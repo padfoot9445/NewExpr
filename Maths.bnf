@@ -1,0 +1,4 @@
+<Expression> ::= <Addition> | <Multiplication> | <Negation> | "(" <Expression> ")" | <Number>;
+<Addition> ::= <Expression> ("+" | "-") <Expression>;
+<Multiplication> ::= <Expression> ("*" | "/") <Expression>;
+<Negation> ::= "-" <Expression>;

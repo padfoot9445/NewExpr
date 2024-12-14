@@ -1,5 +1,6 @@
 namespace Common.Tokens;
-public interface IToken
+using Common.AST;
+public interface IToken : IValidASTLeaf
 {
     public TokenType TT { get; }
     public string Lexeme { get; }

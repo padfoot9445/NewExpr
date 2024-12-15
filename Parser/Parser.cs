@@ -96,6 +96,7 @@ public class Parser
         }
         Node = null;
         return false;
+        //no need for error message here as the explanation of why NextInPriority or BinaryPrime failed to parse will be handled by those methods
     }
     /// <summary>
     /// <OperationPrime> ::= <Operator> <paramref name="NextInPriority"/> <OperationPrime> |
@@ -129,6 +130,7 @@ public class Parser
             {
                 Node = null;
                 return false;
+                //similarly, faliure to parse ParentPrimedNode or NextInPriority is handled by those methods
             }
         }
 
@@ -162,6 +164,13 @@ public class Parser
 
         else
         {
+            //if no repeat, must be EOF
+            if (Input[Current].TT != TokenType.EOF)
+            {
+                Log.Log($"Expected \",\" at Token Position {Current} but got {Input[Current].Lexeme}");
+                Node = null;
+                return false;
+            }
             Node = ASTNode.NonTerminal(Expr!, nameof(Program));
             return true;
         }
@@ -268,6 +277,9 @@ public class Parser
             Node = ASTNode.NonTerminal(PrimaryNode!, nameof(Negation));
             return true;
         }
+        //we can use current here because being here means primary also failed, and thus current is rolled back
+        Log.Log($"Expected one of \"-\" or expected Primary. At Token Position {Current}, got {Input[Current].Lexeme}; Error may be here, or at Primary:");
+
         Node = null;
         return false;
     }
@@ -290,6 +302,7 @@ public class Parser
             Current++;
             return true;
         }
+        Log.Log($"Expected Open Parenthesis ( or Number at token position {Current}, but got {Input[Current].Lexeme}");
         Node = null;
         return false;
     }

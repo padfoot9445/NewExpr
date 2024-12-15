@@ -1,4 +1,4 @@
-<Program> ::= <Expression> <Program> | <Expression>;
+<Program> ::= <Expression> "," <Program> | <Expression>;
 <Expression> ::= <Addition>;
 <Addition> ::=
     <Multiplication> <AdditionPrime>

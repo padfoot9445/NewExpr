@@ -54,6 +54,9 @@ public class TestParser
     [TestCase("1 + (-2) * (3 - 4 / (5 + 6))")]
     [TestCase("((((1))))")]
     [TestCase("-(-(-1))")]
+    [TestCase("5 + 3 10 - 7")]
+    [TestCase("1 + 2 * 3 4 / 2")]
+    [TestCase("10 - (3 * (2 + 1)) 7 * 8")]
     #endregion
     public void Parse_Valid_Strings__Returns_True_And_Node_Is_Type_AST(string input)
     {
@@ -81,10 +84,10 @@ public class TestParser
         });
     }
 
-    //[Test]
+    [Test]
     public void tets()
     {
-        Parser.Parser.Parse(Lex("5;"), out ASTNode? node);
+        Parser.Parser.Parse(Lex("5 + 3 10 - 7"), out ASTNode? node);
         Console.WriteLine(node!.Print());
     }
 }

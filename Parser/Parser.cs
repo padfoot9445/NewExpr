@@ -76,6 +76,66 @@ public class Parser
             return false;
         }
     }
+    /// <summary>
+    /// <Operation> ::= <NextInPriority> <OperationPrime>;
+    /// Example:
+    /// <Addition> ::= <Multiplication> <AdditionPrime>;
+    /// Current Production Name is for naming the AST Node generated
+    /// </summary>
+    /// <param name="NextInPriority"><NextInPriority></param>
+    /// <param name="BinaryPrime"><OperationPrime></param>
+    /// <param name="CurrentProductionName"><Operation></param>
+    /// <param name="Node">Out</param>
+    /// <returns></returns>
+    bool PrimedBinary(ParsingFunction NextInPriority, ParsingFunction BinaryPrime, string CurrentProductionName, out ASTNode? Node)
+    {
+        if (SafeParse(NextInPriority, out ASTNode? Neg) && SafeParse(BinaryPrime, out ASTNode? MulP))
+        {
+            Node = ASTNode.PrimedBinary(Neg!, MulP!, CurrentProductionName);
+            return true;
+        }
+        Node = null;
+        return false;
+    }
+    /// <summary>
+    /// <OperationPrime> ::= <Operator> <paramref name="NextInPriority"/> <OperationPrime> |
+    /// <Operator2> <paramref name="NextInPriority"/> <OperationPrime> | ... |
+    /// <Empty>;
+    /// Example:
+    /// <AdditionPrime> ::=
+    ///     "+" <Multiplication> <AdditionPrime> |
+    ///     "-" <Multiplication> <AdditionPrime> |
+    ///     <Empty>
+    ///;
+    /// </summary>
+    /// <param name="NextInPriority"></param>
+    /// <param name="Operators">Set of all valid operators</param>
+    /// <param name="CurrentProductionName"></param>
+    /// <param name="Node"></param>
+    /// <returns></returns>
+    bool BinaryPrime(ParsingFunction NextInPriority, ICollection<TokenType> Operators, string CurrentProductionName, out ASTNode? Node)
+    {
+        bool Self(out ASTNode? node) => BinaryPrime(NextInPriority, Operators, CurrentProductionName, out node); //function representing recursive call on self; i.e. the BinaryPrime part of the paths where this is not empty
+        if (Operators.Contains(Input[Current].TT))
+        {
+            IToken Operator = Input[Current];
+            Current++;
+            if (SafeParse(NextInPriority, out ASTNode? ParentPrimedNode) && SafeParse(Self, out ASTNode? PrimeNode))
+            {
+                Node = ASTNode.BinaryPrime(Operator: Operator, Right: ParentPrimedNode!, Repeat: PrimeNode!, CurrentProductionName);
+                return true;
+            }
+            else
+            {
+                Node = null;
+                return false;
+            }
+        }
+
+        //if not **  must be empty
+        Node = ASTNode.NonTerminal(ASTNode.Empty(), CurrentProductionName);
+        return true;
+    }
     bool Program(out ASTNode? Node)
     {
         if (!SafeParse(Expression, out ASTNode? Expr))
@@ -158,6 +218,7 @@ public class Parser
         Node = ASTNode.NonTerminal(ASTNode.Empty(), nameof(MultiplicationPrime));
         return true;
     }
+
     bool Power(out ASTNode? Node)
     {
         if (SafeParse(Negation, out ASTNode? Neg) && SafeParse(PowerPrime, out ASTNode? MulP))
@@ -174,7 +235,7 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Power, out ASTNode? Neg) && SafeParse(PowerPrime, out ASTNode? ExpP))
+            if (SafeParse(Negation, out ASTNode? Neg) && SafeParse(PowerPrime, out ASTNode? ExpP))
             {
                 Node = ASTNode.BinaryPrime(Operator: Operator, Right: Neg!, Repeat: ExpP!, nameof(PowerPrime));
                 return true;

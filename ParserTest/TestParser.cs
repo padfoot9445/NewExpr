@@ -57,6 +57,11 @@ public class TestParser
     [TestCase("5 + 3, 10 - 7")]
     [TestCase("1 + 2 * 3,4 / 2")]
     [TestCase("10 - (3 * (2 + 1)) , 7 * 8")]
+    [TestCase("10 ** 2")]
+    [TestCase("1.3 ** 3.4")]
+    [TestCase("1.4 ** 3 * 2")]
+    [TestCase("-34 ** 5")]
+    [TestCase("2 - 234 ** 7 + 23")]
     #endregion
     public void Parse_Valid_Strings__Returns_True_And_Node_Is_Type_AST(string input)
     {
@@ -86,7 +91,8 @@ public class TestParser
 
     //[TestCase("5 + 3, 10 - 7")]
     //[TestCase("10 - (3 * (2 + 1)) , 7 * 8")]
-    [Ignore("Only For Printing AST Easily; no printing necessary now")]
+    //[Ignore("Only For Printing AST Easily; no printing necessary now")]
+    [TestCase("1.4 ** 3 * 2")]
     public void Tets(string inp)
     {
         Parser.Parser.Parse(Lex(inp), out ASTNode? node);

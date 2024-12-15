@@ -128,7 +128,7 @@ public class Parser
     }
     bool Multiplication(out ASTNode? Node)
     {
-        if (SafeParse(Negation, out ASTNode? Neg) && SafeParse(MultiplicationPrime, out ASTNode? MulP))
+        if (SafeParse(Power, out ASTNode? Neg) && SafeParse(MultiplicationPrime, out ASTNode? MulP))
         {
             Node = ASTNode.PrimedBinary(Neg!, MulP!, nameof(Multiplication));
             return true;
@@ -142,7 +142,7 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Negation, out ASTNode? Neg) && SafeParse(MultiplicationPrime, out ASTNode? MulP))
+            if (SafeParse(Power, out ASTNode? Neg) && SafeParse(MultiplicationPrime, out ASTNode? MulP))
             {
                 Node = ASTNode.BinaryPrime(Operator: Operator, Right: Neg!, Repeat: MulP!, nameof(MultiplicationPrime));
                 return true;
@@ -158,6 +158,38 @@ public class Parser
         Node = ASTNode.NonTerminal(ASTNode.Empty(), nameof(MultiplicationPrime));
         return true;
     }
+    bool Power(out ASTNode? Node)
+    {
+        if (SafeParse(Negation, out ASTNode? Neg) && SafeParse(PowerPrime, out ASTNode? MulP))
+        {
+            Node = ASTNode.PrimedBinary(Neg!, MulP!, nameof(Power));
+            return true;
+        }
+        Node = null;
+        return false;
+    }
+    bool PowerPrime(out ASTNode? Node)
+    {
+        if (Input[Current].TT == TokenType.Exponentiation)
+        {
+            IToken Operator = Input[Current];
+            Current++;
+            if (SafeParse(Power, out ASTNode? Neg) && SafeParse(PowerPrime, out ASTNode? ExpP))
+            {
+                Node = ASTNode.BinaryPrime(Operator: Operator, Right: Neg!, Repeat: ExpP!, nameof(PowerPrime));
+                return true;
+            }
+            else
+            {
+                Node = null;
+                return false;
+            }
+        }
+
+        //if not **  must be empty
+        Node = ASTNode.NonTerminal(ASTNode.Empty(), nameof(PowerPrime));
+        return true;
+    }
     bool Negation(out ASTNode? Node)
     {
         if (Input[Current].TT == TokenType.Subtraction)
@@ -166,7 +198,7 @@ public class Parser
             Current++;
             if (SafeParse(Expression, out ASTNode? Expr))
             {
-                Node = ASTNode.Unary(Operator: Input[Current], Operand: Expr!, nameof(Negation));
+                Node = ASTNode.Unary(Operator: Operator, Operand: Expr!, nameof(Negation));
                 return true;
             }
         }

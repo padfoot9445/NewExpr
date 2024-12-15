@@ -1,4 +1,4 @@
-<Program> ::= <Expression> "," <Program> | <Expression>;
+<Program> ::= <Expression> "," <Program> | <Expression> "EOF";
 <Expression> ::= <Addition>;
 <Addition> ::=
     <Multiplication> <AdditionPrime>
@@ -9,11 +9,18 @@
     <Empty>
 ;
 <Multiplication> ::=
-    <Negation> <MultiplicationPrime>
+    <Power> <MultiplicationPrime>
 ;
 <MultiplicationPrime> ::=
-    "*" <Negation> <MultiplicationPrime> |
-    "/" <Negation> <MultiplicationPrime> |
+    "*" <Power> <MultiplicationPrime> |
+    "/" <Power> <MultiplicationPrime> |
+    <Empty>
+;
+<Power> ::=
+    <Negation> <PowerPrime>
+;
+<PowerPrime> ::=
+    "**" <Negation> <PowerPrime> |
     <Empty>
 ;
 <Negation> ::=

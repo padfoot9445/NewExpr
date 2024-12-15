@@ -1,19 +1,20 @@
-<Expression> ::= <Addition> | <Multiplication> | <Negation> | "(" <Expression> ")" | <Number>;
-<Addition> ::= <Expression> ("+" | "-") <Expression>;
-<Multiplication> ::= <Expression> ("*" | "/") <Expression>;
-<Negation> ::= "-" <Expression>;
-
-
+<Program> ::= <Expression> <Program> | <Expression>;
 <Expression> ::= <Addition>;
-<Addition> ::= 
-    <Expression> "+" <Multiplication> |
-    <Expression> "-" <Multiplication> |
-    <Multiplication>
+<Addition> ::=
+    <Multiplication> <AdditionPrime>
+;
+<AdditionPrime> ::=
+    "+" <Multiplication> <AdditionPrime> |
+    "-" <Multiplication> <AdditionPrime> |
+    <Empty>
 ;
 <Multiplication> ::=
-    <Expression> "*" <Multiplication> |
-    <Expression> "/" <Multiplication> |
-    <Negation>
+    <Negation> <MultiplicationPrime>
+;
+<MultiplicationPrime> ::=
+    "*" <Negation> <MultiplicationPrime> |
+    "/" <Negation> <MultiplicationPrime> |
+    <Empty>
 ;
 <Negation> ::=
     "-" <Expression> |
@@ -23,3 +24,4 @@
     "(" <Expression> ")" |
     <Number>
 ;
+<Number> ::= [0-9]+;

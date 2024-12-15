@@ -1,5 +1,5 @@
 namespace Parser;
-class Logger
+class Logger : ILogger
 {
     public TextWriter Writer { get; init; }
     public Logger(TextWriter writer)

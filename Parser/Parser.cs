@@ -24,10 +24,11 @@ public class Parser
         {
             Input.Add(IToken.NewToken(TokenType.EOF, "EOF", -1));
         }
-        Log = logger ?? (ILogger)new Logger();
+        Log = logger ?? new Logger();
     }
     public bool Parse(out ASTNode? node)
     {
+        //returns true if parse success; node will be of type AST. If parse failure, returns false; node is undefined
         if (Input.Count == 0)
         {
             node = null;
@@ -44,9 +45,17 @@ public class Parser
         }
         return true;
     }
-    public static bool Parse(IEnumerable<IToken> Input, out ASTNode? Node)
+    public static bool Parse(IEnumerable<IToken> Input, out ASTNode? Node, ILogger? Log = null)
     {
-        var parser = new Parser(Input);
+        Parser parser;
+        if (Log is not null)
+        {
+            parser = new Parser(Input, Log);
+        }
+        else
+        {
+            parser = new Parser(Input);
+        }
         return parser.Parse(out Node);
     }
     delegate bool ParsingFunction(out ASTNode? Node);

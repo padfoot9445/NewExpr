@@ -28,6 +28,7 @@ class NumberAndBooleanOnlyScanner : Scanner
         ("+", TokenType.Addition),
         ("-", TokenType.Subtraction),
         ("*", TokenType.Multiplication),
+        ("**", TokenType.Exponentiation),
         ("/", TokenType.Division),
         ("~", TokenType.BitwiseNegation),
         ("^", TokenType.BitwiseXor),

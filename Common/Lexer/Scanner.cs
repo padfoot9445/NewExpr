@@ -5,7 +5,7 @@ abstract class Scanner : IScanner
 {
     public Scanner(string input)
     {
-        this.input = input;
+        this.input = input.Trim();
     }
     public string input { get; set; }
     int Current = 0;
@@ -56,29 +56,47 @@ abstract class Scanner : IScanner
     }
     IToken GetLiteral()
     {
-        bool ValidForNum = IsNum(input[Current]);
-        bool ValidForIdent = IsValidFirstIdentChar(input[Current]);
-        while (Current < input.Length && IsNum(input[Current]))
+        Start = Current;
+        //Check if it's a number first
+        if (IsNum(input[Current]))
         {
-            ValidForNum &= IsNum(input[Current]);
-            Current++;
-        }
-        while (Current < input.Length && IsValidFirstIdentChar(input[Current]))
-        {
-            ValidForIdent &= IsValidFirstIdentChar(input[Current]);
-            Current++;
-        }
-        if (ValidForNum)
-        {
+            bool SeenDot = false;
+            while (Current < input.Length)
+            {
+                if (input[Current] == '.')
+                {
+                    if (SeenDot)
+                    {
+                        throw new Exception($"Number ${input[Start..(Current + 1)]} cannot have more than one dot at pos {Current}");
+                    }
+                    else
+                    {
+                        SeenDot = true;
+                    }
+                }
+                else if (IsNum(input[Current]))
+                {
+
+                }
+                else
+                {
+                    break;
+                }
+                Current++;
+            }
             return IToken.NewToken(TokenType.Number, input[Start..Current], Current);
         }
-        else if (ValidForIdent)
+        else if (IsValidFirstIdentChar(input[Current]))
         {
+            while (Current < input.Length && (IsValidFirstIdentChar(input[Current]) || IsNum(input[Current])))
+            {
+                Current++;
+            }
             return IToken.NewToken(TokenType.Identifier, input[Start..Current], Current);
         }
         else
         {
-            throw new Exception($"Invalid character string {input[Start..Current]} parsed at before {Current}");
+            throw new Exception($"Unexpected character ${input[Current]} at pos {Current}");
         }
     }
     static bool IsNum(char c)

@@ -19,6 +19,7 @@ public enum TokenType
     Subtraction,
     Multiplication,
     Division,
+    Exponentiation,
     #endregion
     #region logical operator
     LogicalAnd,

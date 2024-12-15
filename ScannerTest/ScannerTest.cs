@@ -21,6 +21,8 @@ public class ScannerTests
     [TestCase("float", TokenType.Float, "float")]
     [TestCase("int", TokenType.Int, "int")]
     [TestCase("42", TokenType.Number, "42")]
+    [TestCase("42.3", TokenType.Number, "42.3")]
+    [TestCase("42 ", TokenType.Number, "42")]
     [TestCase("myVar", TokenType.Identifier, "myVar")]
     [TestCase("+", TokenType.Addition, "+")]
     [TestCase("-", TokenType.Subtraction, "-")]
@@ -49,6 +51,7 @@ public class ScannerTests
     [TestCase("(", TokenType.OpenParen, "(")]
     [TestCase(")", TokenType.CloseParen, ")")]
     [TestCase(",", TokenType.Comma, ",")]
+    [TestCase("**", TokenType.Exponentiation, "**")]
     public void Scan_SingleToken_ReturnsCorrectToken(string input, TokenType expectedType, string expectedLexeme)
     {
         Setup(input);
@@ -118,6 +121,27 @@ public class ScannerTests
                 (TokenType.Equals, "="),
                 (TokenType.Number, "1123"),
                 (TokenType.Semicolon, ";")
+            }
+        );
+        yield return new TestCaseData(
+            "123 456",
+            new List<(TokenType, string)>
+            {
+                (TokenType.Number, "123"),
+                (TokenType.Number, "456"),
+            }
+        );
+        yield return new TestCaseData(
+            "5 + 3, 10 - 7",
+            new List<(TokenType, string)>
+            {
+                (TokenType.Number, "5"),
+                (TokenType.Addition, "+"),
+                (TokenType.Number, "3"),
+                (TokenType.Comma, ","),
+                (TokenType.Number, "10"),
+                (TokenType.Subtraction, "-"),
+                (TokenType.Number, "7")
             }
         );
     }

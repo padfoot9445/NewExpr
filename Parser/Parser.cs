@@ -83,12 +83,23 @@ public class Parser
             Node = null;
             return false;
         }
-        //check if repeat; success is valid in any case
-        if (SafeParse(Program, out ASTNode? Repeat))
+        //check if repeat(comma is there); success is valid in any case
+        if (Input[Current].TT == TokenType.Comma)
         {
-            Node = ASTNode.Repeating(Expr!, Repeat!, nameof(Program));
-            return true;
+            Current++;
+            if (SafeParse(Program, out ASTNode? Repeat))
+            {
+                Node = ASTNode.Repeating(Expr!, Repeat!, nameof(Program));
+                return true;
+            }
+            else
+            {
+                //cannot have comma but no repeat
+                Node = null;
+                return false;
+            }
         }
+
         else
         {
             Node = ASTNode.NonTerminal(Expr!, nameof(Program));
@@ -161,7 +172,7 @@ public class Parser
         }
         else if (SafeParse(Primary, out ASTNode? PrimaryNode))
         {
-            Node = ASTNode.NonTerminal(PrimaryNode, nameof(Negation));
+            Node = ASTNode.NonTerminal(PrimaryNode!, nameof(Negation));
             return true;
         }
         Node = null;

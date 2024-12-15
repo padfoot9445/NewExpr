@@ -78,21 +78,30 @@ public class TestParser
     [TestCase("5 + 3; 10 - 7;", 1)]
     [TestCase("1 + 2 * 3; -4 / 2;", 1)]
     [TestCase("10 - (3 * (2 + 1)); 7 * 8;", 1)]
+    [TestCase("5 + 3;, 10 - 7;", 2)]
+    [TestCase("1 + 2 * 3;, -4 /, 2;", 3)]
+    [TestCase("10 - (3 * (2 + 1)); 7 * 8;", 1)]
     #endregion
     public void Invalid_Cases__Returns_False_And_Prints_Error(string input, int MinimumErrorMessageCount) //do not assert for null because that is UB
     {
+        bool OutMessages = false;
         var Logger = new MockLogger();
         Assert.Multiple(() =>
         {
             Assert.That(Parser.Parser.Parse(Lex(input), out ASTNode? node, Logger), Is.False);
             Assert.That(Logger.LogRecord, Has.Count.GreaterThanOrEqualTo(MinimumErrorMessageCount));
         });
+
+        if (OutMessages)
+        {
+            Console.WriteLine(string.Join("; ", Logger.LogRecord));
+        }
     }
 
     //[TestCase("5 + 3, 10 - 7")]
     //[TestCase("10 - (3 * (2 + 1)) , 7 * 8")]
-    //[Ignore("Only For Printing AST Easily; no printing necessary now")]
-    [TestCase("1.4 ** 3 * 2")]
+    [Ignore("Only For Printing AST Easily; no printing necessary now")]
+    //[TestCase("1.4 ** 3 * 2")]
     public void Tets(string inp)
     {
         Parser.Parser.Parse(Lex(inp), out ASTNode? node);

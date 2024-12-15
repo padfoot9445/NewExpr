@@ -9,6 +9,7 @@ public class Parser
     int Current = 0;
     Stack<int> State = new();
     ILogger Log { get; init; }
+    readonly HashSet<TokenType> RecoveryTokens = [TokenType.Comma];
     void SaveState()
     {
         State.Push(Current);
@@ -34,16 +35,33 @@ public class Parser
             node = null;
             return false;
         }
-        if (!SafeParse(Program, out node))
+        else if (!SafeParse(Program, out node))
         {
-            return false;
-        }
-        if (Input[Current].TT != TokenType.EOF)
-        {
-            Log.Log($"Unexpected Tokens {string.Join(' ', Input[Current..].Select(x => x.Lexeme.ToString()))}");
-            return false;
+            if (Recover())
+            {
+                return Parse(out node);
+                //if we skipped forwards, it means that we are parsing from a new location, so we can continue
+            }
+            else
+            {
+                //no skip forwards, we've discovered as many syntax errors as we can.
+                node = null;
+                return false;
+            }
         }
         return true;
+    }
+    bool Recover()
+    {
+        //skip forwards to the next token in RecoveryTokens. If we reach EOF before finding the next token, return false; else true
+        while (Input[Current].TT != TokenType.EOF)
+        {
+            if (RecoveryTokens.Contains(Input[Current++].TT)) //current++ because no matter what we want to focus on the token after the one we are focusing on now
+            {
+                return true;
+            }
+        }
+        return false;
     }
     public static bool Parse(IEnumerable<IToken> Input, out ASTNode? Node, ILogger? Log = null)
     {
@@ -167,7 +185,7 @@ public class Parser
             //if no repeat, must be EOF
             if (Input[Current].TT != TokenType.EOF)
             {
-                Log.Log($"Expected \",\" at Token Position {Current} but got {Input[Current].Lexeme}");
+                Log.Log($"Expected \",\" at Token Position {Current} but got \"{Input[Current].Lexeme}\"");
                 Node = null;
                 return false;
             }
@@ -278,7 +296,7 @@ public class Parser
             return true;
         }
         //we can use current here because being here means primary also failed, and thus current is rolled back
-        Log.Log($"Expected one of \"-\" or expected Primary. At Token Position {Current}, got {Input[Current].Lexeme}; Error may be here, or at Primary:");
+        Log.Log($"Expected \"-\" or Primary at Token Position {Current}, but got \"{Input[Current].Lexeme}\"; Error may be here, or at Primary:");
 
         Node = null;
         return false;
@@ -302,7 +320,7 @@ public class Parser
             Current++;
             return true;
         }
-        Log.Log($"Expected Open Parenthesis ( or Number at token position {Current}, but got {Input[Current].Lexeme}");
+        Log.Log($"Expected Open Parenthesis ( or Number at token position {Current}, but got \"{Input[Current].Lexeme}\"");
         Node = null;
         return false;
     }

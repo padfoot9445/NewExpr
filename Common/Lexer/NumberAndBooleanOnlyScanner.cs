@@ -6,8 +6,8 @@ class NumberAndBooleanOnlyScanner : Scanner
     {
     }
     protected override (string, TokenType)[] MCTTM => [
-        ("int", TokenType.Int),
-        ("float", TokenType.Float),
+        ("int", TokenType.TypeInt),
+        ("float", TokenType.TypeFloat),
         ("and", TokenType.LogicalAnd),
         (">=", TokenType.GreaterThanOrEqualTo),
         ("<=", TokenType.LessThanOrEqualTo),

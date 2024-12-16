@@ -18,8 +18,8 @@ public class ScannerTests
 
     // Parameterized test for single-token inputs
     // [TestCase("a", TokenType.Identifier, "a")]
-    [TestCase("float", TokenType.Float, "float")]
-    [TestCase("int", TokenType.Int, "int")]
+    [TestCase("float", TokenType.TypeFloat, "float")]
+    [TestCase("int", TokenType.TypeInt, "int")]
     [TestCase("42", TokenType.Number, "42")]
     [TestCase("42.3", TokenType.Number, "42.3")]
     [TestCase("42 ", TokenType.Number, "42")]

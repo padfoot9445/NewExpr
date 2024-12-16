@@ -43,8 +43,8 @@ public enum TokenType
     Semicolon,
     #endregion
     Equals,
-    Float,
-    Int,
+    TypeFloat,
+    TypeInt,
     EOF,
 
 }

@@ -1,5 +1,10 @@
-<Program> ::= <Expression> <Program>;
-<Expression> ::= <Addition> | <Multiplication> | <Negation> | "(" <Expression> ")" | <Number>;
+<Program> ::= <Expression> "," <Program>;
+<Expression> ::= <Addition> | <Multiplication> | <Negation> | <Power> | "(" <Expression> ")" | <Number>;
 <Addition> ::= <Expression> ("+" | "-") <Expression>;
 <Multiplication> ::= <Expression> ("*" | "/") <Expression>;
 <Negation> ::= "-" <Expression>;
+<Power> ::= <Expression> "**" <Expression>;
+<DeclAndAssignment> ::= <Type> <Identifier> "=" <Expression>;
+<Assignment> ::= <Identifier> "=" <Expression>;
+<Decl> := ::= <Type> <Identifier>;
+<Type> ::= "int" | "float" | "double" | "number" | "long" | "longint" | "byte";

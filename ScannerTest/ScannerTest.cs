@@ -149,6 +149,19 @@ public class ScannerTests
                 (TokenType.Number, "7")
             }
         );
+        yield return new TestCaseData(
+            "5 \n+ 3, 10 \n\t- 7",
+            new List<(TokenType, string)>
+            {
+                (TokenType.Number, "5"),
+                (TokenType.Addition, "+"),
+                (TokenType.Number, "3"),
+                (TokenType.Comma, ","),
+                (TokenType.Number, "10"),
+                (TokenType.Subtraction, "-"),
+                (TokenType.Number, "7")
+            }
+        );
     }
 
     [TestCaseSource(nameof(ComplexExpressions))]

@@ -5,7 +5,8 @@ class NumberAndBooleanOnlyScanner : Scanner
     public NumberAndBooleanOnlyScanner(string input) : base(input)
     {
     }
-    protected override (string, TokenType)[] MCTTM => [
+    protected override (string, TokenType)[] MCTTM =>
+    [
         ("int", TokenType.TypeInt),
         ("float", TokenType.TypeFloat),
         ("and", TokenType.LogicalAnd),
@@ -36,5 +37,11 @@ class NumberAndBooleanOnlyScanner : Scanner
         ("|", TokenType.BitwiseOr),
         (">", TokenType.GreaterThan),
         ("<", TokenType.LessThan),
-        ("=", TokenType.Equals) ];
+        ("=", TokenType.Equals),
+        ("double", TokenType.TypeDouble),
+        ("number", TokenType.TypeNumber),
+        ("long", TokenType.TypeLong),
+        ("longint", TokenType.TypeLongInt),
+        ("byte", TokenType.TypeByte),
+    ];
 }

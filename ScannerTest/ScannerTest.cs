@@ -52,6 +52,11 @@ public class ScannerTests
     [TestCase(")", TokenType.CloseParen, ")")]
     [TestCase(",", TokenType.Comma, ",")]
     [TestCase("**", TokenType.Exponentiation, "**")]
+    [TestCase("double", TokenType.TypeDouble, "double")]
+    [TestCase("number", TokenType.TypeNumber, "number")]
+    [TestCase("long", TokenType.TypeLong, "long")]
+    [TestCase("longint", TokenType.TypeLongInt, "longint")]
+    [TestCase("byte", TokenType.TypeByte, "byte")]
     public void Scan_SingleToken_ReturnsCorrectToken(string input, TokenType expectedType, string expectedLexeme)
     {
         Setup(input);

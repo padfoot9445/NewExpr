@@ -45,6 +45,11 @@ public enum TokenType
     Equals,
     TypeFloat,
     TypeInt,
+    TypeDouble,
+    TypeNumber,
+    TypeLong,
+    TypeLongInt,
+    TypeByte,
     EOF,
 
 }

@@ -260,63 +260,6 @@ public class Parser
         Log.Log($"Expected addition or declaration at position {Current}");
         return false;
     }
-    bool Assignment(out ASTNode? Node)
-    {
-        if (TCmp(TokenType.Identifier) && TCmp(TokenType.Equals, 1))
-        {
-            AssignmentTarget(out ASTNode? Identifier);
-            IToken OperatorEquals = Input[Current++];
-            //IDENTIFIER "=" <Addition>
-            if (SafeParse(Addition, out ASTNode? Add))
-            {
-                Node = ASTNode.Binary(Identifier!, OperatorEquals, Add!, nameof(Assignment));
-                return true;
-            }
-            Node = null;
-            return false;
-        }
-        else if (SafeParse(Type, out ASTNode? TypeNode))
-        {
-            //<Type> IDENTIFIER "=" <Addition>
-            if (!SafeParse(AssignmentTarget, out ASTNode? Ident))
-            {
-                Log.Log("Expected Identifier after Type");
-                Node = null;
-                return false;
-            }
-            else if (SafeParse(AssignmentPrime, out ASTNode? AssP))
-            {
-                Node = new ASTNode([ASTLeafType.NonTerminal, ASTLeafType.NonTerminal, ASTLeafType.NonTerminal], [TypeNode!, Ident!, AssP!], nameof(Assignment));
-                return true;
-            }
-            else
-            {
-                Log.Log($"Expected Identifier after type at {Current}");
-                Node = null;
-                return false;
-            }
-
-        }
-        else if (SafeParse(Addition, out ASTNode? Add))
-        {
-            Node = ASTNode.NonTerminal(Add!, nameof(Expression));
-            return true;
-        }
-        Log.Log($"Unexpected token at TP {Current} {Input[Current]}");
-        Node = null;
-        return false;
-    }
-    bool AssignmentTarget(out ASTNode? Node)
-    {
-        if (TCmp(TokenType.Identifier))
-        {
-            Node = ASTNode.Terminal(Input[Current], nameof(AssignmentTarget));
-            Current++;
-            return true;
-        }
-        Node = null;
-        return false;
-    }
     bool Type(out ASTNode? Node)
     {
         if (TCmp([TokenType.TypeByte, TokenType.TypeDouble, TokenType.TypeInt, TokenType.TypeLong, TokenType.TypeLongInt, TokenType.TypeFloat, TokenType.TypeNumber]))

@@ -68,6 +68,10 @@ public class TestParser
     [TestCase("a234_;")]
     [TestCase("1 + 2; 3 + 4;")]
     [TestCase("5;")]
+    [TestCase("i = (j = 2);")]
+    [TestCase("i = 4 * (j = 2) + 2;")]
+    [TestCase("int i = (long j = 2);")]
+    [TestCase("int i = 2 + (long j = 4) * 3;")]
     #endregion
     public void Parse_Valid_Strings__Returns_True_And_Node_Is_Type_AST(string input)
     {

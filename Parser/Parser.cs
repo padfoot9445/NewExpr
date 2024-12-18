@@ -9,7 +9,7 @@ public class Parser
     int Current = 0;
     Stack<int> State = new();
     ILogger Log { get; init; }
-    readonly HashSet<TokenType> RecoveryTokens = [TokenType.Comma];
+    readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
     void SaveState()
     {
         State.Push(Current);
@@ -187,8 +187,8 @@ public class Parser
             Node = null;
             return false;
         }
-        //check if repeat(comma is there); success is valid in any case
-        if (Input[Current].TT == TokenType.Comma)
+        //check if repeat(Semicolon is there); success is valid in any case
+        if (Input[Current].TT == TokenType.Semicolon)
         {
             Current++;
             if (SafeParse(Program, out ASTNode? Repeat))
@@ -198,7 +198,7 @@ public class Parser
             }
             else
             {
-                //cannot have comma but no repeat
+                //cannot have Semicolon but no repeat
                 Node = null;
                 return false;
             }
@@ -209,7 +209,7 @@ public class Parser
             //if no repeat, must be EOF
             if (Input[Current].TT != TokenType.EOF)
             {
-                Log.Log($"Expected \",\" at Token Position {Current} but got \"{Input[Current].Lexeme}\"");
+                Log.Log($"Expected \";\" at Token Position {Current} but got \"{Input[Current].Lexeme}\"");
                 Node = null;
                 return false;
             }

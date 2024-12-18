@@ -54,9 +54,9 @@ public class TestParser
     [TestCase("1 + (-2) * (3 - 4 / (5 + 6))")]
     [TestCase("((((1))))")]
     [TestCase("-(-(-1))")]
-    [TestCase("5 + 3, 10 - 7")]
-    [TestCase("1 + 2 * 3,4 / 2")]
-    [TestCase("10 - (3 * (2 + 1)) , 7 * 8")]
+    [TestCase("5 + 3; 10 - 7")]
+    [TestCase("1 + 2 * 3;4 / 2")]
+    [TestCase("10 - (3 * (2 + 1)) ; 7 * 8")]
     [TestCase("10 ** 2")]
     [TestCase("1.3 ** 3.4")]
     [TestCase("1.4 ** 3 * 2")]
@@ -66,6 +66,7 @@ public class TestParser
     [TestCase("long i")]
     [TestCase("_ = 1")]
     [TestCase("a234_")]
+    [TestCase("1 + 2; 3 + 4")]
     #endregion
     public void Parse_Valid_Strings__Returns_True_And_Node_Is_Type_AST(string input)
     {
@@ -77,13 +78,13 @@ public class TestParser
     }
     #region Invalid Cases
     [TestCase("", 0)]
-    [TestCase("5;", 1)]
-    [TestCase("5 + 3; 10 - 7;", 1)]
-    [TestCase("1 + 2 * 3; -4 / 2;", 1)]
-    [TestCase("10 - (3 * (2 + 1)); 7 * 8;", 1)]
-    [TestCase("5 + 3;, 10 - 7;", 2)]
-    [TestCase("1 + 2 * 3;, -4 /, 2;", 3)]
-    [TestCase("10 - (3 * (2 + 1)); 7 * 8;", 1)]
+    [TestCase("5,", 1)]
+    [TestCase("5 + 3, 10 - 7", 1)]
+    [TestCase("1 + 2 * 3, -4 / 2,", 1)]
+    [TestCase("10 - (3 * (2 + 1)), 7 * 8,", 1)]
+    [TestCase("5 + 3,; 10 - 7,", 2)]
+    [TestCase("1 + 2 * 3,; -4 /, 2,", 3)]
+    [TestCase("10 - (3 * (2 + 1)), 7 * 8,", 1)]
     #endregion
     public void Invalid_Cases__Returns_False_And_Prints_Error(string input, int MinimumErrorMessageCount) //do not assert for null because that is UB
     {

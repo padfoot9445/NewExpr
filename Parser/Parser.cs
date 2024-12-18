@@ -76,6 +76,30 @@ public class Parser
         }
         return parser.Parse(out Node);
     }
+    bool TCmp(TokenType tokenType, int offset = 0)
+    {
+        if (offset < Input.Count - 1)
+        {
+            return Input[Current + offset].TT == tokenType;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    bool TCmp(IEnumerable<TokenType> set, int offset = 0)
+    {
+        return set.Select(x => TCmp(x, offset)).Contains(true);
+    }
+    bool ICmp(TokenType tokenType, int offset = 0) // increments the index on cmp success
+    {
+        if (TCmp(tokenType, offset))
+        {
+            Current++;
+            return true;
+        }
+        return false;
+    }
     delegate bool ParsingFunction(out ASTNode? Node);
     bool SafeParse(ParsingFunction fn, out ASTNode? K) //return true on successful parse, else false. Node is undefined on faliure.
     {
@@ -195,13 +219,130 @@ public class Parser
     }
     bool Expression(out ASTNode? Node)
     {
-        if (SafeParse(Addition, out ASTNode? Add))
+        if (SafeParse(Declaration, out ASTNode? Add))
         {
             Node = ASTNode.NonTerminal(Add!, nameof(Expression));
             return true;
         }
         Node = null;
         return false;
+    }
+    bool Declaration(out ASTNode? Node)
+    {
+        if (SafeParse(Type, out ASTNode? TNode))
+        {
+            if (!ICmp(TokenType.Identifier))
+            {
+                Log.Log($"Expected Identifier after Type at position {Current}");
+                Node = null;
+                return false;
+            }
+            if (SafeParse(AssignmentPrime, out ASTNode? ANode))
+            {
+                Node = ASTNode.Binary(TNode!, Input[Current - 1], ANode!, nameof(Declaration));
+                return true;
+            }
+            else
+            {
+                Log.Log($"Impossible path in {nameof(Declaration)}");
+                Node = null;
+                return false;
+            }
+        }
+        else if (SafeParse(Addition, out ASTNode? Add))
+        {
+            Node = ASTNode.NonTerminal(Add!, nameof(Declaration));
+            return true;
+        }
+        Node = null;
+        Log.Log($"Expected addition or declaration at position {Current}");
+        return false;
+    }
+    bool Assignment(out ASTNode? Node)
+    {
+        if (TCmp(TokenType.Identifier) && TCmp(TokenType.Equals, 1))
+        {
+            AssignmentTarget(out ASTNode? Identifier);
+            IToken OperatorEquals = Input[Current++];
+            //IDENTIFIER "=" <Addition>
+            if (SafeParse(Addition, out ASTNode? Add))
+            {
+                Node = ASTNode.Binary(Identifier!, OperatorEquals, Add!, nameof(Assignment));
+                return true;
+            }
+            Node = null;
+            return false;
+        }
+        else if (SafeParse(Type, out ASTNode? TypeNode))
+        {
+            //<Type> IDENTIFIER "=" <Addition>
+            if (!SafeParse(AssignmentTarget, out ASTNode? Ident))
+            {
+                Log.Log("Expected Identifier after Type");
+                Node = null;
+                return false;
+            }
+            else if (SafeParse(AssignmentPrime, out ASTNode? AssP))
+            {
+                Node = new ASTNode([ASTLeafType.NonTerminal, ASTLeafType.NonTerminal, ASTLeafType.NonTerminal], [TypeNode!, Ident!, AssP!], nameof(Assignment));
+                return true;
+            }
+            else
+            {
+                Log.Log($"Expected Identifier after type at {Current}");
+                Node = null;
+                return false;
+            }
+
+        }
+        else if (SafeParse(Addition, out ASTNode? Add))
+        {
+            Node = ASTNode.NonTerminal(Add!, nameof(Expression));
+            return true;
+        }
+        Log.Log($"Unexpected token at TP {Current} {Input[Current]}");
+        Node = null;
+        return false;
+    }
+    bool AssignmentTarget(out ASTNode? Node)
+    {
+        if (TCmp(TokenType.Identifier))
+        {
+            Node = ASTNode.Terminal(Input[Current], nameof(AssignmentTarget));
+            Current++;
+            return true;
+        }
+        Node = null;
+        return false;
+    }
+    bool Type(out ASTNode? Node)
+    {
+        if (TCmp([TokenType.TypeByte, TokenType.TypeDouble, TokenType.TypeInt, TokenType.TypeLong, TokenType.TypeLongInt, TokenType.TypeFloat, TokenType.TypeNumber]))
+        {
+            Node = ASTNode.Terminal(Input[Current], nameof(Type));
+            Current++;
+            return true;
+        }
+        Node = null;
+        return false;
+    }
+    bool AssignmentPrime(out ASTNode? Node)
+    {
+        if (TCmp(TokenType.Equals))
+        {
+            IToken Operator = Input[Current++];
+            if (!SafeParse(Addition, out ASTNode? Add))
+            {
+                if (SafeParse(AssignmentPrime, out ASTNode? AssP))
+                {
+
+                    Node = ASTNode.BinaryPrime(Operator, Add!, AssP!, nameof(AssignmentPrime));
+                    return true;
+                }
+            }
+        }
+        Node = ASTNode.Empty();
+        return true;
     }
     bool Addition(out ASTNode? Node)
     {
@@ -314,13 +455,18 @@ public class Parser
                 return true;
             }
         }
-        else if (Input[Current].TT == TokenType.Number)
+        else if (TCmp([TokenType.Number, TokenType.Identifier]))
         {
-            Node = ASTNode.Terminal(Input[Current], nameof(Primary));
-            Current++;
-            return true;
+            ASTNode IdentifierNode = ASTNode.Terminal(Input[Current++], nameof(Primary));
+            if (SafeParse(AssignmentPrime, out ASTNode? AssP))
+            {
+                Node = ASTNode.PrimedBinary(IdentifierNode, AssP!, nameof(Primary));
+                return true;
+            }
+            Node = null;
+            return false;
         }
-        Log.Log($"Expected Open Parenthesis ( or Number at token position {Current}, but got \"{Input[Current].Lexeme}\"");
+        Log.Log($"Expected Open Parenthesis ( or Number or identifier at token position {Current}, but got \"{Input[Current].Lexeme}\"");
         Node = null;
         return false;
     }

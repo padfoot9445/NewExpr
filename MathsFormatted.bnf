@@ -1,5 +1,14 @@
 <Program> ::= <Expression> "," <Program> | <Expression> "EOF";
-<Expression> ::= <Addition>;
+<Expression> ::= <Declaration>
+;
+<Declaration> ::=
+    <Type> <Identifier> <AssignmentPrime> |
+    <Addition>
+;
+<AssignmentPrime> ::=
+    "=" <Expression> <AssignmentPrime>|
+    <Empty>
+;
 <Addition> ::=
     <Multiplication> <AdditionPrime>
 ;
@@ -29,6 +38,8 @@
 ;
 <Primary> ::=
     "(" <Expression> ")" |
-    <Number>
+    <Number> |
+    <Identifier> <AssignmentPrime>
 ;
 <Number> ::= [0-9]+;
+<Type> ::= "int" | "float" | "double" | "number" | "long" | "longint" | "byte";

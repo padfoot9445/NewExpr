@@ -62,13 +62,16 @@ public class TestParser
     [TestCase("1.4 ** 3 * 2")]
     [TestCase("-34 ** 5")]
     [TestCase("2 - 234 ** 7 + 23")]
+    [TestCase("int i = 12")]
+    [TestCase("long i")]
+    [TestCase("_ = 1")]
+    [TestCase("a234_")]
     #endregion
     public void Parse_Valid_Strings__Returns_True_And_Node_Is_Type_AST(string input)
     {
         Assert.Multiple(() =>
         {
             Assert.That(Parser.Parser.Parse(Lex(input), out ASTNode? node), Is.True);
-
             Assert.That(node, Is.TypeOf<ASTNode>());
         });
     }

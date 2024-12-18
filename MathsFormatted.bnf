@@ -1,4 +1,4 @@
-<Program> ::= <Expression> ";" <Program> | <Expression> "EOF";
+<Program> ::= <Expression> ";" <Program> | <Expression> ";" "EOF";
 <Expression> ::= <Declaration>
 ;
 <Declaration> ::=

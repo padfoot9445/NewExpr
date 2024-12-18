@@ -198,23 +198,25 @@ public class Parser
             }
             else
             {
-                //cannot have Semicolon but no repeat
-                Node = null;
-                return false;
+                //check if EOF
+                //if no repeat, must be EOF
+                if (Input[Current].TT != TokenType.EOF)
+                {
+                    Log.Log($"Expected \";\" at Token Position {Current} but got \"{Input[Current].Lexeme}\"");
+                    Node = null;
+                    return false;
+                }
+                IToken OperatorSemicolon = Input[Current];
+                Node = new ASTNode([ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, OperatorSemicolon], nameof(Program));
+                return true;
             }
         }
 
         else
         {
-            //if no repeat, must be EOF
-            if (Input[Current].TT != TokenType.EOF)
-            {
-                Log.Log($"Expected \";\" at Token Position {Current} but got \"{Input[Current].Lexeme}\"");
-                Node = null;
-                return false;
-            }
-            Node = ASTNode.NonTerminal(Expr!, nameof(Program));
-            return true;
+            Log.Log($"Expected \";\" at {Current}");
+            Node = null;
+            return false;
         }
     }
     bool Expression(out ASTNode? Node)

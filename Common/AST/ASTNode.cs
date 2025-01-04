@@ -3,7 +3,7 @@ using Common.Tokens;
 namespace Common.AST;
 public class ASTNode : IValidASTLeaf
 {
-    public ASTLeafType Type => ASTLeafType.NonTerminal;
+    public virtual ASTLeafType Type => ASTLeafType.NonTerminal;
     public ASTLeafType[] Pattern { get; init; }
     public IValidASTLeaf[] Children { get; init; }
     public string Name { get; init; }

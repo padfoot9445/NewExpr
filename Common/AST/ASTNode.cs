@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Common.Tokens;
 
 namespace Common.AST;
@@ -28,6 +29,26 @@ public class ASTNode : IValidASTLeaf
     {
         string LongName = $"{CallerLongName}-{Name}";
         return $"{LongName}: ({string.Join(", ", Children.Select(x => x is ASTNode k ? k.LongNamePrint(LongName) : ((IToken)x).Lexeme))})";
+    }
+    public Collection<IValidASTLeaf> Flatten()
+    {
+        Collection<IValidASTLeaf> rv = [this];
+        foreach (IValidASTLeaf child in Children)
+        {
+            if (child is ASTNode Node)
+            {
+                rv = [.. rv.Union(Node.Flatten())];
+            }
+            else if (child is IToken Token)
+            {
+                rv.Add(child);
+            }
+            else
+            {
+                throw new Exception("Unexpected Type");
+            }
+        }
+        return rv;
     }
     private ASTNode(IValidASTLeaf[] children, string Name) : this(
     children.Select(x => x.Type).ToArray(), children, Name)

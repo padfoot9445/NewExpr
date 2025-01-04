@@ -23,7 +23,7 @@ public class ASTNode<T> : IValidASTLeaf where T : IMetadata
     }
     public string Print()
     {
-        return $"{Name}: ({string.Join(", ", Children.Select(x => x is ASTNode<T> k ? k.Print() : ((IToken)x).Lexeme))})";
+        return $"{Name}: {Attributes}, ({string.Join(", ", Children.Select(x => x is ASTNode<T> k ? k.Print() : ((IToken)x).Lexeme))})";
     }
     public string LongNamePrint(string CallerLongName = "")
     {

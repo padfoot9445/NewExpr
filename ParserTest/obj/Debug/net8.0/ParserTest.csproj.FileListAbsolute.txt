@@ -102,3 +102,5 @@ C:\Users\User\coding\nostars\Expa\MathsExpressionParser\ParserTest\obj\Debug\net
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\ParserTest\obj\Debug\net8.0\ParserTest.pdb
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\ParserTest\obj\Debug\net8.0\ParserTest.genruntimeconfig.cache
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\ParserTest\obj\Debug\net8.0\ref\ParserTest.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\ParserTest\bin\Debug\net8.0\IRs.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\ParserTest\bin\Debug\net8.0\IRs.pdb

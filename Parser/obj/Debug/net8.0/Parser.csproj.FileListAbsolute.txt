@@ -13,3 +13,5 @@ C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Parser\obj\Debug\net8.0\
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Parser\obj\Debug\net8.0\refint\Parser.dll
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Parser\obj\Debug\net8.0\Parser.pdb
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Parser\obj\Debug\net8.0\ref\Parser.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Parser\bin\Debug\net8.0\IRs.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Parser\bin\Debug\net8.0\IRs.pdb

@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CommonAndTest\Common\Common.csproj" />
     <ProjectReference Include="..\Parser\Parser.csproj" />
+    <ProjectReference Include="..\IRs\IRs.csproj" />
   </ItemGroup>
 
 </Project>

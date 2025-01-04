@@ -1,0 +1,15 @@
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\bin\Debug\net8.0\IRs.deps.json
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\bin\Debug\net8.0\IRs.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\bin\Debug\net8.0\IRs.pdb
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\IRs.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\IRs.AssemblyInfoInputs.cache
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\IRs.AssemblyInfo.cs
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\IRs.csproj.CoreCompileInputs.cache
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\IRs.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\refint\IRs.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\IRs.pdb
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\ref\IRs.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\bin\Debug\net8.0\Common.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\bin\Debug\net8.0\Common.pdb
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\IRs.csproj.AssemblyReference.cache
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\IRs\obj\Debug\net8.0\IRs.csproj.Up2Date

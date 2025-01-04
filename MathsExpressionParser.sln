@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "Parser\Parser.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserTest", "ParserTest\ParserTest.csproj", "{5EECEB70-B8C4-443A-B4A8-18662C8BB2EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRs", "IRs\IRs.csproj", "{F8440479-EA99-4000-AC1C-BCFB3916AD00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformers", "Transformers\Transformers.csproj", "{F271EFE7-A950-435F-BFDA-D9A03BCEBFBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{5EECEB70-B8C4-443A-B4A8-18662C8BB2EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EECEB70-B8C4-443A-B4A8-18662C8BB2EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EECEB70-B8C4-443A-B4A8-18662C8BB2EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8440479-EA99-4000-AC1C-BCFB3916AD00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8440479-EA99-4000-AC1C-BCFB3916AD00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8440479-EA99-4000-AC1C-BCFB3916AD00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8440479-EA99-4000-AC1C-BCFB3916AD00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F271EFE7-A950-435F-BFDA-D9A03BCEBFBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F271EFE7-A950-435F-BFDA-D9A03BCEBFBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F271EFE7-A950-435F-BFDA-D9A03BCEBFBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F271EFE7-A950-435F-BFDA-D9A03BCEBFBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

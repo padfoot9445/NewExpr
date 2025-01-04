@@ -78,8 +78,8 @@ public class TestParser
     {
         Assert.Multiple(() =>
         {
-            Assert.That(Parser.Parser<AttributeRecord>.Parse(Lex(input), out ASTNode<AttributeRecord>? node), Is.True);
-            Assert.That(node, Is.TypeOf<ASTNode<AttributeRecord>>());
+            Assert.That(Parser.Parser.Parse(Lex(input), out ASTNode? node), Is.True);
+            Assert.That(node, Is.TypeOf<ASTNode>());
         });
     }
     #region Invalid Cases
@@ -98,7 +98,7 @@ public class TestParser
         var Logger = new MockLogger();
         Assert.Multiple(() =>
         {
-            Assert.That(Parser.Parser<AttributeRecord>.Parse(Lex(input), out ASTNode<AttributeRecord>? node, Logger), Is.False);
+            Assert.That(Parser.Parser.Parse(Lex(input), out ASTNode? node, Logger), Is.False);
             Assert.That(Logger.LogRecord, Has.Count.GreaterThanOrEqualTo(MinimumErrorMessageCount));
         });
 
@@ -114,7 +114,7 @@ public class TestParser
     //[TestCase("1.4 ** 3 * 2")]
     public void Tets(string inp)
     {
-        Parser.Parser<AttributeRecord>.Parse(Lex(inp), out ASTNode<AttributeRecord>? node);
+        Parser.Parser.Parse(Lex(inp), out ASTNode? node);
         Console.WriteLine(node!.Print());
     }
 }

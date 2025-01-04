@@ -7,13 +7,13 @@ public class ASTNode : IValidASTLeaf
     public ASTLeafType[] Pattern { get; init; }
     public IValidASTLeaf[] Children { get; init; }
     public string Name { get; init; }
-    public ASTNode(ASTLeafType[] pattern, IValidASTLeaf[] children, string name)
+    public ASTNode(IEnumerable<ASTLeafType> pattern, IEnumerable<IValidASTLeaf> children, string name)
     {
-        Pattern = pattern;
-        Children = children;
-        for (int i = 0; i < children.Length; i++)
+        Pattern = pattern.ToArray();
+        Children = children.ToArray();
+        for (int i = 0; i < Children.Length; i++)
         {
-            if (children[i].Type != pattern[i])
+            if (Children[i].Type != Pattern[i])
             {
                 throw new ArgumentException("Children must match pattern");
             }

@@ -1,0 +1,15 @@
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\bin\Debug\net8.0\Transformers.deps.json
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\bin\Debug\net8.0\Transformers.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\bin\Debug\net8.0\Transformers.pdb
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\bin\Debug\net8.0\Common.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\bin\Debug\net8.0\Common.pdb
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\Transformers.csproj.AssemblyReference.cache
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\Transformers.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\Transformers.AssemblyInfoInputs.cache
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\Transformers.AssemblyInfo.cs
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\Transformers.csproj.CoreCompileInputs.cache
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\Transfor.6D5D6E33.Up2Date
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\Transformers.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\refint\Transformers.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\Transformers.pdb
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\ref\Transformers.dll

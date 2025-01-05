@@ -5,7 +5,7 @@ using Common.AST;
 using Common.Tokens;
 using NUnit.Framework.Interfaces;
 using Transformers.ASTTransformers;
-
+using static Common.AST.ASTLeafType;
 namespace TransformersTest.ASTTransformers;
 [TestFixture]
 public class ParseTreeToASTTest
@@ -20,6 +20,8 @@ public class ParseTreeToASTTest
     static ASTNode EmptyDescend { get; } = new ASTNode([], [], "e");
     static ASTNode StackedEmpty { get; } = ASTNode.NonTerminal(ASTNode.NonTerminal(EmptyDescend, "se"), "");
     static ASTNode StackedNonEmpty { get; } = ASTNode.NonTerminal(ASTNode.NonTerminal(Terminal1, "sne"), "");
+    static ASTNode DescendNT { get; } = ASTNode.NonTerminal(TwoTerminal, "DescendNT");
+    static ASTNode DescendBinary { get; } = ASTNode.Binary(DescendNT, Token1, DescendNT, "DescendBinary");
     Func<IValidASTLeaf, bool> TokenOrNonRedundant = x => (x is IToken || (x is ASTNode node && node.Children.Length > 1));
     [Test]
     public void MinimizeTreeTest__Does_Not_Throw()
@@ -74,5 +76,22 @@ public class ParseTreeToASTTest
         yield return new(StackedEmpty, null);
         yield return new(StackedNonEmpty, Token1);
         yield return new(EmptyDescend, null);
+    }
+    [TestCaseSource(nameof(MatchDescendEnd))]
+    public void MatchDescendEndTest__CorrectlyMatchesDescendant(ASTNode leaf, ASTLeafType[] ExpectedMatch)
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(leaf.MatchDescendEnd(ExpectedMatch), Is.True);
+            Assert.That(leaf.MatchDescendEnd(ExpectedMatch[..^1]), Is.False);
+        });
+    }
+    static IEnumerable<TestCaseData> MatchDescendEnd()
+    {
+        yield return new(Terminal1, new ASTLeafType[1] { Terminal });
+        yield return new(TwoTerminal, new ASTLeafType[2] { Terminal, Terminal });
+        yield return new(TWONT, new ASTLeafType[2] { Terminal, Terminal });
+        yield return new(DescendNT, new ASTLeafType[1] { NonTerminal });
+        yield return new(DescendBinary, new ASTLeafType[3] { NonTerminal, Terminal, NonTerminal });
     }
 }

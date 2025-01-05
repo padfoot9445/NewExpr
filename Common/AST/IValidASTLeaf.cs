@@ -1,5 +1,5 @@
 namespace Common.AST;
-public interface IValidASTLeaf
+public interface IValidASTLeaf : IIsEquivalentTo<IValidASTLeaf>
 {
     public ASTLeafType Type { get; }
 }

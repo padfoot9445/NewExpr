@@ -1,5 +1,5 @@
 namespace Common.AST;
-public interface IMetadata
+public interface IMetadata : IIsEquivalentTo<IMetadata>
 {
     /// <summary>
     /// Merges attributes from other with self. If there is a conflict, throw. It is likely that other must be the same type as self.

@@ -2,6 +2,10 @@ namespace IRs.ParseTree;
 using Common.AST;
 public class AttributeRecord : IMetadata
 {
+    public AttributeRecord()
+    {
+        _TypeCode = null;
+    }
     public AttributeRecord(uint? TypeCode = null)
     {
         this._TypeCode = TypeCode;

@@ -14,6 +14,11 @@ record class Token : IToken
         return new Token() { TT = type, Lexeme = lexeme };
     }
 
+    public ICollection<IValidASTLeaf> Flatten()
+    {
+        return [this];
+    }
+
     public bool IsEquivalentTo(IValidASTLeaf other)
     {
         return

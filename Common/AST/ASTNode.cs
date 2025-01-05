@@ -21,6 +21,8 @@ public class ASTNode : IValidASTLeaf
         }
         Name = name;
     }
+
+    ICollection<IValidASTLeaf> IValidASTLeaf.Flatten() => Flatten();
     /// <summary>
     /// Checks if all properties are equal. __cinv controls whether or not to also check inverse equality; this is advisable as you will usually wish to return false if, say, other were to be an annotated node and this was not.
     /// </summary>

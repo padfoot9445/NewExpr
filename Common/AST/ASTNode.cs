@@ -21,6 +21,26 @@ public class ASTNode : IValidASTLeaf
         }
         Name = name;
     }
+    /// <summary>
+    /// Checks if all properties are equal. __cinv controls whether or not to also check inverse equality; this is advisable as you will usually wish to return false if, say, other were to be an annotated node and this was not.
+    /// </summary>
+    /// <param name="other"></param>
+    /// <param name="__cinv"></param>
+    /// <returns></returns>
+    bool IIsEquivalentTo<IValidASTLeaf>.IsEquivalentTo(IValidASTLeaf other) => IsEquivalentTo(other, true);
+    public virtual bool IsEquivalentTo(IValidASTLeaf other, bool __cinv = true)
+    {
+        if (other is not ASTNode node)
+        { return false; }
+
+        return
+            Pattern.SequenceEqual(node.Pattern) &&
+            Children.Length == node.Children.Length &&
+            Children.Select((x, ind) => node.Children[ind].IsEquivalentTo(x)).All(x => x) &&
+            Name == node.Name &&
+            (__cinv ? node.IsEquivalentTo(this, false) : true)
+        ;
+    }
     public string Print()
     {
         return $"{Name}: ({string.Join(", ", Children.Select(x => x is ASTNode k ? k.Print() : ((IToken)x).Lexeme))})";

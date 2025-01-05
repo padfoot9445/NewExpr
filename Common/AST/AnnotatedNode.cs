@@ -36,5 +36,12 @@ public class AnnotatedNode<AnnotationContainer> : ASTNode where AnnotationContai
     }
     public AnnotationContainer Attributes { get; init; }
     public override ASTLeafType Type => ASTLeafType.AnnotatedNode;
-
+    public override bool IsEquivalentTo(IValidASTLeaf other, bool __cinv = true)
+    {
+        return
+            other is AnnotatedNode<AnnotationContainer> Annonode &&
+            Attributes.IsEquivalentTo(Annonode.Attributes) &&
+            base.IsEquivalentTo(other, __cinv)
+        ;
+    }
 }

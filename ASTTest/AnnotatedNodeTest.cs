@@ -22,4 +22,19 @@ public class AnnotatedNodeTest
         AnnotationContainerMock anno = new();
         Assert.That(AnnotatedNode<AnnotationContainerMock>.FromNodeRecursive(anno, AstNodeTest.Node1).Attributes, Is.EqualTo(anno));
     }
+    [Test]
+    public void Test__IsEquivalentTo__EmptyAttributes__ReturnsTrue()
+    {
+        Assert.That(AnnotatedNode<AnnotationContainerMock>.FromNodeRecursive(new(), AstNodeTest.Node1).IsEquivalentTo(AnnotatedNode<AnnotationContainerMock>.FromNodeRecursive(new(), AstNodeTest.Node1)));
+    }
+    [Test]
+    public void Test__IsEquivalentTo__NonEmptyAttributes__ReturnsTrue()
+    {
+        Assert.That(AnnotatedNode<AnnotationContainerMock>.FromNodeRecursive(new(12), AstNodeTest.Node1).IsEquivalentTo(AnnotatedNode<AnnotationContainerMock>.FromNodeRecursive(new(12), AstNodeTest.Node1)));
+    }
+    [Test]
+    public void Test__IsEquivalentTo__DifferentAttributes__ReturnsFalse()
+    {
+        Assert.That(AnnotatedNode<AnnotationContainerMock>.FromNodeRecursive(new(42), AstNodeTest.Node1).IsEquivalentTo(AnnotatedNode<AnnotationContainerMock>.FromNodeRecursive(new(12), AstNodeTest.Node1)), Is.False);
+    }
 }

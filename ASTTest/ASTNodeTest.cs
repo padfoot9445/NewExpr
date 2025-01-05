@@ -50,4 +50,19 @@ public class AstNodeTest
             Assert.That(flat, Contains.Item(Node6));
         });
     }
+    [Test]
+    public void TestIsEquivalentTo__Same__ReturnsTrue()
+    {
+        Assert.That(Node1.IsEquivalentTo(Node1));
+    }
+    [Test]
+    public void TestIsEquivalentTo__Annotated__ReturnsFalse()
+    {
+        Assert.That(Node1.IsEquivalentTo(AnnotatedNode<AnnotationContainerMock>.FromNodeRecursive(new(), Node1)), Is.False);
+    }
+    [Test]
+    public void TestIsEquivalentTo__Different__ReturnsFalse()
+    {
+        Assert.That(Node1.IsEquivalentTo(Node2), Is.False);
+    }
 }

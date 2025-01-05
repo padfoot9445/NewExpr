@@ -13,4 +13,14 @@ record class Token : IToken
     {
         return new Token() { TT = type, Lexeme = lexeme };
     }
+
+    public bool IsEquivalentTo(IValidASTLeaf other)
+    {
+        return
+            other is IToken t &&
+            t.TT == TT &&
+            Lexeme == t.Lexeme &&
+            Type == t.Type
+        ;
+    }
 }

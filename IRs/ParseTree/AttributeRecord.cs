@@ -8,6 +8,18 @@ public class AttributeRecord : IMetadata
     }
     private uint? _TypeCode;
     public uint? TypeCode => _TypeCode;
+    bool Common.IIsEquivalentTo<IMetadata>.IsEquivalentTo(IMetadata other)
+    {
+        return IsEquivalentTo(other);
+    }
+    public bool IsEquivalentTo(IMetadata other)
+    {
+        if (other is AttributeRecord otherRecord)
+        {
+            return TypeCode == otherRecord.TypeCode;
+        }
+        return false;
+    }
     private static void MergeField<T>(ref T fieldToBeSet, T otherValue, bool ThrowOnError = true, bool PrioritizeOther = false)
     {
         if (ThrowOnError && fieldToBeSet is not null)

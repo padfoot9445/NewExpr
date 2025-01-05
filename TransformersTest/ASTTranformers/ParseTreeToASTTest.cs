@@ -32,9 +32,9 @@ public class ParseTreeToASTTest
         Collection<IValidASTLeaf> Flat1 = AstNodeTest.Node1.Flatten();
         Assert.Multiple(() =>
         {
-            ASTNode SimpleNode = AstNodeTest.Node1.MinimizeRemoveUnnecessaryNodes();
-            Collection<IValidASTLeaf> Flat2 = SimpleNode.Flatten();
-            Assert.That(Flat2, Does.Not.Matches(new Predicate<IValidASTLeaf>(x => !TokenOrNonRedundant(x)))); //assert that all redundant nodes have been removed
+            IValidASTLeaf SimpleNode = AstNodeTest.Node1.MinimizeRemoveUnnecessaryNodes();
+            ICollection<IValidASTLeaf> Flat2 = SimpleNode.Flatten();
+            Assert.That(Flat2.Where(x => !TokenOrNonRedundant(x)).Count(), Is.EqualTo(0)); //assert that all redundant nodes have been removed
             Assert.That(Flat1.Select(x => x).Where(TokenOrNonRedundant).Count(), Is.EqualTo(Flat2.Count)); //assert that no extra has been removed
         });
     }

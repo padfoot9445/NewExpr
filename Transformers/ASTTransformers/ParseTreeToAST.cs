@@ -9,18 +9,22 @@ public static class ParseTreeToAST
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
-    public static ASTNode MinimizeToAST(this ASTNode node)
+    public static IValidASTLeaf MinimizeToAST(this IValidASTLeaf node)
     {
         throw new NotImplementedException();
     }
     /// <summary>
     /// Removes nodes which have only one or zero children. NOTE: Will remove attributes of terminals and attributes of removed nodes
     /// </summary>
-    /// <param name="node"></param>
+    /// <param name="leaf"></param>
     /// <returns></returns>
-    public static ASTNode MinimizeRemoveUnnecessaryNodes(this ASTNode node)
+    public static IValidASTLeaf MinimizeRemoveUnnecessaryNodes(this IValidASTLeaf leaf)
     {
-        throw new Exception();
+        if (leaf is not ASTNode node) return leaf;
+        var Children = node.Children.Select(x => x.Descend()).Where(x => x is not null).Select(x => x!.MinimizeRemoveUnnecessaryNodes());
+        string Name = "Minimum-Tree-" + node.Name;
+        var Pattern = Children.Select(x => x.Type);
+        return new ASTNode(Pattern, Children, Name);
     }
     public static bool IsRedundant(this IValidASTLeaf leaf)
     {

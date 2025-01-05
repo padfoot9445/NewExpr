@@ -102,10 +102,10 @@ public class TestParser
             Assert.That(Logger.LogRecord, Has.Count.GreaterThanOrEqualTo(MinimumErrorMessageCount));
         });
 
-        if (OutMessages)
-        {
-            Console.WriteLine(string.Join("; ", Logger.LogRecord));
-        }
+        // if (OutMessages)
+        // {
+        //     Console.WriteLine(string.Join("; ", Logger.LogRecord));
+        // }
     }
 
     //[TestCase("5 + 3, 10 - 7")]

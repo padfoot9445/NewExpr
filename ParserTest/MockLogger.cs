@@ -1,5 +1,4 @@
-using Parser;
-
+using Common.Logger;
 namespace ParserTest;
 class MockLogger : ILogger
 {

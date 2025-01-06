@@ -11,7 +11,7 @@ public class AttributeRecord : IMetadata
         this._TypeCode = TypeCode;
     }
     private uint? _TypeCode;
-    public uint? TypeCode => _TypeCode;
+    public uint? TypeCode { get => _TypeCode; set => _TypeCode = value; }
     bool Common.IIsEquivalentTo<IMetadata>.IsEquivalentTo(IMetadata other)
     {
         return IsEquivalentTo(other);

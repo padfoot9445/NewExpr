@@ -78,7 +78,7 @@ public class ParseTreeToASTTest
         yield return new(EmptyDescend, null);
     }
     [TestCaseSource(nameof(MatchDescendEnd))]
-    public void MatchDescendEndTest__CorrectlyMatchesDescendant(ASTNode leaf, ASTLeafType[] ExpectedMatch)
+    public void MatchDescendEndTest__CorrectlyMatchesDescendant(ASTNode leaf, ASTLeafType?[] ExpectedMatch)
     {
         Assert.Multiple(() =>
         {
@@ -88,10 +88,11 @@ public class ParseTreeToASTTest
     }
     static IEnumerable<TestCaseData> MatchDescendEnd()
     {
-        yield return new(Terminal1, new ASTLeafType[1] { Terminal });
-        yield return new(TwoTerminal, new ASTLeafType[2] { Terminal, Terminal });
-        yield return new(TWONT, new ASTLeafType[2] { Terminal, Terminal });
-        yield return new(DescendNT, new ASTLeafType[1] { NonTerminal });
-        yield return new(DescendBinary, new ASTLeafType[3] { NonTerminal, Terminal, NonTerminal });
+        yield return new(Terminal1, new ASTLeafType?[1] { Terminal });
+        yield return new(TwoTerminal, new ASTLeafType?[2] { Terminal, Terminal });
+        yield return new(TWONT, new ASTLeafType?[2] { Terminal, Terminal });
+        yield return new(DescendNT, new ASTLeafType?[1] { NonTerminal });
+        yield return new(DescendBinary, new ASTLeafType?[3] { NonTerminal, Terminal, NonTerminal });
+        yield return new(DescendBinary, new ASTLeafType?[3] { NonTerminal, null, NonTerminal });
     }
 }

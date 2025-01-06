@@ -59,14 +59,14 @@ public static class ParseTreeToAST
         return node;
     }
     public static ASTNode Copy(this ASTNode node) => new(node.Pattern, node.Children, node.Name);
-    public static bool MatchDescendEnd(this ASTNode focus, ASTLeafType[] pattern)
+    public static bool MatchDescendEnd(this ASTNode focus, ASTLeafType?[] pattern)
     {
         //we assume that terminals are indented by one and non-terminals are not indented at all; we are trying to match against the reduced version, so we can just use descend. Is this inefficient? Yes - but is this easier? Also yes
         if (pattern.Length != focus.Pattern.Length) return false; //also guarantees equality with children's length
         for (int i = 0; i < focus.Pattern.Length; i++)
         {
             var descended = focus.Children[i].Descend();
-            if (descended is null || pattern[i] != descended.Type)
+            if (pattern[i] is not null && (descended is null || pattern[i] != descended.Type))
             {
                 return false;
             }

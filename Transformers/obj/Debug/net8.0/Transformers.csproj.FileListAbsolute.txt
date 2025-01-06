@@ -13,3 +13,5 @@ C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\n
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\refint\Transformers.dll
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\Transformers.pdb
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\obj\Debug\net8.0\ref\Transformers.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\bin\Debug\net8.0\IRs.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\Transformers\bin\Debug\net8.0\IRs.pdb

@@ -11,6 +11,19 @@
         "runtime": {
           "bin/placeholder/Common.dll": {}
         }
+      },
+      "IRs/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Common": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/IRs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/IRs.dll": {}
+        }
       }
     }
   },
@@ -19,11 +32,17 @@
       "type": "project",
       "path": "../../CommonAndTest/Common/Common.csproj",
       "msbuildProject": "../../CommonAndTest/Common/Common.csproj"
+    },
+    "IRs/1.0.0": {
+      "type": "project",
+      "path": "../IRs/IRs.csproj",
+      "msbuildProject": "../IRs/IRs.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "Common >= 1.0.0"
+      "Common >= 1.0.0",
+      "IRs >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -61,6 +80,9 @@
           "projectReferences": {
             "C:\\Users\\User\\coding\\nostars\\Expa\\CommonAndTest\\Common\\Common.csproj": {
               "projectPath": "C:\\Users\\User\\coding\\nostars\\Expa\\CommonAndTest\\Common\\Common.csproj"
+            },
+            "C:\\Users\\User\\coding\\nostars\\Expa\\MathsExpressionParser\\IRs\\IRs.csproj": {
+              "projectPath": "C:\\Users\\User\\coding\\nostars\\Expa\\MathsExpressionParser\\IRs\\IRs.csproj"
             }
           }
         }

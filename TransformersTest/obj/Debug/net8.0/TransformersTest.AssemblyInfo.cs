@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TransformersTest")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eecf09ae0103f1d97aa23552ca21811353c005a1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d5c560d66bb8bb3b417ef82936d56379672b5e3")]
 [assembly: System.Reflection.AssemblyProductAttribute("TransformersTest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TransformersTest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

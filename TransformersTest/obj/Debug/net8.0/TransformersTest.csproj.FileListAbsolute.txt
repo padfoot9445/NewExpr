@@ -106,3 +106,5 @@ C:\Users\User\coding\nostars\Expa\MathsExpressionParser\TransformersTest\obj\Deb
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\TransformersTest\obj\Debug\net8.0\TransformersTest.pdb
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\TransformersTest\obj\Debug\net8.0\TransformersTest.genruntimeconfig.cache
 C:\Users\User\coding\nostars\Expa\MathsExpressionParser\TransformersTest\obj\Debug\net8.0\ref\TransformersTest.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\TransformersTest\bin\Debug\net8.0\IRs.dll
+C:\Users\User\coding\nostars\Expa\MathsExpressionParser\TransformersTest\bin\Debug\net8.0\IRs.pdb

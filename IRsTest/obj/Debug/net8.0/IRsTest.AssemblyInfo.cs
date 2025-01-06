@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IRsTest")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+566d2607d0a149c727f818c183e9ce548b09160e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d5c560d66bb8bb3b417ef82936d56379672b5e3")]
 [assembly: System.Reflection.AssemblyProductAttribute("IRsTest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("IRsTest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

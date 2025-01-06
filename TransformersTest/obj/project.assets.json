@@ -406,11 +406,25 @@
           "bin/placeholder/Common.dll": {}
         }
       },
-      "Transformers/1.0.0": {
+      "IRs/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "Common": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/IRs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/IRs.dll": {}
+        }
+      },
+      "Transformers/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Common": "1.0.0",
+          "IRs": "1.0.0"
         },
         "compile": {
           "bin/placeholder/Transformers.dll": {}
@@ -1021,6 +1035,11 @@
       "type": "project",
       "path": "../../CommonAndTest/Common/Common.csproj",
       "msbuildProject": "../../CommonAndTest/Common/Common.csproj"
+    },
+    "IRs/1.0.0": {
+      "type": "project",
+      "path": "../IRs/IRs.csproj",
+      "msbuildProject": "../IRs/IRs.csproj"
     },
     "Transformers/1.0.0": {
       "type": "project",

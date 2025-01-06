@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRs", "IRs\IRs.csproj", "{F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformers", "Transformers\Transformers.csproj", "{F271EFE7-A950-435F-BFDA-D9A03BCEBFBA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRsTest", "IRsTest\IRsTest.csproj", "{7186F7D8-BEDD-4339-9E6E-FE40BA478461}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransformersTest", "TransformersTest\TransformersTest.csproj", "{0524B3E2-14D1-4FDE-8E4B-D8C969656C88}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +46,13 @@ Global
 		{F271EFE7-A950-435F-BFDA-D9A03BCEBFBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F271EFE7-A950-435F-BFDA-D9A03BCEBFBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F271EFE7-A950-435F-BFDA-D9A03BCEBFBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7186F7D8-BEDD-4339-9E6E-FE40BA478461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7186F7D8-BEDD-4339-9E6E-FE40BA478461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7186F7D8-BEDD-4339-9E6E-FE40BA478461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7186F7D8-BEDD-4339-9E6E-FE40BA478461}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0524B3E2-14D1-4FDE-8E4B-D8C969656C88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0524B3E2-14D1-4FDE-8E4B-D8C969656C88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0524B3E2-14D1-4FDE-8E4B-D8C969656C88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0524B3E2-14D1-4FDE-8E4B-D8C969656C88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

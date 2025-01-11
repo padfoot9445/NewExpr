@@ -7,4 +7,5 @@ class MockLogger : ILogger
     {
         LogRecord.Add(message);
     }
+    public bool LoggingEnabled { get; set; } = false;
 }

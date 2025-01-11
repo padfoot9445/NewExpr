@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScannerTest", "ScannerTest\ScannerTest.csproj", "{12937A90-0907-4F45-B3E2-ECA5E5E9EA36}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASTTest", "ASTTest\ASTTest.csproj", "{D92937EE-AB15-43F8-8661-53BC136BFE70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{12937A90-0907-4F45-B3E2-ECA5E5E9EA36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12937A90-0907-4F45-B3E2-ECA5E5E9EA36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12937A90-0907-4F45-B3E2-ECA5E5E9EA36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D92937EE-AB15-43F8-8661-53BC136BFE70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D92937EE-AB15-43F8-8661-53BC136BFE70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D92937EE-AB15-43F8-8661-53BC136BFE70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D92937EE-AB15-43F8-8661-53BC136BFE70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

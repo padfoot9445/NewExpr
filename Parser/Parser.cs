@@ -39,8 +39,10 @@ public class Parser
         {
             if (Recover())
             {
-                return Parse(out node);
+                Parse(out node);
                 //if we skipped forwards, it means that we are parsing from a new location, so we can continue
+                //but we still failed so
+                return false;
             }
             else
             {
@@ -104,7 +106,9 @@ public class Parser
     bool SafeParse(ParsingFunction fn, out ASTNode? K) //return true on successful parse, else false. Node is undefined on faliure.
     {
         SaveState();
+        Log.SuppressLog();
         bool Result = fn(out ASTNode? Node);
+        Log.EnableLog();
         if (Result)
         {
             State.Pop();

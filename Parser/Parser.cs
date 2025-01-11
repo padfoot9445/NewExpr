@@ -283,13 +283,18 @@ public class Parser
         if (TCmp(TokenType.Equals))
         {
             IToken Operator = Input[Current++];
-            if (!SafeParse(Addition, out ASTNode? Add))
+            if (SafeParse(Addition, out ASTNode? Add))
             {
                 if (SafeParse(AssignmentPrime, out ASTNode? AssP))
                 {
-
                     Node = ASTNode.BinaryPrime(Operator, Add!, AssP!, nameof(AssignmentPrime));
                     return true;
+                }
+                else
+                {
+                    Log.Log($"Impossible path in {nameof(AssignmentPrime)}");
+                    Node = null;
+                    return false;
                 }
             }
         }

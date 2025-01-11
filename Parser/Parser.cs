@@ -281,128 +281,17 @@ public class Parser
         return false;
     }
     bool AssignmentPrime(out ASTNode? Node)
-    {
-        if (TCmp(TokenType.Equals))
-        {
-            IToken Operator = Input[Current++];
-            if (SafeParse(Addition, out ASTNode? Add))
-            {
-                if (SafeParse(AssignmentPrime, out ASTNode? AssP))
-                {
-                    Node = ASTNode.BinaryPrime(Operator, Add!, AssP!, nameof(AssignmentPrime));
-                    return true;
-                }
-                else
-                {
-                    Log.Log($"Impossible path in {nameof(AssignmentPrime)}");
-                    Node = null;
-                    return false;
-                }
-            }
-        }
-        Node = ASTNode.Empty();
-        return true;
-    }
+    => BinaryPrime(Addition, [TokenType.Equals], nameof(AssignmentPrime), out Node, (Pos) => $"Impossible Path in {nameof(AssignmentPrime)}");
 
-    bool Addition(out ASTNode? Node)
-    {
-        if (!SafeParse(Multiplication, out ASTNode? Mul, Suppress: false) || !SafeParse(AdditionPrime, out ASTNode? AddP, Suppress: false)) //if either mul or add fails, fail the parse; since both must succeed we cannot suppress
-        {
-            Node = null;
-            return false;
-        }
-        Node = ASTNode.PrimedBinary(Mul!, AddP!, nameof(Addition));
-        return true;
-    }
-    bool AdditionPrime(out ASTNode? Node)
-    {
-        if (Input[Current].TT == TokenType.Addition || Input[Current].TT == TokenType.Subtraction)
-        {
-            IToken Operator = Input[Current];
+    bool Addition(out ASTNode? Node) => PrimedBinary(Multiplication, AdditionPrime, nameof(Addition), out Node, (_) => "");
+    bool AdditionPrime(out ASTNode? Node) => BinaryPrime(Multiplication, [TokenType.Addition, TokenType.Subtraction], nameof(AdditionPrime), out Node, (_) => "");
 
-            Current++;
-            if (SafeParse(Multiplication, out ASTNode? Mul, Suppress: false) && SafeParse(AdditionPrime, out ASTNode? AddP, Suppress: false))
-            {
-                Node = ASTNode.BinaryPrime(Operator: Operator, Right: Mul!, Repeat: AddP!, nameof(AdditionPrime));
-                return true;
-            }
-            else
-            {
-                Node = null;
-                return false;
-            }
-        }
-        //if neither + or -, must be empty
-        Node = ASTNode.NonTerminal(ASTNode.Empty(), nameof(AdditionPrime));
-        return true;
-    }
+    bool Multiplication(out ASTNode? Node) => PrimedBinary(Power, MultiplicationPrime, nameof(Multiplication), out Node, (_) => "");
+    bool MultiplicationPrime(out ASTNode? Node) => BinaryPrime(Power, [TokenType.Multiplication, TokenType.Division], nameof(MultiplicationPrime), out Node, (_) => "");
 
-    bool Multiplication(out ASTNode? Node)
-    {
-        if (SafeParse(Power, out ASTNode? Neg, Suppress: false) && SafeParse(MultiplicationPrime, out ASTNode? MulP, Suppress: false))
-        {
-            //again since both must succeed we cannot suppress
-            Node = ASTNode.PrimedBinary(Neg!, MulP!, nameof(Multiplication));
-            return true;
-        }
-        Node = null;
-        return false;
-    }
-    bool MultiplicationPrime(out ASTNode? Node)
-    {
-        if (Input[Current].TT == TokenType.Multiplication || Input[Current].TT == TokenType.Division)
-        {
-            IToken Operator = Input[Current];
-            Current++;
-            if (SafeParse(Power, out ASTNode? Neg, Suppress: false) && SafeParse(MultiplicationPrime, out ASTNode? MulP, Suppress: false))
-            {
-                Node = ASTNode.BinaryPrime(Operator: Operator, Right: Neg!, Repeat: MulP!, nameof(MultiplicationPrime));
-                return true;
-            }
-            else
-            {
-                Node = null;
-                return false;
-            }
-        }
 
-        //if neither * or /, must be empty
-        Node = ASTNode.NonTerminal(ASTNode.Empty(), nameof(MultiplicationPrime));
-        return true;
-    }
-
-    bool Power(out ASTNode? Node)
-    {
-        if (SafeParse(Negation, out ASTNode? Neg, Suppress: false) && SafeParse(PowerPrime, out ASTNode? MulP, Suppress: false))
-        {
-            Node = ASTNode.PrimedBinary(Neg!, MulP!, nameof(Power));
-            return true;
-        }
-        Node = null;
-        return false;
-    }
-    bool PowerPrime(out ASTNode? Node)
-    {
-        if (Input[Current].TT == TokenType.Exponentiation)
-        {
-            IToken Operator = Input[Current];
-            Current++;
-            if (SafeParse(Negation, out ASTNode? Neg, Suppress: false) && SafeParse(PowerPrime, out ASTNode? ExpP, Suppress: false))
-            {
-                Node = ASTNode.BinaryPrime(Operator: Operator, Right: Neg!, Repeat: ExpP!, nameof(PowerPrime));
-                return true;
-            }
-            else
-            {
-                Node = null;
-                return false;
-            }
-        }
-
-        //if not **  must be empty
-        Node = ASTNode.NonTerminal(ASTNode.Empty(), nameof(PowerPrime));
-        return true;
-    }
+    bool Power(out ASTNode? Node) => PrimedBinary(Negation, PowerPrime, nameof(Power), out Node, (_) => "");
+    bool PowerPrime(out ASTNode? Node) => BinaryPrime(Negation, [TokenType.Exponentiation], nameof(PowerPrime), out Node, (_) => "");
     bool Negation(out ASTNode? Node)
     {
         if (Input[Current].TT == TokenType.Subtraction)

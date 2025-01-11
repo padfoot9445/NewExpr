@@ -163,7 +163,7 @@ public class Parser
     /// <param name="CurrentProductionName"></param>
     /// <param name="Node"></param>
     /// <returns></returns>
-    bool BinaryPrime(ParsingFunction NextInPriority, ICollection<TokenType> Operators, string CurrentProductionName, out ASTNode? Node)
+    bool BinaryPrime(ParsingFunction NextInPriority, ICollection<TokenType> Operators, string CurrentProductionName, out ASTNode? Node, Func<int, string>? MessageOnError = null)
     {
         bool Self(out ASTNode? node) => BinaryPrime(NextInPriority, Operators, CurrentProductionName, out node); //function representing recursive call on self; i.e. the BinaryPrime part of the paths where this is not empty
         if (Operators.Contains(Input[Current].TT))
@@ -177,6 +177,10 @@ public class Parser
             }
             else
             {
+                if (MessageOnError is not null)
+                {
+                    Log.Log(MessageOnError(Current));
+                }
                 Node = null;
                 return false;
                 //similarly, faliure to parse ParentPrimedNode or NextInPriority is handled by those methods
@@ -194,7 +198,7 @@ public class Parser
             Node = null;
             return false;
         }
-        //check if repeat(Semicolon is there); success is valid in any case
+        //check if repeat(Semicolon is there); success is not valid in any case
         if (Input[Current].TT == TokenType.Semicolon)
         {
             Current++;
@@ -209,7 +213,7 @@ public class Parser
                 //if no repeat, must be EOF
                 if (Input[Current].TT != TokenType.EOF)
                 {
-                    Log.Log($"Expected \";\" at Token Position {Current} but got \"{Input[Current].Lexeme}\"");
+                    Log.Log($"Expected EOF at Token Position {Current} but got \"{Input[Current].Lexeme}\"");
                     Node = null;
                     return false;
                 }
@@ -228,7 +232,7 @@ public class Parser
     }
     bool Expression(out ASTNode? Node)
     {
-        if (SafeParse(Declaration, out ASTNode? Add))
+        if (SafeParse(Declaration, out ASTNode? Add, Suppress: false)) //no additional context to add here so we get the context from safeparse
         {
             Node = ASTNode.NonTerminal(Add!, nameof(Expression));
             return true;
@@ -258,13 +262,13 @@ public class Parser
                 return false;
             }
         }
-        else if (SafeParse(Addition, out ASTNode? Add))
+        else if (SafeParse(Addition, out ASTNode? Add, Suppress: false))
         {
             Node = ASTNode.NonTerminal(Add!, nameof(Declaration));
             return true;
         }
         Node = null;
-        Log.Log($"Expected addition or declaration at position {Current}");
+        Log.Log($"Expected addition or declaration (Type) at position {Current}");
         return false;
     }
     bool Type(out ASTNode? Node)
@@ -275,6 +279,7 @@ public class Parser
             Current++;
             return true;
         }
+        Log.Log($"Expected valid Type at {Current}");
         Node = null;
         return false;
     }
@@ -303,7 +308,7 @@ public class Parser
     }
     bool Addition(out ASTNode? Node)
     {
-        if (!SafeParse(Multiplication, out ASTNode? Mul) || !SafeParse(AdditionPrime, out ASTNode? AddP)) //if either mul or add fails, fail the parse
+        if (!SafeParse(Multiplication, out ASTNode? Mul, Suppress: false) || !SafeParse(AdditionPrime, out ASTNode? AddP, Suppress: false)) //if either mul or add fails, fail the parse; since both must succeed we cannot suppress
         {
             Node = null;
             return false;
@@ -313,8 +318,9 @@ public class Parser
     }
     bool Multiplication(out ASTNode? Node)
     {
-        if (SafeParse(Power, out ASTNode? Neg) && SafeParse(MultiplicationPrime, out ASTNode? MulP))
+        if (SafeParse(Power, out ASTNode? Neg, Suppress: false) && SafeParse(MultiplicationPrime, out ASTNode? MulP, Suppress: false))
         {
+            //again since both must succeed we cannot suppress
             Node = ASTNode.PrimedBinary(Neg!, MulP!, nameof(Multiplication));
             return true;
         }
@@ -327,7 +333,7 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Power, out ASTNode? Neg) && SafeParse(MultiplicationPrime, out ASTNode? MulP))
+            if (SafeParse(Power, out ASTNode? Neg, Suppress: false) && SafeParse(MultiplicationPrime, out ASTNode? MulP, Suppress: false))
             {
                 Node = ASTNode.BinaryPrime(Operator: Operator, Right: Neg!, Repeat: MulP!, nameof(MultiplicationPrime));
                 return true;
@@ -346,7 +352,7 @@ public class Parser
 
     bool Power(out ASTNode? Node)
     {
-        if (SafeParse(Negation, out ASTNode? Neg) && SafeParse(PowerPrime, out ASTNode? MulP))
+        if (SafeParse(Negation, out ASTNode? Neg, Suppress: false) && SafeParse(PowerPrime, out ASTNode? MulP, Suppress: false))
         {
             Node = ASTNode.PrimedBinary(Neg!, MulP!, nameof(Power));
             return true;
@@ -360,7 +366,7 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Negation, out ASTNode? Neg) && SafeParse(PowerPrime, out ASTNode? ExpP))
+            if (SafeParse(Negation, out ASTNode? Neg, Suppress: false) && SafeParse(PowerPrime, out ASTNode? ExpP, Suppress: false))
             {
                 Node = ASTNode.BinaryPrime(Operator: Operator, Right: Neg!, Repeat: ExpP!, nameof(PowerPrime));
                 return true;
@@ -382,13 +388,13 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Expression, out ASTNode? Expr))
+            if (SafeParse(Expression, out ASTNode? Expr, Suppress: false))
             {
                 Node = ASTNode.Unary(Operator: Operator, Operand: Expr!, nameof(Negation));
                 return true;
             }
         }
-        else if (SafeParse(Primary, out ASTNode? PrimaryNode))
+        else if (SafeParse(Primary, out ASTNode? PrimaryNode, Suppress: false))
         {
             Node = ASTNode.NonTerminal(PrimaryNode!, nameof(Negation));
             return true;
@@ -405,11 +411,26 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Expression, out ASTNode? Expr) && Input[Current].TT == TokenType.CloseParen)
+            if (SafeParse(Expression, out ASTNode? Expr, Suppress: false))
             {
-                Node = ASTNode.Parenthesized(Open: Operator, Center: Expr!, Close: Input[Current], nameof(Primary));
-                Current++;
-                return true;
+                if (Input[Current].TT == TokenType.CloseParen)
+                {
+                    Node = ASTNode.Parenthesized(Open: Operator, Center: Expr!, Close: Input[Current], nameof(Primary));
+                    Current++;
+                    return true;
+                }
+                else
+                {
+                    Log.Log($"Expected Close Parenthesis at position {Current}");
+                    Node = null;
+                    return false;
+                }
+            }
+            else
+            {
+                //no message as not suppressed
+                Node = null;
+                return false;
             }
         }
         else if (TCmp([TokenType.Number, TokenType.Identifier]))
@@ -434,7 +455,7 @@ public class Parser
             IToken Operator = Input[Current];
 
             Current++;
-            if (SafeParse(Multiplication, out ASTNode? Mul) && SafeParse(AdditionPrime, out ASTNode? AddP))
+            if (SafeParse(Multiplication, out ASTNode? Mul, Suppress: false) && SafeParse(AdditionPrime, out ASTNode? AddP, Suppress: false))
             {
                 Node = ASTNode.BinaryPrime(Operator: Operator, Right: Mul!, Repeat: AddP!, nameof(AdditionPrime));
                 return true;

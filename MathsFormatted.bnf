@@ -6,7 +6,7 @@
     <Addition>
 ;
 <AssignmentPrime> ::=
-    "=" <Expression> <AssignmentPrime>|
+    "=" <Addition> <AssignmentPrime>|
     <Empty>
 ;
 <Addition> ::=

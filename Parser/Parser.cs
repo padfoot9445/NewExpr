@@ -103,10 +103,13 @@ public class Parser
         return false;
     }
     delegate bool ParsingFunction(out ASTNode? Node);
-    bool SafeParse(ParsingFunction fn, out ASTNode? K) //return true on successful parse, else false. Node is undefined on faliure.
+    bool SafeParse(ParsingFunction fn, out ASTNode? K, bool Suppress = true) //return true on successful parse, else false. Node is undefined on faliure.
     {
         SaveState();
-        Log.SuppressLog();
+        if (Suppress)
+        {
+            Log.SuppressLog();
+        }
         bool Result = fn(out ASTNode? Node);
         Log.EnableLog();
         if (Result)

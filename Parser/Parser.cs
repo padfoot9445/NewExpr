@@ -65,6 +65,7 @@ public class Parser
         }
         return false;
     }
+    private int Position { get => Current; }
     public static bool Parse(IEnumerable<IToken> Input, out ASTNode? Node, ILogger? Log = null)
     {
         Parser parser;
@@ -213,7 +214,7 @@ public class Parser
                 //if no repeat, must be EOF
                 if (Input[Current].TT != TokenType.EOF)
                 {
-                    Log.Log($"Expected EOF at Token Position {Current} but got \"{Input[Current].Lexeme}\"");
+                    Log.Log($"Expected EOF at Token Position {Position} but got \"{Input[Current].Lexeme}\"");
                     Node = null;
                     return false;
                 }
@@ -225,7 +226,7 @@ public class Parser
 
         else
         {
-            Log.Log($"Expected \";\" at {Current}");
+            Log.Log($"Expected \";\" at {Position}");
             Node = null;
             return false;
         }
@@ -246,7 +247,7 @@ public class Parser
         {
             if (!ICmp(TokenType.Identifier))
             {
-                Log.Log($"Expected Identifier after Type at position {Current}");
+                Log.Log($"Expected Identifier after Type at position {Position}");
                 Node = null;
                 return false;
             }
@@ -268,7 +269,7 @@ public class Parser
             return true;
         }
         Node = null;
-        Log.Log($"Expected addition or declaration (Type) at position {Current}");
+        Log.Log($"Expected addition or declaration (Type) at position {Position}");
         return false;
     }
     bool Type(out ASTNode? Node)
@@ -279,7 +280,7 @@ public class Parser
             Current++;
             return true;
         }
-        Log.Log($"Expected valid Type at {Current}");
+        Log.Log($"Expected valid Type at {Position}");
         Node = null;
         return false;
     }
@@ -400,7 +401,7 @@ public class Parser
             return true;
         }
         //we can use current here because being here means primary also failed, and thus current is rolled back
-        Log.Log($"Expected \"-\" or Primary at Token Position {Current}, but got \"{Input[Current].Lexeme}\"; Error may be here, or at Primary:");
+        Log.Log($"Expected \"-\" or Primary at Token Position {Position}, but got \"{Input[Current].Lexeme}\"; Error may be here, or at Primary:");
 
         Node = null;
         return false;
@@ -421,7 +422,7 @@ public class Parser
                 }
                 else
                 {
-                    Log.Log($"Expected Close Parenthesis at position {Current}");
+                    Log.Log($"Expected Close Parenthesis at position {Position}");
                     Node = null;
                     return false;
                 }
@@ -444,7 +445,7 @@ public class Parser
             Node = null;
             return false;
         }
-        Log.Log($"Expected Open Parenthesis ( or Number or identifier at token position {Current}, but got \"{Input[Current].Lexeme}\"");
+        Log.Log($"Expected Open Parenthesis ( or Number or identifier at token position {Position}, but got \"{Input[Current].Lexeme}\"");
         Node = null;
         return false;
     }

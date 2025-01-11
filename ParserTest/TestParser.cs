@@ -1,4 +1,5 @@
 using Common.AST;
+using Common.Logger;
 using Common.Tokens;
 using IRs.ParseTree;
 
@@ -78,8 +79,10 @@ public class TestParser
     {
         Assert.Multiple(() =>
         {
-            Assert.That(Parser.Parser.Parse(Lex(input), out ASTNode? node), Is.True);
+            ILogger? Logger = null; //new MockLogger();
+            Assert.That(Parser.Parser.Parse(Lex(input), out ASTNode? node, Log: Logger), Is.True);
             Assert.That(node, Is.TypeOf<ASTNode>());
+            //Assert.That(Logger.LogRecord, Is.Empty);
         });
     }
     #region Invalid Cases

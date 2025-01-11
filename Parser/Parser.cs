@@ -9,7 +9,11 @@ public class Parser
     int Current = 0;
     Stack<int> State = new();
     ILogger Log { get; init; }
+
+    private int Position { get => Current; }
     readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
+    delegate bool ParsingFunction(out ASTNode? Node);
+    #region SafeParse
     void SaveState()
     {
         State.Push(Current);
@@ -18,6 +22,29 @@ public class Parser
     {
         Current = State.Pop();
     }
+    bool SafeParse(ParsingFunction fn, out ASTNode? K, bool Suppress = true) //return true on successful parse, else false. Node is undefined on faliure.
+    {
+        SaveState();
+        if (Suppress)
+        {
+            Log.SuppressLog();
+        }
+        bool Result = fn(out ASTNode? Node);
+        Log.EnableLog();
+        if (Result)
+        {
+            State.Pop();
+            K = Node;
+            return true;
+        }
+        else
+        {
+            RollBack();
+            K = null;
+            return false;
+        }
+    }
+    #endregion
     public Parser(IEnumerable<IToken> tokens, ILogger? logger = null)
     {
         this.Input = tokens.ToList();
@@ -27,6 +54,7 @@ public class Parser
         }
         Log = logger ?? new Logger();
     }
+    #region InstanceAndStaticParse
     public bool Parse(out ASTNode? node)
     {
         //returns true if parse success; node will be of type AST. If parse failure, returns false; node is undefined
@@ -53,19 +81,7 @@ public class Parser
         }
         return true;
     }
-    bool Recover()
-    {
-        //skip forwards to the next token in RecoveryTokens. If we reach EOF before finding the next token, return false; else true
-        while (Input[Current].TT != TokenType.EOF)
-        {
-            if (RecoveryTokens.Contains(Input[Current++].TT)) //current++ because no matter what we want to focus on the token after the one we are focusing on now
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    private int Position { get => Current; }
+
     public static bool Parse(IEnumerable<IToken> Input, out ASTNode? Node, ILogger? Log = null)
     {
         Parser parser;
@@ -79,6 +95,20 @@ public class Parser
         }
         return parser.Parse(out Node);
     }
+    #endregion
+    bool Recover()
+    {
+        //skip forwards to the next token in RecoveryTokens. If we reach EOF before finding the next token, return false; else true
+        while (Input[Current].TT != TokenType.EOF)
+        {
+            if (RecoveryTokens.Contains(Input[Current++].TT)) //current++ because no matter what we want to focus on the token after the one we are focusing on now
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    #region TCMP
     bool TCmp(TokenType tokenType, int offset = 0)
     {
         if (offset < Input.Count - 1)
@@ -103,29 +133,8 @@ public class Parser
         }
         return false;
     }
-    delegate bool ParsingFunction(out ASTNode? Node);
-    bool SafeParse(ParsingFunction fn, out ASTNode? K, bool Suppress = true) //return true on successful parse, else false. Node is undefined on faliure.
-    {
-        SaveState();
-        if (Suppress)
-        {
-            Log.SuppressLog();
-        }
-        bool Result = fn(out ASTNode? Node);
-        Log.EnableLog();
-        if (Result)
-        {
-            State.Pop();
-            K = Node;
-            return true;
-        }
-        else
-        {
-            RollBack();
-            K = null;
-            return false;
-        }
-    }
+    #endregion
+    #region GenericParsingMethods
     /// <summary>
     /// <Operation> ::= <NextInPriority> <OperationPrime>;
     /// Example:
@@ -190,6 +199,7 @@ public class Parser
         Node = ASTNode.NonTerminal(ASTNode.Empty(), CurrentProductionName);
         return true;
     }
+    #endregion
     bool Program(out ASTNode? Node)
     {
         if (!SafeParse(Expression, out ASTNode? Expr))
@@ -270,18 +280,6 @@ public class Parser
         Log.Log($"Expected addition or declaration (Type) at position {Position}");
         return false;
     }
-    bool Type(out ASTNode? Node)
-    {
-        if (TCmp([TokenType.TypeByte, TokenType.TypeDouble, TokenType.TypeInt, TokenType.TypeLong, TokenType.TypeLongInt, TokenType.TypeFloat, TokenType.TypeNumber]))
-        {
-            Node = ASTNode.Terminal(Input[Current], nameof(Type));
-            Current++;
-            return true;
-        }
-        Log.Log($"Expected valid Type at {Position}");
-        Node = null;
-        return false;
-    }
     bool AssignmentPrime(out ASTNode? Node)
     {
         if (TCmp(TokenType.Equals))
@@ -305,6 +303,7 @@ public class Parser
         Node = ASTNode.Empty();
         return true;
     }
+
     bool Addition(out ASTNode? Node)
     {
         if (!SafeParse(Multiplication, out ASTNode? Mul, Suppress: false) || !SafeParse(AdditionPrime, out ASTNode? AddP, Suppress: false)) //if either mul or add fails, fail the parse; since both must succeed we cannot suppress
@@ -315,6 +314,29 @@ public class Parser
         Node = ASTNode.PrimedBinary(Mul!, AddP!, nameof(Addition));
         return true;
     }
+    bool AdditionPrime(out ASTNode? Node)
+    {
+        if (Input[Current].TT == TokenType.Addition || Input[Current].TT == TokenType.Subtraction)
+        {
+            IToken Operator = Input[Current];
+
+            Current++;
+            if (SafeParse(Multiplication, out ASTNode? Mul, Suppress: false) && SafeParse(AdditionPrime, out ASTNode? AddP, Suppress: false))
+            {
+                Node = ASTNode.BinaryPrime(Operator: Operator, Right: Mul!, Repeat: AddP!, nameof(AdditionPrime));
+                return true;
+            }
+            else
+            {
+                Node = null;
+                return false;
+            }
+        }
+        //if neither + or -, must be empty
+        Node = ASTNode.NonTerminal(ASTNode.Empty(), nameof(AdditionPrime));
+        return true;
+    }
+
     bool Multiplication(out ASTNode? Node)
     {
         if (SafeParse(Power, out ASTNode? Neg, Suppress: false) && SafeParse(MultiplicationPrime, out ASTNode? MulP, Suppress: false))
@@ -447,26 +469,17 @@ public class Parser
         Node = null;
         return false;
     }
-    bool AdditionPrime(out ASTNode? Node)
+    bool Type(out ASTNode? Node)
     {
-        if (Input[Current].TT == TokenType.Addition || Input[Current].TT == TokenType.Subtraction)
+        if (TCmp([TokenType.TypeByte, TokenType.TypeDouble, TokenType.TypeInt, TokenType.TypeLong, TokenType.TypeLongInt, TokenType.TypeFloat, TokenType.TypeNumber]))
         {
-            IToken Operator = Input[Current];
-
+            Node = ASTNode.Terminal(Input[Current], nameof(Type));
             Current++;
-            if (SafeParse(Multiplication, out ASTNode? Mul, Suppress: false) && SafeParse(AdditionPrime, out ASTNode? AddP, Suppress: false))
-            {
-                Node = ASTNode.BinaryPrime(Operator: Operator, Right: Mul!, Repeat: AddP!, nameof(AdditionPrime));
-                return true;
-            }
-            else
-            {
-                Node = null;
-                return false;
-            }
+            return true;
         }
-        //if neither + or -, must be empty
-        Node = ASTNode.NonTerminal(ASTNode.Empty(), nameof(AdditionPrime));
-        return true;
+        Log.Log($"Expected valid Type at {Position}");
+        Node = null;
+        return false;
     }
+
 }

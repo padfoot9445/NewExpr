@@ -137,13 +137,14 @@ public class Parser
     /// <param name="CurrentProductionName"><Operation></param>
     /// <param name="Node">Out</param>
     /// <returns></returns>
-    bool PrimedBinary(ParsingFunction NextInPriority, ParsingFunction BinaryPrime, string CurrentProductionName, out ASTNode? Node)
+    bool PrimedBinary(ParsingFunction NextInPriority, ParsingFunction BinaryPrime, string CurrentProductionName, out ASTNode? Node, Func<int, string>? ErrorMessage = null)
     {
         if (SafeParse(NextInPriority, out ASTNode? Neg) && SafeParse(BinaryPrime, out ASTNode? MulP))
         {
             Node = ASTNode.PrimedBinary(Neg!, MulP!, CurrentProductionName);
             return true;
         }
+        Log.Log((ErrorMessage ?? ((x) => $"Error in PrimedBinary at {x}"))(Position));
         Node = null;
         return false;
         //no need for error message here as the explanation of why NextInPriority or BinaryPrime failed to parse will be handled by those methods
@@ -178,10 +179,7 @@ public class Parser
             }
             else
             {
-                if (MessageOnError is not null)
-                {
-                    Log.Log(MessageOnError(Current));
-                }
+                Log.Log((MessageOnError ?? ((x) => $"Error in BinaryPrime at {x}"))(Position));
                 Node = null;
                 return false;
                 //similarly, faliure to parse ParentPrimedNode or NextInPriority is handled by those methods

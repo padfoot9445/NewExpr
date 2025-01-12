@@ -21,7 +21,7 @@ public class Parser
         {
             if (Inc)
             {
-                Current++; //generalization of Current++ not needed, I think
+                return Input[Current++ + offset]; //generalization of Current++ not needed, I think
             }
             return Input[Current + offset];
         }
@@ -162,9 +162,9 @@ public class Parser
     /// <param name="CurrentProductionName"></param>
     /// <param name="Node"></param>
     /// <returns></returns>
-    bool BinaryPrime(ParsingFunction NextInPriority, ICollection<TokenType> Operators, string CurrentProductionName, out AnnotatedNode<Annotations>? Node, Func<int, string>? MessageOnError = null, Func<ASTNode, AnnotatedNode<Annotations>>? Action = null)
+    bool BinaryPrime(ParsingFunction NextInPriority, ICollection<TokenType> Operators, string CurrentProductionName, out AnnotatedNode<Annotations>? Node, Func<int, string>? MessageOnError, Func<ASTNode, AnnotatedNode<Annotations>>? Action)
     {
-        bool Self(out AnnotatedNode<Annotations>? node) => BinaryPrime(NextInPriority, Operators, CurrentProductionName, out node); //function representing recursive call on self; i.e. the BinaryPrime part of the paths where this is not empty
+        bool Self(out AnnotatedNode<Annotations>? node) => BinaryPrime(NextInPriority, Operators, CurrentProductionName, out node, MessageOnError, Action); //function representing recursive call on self; i.e. the BinaryPrime part of the paths where this is not empty
         if (Operators.Contains(Input[Current].TT))
         {
             IToken Operator = Input[Current];
@@ -331,7 +331,7 @@ public class Parser
                 Debug.Assert(IdentToken.TT == TokenType.Identifier);
                 Debug.Assert(TNode!.Attributes.TypeDenotedByIdentifier is not null);
                 //verify type safety if AssignmentPrime exists
-                if (ANode!.Attributes.IsEmpty is true && !TP.CanBeDeclaredTo(TNode!.Attributes.TypeDenotedByIdentifier, ANode!.Attributes.TypeCode))
+                if (ANode!.Attributes.IsEmpty is false && !TP.CanBeDeclaredTo(TNode!.Attributes.TypeDenotedByIdentifier!, ANode!.Attributes.TypeCode!))
                 {
                     //if there exists an assignmentprime and the declaration is not type-safe then we have an issue; if there does not exist an assignmentprime the declaration DNE so we don't care about types
                     Log.Log($"Type mismatch at position {Position}; Cannot assign {ANode!.Attributes.TypeCode} to {TNode!.Attributes.TypeDenotedByIdentifier}"); //TODO: Reverse typecodes for better error reporting
@@ -552,6 +552,7 @@ public class Parser
                             IsEmpty: false),
                         node: AssP
                     );
+                    return true;
                 }
                 else
                 {

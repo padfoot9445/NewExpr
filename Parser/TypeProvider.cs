@@ -44,7 +44,7 @@ class TypeProvider
     public uint? BinOpResultantType(uint Type1, uint Type2)
     {
         //returns null if types cannot operate 
-        throw new NotImplementedException();
+        return DefaultTypesHierarchy[Math.Max(DefaultTypesHierarchy.IndexOf(Type1), DefaultTypesHierarchy.IndexOf(Type2))];
     }
     public uint GetTypeFromTypeDenotingIdentifier(string Lexeme)
     {

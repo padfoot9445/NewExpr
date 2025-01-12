@@ -2,6 +2,7 @@ using Common.Tokens;
 using Common.AST;
 using System.Linq.Expressions;
 using Common.Logger;
+using System.Diagnostics;
 namespace Parser;
 public class Parser
 {
@@ -12,7 +13,7 @@ public class Parser
 
     private int Position { get => Current; }
     readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
-    delegate bool ParsingFunction(out ASTNode? Node);
+    delegate bool ParsingFunction(out AnnotatedNode<Annotations>? Node);
     #region SafeParse
     void SaveState()
     {
@@ -22,14 +23,14 @@ public class Parser
     {
         Current = State.Pop();
     }
-    bool SafeParse(ParsingFunction fn, out ASTNode? K, bool Suppress = true) //return true on successful parse, else false. Node is undefined on faliure.
+    bool SafeParse(ParsingFunction fn, out AnnotatedNode<Annotations>? K, bool Suppress = true) //return true on successful parse, else false. Node is undefined on faliure.
     {
         SaveState();
         if (Suppress)
         {
             Log.SuppressLog();
         }
-        bool Result = fn(out ASTNode? Node);
+        bool Result = fn(out AnnotatedNode<Annotations>? Node);
         Log.EnableLog();
         if (Result)
         {
@@ -55,7 +56,7 @@ public class Parser
         Log = logger ?? new Logger();
     }
     #region InstanceAndStaticParse
-    public bool Parse(out ASTNode? node)
+    public bool Parse(out AnnotatedNode<Annotations>? node)
     {
         //returns true if parse success; node will be of type AST. If parse failure, returns false; node is undefined
         if (Input.Count == 0)
@@ -82,7 +83,7 @@ public class Parser
         return true;
     }
 
-    public static bool Parse(IEnumerable<IToken> Input, out ASTNode? Node, ILogger? Log = null)
+    public static bool Parse(IEnumerable<IToken> Input, out AnnotatedNode<Annotations>? Node, ILogger? Log = null)
     {
         Parser parser;
         if (Log is not null)
@@ -134,6 +135,19 @@ public class Parser
         return false;
     }
     #endregion
+    private uint? GetTypeFromIdentifierLiteral(string Lexeme)
+    {
+        throw new NotImplementedException();
+    }
+    private void StoreIdentifierType(string lexeme, uint Type)
+    {
+        throw new NotImplementedException();
+    }
+    private uint? BinOpResultantType(uint Type1, uint Type2)
+    {
+        //returns null if types cannot operate 
+        throw new NotImplementedException();
+    }
     #region GenericParsingMethods
     /// <summary>
     /// <Operation> ::= <NextInPriority> <OperationPrime>;
@@ -146,11 +160,11 @@ public class Parser
     /// <param name="CurrentProductionName"><Operation></param>
     /// <param name="Node">Out</param>
     /// <returns></returns>
-    bool PrimedBinary(ParsingFunction NextInPriority, ParsingFunction BinaryPrime, string CurrentProductionName, out ASTNode? Node, Func<int, string>? ErrorMessage = null)
+    bool PrimedBinary(ParsingFunction NextInPriority, ParsingFunction BinaryPrime, string CurrentProductionName, out AnnotatedNode<Annotations>? Node, Func<int, string>? ErrorMessage = null, Func<ASTNode, AnnotatedNode<Annotations>>? Action = null)
     {
-        if (SafeParse(NextInPriority, out ASTNode? Neg, Suppress: false) && SafeParse(BinaryPrime, out ASTNode? MulP, Suppress: false))
+        if (SafeParse(NextInPriority, out AnnotatedNode<Annotations>? Neg, Suppress: false) && SafeParse(BinaryPrime, out AnnotatedNode<Annotations>? MulP, Suppress: false))
         {
-            Node = ASTNode.PrimedBinary(Neg!, MulP!, CurrentProductionName);
+            Node = (Action ?? ((ASTNode x) => new(new(IsEmpty: false), x)))(ASTNode.PrimedBinary(Neg!, MulP!, CurrentProductionName));
             return true;
         }
         Log.Log((ErrorMessage ?? ((x) => $"Error in PrimedBinary at {x}"))(Position));
@@ -174,16 +188,16 @@ public class Parser
     /// <param name="CurrentProductionName"></param>
     /// <param name="Node"></param>
     /// <returns></returns>
-    bool BinaryPrime(ParsingFunction NextInPriority, ICollection<TokenType> Operators, string CurrentProductionName, out ASTNode? Node, Func<int, string>? MessageOnError = null)
+    bool BinaryPrime(ParsingFunction NextInPriority, ICollection<TokenType> Operators, string CurrentProductionName, out AnnotatedNode<Annotations>? Node, Func<int, string>? MessageOnError = null, Func<ASTNode, AnnotatedNode<Annotations>>? Action = null)
     {
-        bool Self(out ASTNode? node) => BinaryPrime(NextInPriority, Operators, CurrentProductionName, out node); //function representing recursive call on self; i.e. the BinaryPrime part of the paths where this is not empty
+        bool Self(out AnnotatedNode<Annotations>? node) => BinaryPrime(NextInPriority, Operators, CurrentProductionName, out node); //function representing recursive call on self; i.e. the BinaryPrime part of the paths where this is not empty
         if (Operators.Contains(Input[Current].TT))
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(NextInPriority, out ASTNode? ParentPrimedNode, Suppress: false) && SafeParse(Self, out ASTNode? PrimeNode, Suppress: false))
+            if (SafeParse(NextInPriority, out AnnotatedNode<Annotations>? ParentPrimedNode, Suppress: false) && SafeParse(Self, out AnnotatedNode<Annotations>? PrimeNode, Suppress: false))
             {
-                Node = ASTNode.BinaryPrime(Operator: Operator, Right: ParentPrimedNode!, Repeat: PrimeNode!, CurrentProductionName);
+                Node = (Action ?? (x => new(new(IsEmpty: false), x)))(ASTNode.BinaryPrime(Operator: Operator, Right: ParentPrimedNode!, Repeat: PrimeNode!, CurrentProductionName));
                 return true;
             }
             else
@@ -196,13 +210,113 @@ public class Parser
         }
 
         //if not **  must be empty
-        Node = ASTNode.Empty(CurrentProductionName);
+        Node = (Action ?? (x => new(new(IsEmpty: true), x)))(ASTNode.Empty(CurrentProductionName)); //isempty is true
         return true;
     }
-    #endregion
-    bool Program(out ASTNode? Node)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="ErrorMessageFunction">
+    /// uint Type1, uint Type2, int Position => string ErrorMessage</param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    Func<ASTNode, AnnotatedNode<Annotations>> GetPrimedBinaryAction(Func<uint, uint, int, string> ErrorMessageFunction)
+    //Production ::= NextInPriority ProductionPrime;
     {
-        if (!SafeParse(Expression, out ASTNode? Expr))
+        return (ASNode) =>
+        {
+            Debug.Assert(ASNode.Children.Length == 2);
+            Annotations NextInPriorityAnno = GetFromChildIndex(ASNode, 0);
+            Annotations ProductionPrimeAnno = GetFromChildIndex(ASNode, 1);
+            Debug.Assert(NextInPriorityAnno.IsEmpty is false && NextInPriorityAnno.TypeCode is not null);
+            if (!ProductionPrimeAnno.IsEmpty)
+            {
+                Debug.Assert(ProductionPrimeAnno.TypeCode is not null);
+                //if this is actually a binary operation
+
+                return new(
+                    new(
+                        IsEmpty: false,
+                        TypeCode: BinOpResultantType((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!) ?? throw new InvalidOperationException(ErrorMessageFunction((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!, Position))
+                    ),
+                    ASNode
+                );
+
+            }
+            else
+            {
+                //if not, treat it as unary and just return the annotation of the nested type
+                Debug.Assert(NextInPriorityAnno.IsEmpty is false);
+                return new(
+                    NextInPriorityAnno.Copy(),
+                    ASNode
+                );
+            }
+        };
+    }
+    private Func<ASTNode, AnnotatedNode<Annotations>> GetBinaryPrimeAction(Func<uint, uint, int, string> ErrorOnTypeMismatch)
+    //BinaryPrime ::= OPERATOR NextInPriority BinaryPrime | Empty
+    {
+        return (ASNode) =>
+        {
+            Debug.Assert(ASNode.Children.Length == 3 || ASNode.Children.Length == 0);
+            if (ASNode.Children.Length == 0)
+            {
+                return new(new(IsEmpty: true), ASNode);
+            }
+            Annotations NextInPriorityAnnotations = GetFromChildIndex(ASNode, 1);
+            Annotations BinaryPrimeAnnotations = GetFromChildIndex(ASNode, 2);
+            Debug.Assert(NextInPriorityAnnotations.TypeCode is not null);
+            if (BinaryPrimeAnnotations.IsEmpty)
+            {
+                return new(new(TypeCode: NextInPriorityAnnotations.TypeCode), ASNode);
+            }
+            else
+            {
+                Debug.Assert(BinaryPrimeAnnotations.TypeCode is not null);
+                return new(
+                    new(
+                        TypeCode: BinOpResultantType((uint)NextInPriorityAnnotations.TypeCode!, (uint)BinaryPrimeAnnotations.TypeCode!) ?? throw new InvalidOperationException(ErrorOnTypeMismatch((uint)NextInPriorityAnnotations.TypeCode, (uint)BinaryPrimeAnnotations.TypeCode, Position))
+                    ),
+                    ASNode
+                );
+            }
+        };
+    }
+    #endregion
+    bool CanBeAssignedTo(uint TypeRecieving, uint ExprType)
+    {
+        throw new NotImplementedException();
+    }
+    bool CanBeDeclaredTo(uint TypeRecieving, uint ExprType)
+    {
+        return true;
+    }
+
+    private bool CanBeDeclaredTo(uint? typeDenotedByIdentifier, uint? ExprType) => CanBeDeclaredTo((uint)typeDenotedByIdentifier!, (uint)ExprType!);
+    private Annotations GetFromChildIndex(ASTNode node, int index)
+    {
+        if (node.Children.Length <= index)
+        {
+            throw new ArgumentOutOfRangeException($"Index out of range, {index}, {node.Children.Length}");
+        }
+        return ((AnnotatedNode<Annotations>)node.Children[index]).Attributes;
+    }
+    private uint GetTypeFromNumberLiteral(string Lexeme)
+    {
+        // TODO: implement this method
+        throw new NotImplementedException();
+        //should return the lowest prec possible to avoid type clashes brought on by number literals, and we just make sure to generate the appropiate load/parsing code
+    }
+    private uint GetTypeFromTypeDenotingIdentifier(string Lexeme)
+    {
+        // TODO: implement this method
+        throw new NotImplementedException();
+        //should return the type denoted by the type, or throw an exception if it does not exist
+    }
+    bool Program(out AnnotatedNode<Annotations>? Node)
+    {
+        if (!SafeParse(Expression, out AnnotatedNode<Annotations>? Expr))
         {
             Node = null;
             return false;
@@ -211,9 +325,9 @@ public class Parser
         if (Input[Current].TT == TokenType.Semicolon)
         {
             Current++;
-            if (SafeParse(Program, out ASTNode? Repeat))
+            if (SafeParse(Program, out AnnotatedNode<Annotations>? Repeat))
             {
-                Node = ASTNode.Repeating(Expr!, Repeat!, nameof(Program));
+                Node = new(ASTNode.Repeating(Expr!, Repeat!, nameof(Program)));
                 return true;
             }
             else
@@ -227,7 +341,7 @@ public class Parser
                     return false;
                 }
                 IToken OperatorSemicolon = Input[Current];
-                Node = new ASTNode([ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, OperatorSemicolon], nameof(Program));
+                Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, OperatorSemicolon], nameof(Program));
                 return true;
             }
         }
@@ -239,30 +353,48 @@ public class Parser
             return false;
         }
     }
-    bool Expression(out ASTNode? Node)
+    bool Expression(out AnnotatedNode<Annotations>? Node)
     {
-        if (SafeParse(Declaration, out ASTNode? Add, Suppress: false)) //no additional context to add here so we get the context from safeparse
+        if (SafeParse(Declaration, out AnnotatedNode<Annotations>? Add, Suppress: false)) //no additional context to add here so we get the context from safeparse
         {
-            Node = ASTNode.NonTerminal(Add!, nameof(Expression));
+            Node = new(new(Add!.Attributes.TypeCode, IsEmpty: false), ASTNode.NonTerminal(Add!, nameof(Expression))); //TypeCode <- Addition.TypeCode
             return true;
         }
         Node = null;
         return false;
     }
-    bool Declaration(out ASTNode? Node)
+    bool Declaration(out AnnotatedNode<Annotations>? Node)
     {
-        if (SafeParse(Type, out ASTNode? TNode))
+        if (SafeParse(Type, out AnnotatedNode<Annotations>? TNode))
         {
+            IToken IdentToken = Input[Current];
             if (!ICmp(TokenType.Identifier))
             {
                 Log.Log($"Expected Identifier after Type at position {Position}");
                 Node = null;
                 return false;
             }
-            if (SafeParse(AssignmentPrime, out ASTNode? ANode))
+            if (SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? ANode))
             {
-                Node = ASTNode.Binary(TNode!, Input[Current - 1], ANode!, nameof(Declaration));
-                return true;
+                Debug.Assert(IdentToken.TT == TokenType.Identifier);
+                Debug.Assert(TNode!.Attributes.TypeDenotedByIdentifier is not null);
+                //verify type safety if AssignmentPrime exists
+                if (ANode!.Attributes.IsEmpty is true && !CanBeDeclaredTo(TNode!.Attributes.TypeDenotedByIdentifier, ANode!.Attributes.TypeCode))
+                {
+                    //if there exists an assignmentprime and the declaration is not type-safe then we have an issue; if there does not exist an assignmentprime the declaration DNE so we don't care about types
+                    Log.Log($"Type mismatch at position {Position}; Cannot assign {ANode!.Attributes.TypeCode} to {TNode!.Attributes.TypeDenotedByIdentifier}"); //TODO: Reverse typecodes for better error reporting
+                    Node = null;
+                    return false;
+                }
+                else
+                {
+                    StoreIdentifierType(IdentToken.Lexeme, (uint)TNode!.Attributes.TypeDenotedByIdentifier); //store identifier type in type table upon declaration
+                    Node = new(new(
+                        TypeCode: ANode!.Attributes.IsEmpty is true ? null : TNode!.Attributes.TypeDenotedByIdentifier, //if AssignmentPrime is empty then we cannot give any type to this declaration as an expression
+                        IsEmpty: false
+                    ), ASTNode.Binary(TNode!, Input[Current - 1], ANode!, nameof(Declaration)));
+                    return true;
+                }
             }
             else
             {
@@ -271,42 +403,139 @@ public class Parser
                 return false;
             }
         }
-        else if (SafeParse(Addition, out ASTNode? Add, Suppress: false))
+        else if (SafeParse(Addition, out AnnotatedNode<Annotations>? Add, Suppress: false))
         {
-            Node = ASTNode.NonTerminal(Add!, nameof(Declaration));
+            Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, nameof(Declaration)));
             return true;
         }
         Node = null;
         Log.Log($"Expected addition or declaration (Type) at position {Position}");
         return false;
     }
-    bool AssignmentPrime(out ASTNode? Node)
-    => BinaryPrime(Addition, [TokenType.Equals], nameof(AssignmentPrime), out Node, (Pos) => $"Impossible Path in {nameof(AssignmentPrime)}");
 
-    bool Addition(out ASTNode? Node) => PrimedBinary(Multiplication, AdditionPrime, nameof(Addition), out Node, (_) => "");
-    bool AdditionPrime(out ASTNode? Node) => BinaryPrime(Multiplication, [TokenType.Addition, TokenType.Subtraction], nameof(AdditionPrime), out Node, (_) => "");
+    //<AssignmentPrime> ::= "=" <Addition> <AssignmentPrime> | <Empty>;
+    bool AssignmentPrime(out AnnotatedNode<Annotations>? Node)
+    => BinaryPrime(Addition, [TokenType.Equals], nameof(AssignmentPrime), out Node, (Pos) => $"Impossible Path in {nameof(AssignmentPrime)}", (ASnode) =>
+    {
+        if (ASnode.Children.Length == 0) //if assignmentprime is empty
+        {
+            return new(new(IsEmpty: true), ASnode);
+        }
+        else
+        {
+            Debug.Assert(ASnode.Children.Length == 3);
+            Debug.Assert(ASnode.Children[2] is AnnotatedNode<Annotations>);
+            Annotations NestedAssignmentPrimeAnnotations = GetFromChildIndex(ASnode, 2);
+            Annotations AdditionAnnotations = GetFromChildIndex(ASnode, 1);
+            if (NestedAssignmentPrimeAnnotations.IsEmpty is true)
+            {
+                return new(
+                    new(IsEmpty: false,
+                    TypeCode: AdditionAnnotations.TypeCode
+                    ), //= x, TypeCode <- x.TypeCode
+                    ASnode
+                );
+            }
+            else
+            {
+                Debug.Assert(NestedAssignmentPrimeAnnotations.IsEmpty is false);
+                if (!AdditionAnnotations.CanBeResolvedToAssignable)
+                {
+                    throw new InvalidOperationException($"Cannot assign to non-variable at position {Position}");
+                    //TODO: Add handling for exceptions in actions in binaryparse methods
+                }
+                return new(
+                    new(TypeCode: NestedAssignmentPrimeAnnotations.TypeCode), // = x (= y), TypeCode <= (= y).TypeCode
+                    ASnode
+                );
+            }
+        }
+    });
 
-    bool Multiplication(out ASTNode? Node) => PrimedBinary(Power, MultiplicationPrime, nameof(Multiplication), out Node, (_) => "");
-    bool MultiplicationPrime(out ASTNode? Node) => BinaryPrime(Power, [TokenType.Multiplication, TokenType.Division], nameof(MultiplicationPrime), out Node, (_) => "");
+    bool Addition(out AnnotatedNode<Annotations>? Node)
+        => PrimedBinary(
+            NextInPriority: Multiplication,
+            BinaryPrime: AdditionPrime,
+            CurrentProductionName: nameof(Addition),
+            out Node,
+            ErrorMessage: (_) => "", //no error message as we propagate the error down from Multiplication
+            Action: GetPrimedBinaryAction((T1, T2, pos) => $"Addition between {T1} and {T2} is not valid at position {pos}")
+        )
+    ;
+
+    bool AdditionPrime(out AnnotatedNode<Annotations>? Node)
+        => BinaryPrime(
+            NextInPriority: Multiplication,
+            Operators: [TokenType.Addition, TokenType.Subtraction],
+            CurrentProductionName: nameof(AdditionPrime),
+            out Node,
+            MessageOnError: (_) => "",
+            Action: GetBinaryPrimeAction((T1, T2, pos) => $"Addition between {T1} and {T2} is not valid at position {pos}")
+        )
+    ;
+    // AdditionPrime ::= ("-" | "+") Multiplication AdditionPrime | Empty
+    bool Multiplication(out AnnotatedNode<Annotations>? Node)
+        => PrimedBinary(
+            NextInPriority: Power,
+            BinaryPrime: MultiplicationPrime,
+            CurrentProductionName: nameof(Multiplication),
+            out Node,
+            ErrorMessage: (_) => "",
+            Action: GetPrimedBinaryAction((T1, T2, Pos) => $"Multiplication is not valid between {T1} and {T2} at {Pos}")
+        )
+    ;
+    bool MultiplicationPrime(out AnnotatedNode<Annotations>? Node)
+        => BinaryPrime(
+            NextInPriority: Power,
+            Operators: [TokenType.Multiplication, TokenType.Division],
+            CurrentProductionName: nameof(MultiplicationPrime),
+            out Node,
+            MessageOnError: (_) => "",
+            Action: GetBinaryPrimeAction((T1, T2, Pos) => $"Multiplication is not valid between {T1} and {T2} MultiplicationPrime at Pos {Position}")
+        )
+    ;
 
 
-    bool Power(out ASTNode? Node) => PrimedBinary(Negation, PowerPrime, nameof(Power), out Node, (_) => "");
-    bool PowerPrime(out ASTNode? Node) => BinaryPrime(Negation, [TokenType.Exponentiation], nameof(PowerPrime), out Node, (_) => "");
-    bool Negation(out ASTNode? Node)
+    bool Power(out AnnotatedNode<Annotations>? Node)
+        => PrimedBinary(
+            NextInPriority: Negation,
+            BinaryPrime: PowerPrime,
+            CurrentProductionName: nameof(Power),
+            out Node,
+            ErrorMessage: (_) => "",
+            Action: GetPrimedBinaryAction((T1, T2, Pos) => $"Exponentiation is not valid between {T1} and {T2} at Position {Pos}")
+        )
+    ;
+    bool PowerPrime(out AnnotatedNode<Annotations>? Node)
+        => BinaryPrime(
+            NextInPriority: Negation,
+            Operators: [TokenType.Exponentiation],
+            CurrentProductionName: nameof(PowerPrime),
+            Node: out Node,
+            MessageOnError: (_) => "",
+            Action: GetBinaryPrimeAction((T1, T2, Pos) => $"Exponentiation is not valid between {T1} and {T2} at Position {Pos}")
+        )
+    ;
+    bool Negation(out AnnotatedNode<Annotations>? Node)
     {
         if (Input[Current].TT == TokenType.Subtraction)
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Expression, out ASTNode? Expr, Suppress: false))
+            if (SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
             {
-                Node = ASTNode.Unary(Operator: Operator, Operand: Expr!, nameof(Negation));
+                Node = new(
+                    Attributes: Expr!.Attributes.Copy(), //Since Unary Negation does not change type at all, we can just copy - will introduce unary table at some point
+                    node: ASTNode.Unary(Operator: Operator, Operand: Expr!, nameof(Negation)));
                 return true;
             }
         }
-        else if (SafeParse(Primary, out ASTNode? PrimaryNode, Suppress: false))
+        else if (SafeParse(Primary, out AnnotatedNode<Annotations>? PrimaryNode, Suppress: false))
         {
-            Node = ASTNode.NonTerminal(PrimaryNode!, nameof(Negation));
+            Node = new(
+                Attributes: PrimaryNode!.Attributes.Copy(), //single nest so we can just copy
+                node: ASTNode.NonTerminal(PrimaryNode!, nameof(Negation))
+            );
             return true;
         }
         //we can use current here because being here means primary also failed, and thus current is rolled back
@@ -315,17 +544,22 @@ public class Parser
         Node = null;
         return false;
     }
-    bool Primary(out ASTNode? Node) //assuming scanner can currently only scan floats; TODO: Upgrade scanner
+    bool Primary(out AnnotatedNode<Annotations>? Node) //assuming scanner can currently only scan floats; TODO: Upgrade scanner
     {
         if (Input[Current].TT == TokenType.OpenParen)
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Expression, out ASTNode? Expr, Suppress: false))
+            if (SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
             {
                 if (Input[Current].TT == TokenType.CloseParen)
                 {
-                    Node = ASTNode.Parenthesized(Open: Operator, Center: Expr!, Close: Input[Current], nameof(Primary));
+                    Annotations annotations = new Annotations(CanBeResolvedToAssignable: false);
+                    annotations.ForcedMerge(Expr!.Attributes); //we propagate empty since empty brackets are still empty, but the addition of brackets means that we can no-longer resolve to an identifier literal
+                    Node = new(
+                        Attributes: annotations,
+                        node: ASTNode.Parenthesized(Open: Operator, Center: Expr!, Close: Input[Current], nameof(Primary))
+                    );
                     Current++;
                     return true;
                 }
@@ -345,30 +579,76 @@ public class Parser
         }
         else if (TCmp(TokenType.Identifier))
         {
-            ASTNode IdentifierNode = ASTNode.Terminal(Input[Current++], nameof(Primary));
-            if (SafeParse(AssignmentPrime, out ASTNode? AssP))
+            IToken IdentifierToken = Input[Current++];
+            ASTNode IdentifierNode = ASTNode.Terminal(IdentifierToken, nameof(Primary));
+            if (SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? AssP))
             {
-                Node = ASTNode.PrimedBinary(IdentifierNode, AssP!, nameof(Primary));
-                return true;
+                ASTNode ASNode = ASTNode.PrimedBinary(IdentifierNode, AssP!, nameof(Primary));
+                uint? IdentifierType = GetTypeFromIdentifierLiteral(IdentifierToken.Lexeme);
+                if (IdentifierType is null)
+                {
+                    Log.Log($"Identifier {IdentifierToken.Lexeme} was used before declaration at {Position}");
+                    Node = null;
+                    return false;
+                }
+                if (AssP!.Attributes.IsEmpty is true)
+                {
+                    Node = new(
+                        Attributes: new(
+                            TypeCode: IdentifierType,
+                            CanBeResolvedToAssignable: true,
+                            IsEmpty: false),
+                        node: AssP
+                    );
+                }
+                else
+                {
+                    Debug.Assert(AssP!.Attributes.TypeCode is not null);
+                    //typecheck
+                    if (CanBeAssignedTo((uint)IdentifierType, (uint)AssP!.Attributes.TypeCode))
+                    {
+                        Node = new(
+                            Attributes: new(TypeCode: IdentifierType, IsEmpty: false, TypeDenotedByIdentifier: null), //TypeDenotedByIdentifier would need a lookup if we had custom types but we don't
+                            node: AssP
+                        );
+                        return true;
+                    }
+                    else
+                    {
+                        Log.Log($"Could not assign {AssP!.Attributes.TypeCode} to {IdentifierType} at {Position}. If you meant to cast, declare the variable in-line; if you do not want to bind, use _ as the identifier.");
+                        Node = null;
+                        return false;
+                    }
+                }
             }
             Node = null;
             return false;
         }
         else if (TCmp(TokenType.Number))
         {
-            ASTNode NumberNode = ASTNode.Terminal(Input[Current++], nameof(Primary));
-            Node = NumberNode;
+            IToken NumberToken = Input[Current++];
+            ASTNode NumberNode = ASTNode.Terminal(NumberToken, nameof(Primary));
+            Node = new(
+                new(TypeCode: GetTypeFromNumberLiteral(NumberToken.Lexeme)),
+                NumberNode
+            );
             return true;
         }
         Log.Log($"Expected Open Parenthesis ( or Number or identifier at token position {Position}, but got \"{Input[Current].Lexeme}\"");
         Node = null;
         return false;
     }
-    bool Type(out ASTNode? Node)
+    bool Type(out AnnotatedNode<Annotations>? Node)
     {
         if (TCmp([TokenType.TypeByte, TokenType.TypeDouble, TokenType.TypeInt, TokenType.TypeLong, TokenType.TypeLongInt, TokenType.TypeFloat, TokenType.TypeNumber]))
         {
-            Node = ASTNode.Terminal(Input[Current], nameof(Type));
+            Node = new(
+                new(
+                    CanBeResolvedToAssignable: false, //even though it *can*, we can't assign
+                    TypeDenotedByIdentifier: GetTypeFromTypeDenotingIdentifier(Input[Current].Lexeme),
+                    TypeCode: null
+                ),
+                ASTNode.Terminal(Input[Current], nameof(Type)));
             Current++;
             return true;
         }

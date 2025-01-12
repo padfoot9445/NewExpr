@@ -1,6 +1,6 @@
 namespace Parser;
 using Common.Tokens;
-static class TokenComparer
+public static class TokenComparer
 {
     public static bool TCmp(this IToken? CurrentToken, TokenType tokenType)
     {

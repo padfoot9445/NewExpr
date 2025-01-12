@@ -1,5 +1,5 @@
 namespace Parser;
-class TypeProvider
+public class TypeProvider
 {
     Dictionary<string, uint> IdentToType = new();
     Dictionary<string, uint> ExistingTypeDenotingIdentifiers = new();

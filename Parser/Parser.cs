@@ -148,7 +148,7 @@ public class Parser
     /// <returns></returns>
     bool PrimedBinary(ParsingFunction NextInPriority, ParsingFunction BinaryPrime, string CurrentProductionName, out ASTNode? Node, Func<int, string>? ErrorMessage = null)
     {
-        if (SafeParse(NextInPriority, out ASTNode? Neg) && SafeParse(BinaryPrime, out ASTNode? MulP))
+        if (SafeParse(NextInPriority, out ASTNode? Neg, Suppress: false) && SafeParse(BinaryPrime, out ASTNode? MulP, Suppress: false))
         {
             Node = ASTNode.PrimedBinary(Neg!, MulP!, CurrentProductionName);
             return true;
@@ -181,7 +181,7 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(NextInPriority, out ASTNode? ParentPrimedNode) && SafeParse(Self, out ASTNode? PrimeNode))
+            if (SafeParse(NextInPriority, out ASTNode? ParentPrimedNode, Suppress: false) && SafeParse(Self, out ASTNode? PrimeNode, Suppress: false))
             {
                 Node = ASTNode.BinaryPrime(Operator: Operator, Right: ParentPrimedNode!, Repeat: PrimeNode!, CurrentProductionName);
                 return true;

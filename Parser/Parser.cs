@@ -196,7 +196,7 @@ public class Parser
         }
 
         //if not **  must be empty
-        Node = ASTNode.NonTerminal(ASTNode.Empty(), CurrentProductionName);
+        Node = ASTNode.Empty(CurrentProductionName);
         return true;
     }
     #endregion

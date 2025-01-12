@@ -13,6 +13,7 @@ public class AnnotatedNode<AnnotationContainer> : ASTNode where AnnotationContai
     }
     public AnnotatedNode(ASTNode node) : this(new(), node)
     { }
+    [Obsolete("Do not use this method for construction of new annotated nodes; parser should be used")]
     public static AnnotatedNode<AnnotationContainer> FromNodeRecursive(AnnotationContainer? attributes, IValidASTLeaf leaf)
     {
         attributes ??= new();

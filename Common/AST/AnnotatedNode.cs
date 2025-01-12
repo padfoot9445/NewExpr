@@ -3,14 +3,16 @@ using Common.Tokens;
 namespace Common.AST;
 public class AnnotatedNode<AnnotationContainer> : ASTNode where AnnotationContainer : IMetadata, new()
 {
-    private AnnotatedNode(AnnotationContainer Attributes, IEnumerable<ASTLeafType> pattern, IEnumerable<IValidASTLeaf> children, string name) : base(pattern, children, name)
+    public AnnotatedNode(AnnotationContainer Attributes, IEnumerable<ASTLeafType> pattern, IEnumerable<IValidASTLeaf> children, string name) : base(pattern, children, name)
     {
         this.Attributes = Attributes;
     }
-    private AnnotatedNode(AnnotationContainer Attributes, ASTNode node) : base(node.Pattern, node.Children, node.Name)
+    public AnnotatedNode(AnnotationContainer Attributes, ASTNode node) : base(node.Pattern, node.Children, node.Name)
     {
         this.Attributes = Attributes;
     }
+    public AnnotatedNode(ASTNode node) : this(new(), node)
+    { }
     public static AnnotatedNode<AnnotationContainer> FromNodeRecursive(AnnotationContainer? attributes, IValidASTLeaf leaf)
     {
         attributes ??= new();

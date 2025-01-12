@@ -14,7 +14,7 @@ public class ASTNode : IValidASTLeaf
         Children = children.ToArray();
         for (int i = 0; i < Children.Length; i++)
         {
-            if (Children[i].Type != Pattern[i])
+            if (Children[i].Type != Pattern[i] && !(Children[i].Type == ASTLeafType.AnnotatedNode && Pattern[i] == ASTLeafType.NonTerminal))
             {
                 throw new ArgumentException("Children must match pattern");
             }

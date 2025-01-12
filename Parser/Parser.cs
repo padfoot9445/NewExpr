@@ -15,6 +15,18 @@ public class Parser
     readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
     delegate bool ParsingFunction(out AnnotatedNode<Annotations>? Node);
     TypeProvider TP { get; } = new();
+    private IToken? CurrentToken(int offset = 0, bool Inc = false)
+    {
+        if (Current + offset < Input.Count)
+        {
+            if (Inc)
+            {
+                Current++; //generalization of Current++ not needed, I think
+            }
+            return Input[Current + offset];
+        }
+        return null;
+    }
     #region SafeParse
     void SaveState()
     {
@@ -110,32 +122,6 @@ public class Parser
         }
         return false;
     }
-    #region TCMP
-    bool TCmp(TokenType tokenType, int offset = 0)
-    {
-        if (offset < Input.Count - 1)
-        {
-            return Input[Current + offset].TT == tokenType;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    bool TCmp(IEnumerable<TokenType> set, int offset = 0)
-    {
-        return set.Select(x => TCmp(x, offset)).Contains(true);
-    }
-    bool ICmp(TokenType tokenType, int offset = 0) // increments the index on cmp success
-    {
-        if (TCmp(tokenType, offset))
-        {
-            Current++;
-            return true;
-        }
-        return false;
-    }
-    #endregion
     #region GenericParsingMethods
     /// <summary>
     /// <Operation> ::= <NextInPriority> <OperationPrime>;
@@ -333,8 +319,8 @@ public class Parser
     {
         if (SafeParse(Type, out AnnotatedNode<Annotations>? TNode))
         {
-            IToken IdentToken = Input[Current];
-            if (!ICmp(TokenType.Identifier))
+            IToken IdentToken = CurrentToken(Inc: true)!;
+            if (!IdentToken.TCmp(TokenType.Identifier))
             {
                 Log.Log($"Expected Identifier after Type at position {Position}");
                 Node = null;
@@ -543,7 +529,7 @@ public class Parser
                 return false;
             }
         }
-        else if (TCmp(TokenType.Identifier))
+        else if (CurrentToken().TCmp(TokenType.Identifier))
         {
             IToken IdentifierToken = Input[Current++];
             ASTNode IdentifierNode = ASTNode.Terminal(IdentifierToken, nameof(Primary));
@@ -590,7 +576,7 @@ public class Parser
             Node = null;
             return false;
         }
-        else if (TCmp(TokenType.Number))
+        else if (CurrentToken().TCmp(TokenType.Number))
         {
             IToken NumberToken = Input[Current++];
             ASTNode NumberNode = ASTNode.Terminal(NumberToken, nameof(Primary));
@@ -606,7 +592,7 @@ public class Parser
     }
     bool Type(out AnnotatedNode<Annotations>? Node)
     {
-        if (TCmp([TokenType.TypeByte, TokenType.TypeDouble, TokenType.TypeInt, TokenType.TypeLong, TokenType.TypeLongInt, TokenType.TypeFloat, TokenType.TypeNumber]))
+        if (CurrentToken().TCmp([TokenType.TypeByte, TokenType.TypeDouble, TokenType.TypeInt, TokenType.TypeLong, TokenType.TypeLongInt, TokenType.TypeFloat, TokenType.TypeNumber]))
         {
             Node = new(
                 new(

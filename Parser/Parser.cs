@@ -14,6 +14,7 @@ public class Parser
     private int Position { get => Current; }
     readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
     delegate bool ParsingFunction(out AnnotatedNode<Annotations>? Node);
+    TypeProvider TP { get; } = new();
     #region SafeParse
     void SaveState()
     {
@@ -135,19 +136,6 @@ public class Parser
         return false;
     }
     #endregion
-    private uint? GetTypeFromIdentifierLiteral(string Lexeme)
-    {
-        throw new NotImplementedException();
-    }
-    private void StoreIdentifierType(string lexeme, uint Type)
-    {
-        throw new NotImplementedException();
-    }
-    private uint? BinOpResultantType(uint Type1, uint Type2)
-    {
-        //returns null if types cannot operate 
-        throw new NotImplementedException();
-    }
     #region GenericParsingMethods
     /// <summary>
     /// <Operation> ::= <NextInPriority> <OperationPrime>;
@@ -237,7 +225,7 @@ public class Parser
                 return new(
                     new(
                         IsEmpty: false,
-                        TypeCode: BinOpResultantType((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!) ?? throw new InvalidOperationException(ErrorMessageFunction((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!, Position))
+                        TypeCode: TP.BinOpResultantType((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!) ?? throw new InvalidOperationException(ErrorMessageFunction((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!, Position))
                     ),
                     ASNode
                 );
@@ -276,7 +264,7 @@ public class Parser
                 Debug.Assert(BinaryPrimeAnnotations.TypeCode is not null);
                 return new(
                     new(
-                        TypeCode: BinOpResultantType((uint)NextInPriorityAnnotations.TypeCode!, (uint)BinaryPrimeAnnotations.TypeCode!) ?? throw new InvalidOperationException(ErrorOnTypeMismatch((uint)NextInPriorityAnnotations.TypeCode, (uint)BinaryPrimeAnnotations.TypeCode, Position))
+                        TypeCode: TP.BinOpResultantType((uint)NextInPriorityAnnotations.TypeCode!, (uint)BinaryPrimeAnnotations.TypeCode!) ?? throw new InvalidOperationException(ErrorOnTypeMismatch((uint)NextInPriorityAnnotations.TypeCode, (uint)BinaryPrimeAnnotations.TypeCode, Position))
                     ),
                     ASNode
                 );
@@ -284,16 +272,6 @@ public class Parser
         };
     }
     #endregion
-    bool CanBeAssignedTo(uint TypeRecieving, uint ExprType)
-    {
-        throw new NotImplementedException();
-    }
-    bool CanBeDeclaredTo(uint TypeRecieving, uint ExprType)
-    {
-        return true;
-    }
-
-    private bool CanBeDeclaredTo(uint? typeDenotedByIdentifier, uint? ExprType) => CanBeDeclaredTo((uint)typeDenotedByIdentifier!, (uint)ExprType!);
     private Annotations GetFromChildIndex(ASTNode node, int index)
     {
         if (node.Children.Length <= index)
@@ -301,18 +279,6 @@ public class Parser
             throw new ArgumentOutOfRangeException($"Index out of range, {index}, {node.Children.Length}");
         }
         return ((AnnotatedNode<Annotations>)node.Children[index]).Attributes;
-    }
-    private uint GetTypeFromNumberLiteral(string Lexeme)
-    {
-        // TODO: implement this method
-        throw new NotImplementedException();
-        //should return the lowest prec possible to avoid type clashes brought on by number literals, and we just make sure to generate the appropiate load/parsing code
-    }
-    private uint GetTypeFromTypeDenotingIdentifier(string Lexeme)
-    {
-        // TODO: implement this method
-        throw new NotImplementedException();
-        //should return the type denoted by the type, or throw an exception if it does not exist
     }
     bool Program(out AnnotatedNode<Annotations>? Node)
     {
@@ -379,7 +345,7 @@ public class Parser
                 Debug.Assert(IdentToken.TT == TokenType.Identifier);
                 Debug.Assert(TNode!.Attributes.TypeDenotedByIdentifier is not null);
                 //verify type safety if AssignmentPrime exists
-                if (ANode!.Attributes.IsEmpty is true && !CanBeDeclaredTo(TNode!.Attributes.TypeDenotedByIdentifier, ANode!.Attributes.TypeCode))
+                if (ANode!.Attributes.IsEmpty is true && !TP.CanBeDeclaredTo(TNode!.Attributes.TypeDenotedByIdentifier, ANode!.Attributes.TypeCode))
                 {
                     //if there exists an assignmentprime and the declaration is not type-safe then we have an issue; if there does not exist an assignmentprime the declaration DNE so we don't care about types
                     Log.Log($"Type mismatch at position {Position}; Cannot assign {ANode!.Attributes.TypeCode} to {TNode!.Attributes.TypeDenotedByIdentifier}"); //TODO: Reverse typecodes for better error reporting
@@ -388,7 +354,7 @@ public class Parser
                 }
                 else
                 {
-                    StoreIdentifierType(IdentToken.Lexeme, (uint)TNode!.Attributes.TypeDenotedByIdentifier); //store identifier type in type table upon declaration
+                    TP.StoreIdentifierType(IdentToken.Lexeme, (uint)TNode!.Attributes.TypeDenotedByIdentifier); //store identifier type in type table upon declaration
                     Node = new(new(
                         TypeCode: ANode!.Attributes.IsEmpty is true ? null : TNode!.Attributes.TypeDenotedByIdentifier, //if AssignmentPrime is empty then we cannot give any type to this declaration as an expression
                         IsEmpty: false
@@ -584,7 +550,7 @@ public class Parser
             if (SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? AssP))
             {
                 ASTNode ASNode = ASTNode.PrimedBinary(IdentifierNode, AssP!, nameof(Primary));
-                uint? IdentifierType = GetTypeFromIdentifierLiteral(IdentifierToken.Lexeme);
+                uint? IdentifierType = TP.GetTypeFromIdentifierLiteral(IdentifierToken.Lexeme);
                 if (IdentifierType is null)
                 {
                     Log.Log($"Identifier {IdentifierToken.Lexeme} was used before declaration at {Position}");
@@ -605,7 +571,7 @@ public class Parser
                 {
                     Debug.Assert(AssP!.Attributes.TypeCode is not null);
                     //typecheck
-                    if (CanBeAssignedTo((uint)IdentifierType, (uint)AssP!.Attributes.TypeCode))
+                    if (TP.CanBeAssignedTo((uint)IdentifierType, (uint)AssP!.Attributes.TypeCode))
                     {
                         Node = new(
                             Attributes: new(TypeCode: IdentifierType, IsEmpty: false, TypeDenotedByIdentifier: null), //TypeDenotedByIdentifier would need a lookup if we had custom types but we don't
@@ -629,7 +595,7 @@ public class Parser
             IToken NumberToken = Input[Current++];
             ASTNode NumberNode = ASTNode.Terminal(NumberToken, nameof(Primary));
             Node = new(
-                new(TypeCode: GetTypeFromNumberLiteral(NumberToken.Lexeme)),
+                new(TypeCode: TP.GetTypeFromNumberLiteral(NumberToken.Lexeme)),
                 NumberNode
             );
             return true;
@@ -645,7 +611,7 @@ public class Parser
             Node = new(
                 new(
                     CanBeResolvedToAssignable: false, //even though it *can*, we can't assign
-                    TypeDenotedByIdentifier: GetTypeFromTypeDenotingIdentifier(Input[Current].Lexeme),
+                    TypeDenotedByIdentifier: TP.GetTypeFromTypeDenotingIdentifier(Input[Current].Lexeme),
                     TypeCode: null
                 ),
                 ASTNode.Terminal(Input[Current], nameof(Type)));

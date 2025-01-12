@@ -2,6 +2,7 @@ using Common.AST;
 using Common.Logger;
 using Common.Tokens;
 using IRs.ParseTree;
+using Parser;
 
 namespace ParserTest;
 [TestFixture]
@@ -80,8 +81,8 @@ public class TestParser
         Assert.Multiple(() =>
         {
             ILogger? Logger = null; //new MockLogger();
-            Assert.That(Parser.Parser.Parse(Lex(input), out ASTNode? node, Log: Logger), Is.True);
-            Assert.That(node, Is.TypeOf<ASTNode>());
+            Assert.That(Parser.Parser.Parse(Lex(input), out AnnotatedNode<Annotations>? node, Log: Logger), Is.True);
+            Assert.That(node, Is.TypeOf<AnnotatedNode<Annotations>>());
             //Assert.That(Logger.LogRecord, Is.Empty);
         });
     }
@@ -101,7 +102,7 @@ public class TestParser
         var Logger = new MockLogger();
         Assert.Multiple(() =>
         {
-            Assert.That(Parser.Parser.Parse(Lex(input), out ASTNode? node, Logger), Is.False);
+            Assert.That(Parser.Parser.Parse(Lex(input), out AnnotatedNode<Annotations>? node, Logger), Is.False);
             Assert.That(Logger.LogRecord, Has.Count.GreaterThanOrEqualTo(MinimumErrorMessageCount));
         });
 
@@ -117,7 +118,7 @@ public class TestParser
     //[TestCase("1.4 ** 3 * 2")]
     public void Tets(string inp)
     {
-        Parser.Parser.Parse(Lex(inp), out ASTNode? node);
+        Parser.Parser.Parse(Lex(inp), out AnnotatedNode<Annotations>? node);
         Console.WriteLine(node!.Print());
     }
 }

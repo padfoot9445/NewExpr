@@ -343,7 +343,7 @@ public class Parser
                 return false;
             }
         }
-        else if (TCmp([TokenType.Number, TokenType.Identifier]))
+        else if (TCmp(TokenType.Identifier))
         {
             ASTNode IdentifierNode = ASTNode.Terminal(Input[Current++], nameof(Primary));
             if (SafeParse(AssignmentPrime, out ASTNode? AssP))
@@ -353,6 +353,12 @@ public class Parser
             }
             Node = null;
             return false;
+        }
+        else if (TCmp(TokenType.Number))
+        {
+            ASTNode NumberNode = ASTNode.Terminal(Input[Current++], nameof(Primary));
+            Node = NumberNode;
+            return true;
         }
         Log.Log($"Expected Open Parenthesis ( or Number or identifier at token position {Position}, but got \"{Input[Current].Lexeme}\"");
         Node = null;

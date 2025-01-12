@@ -83,7 +83,7 @@ public class ASTNode : IValidASTLeaf
     public static ASTNode NonTerminal(ASTNode NT, string Name) => new ASTNode([NT], Name);
     public static ASTNode Terminal(IToken T, string Name) => new ASTNode([T], Name);
     public static ASTNode Unary(IToken Operator, ASTNode Operand, string Name) => new ASTNode([Operator, Operand], Name);
-    public static ASTNode Empty() => new ASTNode([], "Empty");
+    public static ASTNode Empty(string Name = "Empty") => new ASTNode([], Name);
     public static ASTNode Parenthesized(IToken Open, ASTNode Center, IToken Close, string Name)
     {
         if (Open.TT != TokenType.OpenParen || Close.TT != TokenType.CloseParen)

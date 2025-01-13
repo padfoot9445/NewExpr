@@ -12,7 +12,7 @@ public partial class Parser
     private int Position { get => Current; }
     readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
     delegate bool ParsingFunction(out AnnotatedNode<Annotations>? Node);
-    TypeProvider TP { get; } = new();
+    TypeProvider TP { get; }
     SafeParser SP { get; init; }
     private IToken? CurrentToken(int offset = 0, bool Inc = false)
     {
@@ -26,7 +26,7 @@ public partial class Parser
         }
         return null;
     }
-    public Parser(IEnumerable<IToken> tokens, ILogger? logger = null)
+    public Parser(IEnumerable<IToken> tokens, ILogger? logger = null, TypeProvider? TP = null)
     {
         this.Input = tokens.ToList();
         if (Input.Count > 0 && this.Input[^1].TT != TokenType.EOF)
@@ -35,6 +35,7 @@ public partial class Parser
         }
         Log = logger ?? new Logger();
         SP = new(Log);
+        this.TP = TP ?? new();
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)

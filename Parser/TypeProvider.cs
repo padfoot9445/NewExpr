@@ -5,13 +5,13 @@ public class TypeProvider : ITypeProvider
     Dictionary<string, uint> ExistingTypeDenotingIdentifiers = new();
     uint TypeID = 1;
     //"int" | "float" | "double" | "number" | "long" | "longint" | "byte";
-    uint IntTypeCode;
-    uint FloatTypeCode;
-    uint DoubleTypeCode;
-    uint NumberTypeCode;
-    uint LongTypeCode;
-    uint LongIntTypeCode;
-    uint ByteTypeCode;
+    public readonly uint IntTypeCode;
+    public readonly uint FloatTypeCode;
+    public readonly uint DoubleTypeCode;
+    public readonly uint NumberTypeCode;
+    public readonly uint LongTypeCode;
+    public readonly uint LongIntTypeCode;
+    public readonly uint ByteTypeCode;
     List<uint> DefaultTypesHierarchy;
     public TypeProvider()
     {

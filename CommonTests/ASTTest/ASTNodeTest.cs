@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Common.AST;
 using Common.Tokens;
-namespace ASTTest;
+namespace CommonTests.ASTTest;
 [TestFixture]
 public class AstNodeTest
 {

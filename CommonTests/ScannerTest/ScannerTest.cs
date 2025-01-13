@@ -5,9 +5,9 @@ using Common.Lexer;
 using Common.Tokens;
 using NUnit.Framework;
 
-namespace Common.Tests.ScannerTest;
+namespace CommonTests.ScannerTest;
 [TestFixture]
-public class ScannerTests
+public class ScannerTest
 {
     private IScanner _scanner = IScanner.NewScanner("");
 

@@ -1,6 +1,6 @@
 using Common.AST;
 
-namespace ASTTest;
+namespace CommonTests.ASTTest;
 struct AnnotationContainerMock : IMetadata
 {
     public AnnotationContainerMock() { }

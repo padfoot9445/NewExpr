@@ -4,7 +4,7 @@ using Common.Tokens;
 using IRs.ParseTree;
 using Parser;
 
-namespace ParserTest;
+namespace MEXPTests.ParserTest;
 [TestFixture]
 public class TestParser
 {

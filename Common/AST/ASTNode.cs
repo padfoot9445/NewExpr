@@ -79,7 +79,7 @@ public class ASTNode : IValidASTLeaf
     public static ASTNode Binary(ASTNode Left, IToken Mid, ASTNode Right, string Name) => new ASTNode([Left, Mid, Right], Name);
     public static ASTNode PrimedBinary(ASTNode Left, ASTNode Prime, string Name) => new ASTNode([Left, Prime], Name);
     public static ASTNode BinaryPrime(IToken Operator, ASTNode Right, ASTNode Repeat, string Name) => new([Operator, Right, Repeat], Name);
-    public static ASTNode Repeating(ASTNode Subject, ASTNode Repeat, string Name) => new ASTNode([Subject, Repeat], Name);
+    public static ASTNode Repeating(ASTNode Subject, IToken Delimiter, ASTNode Repeat, string Name) => new ASTNode([Subject, Delimiter, Repeat], Name);
     public static ASTNode NonTerminal(ASTNode NT, string Name) => new ASTNode([NT], Name);
     public static ASTNode Terminal(IToken T, string Name) => new ASTNode([T], Name);
     public static ASTNode Unary(IToken Operator, ASTNode Operand, string Name) => new ASTNode([Operator, Operand], Name);

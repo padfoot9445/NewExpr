@@ -1,5 +1,5 @@
 using Common.Logger;
-namespace ParserTest;
+namespace MEXPTests.ParserTest;
 class MockLogger : ILogger
 {
     public List<string> LogRecord { get; } = new();

@@ -1,7 +1,7 @@
 using Common.Tokens;
 using Parser;
 
-namespace ParserTest;
+namespace MEXPTests.ParserTest;
 [TestFixture]
 public class TokenProviderTest
 {

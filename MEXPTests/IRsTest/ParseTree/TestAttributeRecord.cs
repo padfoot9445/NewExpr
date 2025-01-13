@@ -1,6 +1,6 @@
 using IRs.ParseTree;
 
-namespace IRsTest.ParseTree;
+namespace MEXPTests.IRsTest.ParseTree;
 [TestFixture]
 public class TestAttributeRecord
 {

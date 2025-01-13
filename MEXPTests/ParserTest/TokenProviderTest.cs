@@ -1,5 +1,5 @@
 using Common.Tokens;
-using Parser;
+using MEXP.Parser;
 
 namespace MEXPTests.ParserTest;
 [TestFixture]

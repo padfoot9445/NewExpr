@@ -1,4 +1,4 @@
-namespace Parser;
+namespace MEXP.Parser;
 public class TypeProvider : ITypeProvider
 {
     Dictionary<string, uint> IdentToType = new();

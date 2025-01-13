@@ -1,4 +1,4 @@
-using IRs.ParseTree;
+using MEXP.IRs.ParseTree;
 
 namespace MEXPTests.IRsTest.ParseTree;
 [TestFixture]

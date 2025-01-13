@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using Parser;
+using MEXP.Parser;
 using System;
 
 namespace MEXPTests.ParserTest;

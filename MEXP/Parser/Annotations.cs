@@ -1,6 +1,6 @@
 using Common.AST;
 
-namespace Parser;
+namespace MEXP.Parser;
 public class Annotations : IMetadata
 {
     public Annotations()

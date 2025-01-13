@@ -3,7 +3,7 @@ using Common.AST;
 using System.Linq.Expressions;
 using Common.Logger;
 using System.Diagnostics;
-namespace Parser;
+namespace MEXP.Parser;
 public partial class Parser
 {
     public List<IToken> Input { get; set; } //assume it ends in EOF

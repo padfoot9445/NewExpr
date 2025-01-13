@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using Common.AST;
 using Common.Logger;
 
-namespace Parser;
+namespace MEXP.Parser;
 partial class Parser
 {
     class SafeParser

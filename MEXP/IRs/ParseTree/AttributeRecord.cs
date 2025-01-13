@@ -1,4 +1,4 @@
-namespace IRs.ParseTree;
+namespace MEXP.IRs.ParseTree;
 using Common.AST;
 public class AttributeRecord : IMetadata
 {

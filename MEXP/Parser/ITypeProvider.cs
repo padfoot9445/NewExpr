@@ -1,4 +1,4 @@
-namespace Parser;
+namespace MEXP.Parser;
 public interface ITypeProvider
 {
     public uint? GetTypeFromIdentifierLiteral(string Lexeme);

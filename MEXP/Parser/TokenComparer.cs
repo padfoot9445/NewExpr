@@ -1,4 +1,4 @@
-namespace Parser;
+namespace MEXP.Parser;
 using Common.Tokens;
 public static class TokenComparer
 {

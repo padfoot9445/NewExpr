@@ -2,7 +2,7 @@ using NUnit.Framework;
 using Parser;
 using System;
 
-namespace ParserTests;
+namespace ParserTest;
 [TestFixture]
 public class TypeProviderTests
 {

@@ -4,6 +4,7 @@
 ## Get latest from `dotnet new gitignore`
 coverage_report/
 # dotenv files
+.VSCodeCounter/
 .env
 inspectcode.xml
 # User-specific files

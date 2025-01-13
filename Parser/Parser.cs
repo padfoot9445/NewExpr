@@ -242,11 +242,17 @@ public partial class Parser
             Node = null;
             return false;
         }
-        //check if repeat(Semicolon is there); success is not valid in any case
-        IToken C = CurrentToken()!;
-        if (C.TT == TokenType.Semicolon)
+        //assert semicolon
+        IToken C = CurrentToken(Inc: true)!;
+        if (C.TT != TokenType.Semicolon)
         {
-            Current++;
+            Log.Log($"Expected \";\" at {Position}");
+            Node = null;
+            return false;
+        }
+        //check for repeat(is not EOF)
+        if (!CurrentToken().TCmp(TokenType.EOF))
+        {
             if (SP.SafeParse(Program, out AnnotatedNode<Annotations>? Repeat, Current: ref Current))
             {
                 Node = new(ASTNode.Repeating(Expr!, C, Repeat!, nameof(Program)));
@@ -254,27 +260,18 @@ public partial class Parser
             }
             else
             {
-                //check if EOF
-                //if no repeat, must be EOF
-                if (Input[Current].TT != TokenType.EOF)
-                {
-                    Log.Log($"Expected EOF at Token Position {Position} but got \"{Input[Current].Lexeme}\"");
-                    Node = null;
-                    return false;
-                }
-                IToken OperatorSemicolon = Input[Current];
-                Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, OperatorSemicolon], nameof(Program));
-                return true;
+                Log.Log($"Expected EOF at Token Position {Position} but got \"{Input[Current].Lexeme}\"");
+                Node = null;
+                return false;
             }
         }
-
         else
         {
-            Log.Log($"Expected \";\" at {Position}");
-            Node = null;
-            return false;
+            Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, C], nameof(Program));
+            return true;
         }
     }
+
     bool Expression(out AnnotatedNode<Annotations>? Node)
     {
         if (SP.SafeParse(Declaration, out AnnotatedNode<Annotations>? Add, Suppress: false, Current: ref Current)) //no additional context to add here so we get the context from safeparse

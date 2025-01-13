@@ -5,7 +5,7 @@
 coverage_report/
 # dotenv files
 .env
-
+inspectcode.xml
 # User-specific files
 *.rsuser
 *.suo

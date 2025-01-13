@@ -7,6 +7,8 @@ coverage_report/
 .VSCodeCounter/
 .env
 inspectcode.xml
+tmp.*
+*.tmp.*
 # User-specific files
 *.rsuser
 *.suo

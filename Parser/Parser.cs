@@ -243,12 +243,13 @@ public partial class Parser
             return false;
         }
         //check if repeat(Semicolon is there); success is not valid in any case
-        if (Input[Current].TT == TokenType.Semicolon)
+        IToken C = CurrentToken()!;
+        if (C.TT == TokenType.Semicolon)
         {
             Current++;
             if (SP.SafeParse(Program, out AnnotatedNode<Annotations>? Repeat, Current: ref Current))
             {
-                Node = new(ASTNode.Repeating(Expr!, Repeat!, nameof(Program)));
+                Node = new(ASTNode.Repeating(Expr!, C, Repeat!, nameof(Program)));
                 return true;
             }
             else
@@ -278,7 +279,7 @@ public partial class Parser
     {
         if (SP.SafeParse(Declaration, out AnnotatedNode<Annotations>? Add, Suppress: false, Current: ref Current)) //no additional context to add here so we get the context from safeparse
         {
-            Node = new(new(Add!.Attributes.TypeCode, IsEmpty: false), ASTNode.NonTerminal(Add!, nameof(Expression))); //TypeCode <- Addition.TypeCode
+            Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, nameof(Expression))); //TypeCode <- Addition.TypeCode
             return true;
         }
         Node = null;

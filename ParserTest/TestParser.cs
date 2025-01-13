@@ -69,6 +69,7 @@ public class TestParser
     [TestCase("long i;")]
     [TestCase("_ = 1;")]
     [TestCase("int a234_; a234_;")]
+    [TestCase("number x; x;")]
     [TestCase("1 + 2; 3 + 4;")]
     [TestCase("5;")]
     [TestCase("float i; int j; i = (j = 2);")]
@@ -111,14 +112,41 @@ public class TestParser
         //     Console.WriteLine(string.Join("; ", Logger.LogRecord));
         // }
     }
-
-    //[TestCase("5 + 3, 10 - 7")]
-    //[TestCase("10 - (3 * (2 + 1)) , 7 * 8")]
-    [Ignore("Only For Printing AST Easily; no printing necessary now")]
-    //[TestCase("1.4 ** 3 * 2")]
-    public void Tets(string inp)
+    static IEnumerable<TestCaseData> AttributeTestData()
     {
-        Parser.Parser.Parse(Lex(inp), out AnnotatedNode<Annotations>? node);
-        Console.WriteLine(node!.Print());
+        var T1 = new TypeProvider();
+        yield return new("1;", T1, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T1.ByteTypeCode), (Annotations x) => x.TypeCode);
+        var T2 = new TypeProvider();
+        yield return new("1.;", T2, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T2.FloatTypeCode), (Annotations x) => x.TypeCode);
+        T1 = new TypeProvider();
+        yield return new("1 + 2;", T1, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T1.ByteTypeCode), (Annotations x) => x.TypeCode);
+        T1 = new TypeProvider();
+        yield return new("1 * 0.3;", T1, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T1.FloatTypeCode), (Annotations x) => x.TypeCode);
+        T1 = new TypeProvider();
+        yield return new("int x;", T1, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)(((AnnotatedNode<Annotations>)((AnnotatedNode<Annotations>)x.Children[0]).Children[0]).Children[0]), new Annotations(TypeDenotedByIdentifier: T1.IntTypeCode), (Annotations x) => x.TypeDenotedByIdentifier);
+        yield return new("number x; x;", T1, (AnnotatedNode<Annotations> x) => ((AnnotatedNode<Annotations>)((AnnotatedNode<Annotations>)x.Children[2]).Children[0]), new Annotations(TypeCode: T1.NumberTypeCode), (Annotations x) => x.TypeCode);
+        yield return new("number x; x;", T1, (AnnotatedNode<Annotations> x) => ((AnnotatedNode<Annotations>)((AnnotatedNode<Annotations>)x.Children[2]).Children[0]), new Annotations(CanBeResolvedToAssignable: true), (Annotations x) => x.CanBeResolvedToAssignable);
     }
+    [TestCaseSource(nameof(AttributeTestData))]
+    public void Attribute_Test<T>(string input, TypeProvider typeProvider, Func<AnnotatedNode<Annotations>, AnnotatedNode<Annotations>> Accessor, Annotations expectedAnnotations, Func<Annotations, T> AnnotationsAccessor)
+    {
+
+        Assert.Multiple(() =>
+        {
+            Parser.Parser p = new(Lex(input), null, typeProvider);
+            Assert.That(p.Parse(out AnnotatedNode<Annotations>? node), Is.True);
+            Assert.That(node, Is.Not.Null);
+            Assert.That(Accessor(node!), Is.Not.Null);
+            Assert.That(AnnotationsAccessor(Accessor(node!)?.Attributes!), Is.EqualTo(AnnotationsAccessor(expectedAnnotations)));
+        });
+    }
+    //     //[TestCase("5 + 3, 10 - 7")]
+    //     //[TestCase("10 - (3 * (2 + 1)) , 7 * 8")]
+    //     // [Ignore("Only For Printing AST Easily; no printing necessary now")]
+    //     // //[TestCase("1.4 ** 3 * 2")]
+    //     // public void Tets(string inp)
+    //     // {
+    //     //     Parser.Parser.Parse(Lex(inp), out AnnotatedNode<Annotations>? node);
+    //     //     Console.WriteLine(node!.Print());
+    //     // }
 }

@@ -4,17 +4,16 @@ using System.Linq.Expressions;
 using Common.Logger;
 using System.Diagnostics;
 namespace Parser;
-public class Parser
+public partial class Parser
 {
     public List<IToken> Input { get; set; } //assume it ends in EOF
     int Current = 0;
-    Stack<int> State = new();
     ILogger Log { get; init; }
-
     private int Position { get => Current; }
     readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
     delegate bool ParsingFunction(out AnnotatedNode<Annotations>? Node);
     TypeProvider TP { get; } = new();
+    SafeParser SP { get; init; }
     private IToken? CurrentToken(int offset = 0, bool Inc = false)
     {
         if (Current + offset < Input.Count)
@@ -27,38 +26,6 @@ public class Parser
         }
         return null;
     }
-    #region SafeParse
-    void SaveState()
-    {
-        State.Push(Current);
-    }
-    void RollBack()
-    {
-        Current = State.Pop();
-    }
-    bool SafeParse(ParsingFunction fn, out AnnotatedNode<Annotations>? K, bool Suppress = true) //return true on successful parse, else false. Node is undefined on faliure.
-    {
-        SaveState();
-        if (Suppress)
-        {
-            Log.SuppressLog();
-        }
-        bool Result = fn(out AnnotatedNode<Annotations>? Node);
-        Log.EnableLog();
-        if (Result)
-        {
-            State.Pop();
-            K = Node;
-            return true;
-        }
-        else
-        {
-            RollBack();
-            K = null;
-            return false;
-        }
-    }
-    #endregion
     public Parser(IEnumerable<IToken> tokens, ILogger? logger = null)
     {
         this.Input = tokens.ToList();
@@ -67,6 +34,7 @@ public class Parser
             Input.Add(IToken.NewToken(TokenType.EOF, "EOF", -1));
         }
         Log = logger ?? new Logger();
+        SP = new(Log);
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)
@@ -77,7 +45,7 @@ public class Parser
             node = null;
             return false;
         }
-        else if (!SafeParse(Program, out node))
+        else if (!SP.SafeParse(Program, out node, Current: ref Current))
         {
             if (Recover())
             {
@@ -136,7 +104,7 @@ public class Parser
     /// <returns></returns>
     bool PrimedBinary(ParsingFunction NextInPriority, ParsingFunction BinaryPrime, string CurrentProductionName, out AnnotatedNode<Annotations>? Node, Func<int, string>? ErrorMessage = null, Func<ASTNode, AnnotatedNode<Annotations>>? Action = null)
     {
-        if (SafeParse(NextInPriority, out AnnotatedNode<Annotations>? Neg, Suppress: false) && SafeParse(BinaryPrime, out AnnotatedNode<Annotations>? MulP, Suppress: false))
+        if (SP.SafeParse(NextInPriority, out AnnotatedNode<Annotations>? Neg, Suppress: false, Current: ref Current) && SP.SafeParse(BinaryPrime, out AnnotatedNode<Annotations>? MulP, Suppress: false, Current: ref Current))
         {
             Node = (Action ?? ((ASTNode x) => new(new(IsEmpty: false), x)))(ASTNode.PrimedBinary(Neg!, MulP!, CurrentProductionName));
             return true;
@@ -169,7 +137,7 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(NextInPriority, out AnnotatedNode<Annotations>? ParentPrimedNode, Suppress: false) && SafeParse(Self, out AnnotatedNode<Annotations>? PrimeNode, Suppress: false))
+            if (SP.SafeParse(NextInPriority, out AnnotatedNode<Annotations>? ParentPrimedNode, Suppress: false, Current: ref Current) && SP.SafeParse(Self, out AnnotatedNode<Annotations>? PrimeNode, Suppress: false, Current: ref Current))
             {
                 Node = (Action ?? (x => new(new(IsEmpty: false), x)))(ASTNode.BinaryPrime(Operator: Operator, Right: ParentPrimedNode!, Repeat: PrimeNode!, CurrentProductionName));
                 return true;
@@ -268,7 +236,7 @@ public class Parser
     }
     bool Program(out AnnotatedNode<Annotations>? Node)
     {
-        if (!SafeParse(Expression, out AnnotatedNode<Annotations>? Expr))
+        if (!SP.SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Current: ref Current))
         {
             Node = null;
             return false;
@@ -277,7 +245,7 @@ public class Parser
         if (Input[Current].TT == TokenType.Semicolon)
         {
             Current++;
-            if (SafeParse(Program, out AnnotatedNode<Annotations>? Repeat))
+            if (SP.SafeParse(Program, out AnnotatedNode<Annotations>? Repeat, Current: ref Current))
             {
                 Node = new(ASTNode.Repeating(Expr!, Repeat!, nameof(Program)));
                 return true;
@@ -307,7 +275,7 @@ public class Parser
     }
     bool Expression(out AnnotatedNode<Annotations>? Node)
     {
-        if (SafeParse(Declaration, out AnnotatedNode<Annotations>? Add, Suppress: false)) //no additional context to add here so we get the context from safeparse
+        if (SP.SafeParse(Declaration, out AnnotatedNode<Annotations>? Add, Suppress: false, Current: ref Current)) //no additional context to add here so we get the context from safeparse
         {
             Node = new(new(Add!.Attributes.TypeCode, IsEmpty: false), ASTNode.NonTerminal(Add!, nameof(Expression))); //TypeCode <- Addition.TypeCode
             return true;
@@ -317,7 +285,7 @@ public class Parser
     }
     bool Declaration(out AnnotatedNode<Annotations>? Node)
     {
-        if (SafeParse(Type, out AnnotatedNode<Annotations>? TNode))
+        if (SP.SafeParse(Type, out AnnotatedNode<Annotations>? TNode, Current: ref Current))
         {
             IToken IdentToken = CurrentToken(Inc: true)!;
             if (!IdentToken.TCmp(TokenType.Identifier))
@@ -326,7 +294,7 @@ public class Parser
                 Node = null;
                 return false;
             }
-            if (SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? ANode))
+            if (SP.SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? ANode, Current: ref Current))
             {
                 Debug.Assert(IdentToken.TT == TokenType.Identifier);
                 Debug.Assert(TNode!.Attributes.TypeDenotedByIdentifier is not null);
@@ -355,7 +323,7 @@ public class Parser
                 return false;
             }
         }
-        else if (SafeParse(Addition, out AnnotatedNode<Annotations>? Add, Suppress: false))
+        else if (SP.SafeParse(Addition, out AnnotatedNode<Annotations>? Add, Suppress: false, Current: ref Current))
         {
             Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, nameof(Declaration)));
             return true;
@@ -474,7 +442,7 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
+            if (SP.SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false, Current: ref Current))
             {
                 Node = new(
                     Attributes: Expr!.Attributes.Copy(), //Since Unary Negation does not change type at all, we can just copy - will introduce unary table at some point
@@ -482,7 +450,7 @@ public class Parser
                 return true;
             }
         }
-        else if (SafeParse(Primary, out AnnotatedNode<Annotations>? PrimaryNode, Suppress: false))
+        else if (SP.SafeParse(Primary, out AnnotatedNode<Annotations>? PrimaryNode, Suppress: false, Current: ref Current))
         {
             Node = new(
                 Attributes: PrimaryNode!.Attributes.Copy(), //single nest so we can just copy
@@ -502,7 +470,7 @@ public class Parser
         {
             IToken Operator = Input[Current];
             Current++;
-            if (SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
+            if (SP.SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false, Current: ref Current))
             {
                 if (Input[Current].TT == TokenType.CloseParen)
                 {
@@ -533,7 +501,7 @@ public class Parser
         {
             IToken IdentifierToken = Input[Current++];
             ASTNode IdentifierNode = ASTNode.Terminal(IdentifierToken, nameof(Primary));
-            if (SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? AssP))
+            if (SP.SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? AssP, Current: ref Current))
             {
                 ASTNode ASNode = ASTNode.PrimedBinary(IdentifierNode, AssP!, nameof(Primary));
                 uint? IdentifierType = TP.GetTypeFromIdentifierLiteral(IdentifierToken.Lexeme);

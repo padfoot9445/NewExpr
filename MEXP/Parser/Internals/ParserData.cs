@@ -43,13 +43,4 @@ class ParserData
         this.TP = TP ?? new TypeProvider();
 
     }
-
-    public Annotations GetFromChildIndex(ASTNode node, int index)
-    {
-        if (node.Children.Length <= index)
-        {
-            throw new ArgumentOutOfRangeException($"Index out of range, {index}, {node.Children.Length}");
-        }
-        return ((AnnotatedNode<Annotations>)node.Children[index]).Attributes;
-    }
 }

@@ -14,8 +14,8 @@ abstract class PrimedBinaryParserBase : InternalParserBase
     private protected virtual AnnotatedNode<Annotations> Action(ASTNode ASNode)
     {
         Debug.Assert(ASNode.Children.Length == 2);
-        Annotations NextInPriorityAnno = ParserData.GetFromChildIndex(ASNode, 0);
-        Annotations ProductionPrimeAnno = ParserData.GetFromChildIndex(ASNode, 1);
+        Annotations NextInPriorityAnno = GetFromChildIndex(ASNode, 0);
+        Annotations ProductionPrimeAnno = GetFromChildIndex(ASNode, 1);
         Debug.Assert(NextInPriorityAnno.IsEmpty is false && NextInPriorityAnno.TypeCode is not null);
         if (!ProductionPrimeAnno.IsEmpty)
         {

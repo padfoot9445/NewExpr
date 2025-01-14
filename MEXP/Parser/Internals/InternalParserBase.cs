@@ -20,6 +20,14 @@ abstract class InternalParserBase
     private protected readonly ILogger Log;
     private protected int Position => ParserData.Position;
     private protected abstract string Name { get; }
+    public Annotations GetFromChildIndex(ASTNode node, int index)
+    {
+        if (node.Children.Length <= index)
+        {
+            throw new ArgumentOutOfRangeException($"Index out of range, {index}, {node.Children.Length}");
+        }
+        return ((AnnotatedNode<Annotations>)node.Children[index]).Attributes;
+    }
     private protected bool SafeParse(InternalParserBase Parser, out AnnotatedNode<Annotations>? Node, bool Suppress = true) => ParserData.SP.SafeParse(Parser, out Node, ref ParserData.Current, Suppress);
     private protected InternalParserBase Program => _Program is null ? new ProgramParser(ParserData) : _Program;
     private InternalParserBase? _Program = null;

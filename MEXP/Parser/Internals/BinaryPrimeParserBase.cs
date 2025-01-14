@@ -24,8 +24,8 @@ abstract class BinaryPrimeParserBase : InternalParserBase
         {
             return new(new(IsEmpty: true), ASNode);
         }
-        Annotations NextInPriorityAnnotations = ParserData.GetFromChildIndex(ASNode, 1);
-        Annotations BinaryPrimeAnnotations = ParserData.GetFromChildIndex(ASNode, 2);
+        Annotations NextInPriorityAnnotations = GetFromChildIndex(ASNode, 1);
+        Annotations BinaryPrimeAnnotations = GetFromChildIndex(ASNode, 2);
         Debug.Assert(NextInPriorityAnnotations.TypeCode is not null);
         if (BinaryPrimeAnnotations.IsEmpty)
         {

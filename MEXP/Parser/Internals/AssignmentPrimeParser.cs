@@ -18,8 +18,8 @@ class AssignmentPrimeParser : BinaryPrimeParserBase
         {
             Debug.Assert(ASNode.Children.Length == 3);
             Debug.Assert(ASNode.Children[2] is AnnotatedNode<Annotations>);
-            Annotations NestedAssignmentPrimeAnnotations = ParserData.GetFromChildIndex(ASNode, 2);
-            Annotations AdditionAnnotations = ParserData.GetFromChildIndex(ASNode, 1);
+            Annotations NestedAssignmentPrimeAnnotations = GetFromChildIndex(ASNode, 2);
+            Annotations AdditionAnnotations = GetFromChildIndex(ASNode, 1);
             if (NestedAssignmentPrimeAnnotations.IsEmpty is true)
             {
                 return new(

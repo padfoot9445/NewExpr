@@ -43,6 +43,7 @@ class Parser : IParser
         this.TP = TP ?? new TypeProvider();
         TypeParser = new TypeParser(this);
         PrimaryParser = new PrimaryParser(this);
+        NegationParser = new NegationParser(this);
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)
@@ -442,34 +443,8 @@ class Parser : IParser
             Action: GetBinaryPrimeAction((T1, T2, Pos) => $"Exponentiation is not valid between {T1} and {T2} at Position {Pos}")
         )
     ;
-    bool Negation(out AnnotatedNode<Annotations>? Node)
-    {
-        if (Input[Current].TT == TokenType.Subtraction)
-        {
-            IToken Operator = Input[Current];
-            Current++;
-            if (SP.SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false, Current: ref Current))
-            {
-                Node = new(
-                    Attributes: Expr!.Attributes.Copy(), //Since Unary Negation does not change type at all, we can just copy - will introduce unary table at some point
-                    node: ASTNode.Unary(Operator: Operator, Operand: Expr!, nameof(Negation)));
-                return true;
-            }
-        }
-        else if (SP.SafeParse(Primary, out AnnotatedNode<Annotations>? PrimaryNode, Suppress: false, Current: ref Current))
-        {
-            Node = new(
-                Attributes: PrimaryNode!.Attributes.Copy(), //single nest so we can just copy
-                node: ASTNode.NonTerminal(PrimaryNode!, nameof(Negation))
-            );
-            return true;
-        }
-        //we can use current here because being here means primary also failed, and thus current is rolled back
-        Log.Log($"Expected \"-\" or Primary at Token Position {Position}, but got \"{Input[Current].Lexeme}\"; Error may be here, or at Primary:");
-
-        Node = null;
-        return false;
-    }
+    private InternalParserBase NegationParser;
+    public ParsingFunction Negation => NegationParser.Parse;
     private InternalParserBase PrimaryParser;
     public ParsingFunction Primary => PrimaryParser.Parse;
     private InternalParserBase TypeParser;

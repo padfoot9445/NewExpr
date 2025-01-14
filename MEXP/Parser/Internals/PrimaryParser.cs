@@ -10,102 +10,129 @@ class PrimaryParser : InternalParserBase
 
     private protected override string Name => "Primary";
 
-    public override bool Parse(out AnnotatedNode<Annotations>? Node)
-
+    private bool ParseBracket(out AnnotatedNode<Annotations>? Node)
     {
-        if (CurrentToken()!.TT == TokenType.OpenParen)
+        IToken OpenBracketToken = CurrentToken(Inc: true)!;
+        //get expr
+        if (!_Parser.SP.SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false, Current: ref _Parser.Current))
         {
-            IToken Operator = CurrentToken(Inc: true)!;
-            if (_Parser.SP.SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false, Current: ref _Parser.Current))
-            {
-                if (CurrentToken()!.TT == TokenType.CloseParen)
-                {
-                    Annotations annotations = new Annotations(CanBeResolvedToAssignable: false);
-                    annotations.ForcedMerge(Expr!.Attributes); //we propagate empty since empty brackets are still empty, but the addition of brackets means that we can no-longer resolve to an identifier literal
-                    Node = new(
-                        Attributes: annotations,
-                        node: ASTNode.Parenthesized(Open: Operator, Center: Expr!, Close: CurrentToken()!, Name)
-                    );
-                    _Parser.Advance();
-                    return true;
-                }
-                else
-                {
-                    Log.Log($"Expected Close Parenthesis at position {Position}");
-                    Node = null;
-                    return false;
-                }
-            }
-            else
-            {
-                //no message as not suppressed
-                Node = null;
-                return false;
-            }
-        }
-        else if (CurrentToken().TCmp(TokenType.Identifier))
-        {
-            IToken IdentifierToken = CurrentToken(Inc: true)!;
-            ASTNode IdentifierNode = ASTNode.Terminal(IdentifierToken, Name);
-            if (_Parser.SP.SafeParse(_Parser.AssignmentPrime, out AnnotatedNode<Annotations>? AssP, Current: ref _Parser.Current))
-            {
-                ASTNode ASNode = ASTNode.PrimedBinary(IdentifierNode, AssP!, Name);
-                uint? IdentifierType = _Parser.TP.GetTypeFromIdentifierLiteral(IdentifierToken.Lexeme);
-                if (IdentifierType is null)
-                {
-                    Log.Log($"Identifier {IdentifierToken.Lexeme} was used before declaration at {Position}");
-                    Node = null;
-                    return false;
-                }
-                if (AssP!.Attributes.IsEmpty is true)
-                {
-                    Node = new(
-                        Attributes: new(
-                            TypeCode: IdentifierType,
-                            CanBeResolvedToAssignable: true,
-                            IsEmpty: false),
-                        node: AssP
-                    );
-                    return true;
-                }
-                else
-                {
-                    Debug.Assert(AssP!.Attributes.TypeCode is not null);
-                    //typecheck
-                    if (_Parser.TP.CanBeAssignedTo((uint)IdentifierType, (uint)AssP!.Attributes.TypeCode))
-                    {
-                        Node = new(
-                            Attributes: new(TypeCode: IdentifierType, IsEmpty: false, TypeDenotedByIdentifier: null), //TypeDenotedByIdentifier would need a lookup if we had custom types but we don't
-                            node: AssP
-                        );
-                        return true;
-                    }
-                    else
-                    {
-                        Log.Log($"Could not assign {AssP!.Attributes.TypeCode} to {IdentifierType} at {Position}. If you meant to cast, declare the variable in-line; if you do not want to bind, use _ as the identifier.");
-                        Node = null;
-                        return false;
-                    }
-                }
-            }
+            //no message as not suppressed
             Node = null;
             return false;
         }
-        else if (CurrentToken().TCmp(TokenType.Number))
+        if (CurrentToken().TCmp(TokenType.CloseParen))
         {
-            IToken NumberToken = CurrentToken(Inc: true)!;
-            ASTNode NumberNode = ASTNode.Terminal(NumberToken, Name);
+            Annotations annotations = new Annotations(CanBeResolvedToAssignable: false);
+            annotations.ForcedMerge(Expr!.Attributes); //we propagate empty since empty brackets are still empty, but the addition of brackets means that we can no-longer resolve to an identifier literal
             Node = new(
-                new(TypeCode: _Parser.TP.GetTypeFromNumberLiteral(NumberToken.Lexeme)),
-                NumberNode
+                Attributes: annotations,
+                node: ASTNode.Parenthesized(Open: OpenBracketToken, Center: Expr!, Close: CurrentToken()!, Name)
+            );
+            _Parser.Advance();
+            return true;
+        }
+        else
+        {
+            Log.Log($"Expected Close Parenthesis at position {Position}");
+            Node = null;
+            return false;
+        }
+    }
+    private bool GetAndValidateIdentifierType(IToken IdentifierToken, out uint IdentifierType)
+    {
+        uint? _IdentifierType = _Parser.TP.GetTypeFromIdentifierLiteral(IdentifierToken.Lexeme);
+        if (_IdentifierType is null)
+        {
+            Log.Log($"Identifier {IdentifierToken.Lexeme} was used before declaration at {Position}");
+            IdentifierType = uint.MaxValue;
+            return false;
+        }
+        IdentifierType = (uint)_IdentifierType!;
+        return true;
+    }
+    private bool ParseRemainderOfAssignment(AnnotatedNode<Annotations>? AssP, uint IdentifierType, out AnnotatedNode<Annotations>? Node)
+    {
+        Debug.Assert(AssP!.Attributes.TypeCode is not null);
+        //typecheck
+        if (_Parser.TP.CanBeAssignedTo(IdentifierType, (uint)AssP!.Attributes.TypeCode))
+        {
+            Node = new(
+                Attributes: new(TypeCode: IdentifierType, IsEmpty: false, TypeDenotedByIdentifier: null), //TypeDenotedByIdentifier would need a lookup if we had custom types but we don't
+                node: AssP
             );
             return true;
+        }
+        else
+        {
+            Log.Log($"Could not assign {AssP!.Attributes.TypeCode} to {IdentifierType} at {Position}. If you meant to cast, declare the variable in-line; if you do not want to bind, use _ as the identifier.");
+            Node = null;
+            return false;
+        }
+    }
+    private bool ParseIdentifierOrAssignment(out AnnotatedNode<Annotations>? Node)
+    {
+        IToken IdentifierToken = CurrentToken(Inc: true)!;
+        //get the assignment prime node
+        if (!_Parser.SP.SafeParse(_Parser.AssignmentPrime, out AnnotatedNode<Annotations>? AssP, Current: ref _Parser.Current))
+        {
+            Log.Log($"Impossible path in ParseIdentifierAndAssignment");
+            Node = null;
+            return false;
+        }
+
+        //check if the identifier is properly declared
+        if (!GetAndValidateIdentifierType(IdentifierToken, out uint IdentifierType))
+        {
+            Node = null;
+            return false;
+        }
+
+        //check if there is an assignment
+        if (AssP!.Attributes.IsEmpty is false)
+        {
+            return ParseRemainderOfAssignment(AssP, IdentifierType, out Node);
+
+        }
+        else
+        {
+            Node = new(
+                Attributes: new(
+                    TypeCode: IdentifierType,
+                    CanBeResolvedToAssignable: true,
+                    IsEmpty: false
+                ),
+                node: AssP
+            );
+            return true;
+        }
+    }
+    private bool ParseNumber(out AnnotatedNode<Annotations>? Node)
+    {
+        IToken NumberToken = CurrentToken(Inc: true)!;
+        ASTNode NumberNode = ASTNode.Terminal(NumberToken, Name);
+        Node = new(
+            new(TypeCode: _Parser.TP.GetTypeFromNumberLiteral(NumberToken.Lexeme)),
+            NumberNode
+        );
+        return true;
+    }
+    public override bool Parse(out AnnotatedNode<Annotations>? Node)
+    {
+        if (CurrentToken().TCmp(TokenType.OpenParen))
+        //brackets
+        {
+            return ParseBracket(out Node);
+        }
+        else if (CurrentToken().TCmp(TokenType.Identifier))
+        {
+            return ParseIdentifierOrAssignment(out Node);
+        }
+        else if (CurrentToken().TCmp(TokenType.Number))
+        {
+            return ParseNumber(out Node);
         }
         Log.Log($"Expected Open Parenthesis ( or Number or identifier at token position {Position}, but got \"{CurrentToken()!.Lexeme}\"");
         Node = null;
         return false;
     }
-
-
-
 }

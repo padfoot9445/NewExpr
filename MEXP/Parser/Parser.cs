@@ -46,6 +46,8 @@ class Parser : IParser
         NegationParser = new NegationParser(this);
         PowerParser = new PowerParser(this);
         PowerPrimeParser = new PowerPrimeParser(this);
+        MultiplicationParser = new MultiplicationParser(this);
+        MultiplicationPrimeParser = new MultiplicationPrimeParser(this);
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)
@@ -403,38 +405,11 @@ class Parser : IParser
         )
     ;
     // AdditionPrime ::= ("-" | "+") Multiplication AdditionPrime | Empty
-    public bool Multiplication(out AnnotatedNode<Annotations>? Node)
-        => PrimedBinary(
-            NextInPriority: Power,
-            BinaryPrime: MultiplicationPrime,
-            CurrentProductionName: nameof(Multiplication),
-            out Node,
-            ErrorMessage: (_) => "",
-            Action: GetPrimedBinaryAction((T1, T2, Pos) => $"Multiplication is not valid between {T1} and {T2} at {Pos}")
-        )
-    ;
-    public bool MultiplicationPrime(out AnnotatedNode<Annotations>? Node)
-        => BinaryPrime(
-            NextInPriority: Power,
-            Operators: [TokenType.Multiplication, TokenType.Division],
-            CurrentProductionName: nameof(MultiplicationPrime),
-            out Node,
-            MessageOnError: (_) => "",
-            Action: GetBinaryPrimeAction((T1, T2, Pos) => $"Multiplication is not valid between {T1} and {T2} MultiplicationPrime at Pos {Position}")
-        )
-    ;
+    private InternalParserBase MultiplicationParser;
+    public ParsingFunction Multiplication => MultiplicationParser.Parse;
 
-
-    // public bool Power(out AnnotatedNode<Annotations>? Node)
-    //     => PrimedBinary(
-    //         NextInPriority: Negation,
-    //         BinaryPrime: PowerPrime,
-    //         CurrentProductionName: nameof(Power),
-    //         out Node,
-    //         ErrorMessage: (_) => "",
-    //         Action: GetPrimedBinaryAction((T1, T2, Pos) => $"Exponentiation is not valid between {T1} and {T2} at Position {Pos}")
-    //     )
-    // ;
+    private InternalParserBase MultiplicationPrimeParser;
+    public ParsingFunction MultiplicationPrime => MultiplicationPrimeParser.Parse;
     private InternalParserBase PowerParser;
     public ParsingFunction Power => PowerParser.Parse;
     private InternalParserBase PowerPrimeParser;

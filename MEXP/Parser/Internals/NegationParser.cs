@@ -4,7 +4,7 @@ using Common.Tokens;
 namespace MEXP.Parser.Internals;
 class NegationParser : InternalParserBase
 {
-    public NegationParser(Parser p) : base(p)
+    public NegationParser(ParserData p) : base(p)
     {
     }
 
@@ -15,7 +15,7 @@ class NegationParser : InternalParserBase
         if (CurrentToken()!.TT == TokenType.Subtraction)
         {
             IToken Operator = CurrentToken(Inc: true)!;
-            if (SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
+            if (SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
             {
                 Node = new(
                     Attributes: Expr!.Attributes.Copy(), //Since Unary Negation does not change type at all, we can just copy - will introduce unary table at some point
@@ -23,7 +23,7 @@ class NegationParser : InternalParserBase
                 return true;
             }
         }
-        else if (SafeParse(_Parser.Primary, out AnnotatedNode<Annotations>? PrimaryNode, Suppress: false))
+        else if (SafeParse(Primary, out AnnotatedNode<Annotations>? PrimaryNode, Suppress: false))
         {
             Node = new(
                 Attributes: PrimaryNode!.Attributes.Copy(), //single nest so we can just copy

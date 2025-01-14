@@ -4,7 +4,7 @@ using Common.AST;
 namespace MEXP.Parser.Internals;
 abstract class PrimedBinaryParserBase : InternalParserBase
 {
-    protected PrimedBinaryParserBase(Parser p) : base(p)
+    protected PrimedBinaryParserBase(ParserData p) : base(p)
     {
     }
     private protected abstract InternalParserBase NextInPriority { get; }
@@ -14,8 +14,8 @@ abstract class PrimedBinaryParserBase : InternalParserBase
     private protected virtual AnnotatedNode<Annotations> Action(ASTNode ASNode)
     {
         Debug.Assert(ASNode.Children.Length == 2);
-        Annotations NextInPriorityAnno = _Parser.GetFromChildIndex(ASNode, 0);
-        Annotations ProductionPrimeAnno = _Parser.GetFromChildIndex(ASNode, 1);
+        Annotations NextInPriorityAnno = ParserData.GetFromChildIndex(ASNode, 0);
+        Annotations ProductionPrimeAnno = ParserData.GetFromChildIndex(ASNode, 1);
         Debug.Assert(NextInPriorityAnno.IsEmpty is false && NextInPriorityAnno.TypeCode is not null);
         if (!ProductionPrimeAnno.IsEmpty)
         {
@@ -25,7 +25,7 @@ abstract class PrimedBinaryParserBase : InternalParserBase
             return new(
                 new(
                     IsEmpty: false,
-                    TypeCode: _Parser.TP.BinOpResultantType((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!) ?? throw new InvalidOperationException(TypeMismatchErrorMessage((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!))
+                    TypeCode: TP.BinOpResultantType((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!) ?? throw new InvalidOperationException(TypeMismatchErrorMessage((uint)NextInPriorityAnno.TypeCode!, (uint)ProductionPrimeAnno.TypeCode!))
                 ),
                 ASNode
             );

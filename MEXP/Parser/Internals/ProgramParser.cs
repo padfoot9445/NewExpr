@@ -4,14 +4,14 @@ using Common.Tokens;
 namespace MEXP.Parser.Internals;
 class ProgramParser : InternalParserBase
 {
-    public ProgramParser(Parser p) : base(p)
+    public ProgramParser(ParserData p) : base(p)
     {
     }
     private protected override string Name => "Program";
 
     public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
-        if (!SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr))
+        if (!SafeParse(Expression, out AnnotatedNode<Annotations>? Expr))
         {
             Node = null;
             return false;

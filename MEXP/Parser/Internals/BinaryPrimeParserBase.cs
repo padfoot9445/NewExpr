@@ -5,7 +5,7 @@ using Common.Tokens;
 namespace MEXP.Parser.Internals;
 abstract class BinaryPrimeParserBase : InternalParserBase
 {
-    protected BinaryPrimeParserBase(Parser p) : base(p)
+    protected BinaryPrimeParserBase(ParserData p) : base(p)
     {
     }
     public override bool Parse(out AnnotatedNode<Annotations>? Node)
@@ -24,8 +24,8 @@ abstract class BinaryPrimeParserBase : InternalParserBase
         {
             return new(new(IsEmpty: true), ASNode);
         }
-        Annotations NextInPriorityAnnotations = _Parser.GetFromChildIndex(ASNode, 1);
-        Annotations BinaryPrimeAnnotations = _Parser.GetFromChildIndex(ASNode, 2);
+        Annotations NextInPriorityAnnotations = ParserData.GetFromChildIndex(ASNode, 1);
+        Annotations BinaryPrimeAnnotations = ParserData.GetFromChildIndex(ASNode, 2);
         Debug.Assert(NextInPriorityAnnotations.TypeCode is not null);
         if (BinaryPrimeAnnotations.IsEmpty)
         {
@@ -36,7 +36,7 @@ abstract class BinaryPrimeParserBase : InternalParserBase
             Debug.Assert(BinaryPrimeAnnotations.TypeCode is not null);
             return new(
                 new(
-                    TypeCode: _Parser.TP.BinOpResultantType((uint)NextInPriorityAnnotations.TypeCode!, (uint)BinaryPrimeAnnotations.TypeCode!) ?? throw new InvalidOperationException(TypeMismatchErrorMessage((uint)NextInPriorityAnnotations.TypeCode, (uint)BinaryPrimeAnnotations.TypeCode))
+                    TypeCode: TP.BinOpResultantType((uint)NextInPriorityAnnotations.TypeCode!, (uint)BinaryPrimeAnnotations.TypeCode!) ?? throw new InvalidOperationException(TypeMismatchErrorMessage((uint)NextInPriorityAnnotations.TypeCode, (uint)BinaryPrimeAnnotations.TypeCode))
                 ),
                 ASNode
             );

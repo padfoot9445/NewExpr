@@ -4,7 +4,7 @@ using Common.Tokens;
 namespace MEXP.Parser.Internals;
 class PrimaryParser : InternalParserBase
 {
-    public PrimaryParser(Parser p) : base(p)
+    public PrimaryParser(ParserData p) : base(p)
     {
     }
 
@@ -14,7 +14,7 @@ class PrimaryParser : InternalParserBase
     {
         IToken OpenBracketToken = CurrentToken(Inc: true)!;
         //get expr
-        if (!SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
+        if (!SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
         {
             //no message as not suppressed
             Node = null;
@@ -28,7 +28,7 @@ class PrimaryParser : InternalParserBase
                 Attributes: annotations,
                 node: ASTNode.Parenthesized(Open: OpenBracketToken, Center: Expr!, Close: CurrentToken()!, Name)
             );
-            _Parser.Advance();
+            Advance();
             return true;
         }
         else
@@ -40,7 +40,7 @@ class PrimaryParser : InternalParserBase
     }
     private bool GetAndValidateIdentifierType(IToken IdentifierToken, out uint IdentifierType)
     {
-        uint? _IdentifierType = _Parser.TP.GetTypeFromIdentifierLiteral(IdentifierToken.Lexeme);
+        uint? _IdentifierType = TP.GetTypeFromIdentifierLiteral(IdentifierToken.Lexeme);
         if (_IdentifierType is null)
         {
             Log.Log($"Identifier {IdentifierToken.Lexeme} was used before declaration at {Position}");
@@ -54,7 +54,7 @@ class PrimaryParser : InternalParserBase
     {
         Debug.Assert(AssP!.Attributes.TypeCode is not null);
         //typecheck
-        if (_Parser.TP.CanBeAssignedTo(IdentifierType, (uint)AssP!.Attributes.TypeCode))
+        if (TP.CanBeAssignedTo(IdentifierType, (uint)AssP!.Attributes.TypeCode))
         {
             Node = new(
                 Attributes: new(TypeCode: IdentifierType, IsEmpty: false, TypeDenotedByIdentifier: null), //TypeDenotedByIdentifier would need a lookup if we had custom types but we don't
@@ -73,7 +73,7 @@ class PrimaryParser : InternalParserBase
     {
         IToken IdentifierToken = CurrentToken(Inc: true)!;
         //get the assignment prime node
-        if (!SafeParse(_Parser.AssignmentPrime, out AnnotatedNode<Annotations>? AssP))
+        if (!SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? AssP))
         {
             Log.Log($"Impossible path in ParseIdentifierAndAssignment");
             Node = null;
@@ -111,7 +111,7 @@ class PrimaryParser : InternalParserBase
         IToken NumberToken = CurrentToken(Inc: true)!;
         ASTNode NumberNode = ASTNode.Terminal(NumberToken, Name);
         Node = new(
-            new(TypeCode: _Parser.TP.GetTypeFromNumberLiteral(NumberToken.Lexeme)),
+            new(TypeCode: TP.GetTypeFromNumberLiteral(NumberToken.Lexeme)),
             NumberNode
         );
         return true;

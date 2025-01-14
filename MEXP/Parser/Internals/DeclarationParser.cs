@@ -5,14 +5,14 @@ using Common.Tokens;
 namespace MEXP.Parser.Internals;
 class DeclarationParser : InternalParserBase
 {
-    public DeclarationParser(Parser p) : base(p)
+    public DeclarationParser(ParserData p) : base(p)
     {
     }
     private protected override string Name => "Declaration";
 
     public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
-        if (SafeParse(_Parser.Type, out AnnotatedNode<Annotations>? TNode))
+        if (SafeParse(Type, out AnnotatedNode<Annotations>? TNode))
         {
             IToken IdentToken = CurrentToken(Inc: true)!;
             if (!IdentToken.TCmp(TokenType.Identifier))
@@ -21,12 +21,12 @@ class DeclarationParser : InternalParserBase
                 Node = null;
                 return false;
             }
-            if (SafeParse(_Parser.AssignmentPrime, out AnnotatedNode<Annotations>? ANode))
+            if (SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? ANode))
             {
                 Debug.Assert(IdentToken.TT == TokenType.Identifier);
                 Debug.Assert(TNode!.Attributes.TypeDenotedByIdentifier is not null);
                 //verify type safety if AssignmentPrime exists
-                if (ANode!.Attributes.IsEmpty is false && !_Parser.TP.CanBeDeclaredTo(TNode!.Attributes.TypeDenotedByIdentifier!, ANode!.Attributes.TypeCode!))
+                if (ANode!.Attributes.IsEmpty is false && !TP.CanBeDeclaredTo(TNode!.Attributes.TypeDenotedByIdentifier!, ANode!.Attributes.TypeCode!))
                 {
                     //if there exists an assignmentprime and the declaration is not type-safe then we have an issue; if there does not exist an assignmentprime the declaration DNE so we don't care about types
                     Log.Log($"Type mismatch at position {Position}; Cannot assign {ANode!.Attributes.TypeCode} to {TNode!.Attributes.TypeDenotedByIdentifier}"); //TODO: Reverse typecodes for better error reporting
@@ -35,7 +35,7 @@ class DeclarationParser : InternalParserBase
                 }
                 else
                 {
-                    _Parser.TP.StoreIdentifierType(IdentToken.Lexeme, (uint)TNode!.Attributes.TypeDenotedByIdentifier); //store identifier type in type table upon declaration
+                    TP.StoreIdentifierType(IdentToken.Lexeme, (uint)TNode!.Attributes.TypeDenotedByIdentifier); //store identifier type in type table upon declaration
                     Node = new(new(
                         TypeCode: ANode!.Attributes.IsEmpty is true ? null : TNode!.Attributes.TypeDenotedByIdentifier, //if AssignmentPrime is empty then we cannot give any type to this declaration as an expression
                         IsEmpty: false
@@ -50,7 +50,7 @@ class DeclarationParser : InternalParserBase
                 return false;
             }
         }
-        else if (SafeParse(_Parser.Addition, out AnnotatedNode<Annotations>? Add, Suppress: false))
+        else if (SafeParse(Addition, out AnnotatedNode<Annotations>? Add, Suppress: false))
         {
             Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, Name));
             return true;

@@ -5,7 +5,7 @@ using Common.Tokens;
 namespace MEXP.Parser.Internals;
 class AssignmentPrimeParser : BinaryPrimeParserBase
 {
-    public AssignmentPrimeParser(Parser p) : base(p)
+    public AssignmentPrimeParser(ParserData p) : base(p)
     {
     }
     private protected override AnnotatedNode<Annotations> Action(ASTNode ASNode)
@@ -18,8 +18,8 @@ class AssignmentPrimeParser : BinaryPrimeParserBase
         {
             Debug.Assert(ASNode.Children.Length == 3);
             Debug.Assert(ASNode.Children[2] is AnnotatedNode<Annotations>);
-            Annotations NestedAssignmentPrimeAnnotations = _Parser.GetFromChildIndex(ASNode, 2);
-            Annotations AdditionAnnotations = _Parser.GetFromChildIndex(ASNode, 1);
+            Annotations NestedAssignmentPrimeAnnotations = ParserData.GetFromChildIndex(ASNode, 2);
+            Annotations AdditionAnnotations = ParserData.GetFromChildIndex(ASNode, 1);
             if (NestedAssignmentPrimeAnnotations.IsEmpty is true)
             {
                 return new(
@@ -45,7 +45,7 @@ class AssignmentPrimeParser : BinaryPrimeParserBase
         }
     }
 
-    private protected override InternalParserBase NextInPriority => _Parser.Addition;
+    private protected override InternalParserBase NextInPriority => Addition;
 
     private protected override ICollection<TokenType> Operators => [TokenType.Equals];
 

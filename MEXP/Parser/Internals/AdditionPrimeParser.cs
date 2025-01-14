@@ -3,11 +3,11 @@ using Common.Tokens;
 namespace MEXP.Parser.Internals;
 class AdditionPrimeParser : BinaryPrimeParserBase
 {
-    public AdditionPrimeParser(Parser p) : base(p)
+    public AdditionPrimeParser(ParserData p) : base(p)
     {
     }
 
-    private protected override InternalParserBase NextInPriority => _Parser.Multiplication;
+    private protected override InternalParserBase NextInPriority => Multiplication;
 
     private protected override ICollection<TokenType> Operators => [TokenType.Addition, TokenType.Subtraction];
 

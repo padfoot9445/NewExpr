@@ -5,7 +5,7 @@ using MEXP.Parser;
 namespace MEXP.Parser.Internals;
 class TypeParser : InternalParserBase
 {
-    public TypeParser(Parser p) : base(p)
+    public TypeParser(ParserData p) : base(p)
     {
     }
     private protected override string Name => "Type";
@@ -16,11 +16,11 @@ class TypeParser : InternalParserBase
             Node = new(
                 new(
                     CanBeResolvedToAssignable: false, //even though it *can*, we can't assign
-                    TypeDenotedByIdentifier: _Parser.TP.GetTypeFromTypeDenotingIdentifier(CurrentToken()!.Lexeme),
+                    TypeDenotedByIdentifier: TP.GetTypeFromTypeDenotingIdentifier(CurrentToken()!.Lexeme),
                     TypeCode: null
                 ),
                 ASTNode.Terminal(CurrentToken()!, nameof(Type)));
-            _Parser.Advance();
+            Advance();
             return true;
         }
         Log.Log($"Expected valid Type at {Position}");

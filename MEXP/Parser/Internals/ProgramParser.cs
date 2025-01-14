@@ -25,9 +25,9 @@ class ProgramParser : InternalParserBase
         //check for repeat(is not EOF)
         if (!CurrentToken().TCmp(TokenType.EOF))
         {
-            if (_Parser.SP.SafeParse(Program, out AnnotatedNode<Annotations>? Repeat, Current: ref _Parser.Current))
+            if (_Parser.SP.SafeParse(self, out AnnotatedNode<Annotations>? Repeat, Current: ref _Parser.Current))
             {
-                Node = new(ASTNode.Repeating(Expr!, C, Repeat!, nameof(Program)));
+                Node = new(ASTNode.Repeating(Expr!, C, Repeat!, Name));
                 return true;
             }
             else
@@ -39,7 +39,7 @@ class ProgramParser : InternalParserBase
         }
         else
         {
-            Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, C], nameof(Program));
+            Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, C], Name);
             return true;
         }
     }

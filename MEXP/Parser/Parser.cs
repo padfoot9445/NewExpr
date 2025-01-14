@@ -51,6 +51,9 @@ class Parser : IParser
         AdditionParser = new AdditionParser(this);
         AdditionPrimeParser = new AdditionPrimeParser(this);
         AssignmentPrimeParser = new AssignmentPrimeParser(this);
+        DeclarationParser = new DeclarationParser(this);
+        ExpressionParser = new ExpressionParser(this);
+        ProgramParser = new ProgramParser(this);
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)
@@ -114,103 +117,12 @@ class Parser : IParser
         }
         return ((AnnotatedNode<Annotations>)node.Children[index]).Attributes;
     }
-    bool Program(out AnnotatedNode<Annotations>? Node)
-    {
-        if (!SP.SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Current: ref Current))
-        {
-            Node = null;
-            return false;
-        }
-        //assert semicolon
-        IToken C = CurrentToken(Inc: true)!;
-        if (C.TT != TokenType.Semicolon)
-        {
-            Log.Log($"Expected \";\" at {Position}");
-            Node = null;
-            return false;
-        }
-        //check for repeat(is not EOF)
-        if (!CurrentToken().TCmp(TokenType.EOF))
-        {
-            if (SP.SafeParse(Program, out AnnotatedNode<Annotations>? Repeat, Current: ref Current))
-            {
-                Node = new(ASTNode.Repeating(Expr!, C, Repeat!, nameof(Program)));
-                return true;
-            }
-            else
-            {
-                Log.Log($"Expected EOF at Token Position {Position} but got \"{Input[Current].Lexeme}\"");
-                Node = null;
-                return false;
-            }
-        }
-        else
-        {
-            Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, C], nameof(Program));
-            return true;
-        }
-    }
-
-    public bool Expression(out AnnotatedNode<Annotations>? Node)
-    {
-        if (SP.SafeParse(Declaration, out AnnotatedNode<Annotations>? Add, Suppress: false, Current: ref Current)) //no additional context to add here so we get the context from safeparse
-        {
-            Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, nameof(Expression))); //TypeCode <- Addition.TypeCode
-            return true;
-        }
-        Node = null;
-        return false;
-    }
-    public bool Declaration(out AnnotatedNode<Annotations>? Node)
-    {
-        if (SP.SafeParse(Type, out AnnotatedNode<Annotations>? TNode, Current: ref Current))
-        {
-            IToken IdentToken = CurrentToken(Inc: true)!;
-            if (!IdentToken.TCmp(TokenType.Identifier))
-            {
-                Log.Log($"Expected Identifier after Type at position {Position}");
-                Node = null;
-                return false;
-            }
-            if (SP.SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? ANode, Current: ref Current))
-            {
-                Debug.Assert(IdentToken.TT == TokenType.Identifier);
-                Debug.Assert(TNode!.Attributes.TypeDenotedByIdentifier is not null);
-                //verify type safety if AssignmentPrime exists
-                if (ANode!.Attributes.IsEmpty is false && !TP.CanBeDeclaredTo(TNode!.Attributes.TypeDenotedByIdentifier!, ANode!.Attributes.TypeCode!))
-                {
-                    //if there exists an assignmentprime and the declaration is not type-safe then we have an issue; if there does not exist an assignmentprime the declaration DNE so we don't care about types
-                    Log.Log($"Type mismatch at position {Position}; Cannot assign {ANode!.Attributes.TypeCode} to {TNode!.Attributes.TypeDenotedByIdentifier}"); //TODO: Reverse typecodes for better error reporting
-                    Node = null;
-                    return false;
-                }
-                else
-                {
-                    TP.StoreIdentifierType(IdentToken.Lexeme, (uint)TNode!.Attributes.TypeDenotedByIdentifier); //store identifier type in type table upon declaration
-                    Node = new(new(
-                        TypeCode: ANode!.Attributes.IsEmpty is true ? null : TNode!.Attributes.TypeDenotedByIdentifier, //if AssignmentPrime is empty then we cannot give any type to this declaration as an expression
-                        IsEmpty: false
-                    ), ASTNode.Binary(TNode!, Input[Current - 1], ANode!, nameof(Declaration)));
-                    return true;
-                }
-            }
-            else
-            {
-                Log.Log($"Impossible path in {nameof(Declaration)}");
-                Node = null;
-                return false;
-            }
-        }
-        else if (SP.SafeParse(Addition, out AnnotatedNode<Annotations>? Add, Suppress: false, Current: ref Current))
-        {
-            Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, nameof(Declaration)));
-            return true;
-        }
-        Node = null;
-        Log.Log($"Expected addition or declaration (Type) at position {Position}");
-        return false;
-    }
-
+    private InternalParserBase ProgramParser;
+    public ParsingFunction Program => ProgramParser.Parse;
+    private InternalParserBase ExpressionParser;
+    public ParsingFunction Expression => ExpressionParser.Parse;
+    private InternalParserBase DeclarationParser;
+    public ParsingFunction Declaration => DeclarationParser.Parse;
     //<AssignmentPrime> ::= "=" <Addition> <AssignmentPrime> | <Empty>;
     private InternalParserBase AssignmentPrimeParser;
     public ParsingFunction AssignmentPrime => AssignmentPrimeParser.Parse;

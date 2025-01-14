@@ -5,16 +5,21 @@ using Common.Logger;
 using System.Diagnostics;
 using MEXP.Parser.Internals;
 namespace MEXP.Parser;
-public class Parser
+class Parser : IParser
 {
     public List<IToken> Input { get; set; } //assume it ends in EOF
     int Current = 0;
-    ILogger Log { get; init; }
-    private int Position { get => Current; }
+    public ILogger Log { get; init; }
+    public int Position { get => Current; }
     readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
-    ITypeProvider TP { get; }
-    SafeParser SP { get; init; }
-    private IToken? CurrentToken(int offset = 0, bool Inc = false)
+    public ITypeProvider TP { get; }
+    public SafeParser SP { get; init; }
+    public IToken? Advance()
+    {
+        Current++;
+        return CurrentToken(-1);
+    }
+    public IToken? CurrentToken(int offset = 0, bool Inc = false)
     {
         if (Current + offset < Input.Count)
         {
@@ -36,6 +41,7 @@ public class Parser
         Log = logger ?? new Logger();
         SP = new(Log);
         this.TP = TP ?? new TypeProvider();
+        TypeParser = new TypeParser(this);
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)
@@ -558,23 +564,7 @@ public class Parser
         Node = null;
         return false;
     }
-    bool Type(out AnnotatedNode<Annotations>? Node)
-    {
-        if (CurrentToken().TCmp([TokenType.TypeByte, TokenType.TypeDouble, TokenType.TypeInt, TokenType.TypeLong, TokenType.TypeLongInt, TokenType.TypeFloat, TokenType.TypeNumber]))
-        {
-            Node = new(
-                new(
-                    CanBeResolvedToAssignable: false, //even though it *can*, we can't assign
-                    TypeDenotedByIdentifier: TP.GetTypeFromTypeDenotingIdentifier(Input[Current].Lexeme),
-                    TypeCode: null
-                ),
-                ASTNode.Terminal(Input[Current], nameof(Type)));
-            Current++;
-            return true;
-        }
-        Log.Log($"Expected valid Type at {Position}");
-        Node = null;
-        return false;
-    }
+    private InternalParserBase TypeParser;
+    private ParsingFunction Type => TypeParser.Parse;
 
 }

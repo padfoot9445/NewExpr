@@ -82,7 +82,7 @@ public class TestParser
         Assert.Multiple(() =>
         {
             ILogger? Logger = null; //new MockLogger();
-            Assert.That(Parser.Parse(Lex(input), out AnnotatedNode<Annotations>? node, Log: Logger), Is.True);
+            Assert.That(IParser.Parse(Lex(input), out AnnotatedNode<Annotations>? node, Log: Logger), Is.True);
             Assert.That(node, Is.TypeOf<AnnotatedNode<Annotations>>());
             //Assert.That(Logger.LogRecord, Is.Empty);
         });
@@ -103,7 +103,7 @@ public class TestParser
         var Logger = new MockLogger();
         Assert.Multiple(() =>
         {
-            Assert.That(Parser.Parse(Lex(input), out AnnotatedNode<Annotations>? node, Logger), Is.False);
+            Assert.That(IParser.Parse(Lex(input), out AnnotatedNode<Annotations>? node, Logger), Is.False);
             Assert.That(Logger.LogRecord, Has.Count.GreaterThanOrEqualTo(MinimumErrorMessageCount));
         });
 
@@ -133,7 +133,7 @@ public class TestParser
 
         Assert.Multiple(() =>
         {
-            Parser p = new(Lex(input), null, typeProvider);
+            IParser p = IParser.NewParser(Lex(input), null, typeProvider);
             Assert.That(p.Parse(out AnnotatedNode<Annotations>? node), Is.True);
             Assert.That(node, Is.Not.Null);
             Assert.That(Accessor(node!), Is.Not.Null);

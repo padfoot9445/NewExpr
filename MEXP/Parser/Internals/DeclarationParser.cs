@@ -8,7 +8,9 @@ class DeclarationParser : InternalParserBase
     public DeclarationParser(Parser p) : base(p)
     {
     }
-    public bool Declaration(out AnnotatedNode<Annotations>? Node)
+    private protected override string Name => "Declaration";
+
+    public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
         if (_Parser.SP.SafeParse(_Parser.Type, out AnnotatedNode<Annotations>? TNode, Current: ref _Parser.Current))
         {
@@ -37,31 +39,24 @@ class DeclarationParser : InternalParserBase
                     Node = new(new(
                         TypeCode: ANode!.Attributes.IsEmpty is true ? null : TNode!.Attributes.TypeDenotedByIdentifier, //if AssignmentPrime is empty then we cannot give any type to this declaration as an expression
                         IsEmpty: false
-                    ), ASTNode.Binary(TNode!, CurrentToken(-1)!, ANode!, nameof(Declaration)));
+                    ), ASTNode.Binary(TNode!, CurrentToken(-1)!, ANode!, Name));
                     return true;
                 }
             }
             else
             {
-                Log.Log($"Impossible path in {nameof(Declaration)}");
+                Log.Log($"Impossible path in {Name}");
                 Node = null;
                 return false;
             }
         }
         else if (_Parser.SP.SafeParse(_Parser.Addition, out AnnotatedNode<Annotations>? Add, Suppress: false, Current: ref _Parser.Current))
         {
-            Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, nameof(Declaration)));
+            Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, Name));
             return true;
         }
         Node = null;
         Log.Log($"Expected addition or declaration (Type) at position {Position}");
         return false;
-    }
-
-    private protected override string Name => "Declaration";
-
-    public override bool Parse(out AnnotatedNode<Annotations>? Node)
-    {
-        return Declaration(out Node);
     }
 }

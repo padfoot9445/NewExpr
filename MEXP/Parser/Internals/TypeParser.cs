@@ -8,7 +8,7 @@ class TypeParser : InternalParserBase
     public TypeParser(Parser p) : base(p)
     {
     }
-
+    private protected override string Name => "Type";
     public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
         if (CurrentToken().TCmp([TokenType.TypeByte, TokenType.TypeDouble, TokenType.TypeInt, TokenType.TypeLong, TokenType.TypeLongInt, TokenType.TypeFloat, TokenType.TypeNumber]))

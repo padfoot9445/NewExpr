@@ -16,4 +16,5 @@ abstract class InternalParserBase
     private protected IToken? CurrentToken(int offset = 0, bool Inc = false) => _Parser.CurrentToken(offset, Inc);
     private protected ILogger Log;
     private protected int Position => _Parser.Position;
+    private protected abstract string Name { get; }
 }

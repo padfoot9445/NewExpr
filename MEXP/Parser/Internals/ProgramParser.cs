@@ -16,14 +16,19 @@ class ProgramParser : InternalParserBase
         }
         //assert semicolon
         IToken C = CurrentToken(Inc: true)!;
-        if (C.TT != TokenType.Semicolon)
+        if (!C.TCmp(TokenType.Semicolon))
         {
             Log.Log($"Expected \";\" at {Position}");
             Node = null;
             return false;
         }
         //check for repeat(is not EOF)
-        if (!CurrentToken().TCmp(TokenType.EOF))
+        if (CurrentToken().TCmp(TokenType.EOF))
+        {
+            Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, C], Name);
+            return true;
+        }
+        else
         {
             if (_Parser.SP.SafeParse(this, out AnnotatedNode<Annotations>? Repeat, Current: ref _Parser.Current))
             {
@@ -37,11 +42,7 @@ class ProgramParser : InternalParserBase
                 return false;
             }
         }
-        else
-        {
-            Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, C], Name);
-            return true;
-        }
+
     }
 
     private protected override string Name => "Program";

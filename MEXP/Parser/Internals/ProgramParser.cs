@@ -25,7 +25,7 @@ class ProgramParser : InternalParserBase
         //check for repeat(is not EOF)
         if (!CurrentToken().TCmp(TokenType.EOF))
         {
-            if (_Parser.SP.SafeParse(self, out AnnotatedNode<Annotations>? Repeat, Current: ref _Parser.Current))
+            if (_Parser.SP.SafeParse(this, out AnnotatedNode<Annotations>? Repeat, Current: ref _Parser.Current))
             {
                 Node = new(ASTNode.Repeating(Expr!, C, Repeat!, Name));
                 return true;

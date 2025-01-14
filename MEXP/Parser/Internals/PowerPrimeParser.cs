@@ -7,7 +7,7 @@ class PowerPrimeParser : BinaryPrimeParserBase
     {
     }
 
-    private protected override ParsingFunction NextInPriority => _Parser.Negation;
+    private protected override InternalParserBase NextInPriority => _Parser.Negation;
 
     private protected override ICollection<TokenType> Operators => [TokenType.Exponentiation];
 

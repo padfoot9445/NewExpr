@@ -5,9 +5,9 @@ class PowerParser : PrimedBinaryParserBase
     {
     }
 
-    private protected override ParsingFunction NextInPriority => _Parser.Negation;
+    private protected override InternalParserBase NextInPriority => _Parser.Negation;
 
-    private protected override ParsingFunction BinaryPrime => _Parser.PowerPrime;
+    private protected override BinaryPrimeParserBase BinaryPrime => (BinaryPrimeParserBase)_Parser.PowerPrime;
 
     private protected override string Name => "Power";
 }

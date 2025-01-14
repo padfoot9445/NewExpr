@@ -41,19 +41,19 @@ class Parser : IParser
         Log = logger ?? new Logger();
         SP = new(Log);
         this.TP = TP ?? new TypeProvider();
-        TypeParser = new TypeParser(this);
-        PrimaryParser = new PrimaryParser(this);
-        NegationParser = new NegationParser(this);
-        PowerParser = new PowerParser(this);
-        PowerPrimeParser = new PowerPrimeParser(this);
-        MultiplicationParser = new MultiplicationParser(this);
-        MultiplicationPrimeParser = new MultiplicationPrimeParser(this);
-        AdditionParser = new AdditionParser(this);
-        AdditionPrimeParser = new AdditionPrimeParser(this);
-        AssignmentPrimeParser = new AssignmentPrimeParser(this);
-        DeclarationParser = new DeclarationParser(this);
-        ExpressionParser = new ExpressionParser(this);
-        ProgramParser = new ProgramParser(this);
+        Type = new TypeParser(this);
+        Primary = new PrimaryParser(this);
+        Negation = new NegationParser(this);
+        Power = new PowerParser(this);
+        PowerPrime = new PowerPrimeParser(this);
+        Multiplication = new MultiplicationParser(this);
+        MultiplicationPrime = new MultiplicationPrimeParser(this);
+        Addition = new AdditionParser(this);
+        AdditionPrime = new AdditionPrimeParser(this);
+        AssignmentPrime = new AssignmentPrimeParser(this);
+        Declaration = new DeclarationParser(this);
+        Expression = new ExpressionParser(this);
+        Program = new ProgramParser(this);
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)
@@ -117,35 +117,22 @@ class Parser : IParser
         }
         return ((AnnotatedNode<Annotations>)node.Children[index]).Attributes;
     }
-    private InternalParserBase ProgramParser;
-    public ParsingFunction Program => ProgramParser.Parse;
-    private InternalParserBase ExpressionParser;
-    public ParsingFunction Expression => ExpressionParser.Parse;
-    private InternalParserBase DeclarationParser;
-    public ParsingFunction Declaration => DeclarationParser.Parse;
+    public InternalParserBase Program;
+    public InternalParserBase Expression;
+    public InternalParserBase Declaration;
     //<AssignmentPrime> ::= "=" <Addition> <AssignmentPrime> | <Empty>;
-    private InternalParserBase AssignmentPrimeParser;
-    public ParsingFunction AssignmentPrime => AssignmentPrimeParser.Parse;
+    public InternalParserBase AssignmentPrime;
 
-    private InternalParserBase AdditionParser;
-    public ParsingFunction Addition => AdditionParser.Parse;
-    private InternalParserBase AdditionPrimeParser;
-    public ParsingFunction AdditionPrime => AdditionPrimeParser.Parse;
+    public InternalParserBase Addition;
+    public InternalParserBase AdditionPrime;
     // AdditionPrime ::= ("-" | "+") Multiplication AdditionPrime | Empty
-    private InternalParserBase MultiplicationParser;
-    public ParsingFunction Multiplication => MultiplicationParser.Parse;
+    public InternalParserBase Multiplication;
 
-    private InternalParserBase MultiplicationPrimeParser;
-    public ParsingFunction MultiplicationPrime => MultiplicationPrimeParser.Parse;
-    private InternalParserBase PowerParser;
-    public ParsingFunction Power => PowerParser.Parse;
-    private InternalParserBase PowerPrimeParser;
-    public ParsingFunction PowerPrime => PowerPrimeParser.Parse;
-    private InternalParserBase NegationParser;
-    public ParsingFunction Negation => NegationParser.Parse;
-    private InternalParserBase PrimaryParser;
-    public ParsingFunction Primary => PrimaryParser.Parse;
-    private InternalParserBase TypeParser;
-    public ParsingFunction Type => TypeParser.Parse;
+    public InternalParserBase MultiplicationPrime;
+    public InternalParserBase Power;
+    public InternalParserBase PowerPrime;
+    public InternalParserBase Negation;
+    public InternalParserBase Primary;
+    public InternalParserBase Type;
 
 }

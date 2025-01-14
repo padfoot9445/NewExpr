@@ -7,7 +7,7 @@ class MultiplicationPrimeParser : BinaryPrimeParserBase
     {
     }
 
-    private protected override ParsingFunction NextInPriority => _Parser.Power;
+    private protected override InternalParserBase NextInPriority => _Parser.Power;
 
     private protected override ICollection<TokenType> Operators => [TokenType.Multiplication, TokenType.Division];
 

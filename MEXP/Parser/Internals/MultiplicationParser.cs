@@ -5,9 +5,9 @@ class MultiplicationParser : PrimedBinaryParserBase
     {
     }
 
-    private protected override ParsingFunction NextInPriority => _Parser.Power;
+    private protected override InternalParserBase NextInPriority => _Parser.Power;
 
-    private protected override ParsingFunction BinaryPrime => _Parser.MultiplicationPrime;
+    private protected override BinaryPrimeParserBase BinaryPrime => (BinaryPrimeParserBase)_Parser.MultiplicationPrime;
 
     private protected override string Name => "Multiplication";
 }

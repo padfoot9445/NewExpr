@@ -45,7 +45,7 @@ class AssignmentPrimeParser : BinaryPrimeParserBase
         }
     }
 
-    private protected override ParsingFunction NextInPriority => _Parser.Addition;
+    private protected override InternalParserBase NextInPriority => _Parser.Addition;
 
     private protected override ICollection<TokenType> Operators => [TokenType.Equals];
 

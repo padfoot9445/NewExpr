@@ -7,8 +7,8 @@ abstract class PrimedBinaryParserBase : InternalParserBase
     protected PrimedBinaryParserBase(Parser p) : base(p)
     {
     }
-    private protected abstract ParsingFunction NextInPriority { get; }
-    private protected abstract ParsingFunction BinaryPrime { get; }
+    private protected abstract InternalParserBase NextInPriority { get; }
+    private protected abstract BinaryPrimeParserBase BinaryPrime { get; }
     private protected virtual string ErrorMessage => $"PrimedBinary Error at {Position}";
     private protected virtual string TypeMismatchErrorMessage(uint Type1, uint Type2) => $"Type Mismatch between {Type1} and {Type2} at {Position}";
     private protected virtual AnnotatedNode<Annotations> Action(ASTNode ASNode)

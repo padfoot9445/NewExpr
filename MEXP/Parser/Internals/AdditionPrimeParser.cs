@@ -7,7 +7,7 @@ class AdditionPrimeParser : BinaryPrimeParserBase
     {
     }
 
-    private protected override ParsingFunction NextInPriority => _Parser.Multiplication;
+    private protected override InternalParserBase NextInPriority => _Parser.Multiplication;
 
     private protected override ICollection<TokenType> Operators => [TokenType.Addition, TokenType.Subtraction];
 

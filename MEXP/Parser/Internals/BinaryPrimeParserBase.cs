@@ -13,7 +13,7 @@ abstract class BinaryPrimeParserBase : InternalParserBase
         return BinaryPrime(out Node);
     }
 
-    private protected abstract ParsingFunction NextInPriority { get; }
+    private protected abstract InternalParserBase NextInPriority { get; }
     private protected abstract ICollection<TokenType> Operators { get; }
     private protected virtual string ErrorMessage => $"PrimedBinary Error at {Position}";
     private protected virtual string TypeMismatchErrorMessage(uint Type1, uint Type2) => $"Type Mismatch between {Type1} and {Type2} at {Position}";
@@ -45,11 +45,10 @@ abstract class BinaryPrimeParserBase : InternalParserBase
 
     bool BinaryPrime(out AnnotatedNode<Annotations>? Node)
     {
-        bool Self(out AnnotatedNode<Annotations>? node) => Parse(out node); //function representing recursive call on self; i.e. the BinaryPrime part of the paths where this is not empty
         if (Operators.Contains(CurrentToken()!.TT))
         {
             IToken Operator = CurrentToken(Inc: true)!;
-            if (_Parser.SP.SafeParse(NextInPriority, out AnnotatedNode<Annotations>? ParentPrimedNode, Suppress: false, Current: ref _Parser.Current) && _Parser.SP.SafeParse(Self, out AnnotatedNode<Annotations>? PrimeNode, Suppress: false, Current: ref _Parser.Current))
+            if (_Parser.SP.SafeParse(NextInPriority, out AnnotatedNode<Annotations>? ParentPrimedNode, Suppress: false, Current: ref _Parser.Current) && _Parser.SP.SafeParse(this, out AnnotatedNode<Annotations>? PrimeNode, Suppress: false, Current: ref _Parser.Current))
             {
                 Node = Action(ASTNode.BinaryPrime(Operator: Operator, Right: ParentPrimedNode!, Repeat: PrimeNode!, Name));
                 return true;

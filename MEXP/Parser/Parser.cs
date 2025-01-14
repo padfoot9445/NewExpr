@@ -3,6 +3,7 @@ using Common.AST;
 using System.Linq.Expressions;
 using Common.Logger;
 using System.Diagnostics;
+using MEXP.Parser.Internals;
 namespace MEXP.Parser;
 public class Parser
 {

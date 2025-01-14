@@ -433,7 +433,7 @@ class Parser : IParser
             Action: GetPrimedBinaryAction((T1, T2, Pos) => $"Exponentiation is not valid between {T1} and {T2} at Position {Pos}")
         )
     ;
-    bool PowerPrime(out AnnotatedNode<Annotations>? Node)
+    public bool PowerPrime(out AnnotatedNode<Annotations>? Node)
         => BinaryPrime(
             NextInPriority: Negation,
             Operators: [TokenType.Exponentiation],

@@ -8,7 +8,7 @@ namespace MEXP.Parser;
 class Parser : IParser
 {
     public List<IToken> Input { get; set; } //assume it ends in EOF
-    int Current = 0;
+    public int Current = 0;
     public ILogger Log { get; init; }
     public int Position { get => Current; }
     readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
@@ -42,6 +42,7 @@ class Parser : IParser
         SP = new(Log);
         this.TP = TP ?? new TypeProvider();
         TypeParser = new TypeParser(this);
+        PrimaryParser = new PrimaryParser(this);
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)
@@ -278,7 +279,7 @@ class Parser : IParser
         }
     }
 
-    bool Expression(out AnnotatedNode<Annotations>? Node)
+    public bool Expression(out AnnotatedNode<Annotations>? Node)
     {
         if (SP.SafeParse(Declaration, out AnnotatedNode<Annotations>? Add, Suppress: false, Current: ref Current)) //no additional context to add here so we get the context from safeparse
         {
@@ -288,7 +289,7 @@ class Parser : IParser
         Node = null;
         return false;
     }
-    bool Declaration(out AnnotatedNode<Annotations>? Node)
+    public bool Declaration(out AnnotatedNode<Annotations>? Node)
     {
         if (SP.SafeParse(Type, out AnnotatedNode<Annotations>? TNode, Current: ref Current))
         {
@@ -339,7 +340,7 @@ class Parser : IParser
     }
 
     //<AssignmentPrime> ::= "=" <Addition> <AssignmentPrime> | <Empty>;
-    bool AssignmentPrime(out AnnotatedNode<Annotations>? Node)
+    public bool AssignmentPrime(out AnnotatedNode<Annotations>? Node)
     => BinaryPrime(Addition, [TokenType.Equals], nameof(AssignmentPrime), out Node, (Pos) => $"Impossible Path in {nameof(AssignmentPrime)}", (ASnode) =>
     {
         if (ASnode.Children.Length == 0) //if assignmentprime is empty
@@ -377,7 +378,7 @@ class Parser : IParser
         }
     });
 
-    bool Addition(out AnnotatedNode<Annotations>? Node)
+    public bool Addition(out AnnotatedNode<Annotations>? Node)
         => PrimedBinary(
             NextInPriority: Multiplication,
             BinaryPrime: AdditionPrime,
@@ -388,7 +389,7 @@ class Parser : IParser
         )
     ;
 
-    bool AdditionPrime(out AnnotatedNode<Annotations>? Node)
+    public bool AdditionPrime(out AnnotatedNode<Annotations>? Node)
         => BinaryPrime(
             NextInPriority: Multiplication,
             Operators: [TokenType.Addition, TokenType.Subtraction],
@@ -399,7 +400,7 @@ class Parser : IParser
         )
     ;
     // AdditionPrime ::= ("-" | "+") Multiplication AdditionPrime | Empty
-    bool Multiplication(out AnnotatedNode<Annotations>? Node)
+    public bool Multiplication(out AnnotatedNode<Annotations>? Node)
         => PrimedBinary(
             NextInPriority: Power,
             BinaryPrime: MultiplicationPrime,
@@ -409,7 +410,7 @@ class Parser : IParser
             Action: GetPrimedBinaryAction((T1, T2, Pos) => $"Multiplication is not valid between {T1} and {T2} at {Pos}")
         )
     ;
-    bool MultiplicationPrime(out AnnotatedNode<Annotations>? Node)
+    public bool MultiplicationPrime(out AnnotatedNode<Annotations>? Node)
         => BinaryPrime(
             NextInPriority: Power,
             Operators: [TokenType.Multiplication, TokenType.Division],
@@ -421,7 +422,7 @@ class Parser : IParser
     ;
 
 
-    bool Power(out AnnotatedNode<Annotations>? Node)
+    public bool Power(out AnnotatedNode<Annotations>? Node)
         => PrimedBinary(
             NextInPriority: Negation,
             BinaryPrime: PowerPrime,
@@ -469,101 +470,8 @@ class Parser : IParser
         Node = null;
         return false;
     }
-    bool Primary(out AnnotatedNode<Annotations>? Node) //assuming scanner can currently only scan floats; TODO: Upgrade scanner
-    {
-        if (Input[Current].TT == TokenType.OpenParen)
-        {
-            IToken Operator = Input[Current];
-            Current++;
-            if (SP.SafeParse(Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false, Current: ref Current))
-            {
-                if (Input[Current].TT == TokenType.CloseParen)
-                {
-                    Annotations annotations = new Annotations(CanBeResolvedToAssignable: false);
-                    annotations.ForcedMerge(Expr!.Attributes); //we propagate empty since empty brackets are still empty, but the addition of brackets means that we can no-longer resolve to an identifier literal
-                    Node = new(
-                        Attributes: annotations,
-                        node: ASTNode.Parenthesized(Open: Operator, Center: Expr!, Close: Input[Current], nameof(Primary))
-                    );
-                    Current++;
-                    return true;
-                }
-                else
-                {
-                    Log.Log($"Expected Close Parenthesis at position {Position}");
-                    Node = null;
-                    return false;
-                }
-            }
-            else
-            {
-                //no message as not suppressed
-                Node = null;
-                return false;
-            }
-        }
-        else if (CurrentToken().TCmp(TokenType.Identifier))
-        {
-            IToken IdentifierToken = Input[Current++];
-            ASTNode IdentifierNode = ASTNode.Terminal(IdentifierToken, nameof(Primary));
-            if (SP.SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? AssP, Current: ref Current))
-            {
-                ASTNode ASNode = ASTNode.PrimedBinary(IdentifierNode, AssP!, nameof(Primary));
-                uint? IdentifierType = TP.GetTypeFromIdentifierLiteral(IdentifierToken.Lexeme);
-                if (IdentifierType is null)
-                {
-                    Log.Log($"Identifier {IdentifierToken.Lexeme} was used before declaration at {Position}");
-                    Node = null;
-                    return false;
-                }
-                if (AssP!.Attributes.IsEmpty is true)
-                {
-                    Node = new(
-                        Attributes: new(
-                            TypeCode: IdentifierType,
-                            CanBeResolvedToAssignable: true,
-                            IsEmpty: false),
-                        node: AssP
-                    );
-                    return true;
-                }
-                else
-                {
-                    Debug.Assert(AssP!.Attributes.TypeCode is not null);
-                    //typecheck
-                    if (TP.CanBeAssignedTo((uint)IdentifierType, (uint)AssP!.Attributes.TypeCode))
-                    {
-                        Node = new(
-                            Attributes: new(TypeCode: IdentifierType, IsEmpty: false, TypeDenotedByIdentifier: null), //TypeDenotedByIdentifier would need a lookup if we had custom types but we don't
-                            node: AssP
-                        );
-                        return true;
-                    }
-                    else
-                    {
-                        Log.Log($"Could not assign {AssP!.Attributes.TypeCode} to {IdentifierType} at {Position}. If you meant to cast, declare the variable in-line; if you do not want to bind, use _ as the identifier.");
-                        Node = null;
-                        return false;
-                    }
-                }
-            }
-            Node = null;
-            return false;
-        }
-        else if (CurrentToken().TCmp(TokenType.Number))
-        {
-            IToken NumberToken = Input[Current++];
-            ASTNode NumberNode = ASTNode.Terminal(NumberToken, nameof(Primary));
-            Node = new(
-                new(TypeCode: TP.GetTypeFromNumberLiteral(NumberToken.Lexeme)),
-                NumberNode
-            );
-            return true;
-        }
-        Log.Log($"Expected Open Parenthesis ( or Number or identifier at token position {Position}, but got \"{Input[Current].Lexeme}\"");
-        Node = null;
-        return false;
-    }
+    private InternalParserBase PrimaryParser;
+    private ParsingFunction Primary => PrimaryParser.Parse;
     private InternalParserBase TypeParser;
     private ParsingFunction Type => TypeParser.Parse;
 

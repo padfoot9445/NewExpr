@@ -48,6 +48,9 @@ class Parser : IParser
         PowerPrimeParser = new PowerPrimeParser(this);
         MultiplicationParser = new MultiplicationParser(this);
         MultiplicationPrimeParser = new MultiplicationPrimeParser(this);
+        AdditionParser = new AdditionParser(this);
+        AdditionPrimeParser = new AdditionPrimeParser(this);
+        AssignmentPrimeParser = new AssignmentPrimeParser(this);
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)
@@ -345,65 +348,13 @@ class Parser : IParser
     }
 
     //<AssignmentPrime> ::= "=" <Addition> <AssignmentPrime> | <Empty>;
-    public bool AssignmentPrime(out AnnotatedNode<Annotations>? Node)
-    => BinaryPrime(Addition, [TokenType.Equals], nameof(AssignmentPrime), out Node, (Pos) => $"Impossible Path in {nameof(AssignmentPrime)}", (ASnode) =>
-    {
-        if (ASnode.Children.Length == 0) //if assignmentprime is empty
-        {
-            return new(new(IsEmpty: true), ASnode);
-        }
-        else
-        {
-            Debug.Assert(ASnode.Children.Length == 3);
-            Debug.Assert(ASnode.Children[2] is AnnotatedNode<Annotations>);
-            Annotations NestedAssignmentPrimeAnnotations = GetFromChildIndex(ASnode, 2);
-            Annotations AdditionAnnotations = GetFromChildIndex(ASnode, 1);
-            if (NestedAssignmentPrimeAnnotations.IsEmpty is true)
-            {
-                return new(
-                    new(IsEmpty: false,
-                    TypeCode: AdditionAnnotations.TypeCode
-                    ), //= x, TypeCode <- x.TypeCode
-                    ASnode
-                );
-            }
-            else
-            {
-                Debug.Assert(NestedAssignmentPrimeAnnotations.IsEmpty is false);
-                if (!AdditionAnnotations.CanBeResolvedToAssignable)
-                {
-                    throw new InvalidOperationException($"Cannot assign to non-variable at position {Position}");
-                    //TODO: Add handling for exceptions in actions in binaryparse methods
-                }
-                return new(
-                    new(TypeCode: NestedAssignmentPrimeAnnotations.TypeCode), // = x (= y), TypeCode <= (= y).TypeCode
-                    ASnode
-                );
-            }
-        }
-    });
+    private InternalParserBase AssignmentPrimeParser;
+    public ParsingFunction AssignmentPrime => AssignmentPrimeParser.Parse;
 
-    public bool Addition(out AnnotatedNode<Annotations>? Node)
-        => PrimedBinary(
-            NextInPriority: Multiplication,
-            BinaryPrime: AdditionPrime,
-            CurrentProductionName: nameof(Addition),
-            out Node,
-            ErrorMessage: (_) => "", //no error message as we propagate the error down from Multiplication
-            Action: GetPrimedBinaryAction((T1, T2, pos) => $"Addition between {T1} and {T2} is not valid at position {pos}")
-        )
-    ;
-
-    public bool AdditionPrime(out AnnotatedNode<Annotations>? Node)
-        => BinaryPrime(
-            NextInPriority: Multiplication,
-            Operators: [TokenType.Addition, TokenType.Subtraction],
-            CurrentProductionName: nameof(AdditionPrime),
-            out Node,
-            MessageOnError: (_) => "",
-            Action: GetBinaryPrimeAction((T1, T2, pos) => $"Addition between {T1} and {T2} is not valid at position {pos}")
-        )
-    ;
+    private InternalParserBase AdditionParser;
+    public ParsingFunction Addition => AdditionParser.Parse;
+    private InternalParserBase AdditionPrimeParser;
+    public ParsingFunction AdditionPrime => AdditionPrimeParser.Parse;
     // AdditionPrime ::= ("-" | "+") Multiplication AdditionPrime | Empty
     private InternalParserBase MultiplicationParser;
     public ParsingFunction Multiplication => MultiplicationParser.Parse;

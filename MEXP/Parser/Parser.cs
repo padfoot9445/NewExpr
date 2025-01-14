@@ -235,7 +235,7 @@ class Parser : IParser
         };
     }
     #endregion
-    private Annotations GetFromChildIndex(ASTNode node, int index)
+    public Annotations GetFromChildIndex(ASTNode node, int index)
     {
         if (node.Children.Length <= index)
         {

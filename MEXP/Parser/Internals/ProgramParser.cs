@@ -7,7 +7,9 @@ class ProgramParser : InternalParserBase
     public ProgramParser(Parser p) : base(p)
     {
     }
-    bool Program(out AnnotatedNode<Annotations>? Node)
+    private protected override string Name => "Program";
+
+    public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
         if (!SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr))
         {
@@ -43,12 +45,5 @@ class ProgramParser : InternalParserBase
             }
         }
 
-    }
-
-    private protected override string Name => "Program";
-
-    public override bool Parse(out AnnotatedNode<Annotations>? Node)
-    {
-        return Program(out Node);
     }
 }

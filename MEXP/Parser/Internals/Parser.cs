@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using Common.Logger;
 using System.Diagnostics;
 using MEXP.Parser.Internals;
-namespace MEXP.Parser;
+namespace MEXP.Parser.Internals;
 class Parser : IParser
 {
     public List<IToken> Input { get; set; } //assume it ends in EOF

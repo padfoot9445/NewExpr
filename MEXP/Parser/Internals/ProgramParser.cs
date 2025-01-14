@@ -8,7 +8,30 @@ class ProgramParser : InternalParserBase
     {
     }
     private protected override string Name => "Program";
-
+    private bool ConsumeSemicolon(out IToken? Semicolon)
+    {
+        Semicolon = CurrentToken(Inc: true)!;
+        if (!Semicolon.TCmp(TokenType.Semicolon))
+        {
+            Log.Log($"Expected \";\" at {Position}");
+            return false;
+        }
+        return true;
+    }
+    private bool ParseRepeat(AnnotatedNode<Annotations> Expr, IToken C, out AnnotatedNode<Annotations>? Node)
+    {
+        if (SafeParse(this, out AnnotatedNode<Annotations>? Repeat))
+        {
+            Node = new(ASTNode.Repeating(Expr!, C!, Repeat!, Name));
+            return true;
+        }
+        else
+        {
+            Log.Log($"Expected EOF at Token Position {Position} but got \"{CurrentToken()!.Lexeme}\"");
+            Node = null;
+            return false;
+        }
+    }
     public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
         if (!SafeParse(Expression, out AnnotatedNode<Annotations>? Expr))
@@ -17,32 +40,20 @@ class ProgramParser : InternalParserBase
             return false;
         }
         //assert semicolon
-        IToken C = CurrentToken(Inc: true)!;
-        if (!C.TCmp(TokenType.Semicolon))
+        if (!ConsumeSemicolon(out IToken? C))
         {
-            Log.Log($"Expected \";\" at {Position}");
             Node = null;
             return false;
         }
         //check for repeat(is not EOF)
         if (CurrentToken().TCmp(TokenType.EOF))
         {
-            Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, C], Name);
+            Node = new(new(IsEmpty: false), [ASTLeafType.NonTerminal, ASTLeafType.Terminal], [Expr!, C!], Name);
             return true;
         }
         else
         {
-            if (SafeParse(this, out AnnotatedNode<Annotations>? Repeat))
-            {
-                Node = new(ASTNode.Repeating(Expr!, C, Repeat!, Name));
-                return true;
-            }
-            else
-            {
-                Log.Log($"Expected EOF at Token Position {Position} but got \"{CurrentToken()!.Lexeme}\"");
-                Node = null;
-                return false;
-            }
+            return ParseRepeat(Expr!, C!, out Node);
         }
 
     }

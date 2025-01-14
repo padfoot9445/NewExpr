@@ -4,14 +4,13 @@ using System.Linq.Expressions;
 using Common.Logger;
 using System.Diagnostics;
 namespace MEXP.Parser;
-public partial class Parser
+public class Parser
 {
     public List<IToken> Input { get; set; } //assume it ends in EOF
     int Current = 0;
     ILogger Log { get; init; }
     private int Position { get => Current; }
     readonly HashSet<TokenType> RecoveryTokens = [TokenType.Semicolon];
-    delegate bool ParsingFunction(out AnnotatedNode<Annotations>? Node);
     ITypeProvider TP { get; }
     SafeParser SP { get; init; }
     private IToken? CurrentToken(int offset = 0, bool Inc = false)

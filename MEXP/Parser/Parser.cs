@@ -44,6 +44,7 @@ class Parser : IParser
         TypeParser = new TypeParser(this);
         PrimaryParser = new PrimaryParser(this);
         NegationParser = new NegationParser(this);
+        PowerParser = new PowerParser(this);
     }
     #region InstanceAndStaticParse
     public bool Parse(out AnnotatedNode<Annotations>? node)
@@ -423,16 +424,18 @@ class Parser : IParser
     ;
 
 
-    public bool Power(out AnnotatedNode<Annotations>? Node)
-        => PrimedBinary(
-            NextInPriority: Negation,
-            BinaryPrime: PowerPrime,
-            CurrentProductionName: nameof(Power),
-            out Node,
-            ErrorMessage: (_) => "",
-            Action: GetPrimedBinaryAction((T1, T2, Pos) => $"Exponentiation is not valid between {T1} and {T2} at Position {Pos}")
-        )
-    ;
+    // public bool Power(out AnnotatedNode<Annotations>? Node)
+    //     => PrimedBinary(
+    //         NextInPriority: Negation,
+    //         BinaryPrime: PowerPrime,
+    //         CurrentProductionName: nameof(Power),
+    //         out Node,
+    //         ErrorMessage: (_) => "",
+    //         Action: GetPrimedBinaryAction((T1, T2, Pos) => $"Exponentiation is not valid between {T1} and {T2} at Position {Pos}")
+    //     )
+    // ;
+    private InternalParserBase PowerParser;
+    public ParsingFunction Power => PowerParser.Parse;
     public bool PowerPrime(out AnnotatedNode<Annotations>? Node)
         => BinaryPrime(
             NextInPriority: Negation,

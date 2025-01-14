@@ -15,7 +15,7 @@ class NegationParser : InternalParserBase
         if (CurrentToken()!.TT == TokenType.Subtraction)
         {
             IToken Operator = CurrentToken(Inc: true)!;
-            if (_Parser.SP.SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false, Current: ref _Parser.Current))
+            if (SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
             {
                 Node = new(
                     Attributes: Expr!.Attributes.Copy(), //Since Unary Negation does not change type at all, we can just copy - will introduce unary table at some point
@@ -23,7 +23,7 @@ class NegationParser : InternalParserBase
                 return true;
             }
         }
-        else if (_Parser.SP.SafeParse(_Parser.Primary, out AnnotatedNode<Annotations>? PrimaryNode, Suppress: false, Current: ref _Parser.Current))
+        else if (SafeParse(_Parser.Primary, out AnnotatedNode<Annotations>? PrimaryNode, Suppress: false))
         {
             Node = new(
                 Attributes: PrimaryNode!.Attributes.Copy(), //single nest so we can just copy

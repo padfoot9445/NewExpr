@@ -9,7 +9,7 @@ class ProgramParser : InternalParserBase
     }
     bool Program(out AnnotatedNode<Annotations>? Node)
     {
-        if (!_Parser.SP.SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr, Current: ref _Parser.Current))
+        if (!SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr))
         {
             Node = null;
             return false;
@@ -30,7 +30,7 @@ class ProgramParser : InternalParserBase
         }
         else
         {
-            if (_Parser.SP.SafeParse(this, out AnnotatedNode<Annotations>? Repeat, Current: ref _Parser.Current))
+            if (SafeParse(this, out AnnotatedNode<Annotations>? Repeat))
             {
                 Node = new(ASTNode.Repeating(Expr!, C, Repeat!, Name));
                 return true;

@@ -12,7 +12,7 @@ class DeclarationParser : InternalParserBase
 
     public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
-        if (_Parser.SP.SafeParse(_Parser.Type, out AnnotatedNode<Annotations>? TNode, Current: ref _Parser.Current))
+        if (SafeParse(_Parser.Type, out AnnotatedNode<Annotations>? TNode))
         {
             IToken IdentToken = CurrentToken(Inc: true)!;
             if (!IdentToken.TCmp(TokenType.Identifier))
@@ -21,7 +21,7 @@ class DeclarationParser : InternalParserBase
                 Node = null;
                 return false;
             }
-            if (_Parser.SP.SafeParse(_Parser.AssignmentPrime, out AnnotatedNode<Annotations>? ANode, Current: ref _Parser.Current))
+            if (SafeParse(_Parser.AssignmentPrime, out AnnotatedNode<Annotations>? ANode))
             {
                 Debug.Assert(IdentToken.TT == TokenType.Identifier);
                 Debug.Assert(TNode!.Attributes.TypeDenotedByIdentifier is not null);
@@ -50,7 +50,7 @@ class DeclarationParser : InternalParserBase
                 return false;
             }
         }
-        else if (_Parser.SP.SafeParse(_Parser.Addition, out AnnotatedNode<Annotations>? Add, Suppress: false, Current: ref _Parser.Current))
+        else if (SafeParse(_Parser.Addition, out AnnotatedNode<Annotations>? Add, Suppress: false))
         {
             Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, Name));
             return true;

@@ -14,7 +14,7 @@ class PrimaryParser : InternalParserBase
     {
         IToken OpenBracketToken = CurrentToken(Inc: true)!;
         //get expr
-        if (!_Parser.SP.SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false, Current: ref _Parser.Current))
+        if (!SafeParse(_Parser.Expression, out AnnotatedNode<Annotations>? Expr, Suppress: false))
         {
             //no message as not suppressed
             Node = null;
@@ -73,7 +73,7 @@ class PrimaryParser : InternalParserBase
     {
         IToken IdentifierToken = CurrentToken(Inc: true)!;
         //get the assignment prime node
-        if (!_Parser.SP.SafeParse(_Parser.AssignmentPrime, out AnnotatedNode<Annotations>? AssP, Current: ref _Parser.Current))
+        if (!SafeParse(_Parser.AssignmentPrime, out AnnotatedNode<Annotations>? AssP))
         {
             Log.Log($"Impossible path in ParseIdentifierAndAssignment");
             Node = null;

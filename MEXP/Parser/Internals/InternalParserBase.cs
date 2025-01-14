@@ -17,4 +17,5 @@ abstract class InternalParserBase
     private protected ILogger Log;
     private protected int Position => _Parser.Position;
     private protected abstract string Name { get; }
+    private protected bool SafeParse(InternalParserBase Parser, out AnnotatedNode<Annotations>? Node, bool Suppress = true) => _Parser.SP.SafeParse(Parser, out Node, ref _Parser.Current, Suppress);
 }

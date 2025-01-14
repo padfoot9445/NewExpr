@@ -43,7 +43,7 @@ abstract class PrimedBinaryParserBase : InternalParserBase
     }
     bool PrimedBinary(out AnnotatedNode<Annotations>? Node)
     {
-        if (_Parser.SP.SafeParse(NextInPriority, out AnnotatedNode<Annotations>? Neg, Suppress: false, Current: ref _Parser.Current) && _Parser.SP.SafeParse(BinaryPrime, out AnnotatedNode<Annotations>? MulP, Suppress: false, Current: ref _Parser.Current))
+        if (SafeParse(NextInPriority, out AnnotatedNode<Annotations>? Neg, Suppress: false) && SafeParse(BinaryPrime, out AnnotatedNode<Annotations>? MulP, Suppress: false))
         {
             Node = Action(ASTNode.PrimedBinary(Neg!, MulP!, Name));
             return true;

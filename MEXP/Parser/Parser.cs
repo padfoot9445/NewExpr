@@ -471,8 +471,8 @@ class Parser : IParser
         return false;
     }
     private InternalParserBase PrimaryParser;
-    private ParsingFunction Primary => PrimaryParser.Parse;
+    public ParsingFunction Primary => PrimaryParser.Parse;
     private InternalParserBase TypeParser;
-    private ParsingFunction Type => TypeParser.Parse;
+    public ParsingFunction Type => TypeParser.Parse;
 
 }

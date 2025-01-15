@@ -117,11 +117,11 @@ public class TestParser
         var T1 = new TypeProvider();
         yield return new("1;", T1, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T1.ByteTypeCode), (Annotations x) => x.TypeCode);
         var T2 = new TypeProvider();
-        yield return new("1.;", T2, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T2.FloatTypeCode), (Annotations x) => x.TypeCode);
+        yield return new("1.;", T2, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T2.NumberTypeCode), (Annotations x) => x.TypeCode);
         T1 = new TypeProvider();
         yield return new("1 + 2;", T1, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T1.ByteTypeCode), (Annotations x) => x.TypeCode);
         T1 = new TypeProvider();
-        yield return new("1 * 0.3;", T1, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T1.FloatTypeCode), (Annotations x) => x.TypeCode);
+        yield return new("1 * 0.3;", T1, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)x.Children[0], new Annotations(TypeCode: T1.NumberTypeCode), (Annotations x) => x.TypeCode);
         T1 = new TypeProvider();
         yield return new("int x;", T1, (AnnotatedNode<Annotations> x) => (AnnotatedNode<Annotations>)(((AnnotatedNode<Annotations>)((AnnotatedNode<Annotations>)x.Children[0]).Children[0]).Children[0]), new Annotations(TypeDenotedByIdentifier: T1.IntTypeCode), (Annotations x) => x.TypeDenotedByIdentifier);
         yield return new("number x; x;", T1, (AnnotatedNode<Annotations> x) => ((AnnotatedNode<Annotations>)((AnnotatedNode<Annotations>)x.Children[2]).Children[0]), new Annotations(TypeCode: T1.NumberTypeCode), (Annotations x) => x.TypeCode);

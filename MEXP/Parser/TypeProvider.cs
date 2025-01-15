@@ -71,13 +71,26 @@ public class TypeProvider : ITypeProvider
     {
         if (Lexeme.Contains('.'))
         {
-            return FloatTypeCode;
+            return GetTypeFromFloatLiteral(Lexeme.Length);
         }
         else
         {
-            return ByteTypeCode;
+            return GetTypeFromIntLiteral(Lexeme.Length);
         }
         //should return the lowest prec possible to avoid type clashes brought on by number literals, and we just make sure to generate the appropiate load/parsing code
     }
-
+    public uint GetTypeFromIntLiteral(int Number)
+    {
+        return Number switch
+        {
+            (<= 2) => ByteTypeCode,
+            (> 2) and (<= 9) => IntTypeCode,
+            (> 9) and (<= 18) => LongTypeCode,
+            _ => LongIntTypeCode
+        };
+    }
+    public uint GetTypeFromFloatLiteral(int Length)
+    {
+        return NumberTypeCode;
+    }
 }

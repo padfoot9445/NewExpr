@@ -6,7 +6,7 @@ namespace MEXPTests.ParserTest;
 [TestFixture]
 public class TypeProviderTests
 {
-    private TypeProvider _typeProvider = new();
+    private static TypeProvider _typeProvider = new();
 
     [SetUp]
     public void Setup()
@@ -84,8 +84,8 @@ public class TypeProviderTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(_typeProvider.GetTypeFromNumberLiteral("123.45"), Is.EqualTo(floatType));
-            Assert.That(_typeProvider.GetTypeFromNumberLiteral("123"), Is.EqualTo(byteType));
+            Assert.That(_typeProvider.GetTypeFromNumberLiteral("123.45"), Is.EqualTo(_typeProvider.NumberTypeCode));
+            Assert.That(_typeProvider.GetTypeFromNumberLiteral("123"), Is.EqualTo(_typeProvider.IntTypeCode));
         });
     }
 
@@ -96,5 +96,28 @@ public class TypeProviderTests
         var floatType = _typeProvider.GetTypeFromTypeDenotingIdentifier("float");
 
         Assert.That(_typeProvider.CanBeDeclaredTo(intType, floatType), Is.True);
+    }
+    [Test]
+    public void Test__GetTypeFromFloat__Returns_ArbPrec()
+    {
+        Assert.That(_typeProvider.GetTypeFromFloatLiteral(0), Is.EqualTo(_typeProvider.NumberTypeCode));
+    }
+
+    static IEnumerable<TestCaseData> Test__GetTypeFromIntLiteral__Returns__Correct_Cases()
+    {
+        yield return new TestCaseData(1, _typeProvider.ByteTypeCode);
+        yield return new TestCaseData(2, _typeProvider.ByteTypeCode);
+        yield return new TestCaseData(3, _typeProvider.IntTypeCode);
+        yield return new TestCaseData(6, _typeProvider.IntTypeCode);
+        yield return new TestCaseData(9, _typeProvider.IntTypeCode);
+        yield return new TestCaseData(10, _typeProvider.LongTypeCode);
+        yield return new TestCaseData(18, _typeProvider.LongTypeCode);
+        yield return new TestCaseData(19, _typeProvider.LongIntTypeCode);
+        yield return new TestCaseData(3524, _typeProvider.LongIntTypeCode);
+    }
+    [TestCaseSource(nameof(Test__GetTypeFromIntLiteral__Returns__Correct_Cases))]
+    public void Test__GetTypeFromIntLiteral__Returns__Correct(int Length, uint ExpectedCode)
+    {
+        Assert.That(_typeProvider.GetTypeFromIntLiteral(Length), Is.EqualTo(ExpectedCode));
     }
 }

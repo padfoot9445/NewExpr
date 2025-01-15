@@ -1,5 +1,6 @@
 using Common.AST;
 using Common.Tokens;
+using MEXP.IRs.ParseTree;
 using MEXP.Parser;
 
 namespace MEXP.Parser.Internals;

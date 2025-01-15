@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Common.AST;
 using Common.Tokens;
+using MEXP.IRs.ParseTree;
 
 namespace MEXP.Parser.Internals;
 class DeclarationParser : InternalParserBase

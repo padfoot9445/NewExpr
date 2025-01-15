@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using Common.AST;
 using Common.Logger;
+using MEXP.IRs.ParseTree;
 
 namespace MEXP.Parser.Internals;
 

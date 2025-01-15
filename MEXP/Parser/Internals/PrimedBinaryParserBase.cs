@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Common.AST;
+using MEXP.IRs.ParseTree;
 
 namespace MEXP.Parser.Internals;
 abstract class PrimedBinaryParserBase : InternalParserBase

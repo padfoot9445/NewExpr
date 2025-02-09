@@ -1,0 +1,110 @@
+Section ::= Statement Section | EMPTY;
+Statement ::= Expression ";" | Loop | Cond | Function | CascadingFunction | Block | ReturnStatement | LoopControlStatement;
+ReturnStatement ::= "return" Expression ";";
+LoopControlStatement ::= ("break" | "continue") OptionalNestedValueInLoopControl;
+OptionalNestedValueInLoopControl ::= IDENTIFIER; #Identifier where identifier is a label and not a variable
+Loop ::= (ForLoopHeader | WhileLoopHeader) OptionalLoopLabel OptionalElse; #like python's loop elses; executes when cause of loop termination is natural (i.e not a break)
+OptionalLoopLabel ::= "as" IDENTIFIER;
+ForLoopHeader ::= "for" "(" Expression ";" Expression ";" Expression ")";
+WhileLoopHeader ::= "while" "(" Expression ")" | "while" "(" Expression ";" Expression ")" #Tradwhile is the first; while (Cond; Action) is the second
+Cond ::= If | Switch;
+If ::= "if" "(" Expression ")" Statement OptionalElse;
+OptionalElse ::= "else" Statement;
+Switch ::= "switch" "(" Expression ")" "{" SwitchBodyInner "}";
+SwitchBody ::= Expression ":" Statement SwitchBody | EMPTY;
+Function ::= Type "(" TypeAndIdentifierCSVOrEmpty ")" Statement;
+CascadingFunction ::= "cascading" IDENTIFIER "(" TypeAndIdentifierCSVOrEmpty ")" Statement; #not true macros in that we can't do funky text replacement and stuff; the only advantage is break, return, continue etc all work as if part of the caller - so labels are imported. This also has the advantage that
+TypeAndIdentifierCSVOrEmpty : TypeAndIdentifierCSV | EMPTY;
+TypeAndIdentifierCSVElement ::= DeclarationModifiersCombined Type IDENTIFIER;
+TypeAndIdentifierCSV ::= TypeAndIdentifierCSVElement TypeAndIdentifierCSVPrime;
+TypeAndIdentifierCSVPrime ::= "," TypeAndIdentifierCSVElement TypeAndIdentifierCSVPrime | EMPTY;
+Block ::= "{" Section "}";
+
+
+
+#EXPRESSIONS
+#Expression ::= Primary > BitwiseExpr > ArithmeticExpr > ComparisonExpr > BooleanLogicExpr > AssignmentExpr > DeclarationExpr > AutoCrementExpr > AliasExpr precedence wise
+Expression ::= AliasExpr;
+
+
+AliasExpr ::= IDENTIFIER "as" IDENTIFIER | DeclarationExpr;
+
+DeclarationExpr ::=
+    DeclarationModifiersCombined Type IDENTIFIER AssignmentPrime |
+    AssignmentExpr
+;
+DeclarationModifiersCombined ::= DeclarationModifier DeclarationModifiersCombined | EMPTY;
+DeclarationModifier ::= "ref" | "readonly" | "frozen" | "copy"; #we don't expose pointer arithmetic, so ref int i = 1; i++ would just store 1 at some memory location and then increment i = 1 + 1 = 2
+AssignmentPrime ::= "=" Expression AssignmentPrime | EMPTY;
+AssignmentExpr ::= IDENTIFIER AssignmentPrime | BooleanLogicExpr;
+
+BooleanLogicExpr ::= ImpliesExpr;
+
+ImpliesExpr ::= OrExpr ImpliesPrime;
+ImpliesPrime ::= "implies" OrExpr ImpliesPrime | EMPTY;
+OrExpr ::= XorExpr OrExprPrime;
+OrExprPrime ::= "or" XorExpr OrExprPrime | EMPTY;
+XorExpr ::= AndExpr XorExprPrime;
+XorExprPrime ::= "xor" AndExpr XorExprPrime | EMPTY;
+AndExpr ::= NotExpr AndExprPrime;
+AndExprPrime ::= "and" NotExpr AndExprPrime | EMPTY;
+NotExpr ::= "not" ComparisonExpr | ComparisonExpr;
+
+ComparisonExpr ::= EqualityComparisonExpr;
+
+EqualityComparisonExpr ::= NonEqualityComparisonExpr EqualityComparisonExprPrime;
+EqualityComparisonExprPrime ::= "==" NonEqualityComparisonExpr EqualityComparisonExprPrime | EMPTY;
+NonEqualityComparisonExpr ::= RelationalComparisonExpr NonEqualityComparisonExprPrime;
+NonEqualityComparisonExprPrime ::= "!=" RelationalComparisonExpr | EMPTY; #no repeat
+
+RelationalComparisonExpr ::= GreaterThanComparisonExpr;
+
+GreaterThanComparisonExpr ::= LesserThanComparisonExpr GreaterThanComparisonExprPrime;
+GreaterThanComparisonExprPrime ::= (">" | ">=") ArithmeticExpr GreaterThanComparisonExprPrime | EMPTY; #we do not descend here into lesserthancomparisonexpr as we want to preserve the a < b < ... < x > y > ... > z
+LesserThanComparisonExpr ::= ArithmeticExpr LesserThanComparisonExprPrime;
+LesserThanComparisonExprPrime ::= ("<" | "<=") ArithmeticExpr LesserThanComparisonExprPrime | EMPTY;
+
+ArithmeticExpr ::= Addition;
+
+Addition ::= Multiplication AdditionPrime;
+AdditionPrime ::= ("+" | "-") Multiplication AdditionPrime | EMPTY;
+Multiplication ::= Power MultiplicationPrime;
+MultiplicationPrime ::=  ("*" | "/")  Power MultiplicationPrime | EMPTY;
+Power ::= Negation PowerPrime;
+PowerPrime ::= "**" Negation PowerPrime | EMPTY;
+Negation ::= NegationPrime Factorial;
+NegationPrime ::= "-" NegationPrime | EMPTY;
+Factorial ::= BitwiseExpr FactorialPrime;
+FactorialPrime ::= "!" FactorialPrime | EMPTY;
+
+BitwiseExpr ::= BitwiseOrExpr;
+
+BitwiseOrExpr ::= BitwiseXorExpr BitwiseOrExprPrime;
+BitwiseOrExprPrime ::= "|" BitwiseXorExpr BitwiseOrExprPrime | EMPTY;
+BitwiseXorExpr ::= BitwiseAndExpr BitwiseXorExprPrime;
+BitwiseXorExprPrime ::= "^" BitwiseAndExpr BitwiseXorExprPrime | EMPTY;
+BitwiseAndExpr ::= BitwiseNotExpr BitwiseAndExprPrime;
+BitwiseAndExprPrime ::= "&" BitwiseNotExpr BitwiseAndExprPrime | EMPTY;
+BitwiseNotExpr ::= "~" Primary | Primary;
+
+
+Primary ::= "(" Expression ")" | IDENTIFIER | NUMBER | STRING | Index | FunctionCall | NewExpr; #no need to be so fancy as to support interpolation etc
+NewExpr ::= "new" Type "(" ArgListOrNone ")";
+Index ::= IDENTIFIER "[" Expression "]";
+FunctionCall ::= IDENTIFIER FunctionCallPrime;
+FunctionCallPrime ::= "." "(" ArgListOrNone ")" | "(" ArgListOrNone ")"
+ArgListOrNone ::= ArgList | EMPTY;
+ArgListElement ::= OptionalArgumentLabel Expression;
+ArgList ::= ArgListElement ArgListPrime;
+ArgListPrime ::= "," ArgListElement ArgListPrime;
+OptionalArgumentLabel ::= IDENTIFIER ":" | EMPTY;
+#region KW Groups
+    Type ::= BaseType | GenericType "<[" Type "]>";
+    GenericType ::= "array" | "list" | "set" | "dict";
+    BaseType ::= "byte" | "short" | "int" | "long" | "bigint" | "float" | "double" | "rational" | "bigfloat" | "string" | "char";
+#endregion
+#region Consts
+    IDENTIFIER ::= {LexerDefined}; #[a-zA-Z_] [a-zA-Z0-9_]*
+    NUMBER ::= {LexerDefined}; #[0-9]+ | [0-9]+ "." [0-9]+
+    STRING ::= {LexerDefined}; #(" | ')
+#endregion

@@ -10,15 +10,15 @@ public sealed class Lexer(string input) : Scanner(input)
     protected override IList<string> StartEndCommentBegin => ["/*"];
     protected override IList<(string, char)> EscapeSequenceToStringValue =>
     [
-        (@"\n", '\n'),
-        (@"\t", '\t'),
-        (@"\r", '\r'),
-        (@"\b", '\b'),
-        (@"\f", '\f'),
-        (@"\v", '\v'),
-        (@"\\", '\\'),
-        (@"\'", '\''),
-        (@"\" + "\"", '\"')
+        (@"n", '\n'),
+        (@"t", '\t'),
+        (@"r", '\r'),
+        (@"b", '\b'),
+        (@"f", '\f'),
+        (@"v", '\v'),
+        (@"\", '\\'),
+        (@"'", '\''),
+        (@"" + "\"", '\"')
     ];
     protected override IList<string> StartEndCommentEnd => ["*/"];
     protected override IEnumerable<(string, TokenType)> MCTTM => new (string, TokenType)[]

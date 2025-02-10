@@ -1,7 +1,7 @@
 using Common.Tokens;
 
 namespace Common.Lexer;
-abstract class Scanner : IScanner
+public abstract class Scanner : IScanner
 {
     public Scanner(string input)
     {

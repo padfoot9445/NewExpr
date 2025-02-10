@@ -140,16 +140,22 @@ public abstract class Scanner : IScanner
         }
         else if (IsQuote(out var quoteLiteral))
         {
+            Current += quoteLiteral.Length; //skip opening quote
             StringBuilder Literal = new();
-            while (Current < input.Length && !StrEq(Current, Current + quoteLiteral.Length, quoteLiteral))
+            while (!StrEq(Current, Current + quoteLiteral.Length, quoteLiteral))
             {
+                if (Current >= input.Length)
+                {
+                    throw new Exception($"Reached EOF whilst consuming string at {Current}");
+                }
                 if (EscapeChars.Contains(input[Current]))
                 {
                     Literal.Append(ConsumeEscape());
                     continue;
                 }
-                Literal.Append(input[Current]);
+                Literal.Append(input[Current++]);
             }
+            Current += quoteLiteral.Length; //skip closing quote
             return IToken.NewToken(TokenType.String, input[Start..Current], Current, Literal.ToString());
         }
         else
@@ -186,6 +192,7 @@ public abstract class Scanner : IScanner
         {
             if (StrEq(Current, Current + s.Length, s))
             {
+                Current += s.Length; //skip escape sequence
                 return c;
             }
         }

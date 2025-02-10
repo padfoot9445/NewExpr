@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SmallLang\SmallLang.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 
 </Project>

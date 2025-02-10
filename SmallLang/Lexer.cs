@@ -2,7 +2,7 @@ using Common.Lexer;
 using Common.Tokens;
 
 namespace SmallLang;
-sealed class Lexer(string input) : Scanner(input)
+public sealed class Lexer(string input) : Scanner(input)
 {
     protected override ICollection<string> EOLCommentBegin => ["#"];
     protected override ICollection<char> EscapeChars => ['\\'];

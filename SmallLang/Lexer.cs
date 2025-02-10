@@ -4,6 +4,7 @@ using Common.Tokens;
 namespace SmallLang;
 public sealed class Lexer(string input) : Scanner(input)
 {
+    protected override ICollection<string> StringQuotes => ["\"", "'"];
     protected override ICollection<string> EOLCommentBegin => ["#"];
     protected override ICollection<char> EscapeChars => ['\\'];
     protected override IList<string> StartEndCommentBegin => ["/*"];

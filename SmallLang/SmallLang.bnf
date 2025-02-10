@@ -90,7 +90,7 @@ BitwiseAndExprPrime ::= "&" BitwiseNotExpr BitwiseAndExprPrime | EMPTY;
 BitwiseNotExpr ::= "~" Primary | Primary;
 
 
-Primary ::= "(" Expression ")" | IDENTIFIER | NUMBER | STRING | Index | FunctionCall | NewExpr | BOOLEAN; #no need to be so fancy as to support interpolation etc
+Primary ::= "(" Expression ")" | IDENTIFIER | NUMBER | STRING | Index | FunctionCall | NewExpr | BOOLEAN | "copy" Expression; #no need to be so fancy as to support interpolation etc
 NewExpr ::= "new" Type "(" ArgListOrNone ")";
 Index ::= IDENTIFIER "[" Expression "]";
 FunctionCall ::= IDENTIFIER FunctionCallPrime;

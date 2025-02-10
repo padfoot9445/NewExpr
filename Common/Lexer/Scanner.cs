@@ -1,3 +1,4 @@
+using System.Text;
 using Common.Tokens;
 
 namespace Common.Lexer;
@@ -13,6 +14,13 @@ public abstract class Scanner : IScanner
     protected virtual ICollection<char> WhiteSpace { get; } = new HashSet<char>() { ' ', '\t', '\n', '\r' };
     public IEnumerable<(string, TokenType)> SymbolTTMappingSortedReverse => MCTTM.OrderBy(x => x.Item1.Length).Reverse();
     protected abstract IEnumerable<(string, TokenType)> MCTTM { get; }
+    protected virtual ICollection<string> EOLCommentBegin { get; } = [];
+    protected virtual IList<string> StartEndCommentBegin { get; } = [];
+    protected virtual IList<string> StartEndCommentEnd { get; } = [];
+    protected virtual ICollection<string> StringQuotes { get; } = [];
+    protected virtual ICollection<char> EscapeChars { get; } = [];
+    protected virtual IList<(string, char)> EscapeSequenceToStringValue { get; } = [];
+
     bool GetTT(out TokenType TT, out int Length)
     {
         foreach (var kvp in SymbolTTMappingSortedReverse)
@@ -37,12 +45,45 @@ public abstract class Scanner : IScanner
             Current++;
         }
     }
+    bool SkipComment() //returns true if the comment hits EOF
+    {
+        //skip eol comments
+        foreach (var i in EOLCommentBegin)
+        {
+            if (StrEq(Current, Current + i.Length, i))
+            {
+                while (Current < input.Length && input[Current] != '\n')
+                {
+                    Current++;
+                }
+                break;
+            }
+        }
+        //startendcomments
+        for (int i = 0; i < StartEndCommentBegin.Count; i++)
+        {
+            if (StrEq(Current, Current + StartEndCommentBegin[i].Length, StartEndCommentBegin[i]))
+            {
+                Current += StartEndCommentBegin[i].Length;
+                while (Current < input.Length && !StrEq(Current, Current + StartEndCommentEnd[i].Length, StartEndCommentEnd[i]))
+                {
+                    Current++;
+                }
+                break;
+            }
+        }
+        return Current == input.Length;
+    }
     public IEnumerable<IToken> Scan()
     {
         while (Current < input.Length)
         {
             SkipWhiteSpace();
             Start = Current;
+            if (SkipComment())
+            {
+                break;
+            }
             if (GetTT(out TokenType TT, out int length))
             {
                 //add keyword tokens
@@ -94,6 +135,20 @@ public abstract class Scanner : IScanner
             }
             return IToken.NewToken(TokenType.Identifier, input[Start..Current], Current);
         }
+        else if (IsQuote(out var quoteLiteral))
+        {
+            StringBuilder Literal = new();
+            while (Current < input.Length && !StrEq(Current, Current + quoteLiteral.Length, quoteLiteral))
+            {
+                if (EscapeChars.Contains(input[Current]))
+                {
+                    Literal.Append(ConsumeEscape());
+                    continue;
+                }
+                Literal.Append(input[Current]);
+            }
+            return IToken.NewToken(TokenType.String, input[Start..Current], Current, Literal.ToString());
+        }
         else
         {
             throw new Exception($"Unexpected character ${input[Current]} at pos {Current}");
@@ -106,6 +161,32 @@ public abstract class Scanner : IScanner
     static bool IsValidFirstIdentChar(char c)
     {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+    }
+    bool IsQuote(out string QuoteLiteral)
+    {
+        foreach (var i in StringQuotes)
+        {
+            if (StrEq(Current, Current + i.Length, i))
+            {
+                QuoteLiteral = i;
+                return true;
+            }
+        }
+        QuoteLiteral = "";
+        return false;
+    }
+    char ConsumeEscape()
+    {
+        //first character is escape symbol
+        Current++;
+        foreach ((string s, char c) in EscapeSequenceToStringValue)
+        {
+            if (StrEq(Current, Current + s.Length, s))
+            {
+                return c;
+            }
+        }
+        throw new Exception($"Invalid escape sequence at pos {Current}");
     }
     bool StrEq(int start, int end, string value)
     {

@@ -45,8 +45,9 @@ public abstract class Scanner : IScanner
             Current++;
         }
     }
-    bool SkipComment() //returns true if the comment hits EOF
+    bool SkipComment() //returns true if skipped comment
     {
+        bool Skipped = false;
         //skip eol comments
         foreach (var i in EOLCommentBegin)
         {
@@ -57,7 +58,7 @@ public abstract class Scanner : IScanner
                     Current++;
                 }
                 Current++; //skip \n
-                break;
+                return true;
             }
         }
         //startendcomments
@@ -71,10 +72,10 @@ public abstract class Scanner : IScanner
                     Current++;
                 }
                 Current += StartEndCommentEnd[i].Length; //skip end comment
-                break;
+                return true;
             }
         }
-        return Current == input.Length;
+        return Skipped;
     }
     public IEnumerable<IToken> Scan()
     {
@@ -84,7 +85,7 @@ public abstract class Scanner : IScanner
             Start = Current;
             if (SkipComment())
             {
-                break;
+                continue;
             }
             if (GetTT(out TokenType TT, out int length))
             {

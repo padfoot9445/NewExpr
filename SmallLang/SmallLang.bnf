@@ -34,8 +34,8 @@ DeclarationExpr ::=
     AssignmentExpr
 ;
 DeclarationModifiersCombined ::= DeclarationModifier DeclarationModifiersCombined | EMPTY;
-DeclarationModifier ::= "ref" | "readonly" | "frozen"; #we don't expose pointer arithmetic, so ref int i = 1; i++ would just store 1 at some memory location and then increment i = 1 + 1 = 2
-FunctionArgDeclModifier ::= DeclarationModifier | "copy"; #copy is syntax sugar for taking the value and then copying
+DeclarationModifier ::= "ref" | "readonly" | "frozen" | "immut"; #we don't expose pointer arithmetic, so ref int i = 1; i++ would just store 1 at some memory location and then increment i = 1 + 1 = 2. We class this sort of ref modifying as still pure, so we use the immut modifier to signify that this does not happen. Under immut, all params must be passed as value or frozen readonly.
+FunctionArgDeclModifier ::= DeclarationModifier | "copy"; #copy is syntax sugar for taking the value and then copying, or pass by value
 FunctionArgDeclModifiersCombined ::= FunctionArgDeclModifier FunctionArgDeclModifiersCombined | EMPTY;
 AssignmentPrime ::= "=" Expression AssignmentPrime | EMPTY;
 AssignmentExpr ::= IDENTIFIER AssignmentPrime | BooleanLogicExpr;

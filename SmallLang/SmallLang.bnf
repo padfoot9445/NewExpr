@@ -15,7 +15,7 @@ SwitchBody ::= Expression ":" Statement SwitchBody | EMPTY;
 Function ::= Type "(" TypeAndIdentifierCSVOrEmpty ")" Statement;
 CascadingFunction ::= "cascading" IDENTIFIER "(" TypeAndIdentifierCSVOrEmpty ")" Statement; #not true macros in that we can't do funky text replacement and stuff; the only advantage is break, return, continue etc all work as if part of the caller - so labels are imported. This also has the advantage that
 TypeAndIdentifierCSVOrEmpty : TypeAndIdentifierCSV | EMPTY;
-TypeAndIdentifierCSVElement ::= DeclarationModifiersCombined Type IDENTIFIER;
+TypeAndIdentifierCSVElement ::= FunctionArgDeclModifiersCombined Type IDENTIFIER;
 TypeAndIdentifierCSV ::= TypeAndIdentifierCSVElement TypeAndIdentifierCSVPrime;
 TypeAndIdentifierCSVPrime ::= "," TypeAndIdentifierCSVElement TypeAndIdentifierCSVPrime | EMPTY;
 Block ::= "{" Section "}";
@@ -34,7 +34,9 @@ DeclarationExpr ::=
     AssignmentExpr
 ;
 DeclarationModifiersCombined ::= DeclarationModifier DeclarationModifiersCombined | EMPTY;
-DeclarationModifier ::= "ref" | "readonly" | "frozen" | "copy"; #we don't expose pointer arithmetic, so ref int i = 1; i++ would just store 1 at some memory location and then increment i = 1 + 1 = 2
+DeclarationModifier ::= "ref" | "readonly" | "frozen"; #we don't expose pointer arithmetic, so ref int i = 1; i++ would just store 1 at some memory location and then increment i = 1 + 1 = 2
+FunctionArgDeclModifier ::= DeclarationModifier | "copy"; #copy is syntax sugar for taking the value and then copying
+FunctionArgDeclModifiersCombined ::= FunctionArgDeclModifier FunctionArgDeclModifiersCombined | EMPTY;
 AssignmentPrime ::= "=" Expression AssignmentPrime | EMPTY;
 AssignmentExpr ::= IDENTIFIER AssignmentPrime | BooleanLogicExpr;
 

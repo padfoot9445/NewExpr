@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonTests", "CommonTests\CommonTests.csproj", "{9B3D63E1-D941-4262-8857-4F15386E352E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallLang", "SmallLang\SmallLang.csproj", "{FAD9806B-71D1-45BD-821B-9FCCA98B97D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{9B3D63E1-D941-4262-8857-4F15386E352E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B3D63E1-D941-4262-8857-4F15386E352E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B3D63E1-D941-4262-8857-4F15386E352E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAD9806B-71D1-45BD-821B-9FCCA98B97D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAD9806B-71D1-45BD-821B-9FCCA98B97D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAD9806B-71D1-45BD-821B-9FCCA98B97D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAD9806B-71D1-45BD-821B-9FCCA98B97D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

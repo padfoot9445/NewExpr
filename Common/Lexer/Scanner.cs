@@ -56,6 +56,7 @@ public abstract class Scanner : IScanner
                 {
                     Current++;
                 }
+                Current++; //skip \n
                 break;
             }
         }
@@ -69,6 +70,7 @@ public abstract class Scanner : IScanner
                 {
                     Current++;
                 }
+                Current += StartEndCommentEnd[i].Length; //skip end comment
                 break;
             }
         }

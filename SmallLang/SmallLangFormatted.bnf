@@ -1,0 +1,120 @@
+Section ::= Statement Section | EMPTY;
+Statement ::= Expression ";" | Loop | Cond | Function | CascadingFunction | Block | ReturnStatement | LoopControlStatement;
+ReturnStatement ::= "return" Expression ";";
+LoopControlStatement ::= ("break" | "continue") OptionalNestedValueInLoopControl;
+OptionalNestedValueInLoopControl ::= IDENTIFIER; #Identifier where identifier is a label and not a variable
+Loop ::= (ForLoopHeader | WhileLoopHeader) OptionalLoopLabel OptionalElse; #like python's loop elses; executes when cause of loop termination is natural (i.e not a break)
+OptionalLoopLabel ::= "as" IDENTIFIER;
+ForLoopHeader ::= "for" "(" Expression ";" Expression ";" Expression ")";
+WhileLoopHeader ::= "while" "(" Expression ")" | "while" "(" Expression ";" Expression ")" #Tradwhile is the first; while (Cond; Action) is the second
+Cond ::= If | Switch;
+If ::= "if" "(" Expression ")" Statement OptionalElse;
+OptionalElse ::= "else" Statement;
+Switch ::= "switch" "(" Expression ")" "{" SwitchBodyInner "}";
+SwitchBody ::= Expression ":" Statement SwitchBody | EMPTY;
+Function ::= Type "(" TypeAndIdentifierCSVOrEmpty ")" Statement;
+CascadingFunction ::= "cascading" IDENTIFIER "(" TypeAndIdentifierCSVOrEmpty ")" Statement; #not true macros in that we can't do funky text replacement and stuff; the only advantage is break, return, continue etc all work as if part of the caller - so labels are imported. This also has the advantage that
+TypeAndIdentifierCSVOrEmpty : TypeAndIdentifierCSV | EMPTY;
+TypeAndIdentifierCSVElement ::= FunctionArgDeclModifiersCombined Type IDENTIFIER;
+TypeAndIdentifierCSV ::= TypeAndIdentifierCSVElement TypeAndIdentifierCSVPrime;
+TypeAndIdentifierCSVPrime ::= "," TypeAndIdentifierCSVElement TypeAndIdentifierCSVPrime | EMPTY;
+Block ::= "{" Section "}";
+
+
+
+#EXPRESSIONS
+#Expression ::= Primary > BitwiseExpr > ArithmeticExpr > ComparisonExpr > BooleanLogicExpr > AssignmentExpr > DeclarationExpr > AutoCrementExpr > AliasExpr precedence wise
+Expression ::= AliasExpr;
+
+
+AliasExpr ::= IDENTIFIER "as" IDENTIFIER | DeclarationExpr;
+
+DeclarationExpr ::=
+    DeclarationModifiersCombined Type IDENTIFIER AssignmentPrime |
+    AssignmentExpr
+;
+DeclarationModifiersCombined ::= DeclarationModifier DeclarationModifiersCombined | EMPTY;
+DeclarationModifier ::= "ref" | "readonly" | "frozen" | "immut"; #we don't expose pointer arithmetic, so ref int i = 1; i++ would just store 1 at some memory location and then increment i = 1 + 1 = 2. We class this sort of ref modifying as still pure, so we use the immut modifier to signify that this does not happen. Under immut, all params must be passed as value or frozen readonly.
+FunctionArgDeclModifier ::= DeclarationModifier | "copy"; #copy is syntax sugar for taking the value and then copying, or pass by value
+FunctionArgDeclModifiersCombined ::= FunctionArgDeclModifier FunctionArgDeclModifiersCombined | EMPTY;
+AssignmentPrime ::= "=" Expression AssignmentPrime | EMPTY;
+AssignmentExpr ::= IDENTIFIER AssignmentPrime | BooleanLogicExpr;
+
+
+
+BooleanLogicExpr ::= ImpliesExpr;
+
+ImpliesExpr ::= OrExpr ImpliesPrime;
+ImpliesPrime ::= "implies" ImpliesExpr | EMPTY;
+OrExpr ::= XorExpr OrExprPrime;
+OrExprPrime ::= "or" OrExpr | EMPTY;
+XorExpr ::= AndExpr XorExprPrime;
+XorExprPrime ::= "xor" XorExpr | EMPTY;
+AndExpr ::= NotExpr AndExprPrime;
+AndExprPrime ::= "and" AndExpr | EMPTY;
+NotExpr ::= "not" ComparisonExpr | ComparisonExpr;
+
+ComparisonExpr ::= EqualityComparisonExpr;
+
+EqualityComparisonExpr ::= NonEqualityComparisonExpr EqualityComparisonExprPrime;
+EqualityComparisonExprPrime ::= "==" EqualityComparisonExpr | EMPTY;
+NonEqualityComparisonExpr ::= RelationalComparisonExpr NonEqualityComparisonExprPrime;
+NonEqualityComparisonExprPrime ::= "!=" RelationalComparisonExpr | EMPTY; #no repeat
+
+RelationalComparisonExpr ::= GreaterThanComparisonExpr;
+
+#not true binaries
+GreaterThanComparisonExpr ::= LesserThanComparisonExpr GreaterThanComparisonExprPrime;
+GreaterThanComparisonExprPrime ::= (">" | ">=") ArithmeticExpr GreaterThanComparisonExprPrime | EMPTY; #we do not descend here into lesserthancomparisonexpr as we want to preserve the a < b < ... < x > y > ... > z
+LesserThanComparisonExpr ::= ArithmeticExpr LesserThanComparisonExprPrime;
+LesserThanComparisonExprPrime ::= ("<" | "<=") ArithmeticExpr LesserThanComparisonExprPrime | EMPTY;
+
+ArithmeticExpr ::= Addition;
+
+Addition ::= Multiplication AdditionPrime;
+AdditionPrime ::= ("+" | "-") Addition | EMPTY;
+Multiplication ::= Power MultiplicationPrime;
+MultiplicationPrime ::=  ("*" | "/")  Multiplication | EMPTY;
+Power ::= Negation PowerPrime;
+PowerPrime ::= "**" Power | EMPTY;
+Negation ::= NegationPrime Factorial;
+NegationPrime ::= "-" NegationPrime | EMPTY;
+Factorial ::= BitwiseExpr FactorialPrime;
+FactorialPrime ::= "!" FactorialPrime | EMPTY;
+
+BitwiseExpr ::= BitwiseOrExpr;
+
+BitwiseOrExpr ::= BitwiseXorExpr BitwiseOrExprPrime;
+BitwiseOrExprPrime ::= "|" BitwiseOrExpr | EMPTY;
+BitwiseXorExpr ::= BitwiseAndExpr BitwiseXorExprPrime;
+BitwiseXorExprPrime ::= "^" BitwiseXorExpr | EMPTY;
+BitwiseAndExpr ::= BitwiseNotExpr BitwiseAndExprPrime;
+BitwiseAndExprPrime ::= "&" BitwiseAndExpr | EMPTY;
+BitwiseNotExpr ::= "~" Primary | Primary;
+
+
+Primary ::= "(" Expression ")" | IDENTIFIER | NUMBER | STRING | Index | FunctionCall | NewExpr | BOOLEAN | "copy" Expression; #no need to be so fancy as to support interpolation etc
+NewExpr ::= "new" Type "(" ArgListOrNone ")";
+Index ::= Primary "[" Expression "]";
+FunctionCall ::= Primary FunctionCallPrime;
+FunctionCallPrime ::= "." "(" ArgListOrNone ")" | "(" ArgListOrNone ")"
+ArgListOrNone ::= ArgList | EMPTY;
+ArgListElement ::= OptionalArgumentLabel Expression;
+ArgList ::= ArgListElement ArgListPrime;
+ArgListPrime ::= "," ArgListElement ArgListPrime;
+OptionalArgumentLabel ::= IDENTIFIER ":" | EMPTY;
+#region KW Groups
+    Type ::= BaseType | GenericType "<[" Type "]>";
+    GenericType ::= "array" | "list" | "set" | "dict";
+    BaseType ::= "byte" | "short" | "int" | "long" | "bigint" | "float" | "double" | "rational" | "bigfloat" | "string" | "char" | "void";
+#endregion
+#region Consts
+    BOOLEAN ::= "true" | "false";
+    IDENTIFIER ::= {LexerDefined}; #[a-zA-Z_] [a-zA-Z0-9_]*
+    NUMBER ::= {LexerDefined}; #[0-9]+ | [0-9]+ "." [0-9]+
+    STRING ::= {LexerDefined}; #(" | ')
+#endregion
+
+
+
+

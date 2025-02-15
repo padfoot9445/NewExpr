@@ -16,4 +16,8 @@ abstract class BaseInternalParser(ParserData data)
         Data = dataCopy;
         return false;
     }
+
+    #region ParserList
+    protected StatementParser Statement => new StatementParser(Data);
+    #endregion
 }

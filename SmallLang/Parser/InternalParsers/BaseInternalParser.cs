@@ -19,5 +19,13 @@ abstract class BaseInternalParser(ParserData data)
 
     #region ParserList
     protected StatementParser Statement => new StatementParser(Data);
+    protected SectionParser Section => new SectionParser(Data);
+    protected BlockParser Block => new BlockParser(Data);
+    protected CondParser Cond => new CondParser(Data);
+    protected ReturnStatementParser ReturnStatement => new ReturnStatementParser(Data);
+    protected ExpressionParser Expression => new ExpressionParser(Data);
+    protected FunctionParser Function => new FunctionParser(Data);
+    protected LoopControlStatementParser LCtrlStatement => new LoopControlStatementParser(Data);
+    protected LoopParser Loop => new LoopParser(Data);
     #endregion
 }

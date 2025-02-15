@@ -6,6 +6,7 @@ public class ParserData(int start, int current, List<IToken> tokens, ILogger log
 {
     public int Start => start;
     public int Current => current;
+    public bool AtEnd => Current == tokens.Count;
     public List<IToken> Tokens => tokens.Select(x => x).ToList();
     public ILogger Logger => logger;
     public IToken CurrentToken => GetToken();

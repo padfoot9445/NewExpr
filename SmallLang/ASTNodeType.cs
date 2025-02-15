@@ -1,0 +1,5 @@
+namespace SmallLang;
+enum ASTNodeType
+{
+
+}

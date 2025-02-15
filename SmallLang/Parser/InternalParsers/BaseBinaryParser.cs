@@ -10,12 +10,12 @@ abstract class BaseBinaryParser(ParserData data) : BaseInternalParser(data)
     public override bool Parse(out DynamicASTNode<ASTNodeType, Attributes>? node)
     {
         //Binary := NextInPriority BPrime
-        if (!NextInPriority.Parse(out var LeftNode))
+        if (!SafeParse(NextInPriority, out var LeftNode))
         {
             node = null;
             return false;
         }
-        if (BinaryPrimeParser.Parse(out var RightNode))
+        if (SafeParse(BinaryPrimeParser, out var RightNode))
         {
             RightNode!.Children.Insert(0, LeftNode!);
             node = RightNode;

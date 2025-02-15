@@ -19,7 +19,7 @@ abstract class BaseBinaryPrimeParser(ParserData data) : BaseInternalParser(data)
         }
         Debug.Assert(Operators.Contains(Data.CurrentToken));
         IToken Operator = Data.Advance();
-        if (!Binary.Parse(out var RightNode))
+        if (!SafeParse(Binary, out var RightNode))
         { ResultNode = null; return false; }
         ResultNode = new(Operator, [RightNode!], OutNodeType);
         return true;

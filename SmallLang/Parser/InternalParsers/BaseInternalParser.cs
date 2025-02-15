@@ -1,7 +1,7 @@
 using Common.AST;
 using Common.Parser;
 
-namespace SmallLang.InternalParsers;
+namespace SmallLang.Parser.InternalParsers;
 abstract class BaseInternalParser(ParserData data)
 {
     protected readonly ParserData Data = data;

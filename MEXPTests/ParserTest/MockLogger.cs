@@ -7,5 +7,16 @@ class MockLogger : ILogger
     {
         LogRecord.Add(message);
     }
+
+    public void FlushBuffer()
+    {
+        throw new NotImplementedException();
+    }
+
+    public ILogger Copy()
+    {
+        throw new NotImplementedException();
+    }
+
     public bool LoggingEnabled { get; set; } = false;
 }

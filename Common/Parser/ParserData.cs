@@ -6,7 +6,7 @@ public class ParserData(int start, int current, List<IToken> tokens, ILogger log
 {
     public ParserData Copy()
     {
-        return new ParserData(start, current, tokens.Select(x => x).ToList(), logger);
+        return new ParserData(start, current, tokens.Select(x => x).ToList(), logger.Copy());
     }
     public int Start => start;
     public int Current => current;

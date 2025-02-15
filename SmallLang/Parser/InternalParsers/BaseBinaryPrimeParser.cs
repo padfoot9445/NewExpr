@@ -9,7 +9,7 @@ abstract class BaseBinaryPrimeParser(ParserData data) : BaseInternalParser(data)
     protected abstract ASTNodeType OutNodeType { get; init; }
     protected abstract ICollection<IToken> Operators { get; init; }
     protected abstract BaseBinaryParser Binary { get; init; }
-    public bool TryParse(out DynamicASTNode<ASTNodeType, Attributes>? ResultNode)
+    public override bool Parse(out DynamicASTNode<ASTNodeType, Attributes>? ResultNode)
     {
         //BPrime := OPERATOR Binary | EMPTY;
         if (Data.AtEnd || !Operators.Contains(Data.CurrentToken))
@@ -19,16 +19,9 @@ abstract class BaseBinaryPrimeParser(ParserData data) : BaseInternalParser(data)
         }
         Debug.Assert(Operators.Contains(Data.CurrentToken));
         IToken Operator = Data.Advance();
-        var RightNode = Binary.Parse();
-        ResultNode = new(Operator, [RightNode], OutNodeType);
+        if (!Binary.Parse(out var RightNode))
+        { ResultNode = null; return false; }
+        ResultNode = new(Operator, [RightNode!], OutNodeType);
         return true;
-    }
-    public override DynamicASTNode<ASTNodeType, Attributes> Parse()
-    {
-        if (TryParse(out var OutNode))
-        {
-            return OutNode!;
-        }
-        throw new Exception($"Tried to parse Empty BinaryPrimeParser at {(Data.SafeCurrentToken ?? IToken.NewToken(TokenType.Number, "ERROR", -1)).Position}, TokenPosition");
     }
 }

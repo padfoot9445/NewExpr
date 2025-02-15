@@ -5,6 +5,6 @@ namespace SmallLang.Parser.InternalParsers;
 abstract class BaseInternalParser(ParserData data)
 {
     protected readonly ParserData Data = data;
-    protected abstract DynamicASTNode<ASTNodeType, Attributes> InternalParse();
-    public virtual DynamicASTNode<ASTNodeType, Attributes> Parse() => InternalParse();
+    public abstract bool Parse(out DynamicASTNode<ASTNodeType, Attributes>? Node);
+
 }

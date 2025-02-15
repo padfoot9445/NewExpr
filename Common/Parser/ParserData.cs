@@ -39,7 +39,12 @@ public class ParserData(int start, int current, List<IToken> tokens, ILogger log
     {
         for (int i = 0; i < TTs.Length; i++)
         {
-            if (!Comparer(Accessor(GetToken(i)), TTs[i]))
+            var t = SafeGetToken(i);
+            if (t == null)
+            {
+                return false;
+            }
+            if (!Comparer(Accessor(t), TTs[i]))
             {
                 return false;
             }

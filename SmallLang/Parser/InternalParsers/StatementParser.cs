@@ -8,14 +8,9 @@ class StatementParser(ParserData data) : BaseInternalParser(data)
     private BaseInternalParser[] Branches => [Loop, Cond, Function, Block, ReturnStatement, LCtrlStatement];
     public override bool Parse(out DynamicASTNode<ASTNodeType, Attributes>? Node)
     {
-        if (SafeParse(Expression, out Node))
+        if (SafeParse(Expression, out Node) && Data.TryConsumeToken(TokenType.Semicolon))
         {
-            if (Data.TCmp(TokenType.Semicolon))
-            {
-                Data.Advance();
-                return true;
-            }
-            else return false;
+            return true;
         }
         foreach (var branch in Branches)
         {

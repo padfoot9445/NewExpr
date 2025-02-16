@@ -2,5 +2,12 @@ namespace SmallLang;
 enum ASTNodeType
 {
     Section,
-    Statement
+    Statement,
+    Block,
+    Cond,
+    Expression,
+    Function,
+    LoopCTRL,
+    Loop,
+    OpValInLCTRL,
 }

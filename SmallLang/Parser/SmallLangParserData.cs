@@ -25,6 +25,8 @@ class SmallLangParserData(int start, int current, List<IToken> tokens, ILogger l
     public LoopControlStatementParser LCtrlStatement => new LoopControlStatementParser(this);
     public LoopParser Loop => new LoopParser(this);
     public OpValInLCTRLParser OpValInLCTRL => new(this);
+    public TypeParser Type => new TypeParser(this);
+    public TypeAndIdentifierCSVOrEmptyParser TypeAndIdentifierCSVOrEmpty => new(this);
     #endregion
 
 }

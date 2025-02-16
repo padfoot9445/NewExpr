@@ -24,7 +24,7 @@ public class ParserData(int start, int current, List<IToken> tokens, ILogger log
         current += Inc;
         return GetToken(-1);
     }
-    public IToken Peek(int Inc = 1) => GetToken(Inc);
+    public IToken Peek(int Inc = 0) => GetToken(Inc);
     public IToken GetToken(int rel = 0)
     {
         return tokens[Current + rel];

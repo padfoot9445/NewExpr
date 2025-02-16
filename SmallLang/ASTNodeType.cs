@@ -10,4 +10,5 @@ enum ASTNodeType
     LoopCTRL,
     Loop,
     OpValInLCTRL,
+    Return,
 }

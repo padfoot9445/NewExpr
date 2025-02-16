@@ -24,8 +24,7 @@ public class ParserData(int start, int current, List<IToken> tokens, ILogger log
         current += Inc;
         return GetToken(-1);
     }
-    public bool TryConsumeToken(TokenType Expected) => TryConsumeToken(out var _, Expected);
-    public bool TryConsumeToken(out IToken? token, TokenType Expected) => TryConsumeToken(out token, [Expected]);
+    public bool TryConsumeToken(params TokenType[] Expected) => TryConsumeToken(out var _, Expected);
     public bool TryConsumeToken(out IToken? Token, params TokenType[] ValidTTs)
     {
         if (!AtEnd && ValidTTs.Contains(CurrentToken.TT))

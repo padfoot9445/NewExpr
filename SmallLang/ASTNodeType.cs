@@ -11,4 +11,7 @@ enum ASTNodeType
     Loop,
     OpValInLCTRL,
     Return,
+    BaseType,
+    GenericType,
+    Type,
 }

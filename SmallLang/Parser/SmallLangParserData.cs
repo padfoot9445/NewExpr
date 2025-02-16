@@ -27,6 +27,8 @@ class SmallLangParserData(int start, int current, List<IToken> tokens, ILogger l
     public OpValInLCTRLParser OpValInLCTRL => new(this);
     public TypeParser Type => new TypeParser(this);
     public TypeAndIdentifierCSVOrEmptyParser TypeAndIdentifierCSVOrEmpty => new(this);
+    public BaseTypeParser BaseType => new(this);
+    public GenericTypeParser GenericType => new(this);
     #endregion
 
 }

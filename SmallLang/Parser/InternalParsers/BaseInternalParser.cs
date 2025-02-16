@@ -27,5 +27,6 @@ abstract class BaseInternalParser(ParserData data)
     protected FunctionParser Function => new FunctionParser(Data);
     protected LoopControlStatementParser LCtrlStatement => new LoopControlStatementParser(Data);
     protected LoopParser Loop => new LoopParser(Data);
+    protected OpValInLCTRLParser OpValInLCTRL => new(Data);
     #endregion
 }

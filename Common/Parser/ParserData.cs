@@ -4,7 +4,7 @@ using Common.Tokens;
 namespace Common.Parser;
 public class ParserData(int start, int current, List<IToken> tokens, ILogger logger)
 {
-    public ParserData Copy()
+    public virtual ParserData Copy()
     {
         return new ParserData(start, current, tokens.Select(x => x).ToList(), logger.Copy());
     }

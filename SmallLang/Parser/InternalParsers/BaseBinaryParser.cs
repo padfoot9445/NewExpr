@@ -3,7 +3,7 @@ using Common.Parser;
 using Common.Tokens;
 
 namespace SmallLang.Parser.InternalParsers;
-abstract class BaseBinaryParser(ParserData data) : BaseInternalParser(data)
+abstract class BaseBinaryParser(SmallLangParserData data) : BaseInternalParser(data)
 {
     protected abstract BaseBinaryPrimeParser BinaryPrimeParser { get; init; }
     protected abstract BaseInternalParser NextInPriority { get; init; }

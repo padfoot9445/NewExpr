@@ -18,7 +18,7 @@ class InternalParser : InternalParserBase, IParser
             node = null;
             return false;
         }
-        else if (!SafeParse(Program, out node))
+        else if (!SafeParse(Data.Program, out node))
         {
             if (Recover())
             {

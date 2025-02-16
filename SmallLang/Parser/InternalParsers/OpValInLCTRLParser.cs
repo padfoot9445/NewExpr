@@ -3,7 +3,7 @@ using Common.Parser;
 using Common.Tokens;
 
 namespace SmallLang.Parser.InternalParsers;
-class OpValInLCTRLParser(ParserData data) : BaseInternalParser(data)
+class OpValInLCTRLParser(SmallLangParserData data) : BaseInternalParser(data)
 {
     public override bool Parse(out DynamicASTNode<ASTNodeType, Attributes>? Node)
     {

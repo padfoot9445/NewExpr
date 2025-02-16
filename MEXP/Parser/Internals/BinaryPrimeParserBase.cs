@@ -49,7 +49,7 @@ abstract class BinaryPrimeParserBase : InternalParserBase
         if (Operators.Contains(CurrentToken()!.TT))
         {
             IToken Operator = CurrentToken(Inc: true)!;
-            if (SafeParse(NextInPriority, out AnnotatedNode<Annotations>? ParentPrimedNode, Suppress: false) && SafeParse(this, out AnnotatedNode<Annotations>? PrimeNode, Suppress: false))
+            if (SafeParse(Data.NextInPriority, out AnnotatedNode<Annotations>? ParentPrimedNode, Suppress: false) && SafeParse(Data.this, out AnnotatedNode<Annotations>? PrimeNode, Suppress: false))
             {
                 Node = Action(ASTNode.BinaryPrime(Operator: Operator, Right: ParentPrimedNode!, Repeat: PrimeNode!, Name));
                 return true;

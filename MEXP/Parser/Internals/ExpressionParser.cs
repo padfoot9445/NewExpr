@@ -11,7 +11,7 @@ class ExpressionParser : InternalParserBase
 
     public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
-        if (SafeParse(Declaration, out AnnotatedNode<Annotations>? Add, Suppress: false)) //no additional context to add here so we get the context from safeparse
+        if (SafeParse(Data.Declaration, out AnnotatedNode<Annotations>? Add, Suppress: false)) //no additional context to add here so we get the context from safeparse
         {
             Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, Name)); //TypeCode <- Addition.TypeCode
             return true;

@@ -26,7 +26,7 @@ class DeclarationParser : InternalParserBase
     {
         Debug.Assert(IdentToken.TT == TokenType.Identifier);
         Debug.Assert(TNode!.Attributes.TypeDenotedByIdentifier is not null);
-        if (!SafeParse(AssignmentPrime, out AnnotatedNode<Annotations>? ANode))
+        if (!SafeParse(Data.AssignmentPrime, out AnnotatedNode<Annotations>? ANode))
         {
 
             Log.Log($"Impossible path in {Name}");
@@ -66,11 +66,11 @@ class DeclarationParser : InternalParserBase
 
     public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
-        if (SafeParse(Type, out AnnotatedNode<Annotations>? TNode))
+        if (SafeParse(Data.Type, out AnnotatedNode<Annotations>? TNode))
         {
             return ParseDecl(TNode!, out Node);
         }
-        else if (SafeParse(Addition, out AnnotatedNode<Annotations>? Add, Suppress: false))
+        else if (SafeParse(Data.Addition, out AnnotatedNode<Annotations>? Add, Suppress: false))
         {
             Node = new(Add!.Attributes.Copy(), ASTNode.NonTerminal(Add!, Name));
             return true;

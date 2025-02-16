@@ -4,7 +4,7 @@ using Common.Parser;
 using Common.Tokens;
 
 namespace SmallLang.Parser.InternalParsers;
-abstract class BaseBinaryPrimeParser(ParserData data) : BaseInternalParser(data)
+abstract class BaseBinaryPrimeParser(SmallLangParserData data) : BaseInternalParser(data)
 {
     protected abstract ASTNodeType OutNodeType { get; init; }
     protected abstract ICollection<IToken> Operators { get; init; }

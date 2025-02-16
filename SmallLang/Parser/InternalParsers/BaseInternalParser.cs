@@ -2,9 +2,9 @@ using Common.AST;
 using Common.Parser;
 
 namespace SmallLang.Parser.InternalParsers;
-abstract class BaseInternalParser(ParserData data)
+abstract class BaseInternalParser(SmallLangParserData data)
 {
-    protected ParserData Data { get; private set; } = data;
+    protected SmallLangParserData Data { get; private set; } = data;
     public abstract bool Parse(out DynamicASTNode<ASTNodeType, Attributes>? Node);
     public bool SafeParse(BaseInternalParser Parser, out DynamicASTNode<ASTNodeType, Attributes>? Node)
     {
@@ -17,16 +17,4 @@ abstract class BaseInternalParser(ParserData data)
         return false;
     }
 
-    #region ParserList
-    protected StatementParser Statement => new StatementParser(Data);
-    protected SectionParser Section => new SectionParser(Data);
-    protected BlockParser Block => new BlockParser(Data);
-    protected CondParser Cond => new CondParser(Data);
-    protected ReturnStatementParser ReturnStatement => new ReturnStatementParser(Data);
-    protected ExpressionParser Expression => new ExpressionParser(Data);
-    protected FunctionParser Function => new FunctionParser(Data);
-    protected LoopControlStatementParser LCtrlStatement => new LoopControlStatementParser(Data);
-    protected LoopParser Loop => new LoopParser(Data);
-    protected OpValInLCTRLParser OpValInLCTRL => new(Data);
-    #endregion
 }

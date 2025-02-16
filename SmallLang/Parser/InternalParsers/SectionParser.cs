@@ -3,12 +3,12 @@ using Common.AST;
 using Common.Parser;
 
 namespace SmallLang.Parser.InternalParsers;
-class SectionParser(ParserData data) : BaseInternalParser(data)
+class SectionParser(SmallLangParserData data) : BaseInternalParser(data)
 {
 
     public override bool Parse(out DynamicASTNode<ASTNodeType, Attributes>? Node)
     {
-        if (SafeParse(Statement, out var LeftNode))
+        if (SafeParse(Data.Statement, out var LeftNode))
         {
             if (SafeParse(this, out var RightNode))
             {

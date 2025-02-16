@@ -2,7 +2,7 @@ using Common.AST;
 using Common.Parser;
 
 namespace SmallLang.Parser.InternalParsers;
-class CondParser(ParserData data) : BaseInternalParser(data)
+class CondParser(SmallLangParserData data) : BaseInternalParser(data)
 {
     public override bool Parse(out DynamicASTNode<ASTNodeType, Attributes>? Node)
     {

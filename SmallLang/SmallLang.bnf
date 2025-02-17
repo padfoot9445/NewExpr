@@ -100,9 +100,10 @@ ArgListElement ::= OptionalArgumentLabel Expression;
 ArgList ::= ArgListElement ArgListPrime;
 ArgListPrime ::= "," ArgListElement ArgListPrime;
 OptionalArgumentLabel ::= IDENTIFIER ":" | EMPTY;
+TypeCSV ::= Type ("," TypeCSV | EMPTY )
 #region KW Groups
-    Type ::= BaseType | GenericType "<[" Type "]>";
-    GenericType ::= "array" | "list" | "set" | "dict";
+    Type ::= BaseType | GenericType "<[" TypeCSV "]>";
+    GenericType ::= "array" | "list" | "set" | "dict" | "collection";
     BaseType ::= "byte" | "short" | "int" | "long" | "bigint" | "float" | "double" | "rational" | "bigfloat" | "string" | "char" | "void";
 #endregion
 #region Consts

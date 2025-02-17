@@ -4,6 +4,7 @@ using sly.lexer;
 namespace Common.Tokens;
 public enum TokenType
 {
+    EOF,
     //should be shared between all sets of valid tokens, since invalid ones will simply be unused
     [Lexeme(GenericToken.Int)]
     [Lexeme(GenericToken.Double)]
@@ -11,6 +12,7 @@ public enum TokenType
     [Lexeme(GenericToken.Identifier, IdentifierType.Custom, "_A-Za-z", "_0-9A_Za-z")]
     Identifier,
     [Lexeme(GenericToken.String)]
+    [Lexeme(GenericToken.String, "'")]
     String,
 
     //Operators
@@ -110,10 +112,12 @@ public enum TokenType
     [Keyword("double")]
     TypeDouble,
     [Keyword("number")]
+    [Keyword("bigfloat")]
     TypeNumber,
     [Keyword("long")]
     TypeLong,
     [Keyword("longint")]
+    [Keyword("bigint")]
     TypeLongInt,
     [Keyword("byte")]
     TypeByte,
@@ -179,6 +183,7 @@ public enum TokenType
     TrueLiteral,
     [Keyword("false")]
     FalseLiteral,
-    EOF,
+    [Comment("#", "/*", "*/")]
+    Comment
 
 }

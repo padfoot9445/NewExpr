@@ -77,7 +77,7 @@ public abstract class Scanner : IScanner
         }
         return Skipped;
     }
-    public IEnumerable<IToken> Scan()
+    public virtual IEnumerable<IToken> Scan()
     {
         while (Current < input.Length)
         {
@@ -98,7 +98,7 @@ public abstract class Scanner : IScanner
             yield return GetLiteral();
         }
     }
-    IToken GetLiteral()
+    protected IToken GetLiteral()
     {
         Start = Current;
         //Check if it's a number first

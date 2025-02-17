@@ -27,7 +27,7 @@ Block ::= "{" Section "}";
 Expression ::= AliasExpr;
 
 
-AliasExpr ::= IDENTIFIER "as" IDENTIFIER | DeclarationExpr;
+AliasExpr ::= IDENTIFIER "as" IDENTIFIER | IDENTIFIER "as" Type IDENTIFIER | IDENTFIER "as" Type | DeclarationExpr;
 
 DeclarationExpr ::=
     DeclarationModifiersCombined Type IDENTIFIER AssignmentPrime |

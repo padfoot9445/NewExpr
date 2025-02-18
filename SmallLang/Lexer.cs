@@ -96,22 +96,18 @@ public sealed class Lexer(string input) : Scanner(input)
     };
     public override IEnumerable<IToken> Scan()
     {
-        ILexer<SmallTT> lexer = LexerBuilder.BuildLexer<SmallTT>().Result;
-        var tokenss = lexer.Tokenize(input);
-        var tokensd = tokenss.Tokens;
-        var x = tokensd.GetEnumerator();
-        var tokens = tokensd.ToList();
-        return [];
-        // var rt = tokens.Select(x => IToken.NewToken(x.TokenID, x.Value, x.Position.Index, x.StringWithoutQuotes)).ToArray();
-        // for (int i = 0; i < rt.Length; i++)
-        // {
-        //     var token = rt[i];
-        //     if (token.TT == TokenType.String)
-        //     {
-        //         input = $"\"{token.Literal}\"";
-        //         rt[i] = GetLiteral();
-        //     }
-        // }
-        // return rt;
+        ILexer<TokenType> lexer = LexerBuilder.BuildLexer<TokenType>().Result;
+        var tokens = lexer.Tokenize(input).Tokens.MainTokens();
+        var rt = tokens.Select(x => IToken.NewToken(x.TokenID, x.Value, x.Position.Index, x.StringWithoutQuotes)).ToArray();
+        for (int i = 0; i < rt.Length; i++)
+        {
+            var token = rt[i];
+            if (token.TT == TokenType.String)
+            {
+                input = $"\"{token.Literal}\"";
+                rt[i] = GetLiteral();
+            }
+        }
+        return rt;
     }
 }

@@ -77,7 +77,7 @@ public enum TokenType
     #region Symbols
     [Sugar(",")]
     Comma,
-    [Sugar(".")]
+    [Sugar(":")]
     Colon,
     [Sugar(".")]
     Dot,

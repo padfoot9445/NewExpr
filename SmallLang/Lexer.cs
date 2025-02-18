@@ -97,7 +97,7 @@ public sealed class Lexer(string input) : Scanner(input)
     public override IEnumerable<IToken> Scan()
     {
         ILexer<TokenType> lexer = LexerBuilder.BuildLexer<TokenType>().Result;
-        var tokens = lexer.Tokenize(input).Tokens.MainTokens();
+        var tokens = lexer.Tokenize(input).Tokens.MainTokens().SkipLast(1);
         var rt = tokens.Select(x => IToken.NewToken(x.TokenID, x.Value, x.Position.Index, x.StringWithoutQuotes)).ToArray();
         for (int i = 0; i < rt.Length; i++)
         {

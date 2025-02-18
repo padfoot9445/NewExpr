@@ -9,7 +9,7 @@ public enum TokenType
     [Lexeme(GenericToken.Int)]
     [Lexeme(GenericToken.Double)]
     Number,
-    [Lexeme(GenericToken.Identifier, IdentifierType.Custom, "_A-Za-z", "_0-9A_Za-z")]
+    [Lexeme(GenericToken.Identifier, IdentifierType.Custom, "_A-Za-z", "_0-9A-Za-z")]
     Identifier,
     [Lexeme(GenericToken.String)]
     [Lexeme(GenericToken.String, "'")]

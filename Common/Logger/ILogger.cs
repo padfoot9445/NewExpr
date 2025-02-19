@@ -1,6 +1,7 @@
 namespace Common.Logger;
 public interface ILogger
 {
+    public void FlushBuffer();
     public void Log(string message);
     public virtual void SuppressLog()
     {
@@ -11,4 +12,5 @@ public interface ILogger
         LoggingEnabled = true;
     }
     public bool LoggingEnabled { get; set; }
+    public ILogger Copy();
 }

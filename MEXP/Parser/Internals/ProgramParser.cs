@@ -21,7 +21,7 @@ class ProgramParser : InternalParserBase
     }
     private bool ParseRepeat(AnnotatedNode<Annotations> Expr, IToken C, out AnnotatedNode<Annotations>? Node)
     {
-        if (SafeParse(this, out AnnotatedNode<Annotations>? Repeat))
+        if (SafeParse(Data.this, out AnnotatedNode<Annotations>? Repeat))
         {
             Node = new(ASTNode.Repeating(Expr!, C!, Repeat!, Name));
             return true;
@@ -35,7 +35,7 @@ class ProgramParser : InternalParserBase
     }
     public override bool Parse(out AnnotatedNode<Annotations>? Node)
     {
-        if (!SafeParse(Expression, out AnnotatedNode<Annotations>? Expr))
+        if (!SafeParse(Data.Expression, out AnnotatedNode<Annotations>? Expr))
         {
             Node = null;
             return false;

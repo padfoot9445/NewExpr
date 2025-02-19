@@ -1,5 +1,5 @@
 Section ::= Statement Section | EMPTY;
-Statement ::= Expression ";" | Loop | Cond | Function | CascadingFunction | Block | ReturnStatement | LoopControlStatement;
+Statement ::= Expression ";" | Loop | Cond | Function | Block | ReturnStatement | LoopControlStatement; #removed cascading function to limit scope of language
 ReturnStatement ::= "return" Expression ";";
 LoopControlStatement ::= ("break" | "continue") OptionalNestedValueInLoopControl;
 OptionalNestedValueInLoopControl ::= IDENTIFIER; #Identifier where identifier is a label and not a variable

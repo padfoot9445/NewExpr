@@ -3,13 +3,13 @@ Statement ::= Expression ";" | Loop | Cond | Function | CascadingFunction | Bloc
 ReturnStatement ::= "return" Expression ";";
 LoopControlStatement ::= ("break" | "continue") OptionalNestedValueInLoopControl;
 OptionalNestedValueInLoopControl ::= IDENTIFIER; #Identifier where identifier is a label and not a variable
-Loop ::= (ForLoopHeader | WhileLoopHeader) OptionalLoopLabel OptionalElse; #like python's loop elses; executes when cause of loop termination is natural (i.e not a break)
+Loop ::= (ForLoopHeader | WhileLoopHeader) OptionalLoopLabel Statement OptionalElse; #like python's loop elses; executes when cause of loop termination is natural (i.e not a break)
 OptionalLoopLabel ::= "as" IDENTIFIER;
 ForLoopHeader ::= "for" "(" Expression ";" Expression ";" Expression ")";
-WhileLoopHeader ::= "while" "(" Expression ")" | "while" "(" Expression ";" Expression ")" #Tradwhile is the first; while (Cond; Action) is the second
+WhileLoopHeader ::= "while" "(" Expression ")" #Tradwhile is the first; while (Cond; Action) is the second
 Cond ::= If | Switch;
 If ::= "if" "(" Expression ")" Statement OptionalElse;
-OptionalElse ::= "else" Statement;
+OptionalElse ::= "else" Statement | EMPTY;
 Switch ::= "switch" "(" Expression ")" "{" SwitchBodyInner "}";
 SwitchBody ::= Expression ":" Statement SwitchBody | EMPTY;
 Function ::= Type "(" TypeAndIdentifierCSVOrEmpty ")" Statement;
@@ -34,7 +34,7 @@ DeclarationExpr ::=
     AssignmentExpr
 ;
 DeclarationModifiersCombined ::= DeclarationModifier DeclarationModifiersCombined | EMPTY;
-DeclarationModifier ::= "ref" | "readonly" | "frozen" | "immut"; #we don't expose pointer arithmetic, so ref int i = 1; i++ would just store 1 at some memory location and then increment i = 1 + 1 = 2. We class this sort of ref modifying as still pure, so we use the immut modifier to signify that this does not happen. Under immut, all params must be passed as value or frozen readonly.
+DeclarationModifier ::= "ref" | "readonly" | "frozen" | "immut"; #we don't expose pointer arithmetic, so ref int i = 1; i++ would just store 1 at some memory location and then increment i = 1 + 1 = 2. We class this sort of ref modifying as still pure, so we use the immut modifier to signify that this does not happen. Under immut, all params must be passed as value or frozen (not readonly, as reassigning pointer doesn't involve accessing outside state).
 FunctionArgDeclModifier ::= DeclarationModifier | "copy"; #copy is syntax sugar for taking the value and then copying, or pass by value
 FunctionArgDeclModifiersCombined ::= FunctionArgDeclModifier FunctionArgDeclModifiersCombined | EMPTY;
 AssignmentPrime ::= "=" Expression AssignmentPrime | EMPTY;
@@ -100,9 +100,10 @@ ArgListElement ::= OptionalArgumentLabel Expression;
 ArgList ::= ArgListElement ArgListPrime;
 ArgListPrime ::= "," ArgListElement ArgListPrime;
 OptionalArgumentLabel ::= IDENTIFIER ":" | EMPTY;
+TypeCSV ::= Type ("," TypeCSV | EMPTY )
 #region KW Groups
-    Type ::= BaseType | GenericType "<[" Type "]>";
-    GenericType ::= "array" | "list" | "set" | "dict";
+    Type ::= BaseType | GenericType "<[" TypeCSV "]>";
+    GenericType ::= "array" | "list" | "set" | "dict" | "collection";
     BaseType ::= "byte" | "short" | "int" | "long" | "bigint" | "float" | "double" | "rational" | "bigfloat" | "string" | "char" | "void";
 #endregion
 #region Consts

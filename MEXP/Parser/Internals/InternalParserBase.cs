@@ -29,7 +29,7 @@ abstract class InternalParserBase
         }
         return ((AnnotatedNode<Annotations>)node.Children[index]).Attributes;
     }
-    private protected bool SafeParse(InternalParserBase Parser, out AnnotatedNode<Annotations>? Node, bool Suppress = true) => ParserData.SP.SafeParse(Parser, out Node, ref ParserData.Current, Suppress);
+    private protected bool SafeParse(Data.InternalParserBase Parser, out AnnotatedNode<Annotations>? Node, bool Suppress = true) => ParserData.SP.SafeParse(Data.Parser, out Node, ref ParserData.Current, Suppress);
     private protected InternalParserBase Program => _Program is null ? new ProgramParser(ParserData) : _Program;
     private InternalParserBase? _Program = null;
     private protected InternalParserBase Expression => _Expression is null ? new ExpressionParser(ParserData) : _Expression;

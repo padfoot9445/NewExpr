@@ -23,7 +23,7 @@ class SafeParser
     {
         Current = State.Pop();
     }
-    public bool SafeParse(InternalParserBase fn, out AnnotatedNode<Annotations>? K, ref int Current, bool Suppress = true) //return true on successful parse, else false. Node is undefined on faliure.
+    public bool SafeParse(Data.InternalParserBase fn, out AnnotatedNode<Annotations>? K, ref int Current, bool Suppress = true) //return true on successful parse, else false. Node is undefined on faliure.
     {
         SaveState(ref Current);
         if (Suppress)

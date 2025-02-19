@@ -183,6 +183,8 @@ public enum TokenType
     TrueLiteral,
     [Keyword("false")]
     FalseLiteral,
+    [Keyword("collection")]
+    TypeCollection,
     [Comment("#", "/*", "*/")]
     Comment
 

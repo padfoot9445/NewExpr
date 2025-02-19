@@ -1,5 +1,5 @@
 namespace SmallLang;
-enum ASTNodeType
+public enum ASTNodeType
 {
     Section, //data: null, children: flattened array of statements
     Statement, //data: null, children: array[0] of statement(unused, passthrough, but should probably still handle)

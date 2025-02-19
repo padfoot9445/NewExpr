@@ -2,8 +2,8 @@ Section : Statement*
 Statement : SCExpr | Loop | Cond | Function | CascadingFunction | Block | ReturnStatement | LoopControlStatement
 SCExpr : Expression ";"
 ReturnStatement : "return" SCExpr
-LoopControlStatement : ("break" | "continue") OptionalNestedValueInLoopControl
-OptionalNestedValueInLoopControl : IDENTIFIER?
+LoopControlStatement : ("break" | "continue") NestedValueInLoopControl
+NestedValueInLoopControl : IDENTIFIER
 Loop : (ForLoopHeader | WhileLoopHeader) LoopLabel? Statement Else?
 LoopLabel : "as" IDENTIFIER
 ForLoopHeader : "for" "(" Expression ";" Expression ";" Expression ")"
@@ -11,9 +11,9 @@ WhileLoopHeader : "while" "(" Expression ")"
 Cond : [If | Switch]
 If : "if" "(" Expression ")" Statement Else?
 Else : "else" Statement
-Switch : "switch" "(" Expression ")" "{" SwitchBody? "}"
-SwitchBody : Expression ":" Statement SwitchBody
-Function : Type "(" TypeAndIdentifierCSV? ")" Statement
+Switch : "switch" "(" Expression ")" "{" SwitchBody* "}"
+SwitchBody : Expression ":" Statement
+Function : Type IDENTIFIER"(" TypeAndIdentifierCSV? ")" Statement
 TypeAndIdentifierCSVElement : FunctionArgDeclModifiersCombined Type IDENTIFIER
 TypeAndIdentifierCSV : TypeAndIdentifierCSVElement TypeAndIdentifierCSVPrime*
 TypeAndIdentifierCSVPrime : "," TypeAndIdentifierCSVElement
@@ -28,19 +28,19 @@ Expression : AliasExpr
 
 AliasExpr : [AliasExpr1 | AliasExpr2 | DeclarationExpr]
 AliasExpr1 : IDENTIFIER "as" IDENTIFIER
-AliasExpr2 : IDENTIFIER "as" Type IDENTIFIER?
+AliasExpr2 : IDENTIFIER "as" Type IDENTIFIER?   
 
 DeclarationExpr :
     [DeclarationExpr1 |
     AssignmentExpr]
-DeclarationExpr1 : DeclarationModifiersCombined Type IDENTIFIER AssignmentPrime
+DeclarationExpr1 : DeclarationModifiersCombined Type IDENTIFIER AssignmentPrime?
 DeclarationModifiersCombined : DeclarationModifier*
 DeclarationModifier : ["ref" | "readonly" | "frozen" | "immut"]
 FunctionArgDeclModifier : ["ref" | "readonly" | "frozen" | "immut" | "copy"]
 FunctionArgDeclModifiersCombined : FunctionArgDeclModifier+
-AssignmentPrime : ("=" Expression AssignmentPrime)?
+AssignmentPrime : "=" Expression #("=" Expression AssignmentPrime) as assignment is in expression
 AssignmentExpr : [AssignmentExpr1 | BooleanLogicExpr]
-AssignmentExpr1 : IDENTIFIER AssignmentPrime
+AssignmentExpr1 : IDENTIFIER AssignmentPrime?
 
 BooleanLogicExpr : ImpliesExpr
 
@@ -91,21 +91,23 @@ BitwiseAndExpr : BitwiseNotExpr BitwiseAndExprPrime
 BitwiseAndExprPrime : "&" BitwiseNotExpr BitwiseAndExprPrime | EMPTY
 BitwiseNotExpr : "~" Primary | Primary
 
-
-Primary : "(" Expression ")" | IDENTIFIER | NUMBER | STRING | Index | FunctionCall | NewExpr | BOOLEAN | "copy" Expression; #no need to be so fancy as to support interpolation etc
-NewExpr : "new" Type "(" ArgListOrNone ")"
-Index : Primary "[" Expression "]"
-FunctionCall : Primary FunctionCallPrime
-FunctionCallPrime : "." "(" ArgListOrNone ")" | "(" ArgListOrNone ")"
-ArgListOrNone : ArgList | EMPTY
-ArgListElement : OptionalArgumentLabel Expression
+Primary : LPrimary PrimaryPrime?
+PrimaryPrime : IndexPrime | FunctionCallPrime
+IndexPrime : "[" Expression "]"
+LPrimary : NewExpr | LPrimary1 | LPrimary2 | LPrimary3 #no need to be so fancy as to support interpolation etc
+LPrimary1 : "(" Expression ")"
+LPrimary2 : "copy" Expression
+LPrimary3 : IDENTIFIER | NUMBER | STRING | TRUELITERAL | FALSELITERAL
+NewExpr : "new" Type "(" ArgList? ")"
+FunctionCallPrime : "." "(" ArgList? ")" | "(" ArgList? ")"
+ArgListElement : ArgumentLabel? Expression
 ArgList : ArgListElement ArgListPrime
 ArgListPrime : "," ArgListElement ArgListPrime
-OptionalArgumentLabel : IDENTIFIER ":" | EMPTY
+ArgumentLabel : IDENTIFIER ":"
 TypeCSV : Type ("," TypeCSV | EMPTY )
 #region KW Groups
-    Type : BaseType | GenericType "<[" TypeCSV "]>"
-        GenericType : "array" | "list" | "set" | "dict" | "collection"
+    Type : BaseType | GenericType
+        GenericType : ("array" | "list" | "set" | "dict" | "collection") "<[" TypeCSV "]>"
         BaseType : "byte" | "short" | "int" | "long" | "bigint" | "float" | "double" | "rational" | "bigfloat" | "string" | "char" | "void"
     #endregion
 #region Consts

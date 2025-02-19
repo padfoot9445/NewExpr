@@ -1,6 +1,7 @@
 namespace SmallLang;
 public enum ASTNodeType
 {
+    Internal, //not exposed and should not be present in the final tree
     Section, //data: null, children: flattened array of statements
     Statement, //data: null, children: array[0] of statement(unused, passthrough, but should probably still handle)
     Block, //data: null, unused, passthrough

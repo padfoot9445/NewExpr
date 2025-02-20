@@ -159,8 +159,19 @@ public partial class SmallLangParser
     public NodeType NTAssignmentPrime(LyToken EQ, NodeType Expr) => new(FromToken(EQ), [Expr], ASTNodeType.AssignmentPrime);
     [Production($"{nameof(NTAssignmentExpr)}: [{nameof(NTAssignmentExpr1)} | SmallLangParser_expressions]")]
     public NodeType NTAssignmentExpr(NodeType Node) => Node;
-    [Production($"{nameof(NTAssignmentExpr1)}: Identifier {nameof(NTAssignmentPrime)}?")]
-    public NodeType NTAssignmentExpr1(LyToken Ident, ValueOption<NodeType> AAssignmentPrime) => new(FromToken(Ident), BuildChildren(AAssignmentPrime), ASTNodeType.AssignmentExpr);
+    [Production($"{nameof(NTAssignmentExpr1)}: {nameof(NTPrimary)} {nameof(NTAssignmentPrime)}?")]
+    public NodeType NTAssignmentExpr1(NodeType P1, ValueOption<NodeType> AAssignmentPrime)
+    {
+        if (GetFromValOp(AAssignmentPrime) is NodeType NodeAssignmentPrime)
+        {
+            if (P1.NodeType != ASTNodeType.Identifier)
+            {
+                throw new Exception($"Expected identifier in assignment");
+            }
+            return new(P1.Data, [NodeAssignmentPrime], ASTNodeType.AssignmentExpr);
+        }
+        else return P1;
+    }
     [Operand]
     [Production($"{nameof(NTPrimary)}: {nameof(NTLPrimary)} {nameof(NTPrimaryPrime)}?")]
     public NodeType NTPrimary(NodeType APrimary, ValueOption<NodeType> Prime)
@@ -182,7 +193,11 @@ public partial class SmallLangParser
     [Production($"{nameof(NTLPrimary2)}: Copy [d] {nameof(NTExpression)}")]
     public NodeType NTLPrimary2(NodeType Expr) => new(null, [Expr], ASTNodeType.CopyExpr);
     [Production($"{nameof(NTLPrimary3)}: [Identifier | Number | String | TrueLiteral | FalseLiteral]")]
-    public NodeType NTLPrimary3(LyToken Token) => new(FromToken(Token), [], ASTNodeType.Primary);
+    public NodeType NTLPrimary3(LyToken Token)
+    {
+        IToken oT = FromToken(Token)!;
+        return new(oT, [], oT.TT == TokenType.Identifier ? ASTNodeType.Identifier : ASTNodeType.Primary);
+    }
     [Production($"{nameof(NTNewExpr)}: New [d] {nameof(NTType)} OpenParen [d] {nameof(NTArgList)}?")]
     public NodeType NTNewExpr(NodeType AType, ValueOption<NodeType> AArgList) => new(null, BuildChildren(AType, AArgList), ASTNodeType.NewExpr);
     [Production($"{nameof(NTFunctionCallPrime)}:OpenParen [d] {nameof(NTArgList)}? CloseParen [d]")]

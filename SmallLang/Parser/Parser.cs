@@ -2,20 +2,27 @@ namespace SmallLang.Parser;
 
 using Common.Tokens;
 using sly.buildresult;
+using sly.parser;
 using sly.parser.generator;
+using LYParser = sly.parser.Parser<Common.Tokens.TokenType, Common.AST.DynamicASTNode<SmallLang.ASTNodeType, SmallLang.Attributes>>;
 using NodeType = Common.AST.DynamicASTNode<SmallLang.ASTNodeType, SmallLang.Attributes>;
-public class Parser(string input)
+public class Parser
 {
-    private Parser<TokenType, NodeType> GetParser()
+    private LYParser LyParser;
+    string input;
+    public Parser(string input)
+    {
+        this.input = input;
+        LyParser = GetParser();
+    }
+    private LYParser GetParser()
     {
         var def = new SmallLangParser();
-        BuildResult<Parser<TokenType, NodeType>> ParserResult = ParserBuilder<TokenType, NodeType>.BuildParser(def,
-                                                                            ParserType.EBNF_LL_RECURSIVE_DESCENT,
-                                                                            "Section");
+        BuildResult<LYParser> parserResult = new ParserBuilder<TokenType, NodeType>().BuildParser(def, ParserType.EBNF_LL_RECURSIVE_DESCENT, "Section");
         if (parserResult.IsOk)
         {
             // everythin'fine : we have a configured parser
-            parser = parserResult.Result;
+            return parserResult.Result;
         }
         else
         {
@@ -24,10 +31,11 @@ public class Parser(string input)
             {
                 Console.WriteLine($"{error.Code} : {error.Message}");
             }
+            throw new Exception(string.Join('\n', parserResult.Errors.Select(x => x.Message)));
         }
     }
-    public NodeType Lex()
+    public NodeType Parse()
     {
-
+        throw new NotImplementedException();
     }
 }

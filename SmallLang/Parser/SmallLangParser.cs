@@ -195,7 +195,7 @@ public partial class SmallLangParser
     public NodeType NTArgListPrime(NodeType Element) => Element;
     [Production($"{nameof(NTArgumentLabel)}: Identifier Colon [d]")]
     public NodeType NTArgumentLabel(LyToken Ident) => new(FromToken(Ident), [], ASTNodeType.Identifier);
-    [Production($"{nameof(NTTypeCSV)}: {nameof(NTType)} (Comma [d] {nameof(NTType)})")]
+    [Production($"{nameof(NTTypeCSV)}: {nameof(NTType)} (Comma [d] {nameof(NTType)})*")]
     public NodeType NTTypeCSV(NodeType AType, List<Group<TokenType, NodeType>> OtherTypes)
     {
         return new(null, [AType, .. OtherTypes.Select(x => x.Items.First().Value)], ASTNodeType.TypeCSV);

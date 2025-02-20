@@ -78,7 +78,7 @@ public partial class SmallLangParser
     [Prefix((int)TokenType.LogicalNot, Associativity.Right, NotExprPrecedence)]
     [Prefix((int)TokenType.BitwiseNegation, Associativity.Right, BitwiseNotExprPrecedence)]
     [Prefix((int)TokenType.Subtraction, Associativity.Right, NegationPrecedence)]
-    public NodeType Prefix(LyToken Op, NodeType Right) => new(FromToken(Op), [Right], ASTNodeType.PrefixExpression);
+    public NodeType Prefix(LyToken Op, NodeType Right) => new(FromToken(Op), [Right], ASTNodeType.UnaryExpression);
     [Infix((int)TokenType.LogicalOr, Associativity.Left, OrExprPrecedence)]
     [Infix((int)TokenType.LogicalXor, Associativity.Left, XorExprPrecedence)]
     [Infix((int)TokenType.LogicalAnd, Associativity.Left, AndExprPrecedence)]

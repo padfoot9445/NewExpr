@@ -31,7 +31,29 @@ public partial class SmallLangParser
             }
             else if (val is ValueOption<LyToken> ValT)
             {
-
+                if (FromToken(ValT) is IToken Token)
+                {
+                    if (Token.TT == TokenType.Identifier)
+                    {
+                        rc.Add(new NodeType(Token, [], ASTNodeType.Identifier));
+                    }
+                    else
+                    {
+                        rc.Add(new NodeType(Token, [], ASTNodeType.Terminal));
+                    }
+                }
+            }
+            else if (val is LyToken TVal)
+            {
+                var Token = FromToken(TVal);
+                if (Token.TT == TokenType.Identifier)
+                {
+                    rc.Add(new NodeType(Token, [], ASTNodeType.Identifier));
+                }
+                else
+                {
+                    rc.Add(new NodeType(Token, [], ASTNodeType.Terminal));
+                }
             }
             else
             {
@@ -124,12 +146,14 @@ public partial class SmallLangParser
     public NodeType Block(NodeType Section) => Section;
     [Production($"{nameof(AliasExpr)}")]
     public NodeType Expression(NodeType pass) => pass;
-    [Production($"[{nameof(AliasExpr1)} | {nameof(AliasExpr2)} {nameof(DeclarationExpr)}]")]
+    [Production($"[{nameof(AliasExpr1)} | {nameof(AliasExpr2)} | {nameof(AliasExpr3)} | {nameof(DeclarationExpr)}]")]
     public NodeType AliasExpr(NodeType Node) => Node;
     [Production($"Identifier As [d] Identifier")]
-    public NodeType AliasExpr1(LyToken Ident, LyToken Ident2) => new(FromToken(Ident), [new(FromToken(Ident2), [], ASTNodeType.Terminal)], ASTNodeType.AliasExpr);
-    [Production($"Identifier As [d] {nameof(Type)} Identifier?")]
-    public NodeType AliasExpr2(LyToken Ident, NodeType Type, ValueOption<LyToken> Ident2) => new(FromToken(Ident), BuildChildren(Type, new NodeType(FromToken(Ident2), [], ASTNodeType.Terminal)), ASTNodeType.AliasExpr);
+    public NodeType AliasExpr1(LyToken Ident, LyToken Ident2) => new(FromToken(Ident), BuildChildren(Ident2), ASTNodeType.AliasExpr);
+    [Production($"Identifier As [d] {nameof(Type)} Identifier")]
+    public NodeType AliasExpr2(LyToken Ident, NodeType Type, LyToken Ident2) => new(FromToken(Ident), BuildChildren(Type, Ident2), ASTNodeType.ReTypingAlias);
+    [Production($"Identifier As [d] {nameof(Type)}")]
+    public NodeType AliasExpr3(LyToken Ident, NodeType Type) => new(FromToken(Ident), BuildChildren(Type), ASTNodeType.ReTypeOriginal);
     [Production($"[{nameof(DeclarationExpr1)} | {nameof(AssignmentExpr)}]")]
     public NodeType DeclarationExpr(NodeType Node) => Node;
     [Production($"{nameof(DeclarationModifiersCombined)}? {nameof(Type)} Identifier {nameof(AssignmentPrime)}")]
@@ -181,7 +205,7 @@ public partial class SmallLangParser
     [Production($"Comma [d] {nameof(ArgListElement)}")]
     public NodeType ArgListPrime(NodeType Element) => Element;
     [Production($"Identifier Colon [d]")]
-    public NodeType ArgumentLabel(LyToken Ident) => new(FromToken(Ident), [], ASTNodeType.Terminal);
+    public NodeType ArgumentLabel(LyToken Ident) => new(FromToken(Ident), [], ASTNodeType.Identifier);
     [Production($"{nameof(Type)} (Comma [d] {nameof(Type)})")]
     public NodeType TypeCSV(NodeType AType, List<Group<TokenType, NodeType>> OtherTypes)
     {

@@ -11,7 +11,7 @@ public enum ASTNodeType
     Block, //data: null, unused, passthrough
     Cond, //data: null, unused, passthrough to if or switch
     Expression, //unused, passthrough
-    UnaryExpression, //data: "not" | "-" | "~" | "!", children: [Expression] //x++ x-- etc if implemented can also be deconstructed in the parser
+    UnaryExpression, //data: "not" | "-" | "~" NOT "!", children: [Expression] //x++ x-- etc if implemented can also be deconstructed in the parser
     Terminal,
     ReTypingAlias, //data: IDENTIFIER, children: [Type Identifier]
     ReTypeOriginal, //data: IDENTIFIER, children: [Type]
@@ -39,7 +39,6 @@ public enum ASTNodeType
     FunctionArgDeclModifiersCombined, //data: null, children: [FunctionArgDeclModifiers+]
     AssignmentPrime, //data: "=", children: [Expression]
     AssignmentExpr, //data: "=", children: [Identifier, Expression]
-    PrefixExpression, //data: operator, children: [Expression]
     FactorialExpression, //data: null, children: [Expression, !+]
     BinaryExpression, //data: "implies" | "or" | "xor" | "and" | "==" | "!=" | ">" | ">=" | "<" | "<=" | "+" | "-" | "*" | "/" | "**" | "|" | "^" | "&", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser
     ComparisionExpression, //data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via 

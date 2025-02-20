@@ -95,7 +95,8 @@ public partial class SmallLangParser
     [Production($"{nameof(NTNestedValueInLoopControl)}: Identifier")]
     public NodeType NTNestedValueInLoopControl(LyToken val) => new NodeType(FromToken(val), [], ASTNodeType.ValInLCTRL);
 
-    [Production($"{nameof(NTLoop)}: [{nameof(NTForLoopHeader)} | {nameof(NTWhileLoopHeader)}] {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
+    [Production($"{nameof(NTLoop)}: {nameof(NTForLoopHeader)} {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
+    [Production($"{nameof(NTLoop)}: {nameof(NTWhileLoopHeader)} {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
     public NodeType NTLoop(NodeType LoopHeader, ValueOption<NodeType> Label, NodeType StatementExpr, ValueOption<NodeType> ElseExpr)
     {
         var rt = LoopHeader.NodeType;

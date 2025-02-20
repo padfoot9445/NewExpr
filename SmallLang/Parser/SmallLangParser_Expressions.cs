@@ -6,7 +6,7 @@ namespace SmallLang.Parser;
 public partial class SmallLangParser
 {
     #region ComparisonExpressions
-    const int EqualToPrecedence = NotExprPrecedence;
+    const int EqualToPrecedence = NotExprPrecedence + 1;
     const int NotEqualToPrecedence = EqualToPrecedence;
     const int GreaterThanPrecedence = NotEqualToPrecedence;
     const int LessThanPrecedence = GreaterThanPrecedence;

@@ -157,9 +157,9 @@ public partial class SmallLangParser
     public NodeType NTFunctionArgDeclModifiersCombined(List<NodeType> Modifiers) => new(null, Modifiers, ASTNodeType.FunctionArgDeclModifiersCombined);
     [Production($"{nameof(NTAssignmentPrime)}: Equals {nameof(NTExpression)}")]
     public NodeType NTAssignmentPrime(LyToken EQ, NodeType Expr) => new(FromToken(EQ), [Expr], ASTNodeType.AssignmentPrime);
-    [Production($"{nameof(NTAssignmentExpr)}: [{nameof(NTAssignmentExpr1)} | SmallLangParser_expressions]")]
+    [Production($"{nameof(NTAssignmentExpr)}: {nameof(NTAssignmentExpr1)}")]
     public NodeType NTAssignmentExpr(NodeType Node) => Node;
-    [Production($"{nameof(NTAssignmentExpr1)}: {nameof(NTPrimary)} {nameof(NTAssignmentPrime)}?")]
+    [Production($"{nameof(NTAssignmentExpr1)}: SmallLangParser_expressions {nameof(NTAssignmentPrime)}?")]
     public NodeType NTAssignmentExpr1(NodeType P1, ValueOption<NodeType> AAssignmentPrime)
     {
         if (GetFromValOp(AAssignmentPrime) is NodeType NodeAssignmentPrime)

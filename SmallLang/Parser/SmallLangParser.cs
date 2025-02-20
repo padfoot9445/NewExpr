@@ -163,13 +163,13 @@ public partial class SmallLangParser
     [Production($"OpenSquare [d] {nameof(Expression)} CloseSquare [d]")]
     public NodeType IndexPrime(NodeType Expr) => new(null, [Expr], ASTNodeType.Index);
     [Production($"[{nameof(NewExpr)} | {nameof(LPrimary1)} | {nameof(LPrimary2)} | {nameof(LPrimary3)}]")]
-    public NodeType LPrimary(NodeType Node) => Node with { NodeType = ASTNodeType.Primary };
+    public NodeType LPrimary(NodeType Node) => Node;
     [Production($"OpenParen [d] {nameof(Expression)} CloseParen [d]")]
-    public NodeType LPrimary1(NodeType Expr) => new(null, [Expr], ASTNodeType.Internal);
+    public NodeType LPrimary1(NodeType Expr) => Expr;
     [Production($"Copy [d] {nameof(Expression)}")]
-    public NodeType LPrimary2(NodeType Expr) => new(null, [Expr], ASTNodeType.Internal);
+    public NodeType LPrimary2(NodeType Expr) => new(null, [Expr], ASTNodeType.CopyExpr);
     [Production($"[Identifier | Number | String | TrueLiteral | FalseLiteral]")]
-    public NodeType LPrimary3(LyToken Token) => new(FromToken(Token), [], ASTNodeType.Internal);
+    public NodeType LPrimary3(LyToken Token) => new(FromToken(Token), [], ASTNodeType.Primary);
     [Production($"New [d] {nameof(Type)} OpenParen [d] {nameof(ArgList)}?")]
     public NodeType NewExpr(NodeType AType, ValueOption<NodeType> AArgList) => new(null, BuildChildren(AType, AArgList), ASTNodeType.NewExpr);
     [Production($"Dot? OpenParen [d] {nameof(ArgList)} CloseParen [d]")]

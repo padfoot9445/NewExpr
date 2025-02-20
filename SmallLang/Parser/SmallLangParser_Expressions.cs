@@ -56,7 +56,9 @@ public partial class SmallLangParser
     const int NegationPrecedence = PowerPrecedence + 1;
 
     const int FactorialPrecedence = NegationPrecedence + 1;
-    const int BitwiseOrExprPrecedence = FactorialPrecedence + 1;
+    const int RShiftPrecedence = FactorialPrecedence + 1;
+    const int LShiftPrecedence = RShiftPrecedence + 1;
+    const int BitwiseOrExprPrecedence = LShiftPrecedence + 1;
 
     const int BitwiseXorExprPrecedence = BitwiseOrExprPrecedence + 1;
 
@@ -91,6 +93,8 @@ public partial class SmallLangParser
     [Infix((int)TokenType.BitwiseOr, Associativity.Left, BitwiseOrExprPrecedence)]
     [Infix((int)TokenType.BitwiseXor, Associativity.Left, BitwiseXorExprPrecedence)]
     [Infix((int)TokenType.BitwiseAnd, Associativity.Left, BitwiseAndExprPrecedence)]
+    [Infix((int)TokenType.BitwiseLeftShift, Associativity.Left, LShiftPrecedence)]
+    [Infix((int)TokenType.BitwiseRightShift, Associativity.Left, RShiftPrecedence)]
     public NodeType BinOp(NodeType left, LyToken Op, NodeType right)
     {
         return new NodeType(FromToken(Op), [left, right], ASTNodeType.BinaryExpression);

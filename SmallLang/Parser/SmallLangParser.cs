@@ -30,23 +30,10 @@ public partial class SmallLangParser
             {
                 AppendIfNotEmpty(rc, valOp);
             }
-            else if (val is ValueOption<LyToken> ValT)
-            {
-                if (FromToken(ValT) is IToken Token)
-                {
-                    if (Token.TT == TokenType.Identifier)
-                    {
-                        rc.Add(new NodeType(Token, [], ASTNodeType.Identifier));
-                    }
-                    else
-                    {
-                        rc.Add(new NodeType(Token, [], ASTNodeType.Terminal));
-                    }
-                }
-            }
             else if (val is LyToken TVal)
             {
                 var Token = FromToken(TVal);
+                if (Token == null) continue;
                 if (Token.TT == TokenType.Identifier)
                 {
                     rc.Add(new NodeType(Token, [], ASTNodeType.Identifier));
@@ -71,8 +58,7 @@ public partial class SmallLangParser
         }
         return null;
     }
-    IToken FromToken(LyToken t) => IToken.NewToken(t.TokenID, t.Value, t.Position.Index, null);
-    IToken? FromToken(ValueOption<LyToken> t) => t.Match(x => FromToken(x), () => null!);
+    IToken? FromToken(LyToken t) => t.IsEmpty ? null : IToken.NewToken(t.TokenID, t.Value, t.Position.Index, null);
     [Production($"{nameof(NTSection)}: {nameof(NTStatement)}*")]
     public NodeType NTSection(List<NodeType> Statements)
     {
@@ -80,10 +66,10 @@ public partial class SmallLangParser
     }
     [Production($"{nameof(NTStatement)}: [{nameof(NTSCExpr)} | {nameof(NTLoop)} | {nameof(NTCond)} | {nameof(NTFunction)} | {nameof(NTBlock)} | {nameof(NTReturnStatement)} | {nameof(NTLoopControlStatement)}]")]
     public NodeType NTStatement(NodeType SubStatement) => SubStatement;
-    [Production($"{nameof(NTSCExpr)}: Expression Semicolon [d]")]
+    [Production($"{nameof(NTSCExpr)}: {nameof(NTExpression)} Semicolon [d]")]
 
     public NodeType NTSCExpr(NodeType Expression) => Expression;
-    [Production($"{nameof(NTReturnStatement)}: Return [d] SCExpr")]
+    [Production($"{nameof(NTReturnStatement)}: Return [d] {nameof(NTSCExpr)}")]
     public NodeType NTReturnStatement(NodeType SCExpr) => SCExpr with { NodeType = ASTNodeType.Return };
     [Production($"{nameof(NTLoopControlStatement)}: [Break | Continue] {nameof(NTNestedValueInLoopControl)}?")]
     public NodeType NTLoopControlStatement(LyToken Operator, ValueOption<NodeType> NestedVal)
@@ -139,7 +125,7 @@ public partial class SmallLangParser
 
     [Production($"{nameof(NTSwitchBody)}: {nameof(NTExpression)} Colon [d] {nameof(NTStatement)}")]
     public NodeType NTSwitchBody(NodeType AExpr, NodeType AStatement) => new(null, [AExpr, AStatement], ASTNodeType.ExprStatementCombined);
-    [Production($"{nameof(NTFunction)}: {nameof(NTType)} Identifier OpenParen [d] {nameof(NTTypeAndIdentifierCSV)}? CloseParen [d] {nameof(Statement)}")]
+    [Production($"{nameof(NTFunction)}: {nameof(NTType)} Identifier OpenParen [d] {nameof(NTTypeAndIdentifierCSV)}? CloseParen [d] {nameof(NTStatement)}")]
     public NodeType NTFunction(NodeType AType, LyToken Ident, ValueOption<NodeType> TICSV, NodeType Statement) => new(FromToken(Ident), BuildChildren(AType, TICSV, Statement), ASTNodeType.Function);
     [Production($"{nameof(NTTypeAndIdentifierCSV)}: {nameof(NTTypeAndIdentifierCSVElement)} (Comma [d] {nameof(NTTypeAndIdentifierCSV)})*")]
     public NodeType NTTypeAndIdentifierCSV(NodeType Element, List<Group<TokenType, NodeType>> Prime) => new(null, [Element, .. Prime.Select(x => x.Items.First().Value)], ASTNodeType.TypeAndIdentifierCSV);
@@ -155,11 +141,11 @@ public partial class SmallLangParser
     public NodeType NTAliasExpr1(LyToken Ident, LyToken Ident2) => new(FromToken(Ident), BuildChildren(Ident2), ASTNodeType.AliasExpr);
     [Production($"{nameof(NTAliasExpr2)}: Identifier As [d] {nameof(NTType)} Identifier")]
     public NodeType NTAliasExpr2(LyToken Ident, NodeType AType, LyToken Ident2) => new(FromToken(Ident), BuildChildren(AType, Ident2), ASTNodeType.ReTypingAlias);
-    [Production($"{nameof(NTAliasExpr3)}: Identifier As [d] {nameof(Type)}")]
+    [Production($"{nameof(NTAliasExpr3)}: Identifier As [d] {nameof(NTType)}")]
     public NodeType NTAliasExpr3(LyToken Ident, NodeType Type) => new(FromToken(Ident), BuildChildren(Type), ASTNodeType.ReTypeOriginal);
     [Production($"{nameof(NTDeclarationExpr)}: [{nameof(NTDeclarationExpr1)} | {nameof(NTAssignmentExpr)}]")]
     public NodeType NTDeclarationExpr(NodeType Node) => Node;
-    [Production($"{nameof(NTDeclarationExpr1)}: {nameof(NTDeclarationModifiersCombined)}? {nameof(NTType)} Identifier {nameof(NTAssignmentPrime)}")]
+    [Production($"{nameof(NTDeclarationExpr1)}: {nameof(NTDeclarationModifiersCombined)}? {nameof(NTType)} Identifier {nameof(NTAssignmentPrime)}?")]
     public NodeType NTDeclarationExpr1(ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident, ValueOption<NodeType> AAssignmentPrime) => new(FromToken(Ident), BuildChildren(Modifiers, AType, AAssignmentPrime), ASTNodeType.Declaration);
     [Production($"{nameof(NTDeclarationModifiersCombined)}: {nameof(NTDeclarationModifier)}+")]
     public NodeType NTDeclarationModifiersCombined(List<NodeType> Modifiers) => new(null, Modifiers, ASTNodeType.DeclarationModifiersCombined);
@@ -200,7 +186,7 @@ public partial class SmallLangParser
     [Production($"{nameof(NTNewExpr)}: New [d] {nameof(NTType)} OpenParen [d] {nameof(NTArgList)}?")]
     public NodeType NTNewExpr(NodeType AType, ValueOption<NodeType> AArgList) => new(null, BuildChildren(AType, AArgList), ASTNodeType.NewExpr);
     [Production($"{nameof(NTFunctionCallPrime)}: Dot? OpenParen [d] {nameof(NTArgList)} CloseParen [d]")]
-    public NodeType NTFunctionCallPrime(ValueOption<LyToken> Dot, NodeType AArgList) => new(FromToken(Dot), BuildChildren(AArgList), ASTNodeType.FunctionCall);
+    public NodeType NTFunctionCallPrime(LyToken Dot, NodeType AArgList) => new(FromToken(Dot), BuildChildren(AArgList), ASTNodeType.FunctionCall);
     [Production($"{nameof(NTArgList)}: {nameof(NTArgListElement)} {nameof(NTArgListPrime)}+")]
     public NodeType NTArgList(NodeType Element, List<NodeType> Elements) => new(null, [Element, .. Elements], ASTNodeType.ArgList);
     [Production($"{nameof(NTArgListElement)}: {nameof(NTArgumentLabel)}? {nameof(NTExpression)}")]

@@ -95,7 +95,7 @@ public partial class SmallLangParser
     [Production($"{nameof(NTNestedValueInLoopControl)}: Identifier")]
     public NodeType NTNestedValueInLoopControl(LyToken val) => new NodeType(FromToken(val), [], ASTNodeType.ValInLCTRL);
 
-    [Production($"{nameof(NTLoop)}: [{nameof(NTForLoopHeader)}) | {nameof(NTWhileLoopHeader)}] {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
+    [Production($"{nameof(NTLoop)}: [{nameof(NTForLoopHeader)} | {nameof(NTWhileLoopHeader)}] {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
     public NodeType NTLoop(NodeType LoopHeader, ValueOption<NodeType> Label, NodeType StatementExpr, ValueOption<NodeType> ElseExpr)
     {
         var rt = LoopHeader.NodeType;
@@ -188,7 +188,7 @@ public partial class SmallLangParser
     public NodeType NTPrimaryPrime(NodeType Node) => Node;
     [Production($"{nameof(NTIndexPrime)}: OpenSquare [d] {nameof(NTExpression)} CloseSquare [d]")]
     public NodeType NTIndexPrime(NodeType Expr) => new(null, [Expr], ASTNodeType.Index);
-    [Production($"[{nameof(NTNewExpr)} | {nameof(NTLPrimary1)} | {nameof(NTLPrimary2)} | {nameof(NTLPrimary3)}]")]
+    [Production($"{nameof(NTLPrimary)}: [{nameof(NTNewExpr)} | {nameof(NTLPrimary1)} | {nameof(NTLPrimary2)} | {nameof(NTLPrimary3)}]")]
     public NodeType NTLPrimary(NodeType Node) => Node;
     [Production($"{nameof(NTLPrimary1)}: OpenParen [d] {nameof(NTExpression)} CloseParen [d]")]
     public NodeType NTLPrimary1(NodeType Expr) => Expr;
@@ -217,6 +217,6 @@ public partial class SmallLangParser
     public NodeType NTType(NodeType Node) => Node;
     [Production($"{nameof(NTGenericType)}: [TypeArray | TypeList | TypeSet | TypeDict | TypeCollection] OpenAngleSquare [d] {nameof(NTTypeCSV)} CloseAngleSquare [d]")]
     public NodeType NTGenericType(LyToken TypeToken, NodeType TypeArgs) => new(FromToken(TypeToken), [TypeArgs], ASTNodeType.GenericType);
-    [Production($"{nameof(NTBaseType)}: byte | short | int | long | bigint | float | double | rational | bigfloat | string | char | void")]
+    [Production($"{nameof(NTBaseType)}: [byte | short | int | long | bigint | float | double | rational | bigfloat | string | char | void]")]
     public NodeType NTBaseType(LyToken TypeToken) => new(FromToken(TypeToken), [], ASTNodeType.BaseType);
 }

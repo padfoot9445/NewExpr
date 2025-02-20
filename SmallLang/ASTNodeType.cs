@@ -36,7 +36,11 @@ public enum ASTNodeType
     FunctionArgDeclModifiersCombined, //data: null, children: [FunctionArgDeclModifiers+]
     AssignmentPrime, //data: "=", children: [Expression]
     AssignmentExpr, //data: "=", children: [Identifier, Expression]
+    PrefixExpression, //data: operator, children: [Expression]
+    FactorialExpression, //data: null, children: [Expression, !+]
     BinaryExpression, //data: "implies" | "or" | "xor" | "and" | "==" | "!=" | ">" | ">=" | "<" | "<=" | "+" | "-" | "*" | "/" | "**" | "|" | "^" | "&", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser
+    ComparisionExpression, //data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via 
+    OperatorExpressionPair, //data: cmpOperator, children: [Expression]
     UnaryExpression, //data: "not" | "-" | "~" | "!", children: [Expression] //x++ x-- etc if implemented can also be deconstructed in the parser
     Primary, //data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr
     CopyExpr, //data: null, children: [Expression] //NO UP FLATTEN

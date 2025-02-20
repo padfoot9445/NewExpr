@@ -185,9 +185,9 @@ public partial class SmallLangParser
     public NodeType NTLPrimary3(LyToken Token) => new(FromToken(Token), [], ASTNodeType.Primary);
     [Production($"{nameof(NTNewExpr)}: New [d] {nameof(NTType)} OpenParen [d] {nameof(NTArgList)}?")]
     public NodeType NTNewExpr(NodeType AType, ValueOption<NodeType> AArgList) => new(null, BuildChildren(AType, AArgList), ASTNodeType.NewExpr);
-    [Production($"{nameof(NTFunctionCallPrime)}:OpenParen [d] {nameof(NTArgList)} CloseParen [d]")]
-    public NodeType NTFunctionCallPrime(NodeType AArgList) => new(null, BuildChildren(AArgList), ASTNodeType.FunctionCall);
-    [Production($"{nameof(NTArgList)}: {nameof(NTArgListElement)} {nameof(NTArgListPrime)}+")]
+    [Production($"{nameof(NTFunctionCallPrime)}:OpenParen [d] {nameof(NTArgList)}? CloseParen [d]")]
+    public NodeType NTFunctionCallPrime(ValueOption<NodeType> AArgList) => new(null, BuildChildren(AArgList), ASTNodeType.FunctionCall);
+    [Production($"{nameof(NTArgList)}: {nameof(NTArgListElement)} {nameof(NTArgListPrime)}*")]
     public NodeType NTArgList(NodeType Element, List<NodeType> Elements) => new(null, [Element, .. Elements], ASTNodeType.ArgList);
     [Production($"{nameof(NTArgListElement)}: {nameof(NTArgumentLabel)}? {nameof(NTExpression)}")]
     public NodeType NTArgListElement(ValueOption<NodeType> Label, NodeType Expr) => new(null, BuildChildren(Label, Expr), ASTNodeType.ArgListElement);

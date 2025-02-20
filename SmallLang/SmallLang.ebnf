@@ -39,8 +39,8 @@ DeclarationModifier : ["ref" | "readonly" | "frozen" | "immut"]
 FunctionArgDeclModifier : ["ref" | "readonly" | "frozen" | "immut" | "copy"]
 FunctionArgDeclModifiersCombined : FunctionArgDeclModifier+
 AssignmentPrime : "=" Expression #("=" Expression AssignmentPrime) as assignment is in expression
-AssignmentExpr : [AssignmentExpr1 | BooleanLogicExpr]
-AssignmentExpr1 : IDENTIFIER AssignmentPrime?
+AssignmentExpr : AssignmentExpr1
+AssignmentExpr1 : BooleanLogicExpr AssignmentPrime?
 
 BooleanLogicExpr : ImpliesExpr
 

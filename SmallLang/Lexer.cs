@@ -109,6 +109,7 @@ public sealed class Lexer(string input) : Scanner(input)
             if (token.TT == TokenType.String)
             {
                 input = $"\"{token.Literal}\"";
+                Start = Current = 0;
                 rt[i] = GetLiteral();
             }
         }

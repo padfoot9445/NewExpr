@@ -1,4 +1,5 @@
 
+using System.Data;
 using Common.AST;
 using Common.Tokens;
 using sly.lexer;
@@ -72,28 +73,29 @@ public partial class SmallLangParser
     }
     IToken FromToken(LyToken t) => IToken.NewToken(t.TokenID, t.Value, t.Position.Index, null);
     IToken? FromToken(ValueOption<LyToken> t) => t.Match(x => FromToken(x), () => null!);
-    [Production($"{nameof(Statement)}*")]
+    [Production($"{nameof(Section)}: {nameof(Statement)}*")]
     public NodeType Section(List<NodeType> Statements)
     {
         return new NodeType(null, Statements, ASTNodeType.Section);
     }
-    [Production($"[{nameof(SCExpr)} | {nameof(Loop)} | {nameof(Cond)} | {nameof(Function)} | {nameof(Block)} | {nameof(ReturnStatement)} | {nameof(LoopControlStatement)}]")]
+    [Production($"{nameof(Statement)}: [{nameof(SCExpr)} | {nameof(Loop)} | {nameof(Cond)} | {nameof(Function)} | {nameof(Block)} | {nameof(ReturnStatement)} | {nameof(LoopControlStatement)}]")]
     public NodeType Statement(NodeType SubStatement) => SubStatement;
-    [Production("Expression Semicolon [d]")]
+    [Production($"{nameof(SCExpr)}: Expression Semicolon [d]")]
+
     public NodeType SCExpr(NodeType Expression) => Expression;
-    [Production("Return [d] SCExpr")]
+    [Production($"{nameof(ReturnStatement)}: Return [d] SCExpr")]
     public NodeType ReturnStatement(NodeType SCExpr) => SCExpr with { NodeType = ASTNodeType.Return };
-    [Production($"[Break | Continue] {nameof(NestedValueInLoopControl)}?")]
+    [Production($"{nameof(LoopControlStatement)}: [Break | Continue] {nameof(NestedValueInLoopControl)}?")]
     public NodeType LoopControlStatement(LyToken Operator, ValueOption<NodeType> NestedVal)
     {
         List<NodeType> rc = [];
         AppendIfNotEmpty(rc, NestedVal);
         return new(FromToken(Operator), rc, ASTNodeType.LoopCTRL);
     }
-    [Production($"Identifier")]
+    [Production($"{nameof(NestedValueInLoopControl)}: Identifier")]
     public NodeType NestedValueInLoopControl(LyToken val) => new NodeType(FromToken(val), [], ASTNodeType.ValInLCTRL);
 
-    [Production($"[{nameof(ForLoopHeader)}) | {nameof(WhileLoopHeader)}] {nameof(LoopLabel)}? {nameof(Statement)} {nameof(Else)}?")]
+    [Production($"{nameof(Loop)}: [{nameof(ForLoopHeader)}) | {nameof(WhileLoopHeader)}] {nameof(LoopLabel)}? {nameof(Statement)} {nameof(Else)}?")]
     public NodeType Loop(NodeType LoopHeader, ValueOption<NodeType> Label, NodeType StatementExpr, ValueOption<NodeType> ElseExpr)
     {
         var rt = LoopHeader.NodeType;
@@ -103,15 +105,15 @@ public partial class SmallLangParser
         AppendIfNotEmpty(rc, ElseExpr);
         return new NodeType(null, rc, rt);
     }
-    [Production("As [d] Identifier")]
+    [Production($"{nameof(LoopLabel)}: As [d] Identifier")]
     public NodeType LoopLabel(LyToken ident) => new NodeType(FromToken(ident), [], ASTNodeType.LoopLabel);
-    [Production($"For [d] OpenParen [d] {nameof(Expression)} Semicolon [d] {nameof(Expression)} Semicolon [d] {nameof(Expression)} CloseParen [d]")]
+    [Production($"{nameof(ForLoopHeader)}: For [d] OpenParen [d] {nameof(Expression)} Semicolon [d] {nameof(Expression)} Semicolon [d] {nameof(Expression)} CloseParen [d]")]
     public NodeType ForLoopHeader(NodeType Init, NodeType Condition, NodeType Step) => new NodeType(null, [Init, Condition, Step], ASTNodeType.For);
-    [Production($"While [d] OpenParen [d] {nameof(Expression)} CloseParen [d]")]
+    [Production($"{nameof(WhileLoopHeader)}: While [d] OpenParen [d] {nameof(Expression)} CloseParen [d]")]
     public NodeType WhileLoopHeader(NodeType Condition) => new NodeType(null, [Condition], ASTNodeType.While);
-    [Production($"[{nameof(Cond)} | {nameof(If)}]")]
+    [Production($"{nameof(Cond)}: [{nameof(Switch)} | {nameof(If)}]")]
     public NodeType Cond(NodeType C) => C;
-    [Production($"If [d] OpenParen [d] {nameof(Expression)} CloseParen [d] {nameof(Statement)} {nameof(Else)}?")]
+    [Production($"{nameof(If)}: If [d] OpenParen [d] {nameof(Expression)} CloseParen [d] {nameof(Statement)} {nameof(Else)}?")]
     public NodeType If(NodeType Cond, NodeType StatementExpr, ValueOption<NodeType> ElseExpr)
     {
         var ThisCombined = new NodeType(null, [Cond, StatementExpr], ASTNodeType.ExprStatementCombined);
@@ -129,51 +131,51 @@ public partial class SmallLangParser
         }
         return new(null, rc, ASTNodeType.If);
     }
-    [Production($"Else [d] {nameof(Statement)}")]
+    [Production($"{nameof(Else)}: Else [d] {nameof(Statement)}")]
     public NodeType Else(NodeType AStatement) => AStatement; //passthrough
-    [Production($"Switch [d] OpenParen [d] {nameof(Expression)} CloseParen [d] OpenCurly [d] {nameof(SwitchBody)}* CloseCurly [d]")]
+    [Production($"{nameof(Switch)}: Switch [d] OpenParen [d] {nameof(Expression)} CloseParen [d] OpenCurly [d] {nameof(SwitchBody)}* CloseCurly [d]")]
     public NodeType Switch(NodeType AExpression, List<NodeType> ASwitchBody) => new NodeType(null, [AExpression, .. ASwitchBody], ASTNodeType.Switch);
 
-    [Production($"{nameof(Expression)} Colon [d] {nameof(Statement)}")]
+    [Production($"{nameof(SwitchBody)}: {nameof(Expression)} Colon [d] {nameof(Statement)}")]
     public NodeType SwitchBody(NodeType AExpr, NodeType AStatement) => new(null, [AExpr, AStatement], ASTNodeType.ExprStatementCombined);
-    [Production($"{nameof(Type)} Identifier OpenParen [d] {nameof(TypeAndIdentifierCSV)}? CloseParen [d] {nameof(Statement)}")]
-    public NodeType Function(NodeType Type, LyToken Ident, ValueOption<NodeType> TICSV, NodeType Statement) => new(FromToken(Ident), BuildChildren(Type, TICSV, Statement), ASTNodeType.Function);
-    [Production($"{nameof(TypeAndIdentifierCSVElement)} (Comma [d] {nameof(TypeAndIdentifierCSV)})*")]
+    [Production($"{nameof(Function)}: {nameof(Type)} Identifier OpenParen [d] {nameof(TypeAndIdentifierCSV)}? CloseParen [d] {nameof(Statement)}")]
+    public NodeType Function(NodeType AType, LyToken Ident, ValueOption<NodeType> TICSV, NodeType Statement) => new(FromToken(Ident), BuildChildren(AType, TICSV, Statement), ASTNodeType.Function);
+    [Production($"{nameof(TypeAndIdentifierCSV)}: {nameof(TypeAndIdentifierCSVElement)} (Comma [d] {nameof(TypeAndIdentifierCSV)})*")]
     public NodeType TypeAndIdentifierCSV(NodeType Element, List<Group<TokenType, NodeType>> Prime) => new(null, [Element, .. Prime.Select(x => x.Items.First().Value)], ASTNodeType.TypeAndIdentifierCSV);
-    [Production($"{nameof(FunctionArgDeclModifiersCombined)}? {nameof(Type)} Identifier")]
+    [Production($"{nameof(TypeAndIdentifierCSVElement)}: {nameof(FunctionArgDeclModifiersCombined)}? {nameof(Type)} Identifier")]
     public NodeType TypeAndIdentifierCSVElement(ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident) => new(FromToken(Ident), BuildChildren(Modifiers, AType), ASTNodeType.TypeAndIdentifierCSVElement);
-    [Production($"OpenCurly [d] {nameof(Section)} CloseCurly [d]")]
-    public NodeType Block(NodeType Section) => Section;
-    [Production($"{nameof(AliasExpr)}")]
+    [Production($"{nameof(Block)}: OpenCurly [d] {nameof(Section)} CloseCurly [d]")]
+    public NodeType Block(NodeType ASection) => ASection;
+    [Production($"{nameof(Expression)}: {nameof(AliasExpr)}")]
     public NodeType Expression(NodeType pass) => pass;
-    [Production($"[{nameof(AliasExpr1)} | {nameof(AliasExpr2)} | {nameof(AliasExpr3)} | {nameof(DeclarationExpr)}]")]
+    [Production($"{nameof(AliasExpr)}: [{nameof(AliasExpr1)} | {nameof(AliasExpr2)} | {nameof(AliasExpr3)} | {nameof(DeclarationExpr)}]")]
     public NodeType AliasExpr(NodeType Node) => Node;
-    [Production($"Identifier As [d] Identifier")]
+    [Production($"{nameof(AliasExpr1)}: Identifier As [d] Identifier")]
     public NodeType AliasExpr1(LyToken Ident, LyToken Ident2) => new(FromToken(Ident), BuildChildren(Ident2), ASTNodeType.AliasExpr);
-    [Production($"Identifier As [d] {nameof(Type)} Identifier")]
-    public NodeType AliasExpr2(LyToken Ident, NodeType Type, LyToken Ident2) => new(FromToken(Ident), BuildChildren(Type, Ident2), ASTNodeType.ReTypingAlias);
-    [Production($"Identifier As [d] {nameof(Type)}")]
+    [Production($"{nameof(AliasExpr2)}: Identifier As [d] {nameof(Type)} Identifier")]
+    public NodeType AliasExpr2(LyToken Ident, NodeType AType, LyToken Ident2) => new(FromToken(Ident), BuildChildren(AType, Ident2), ASTNodeType.ReTypingAlias);
+    [Production($"{nameof(AliasExpr3)}: Identifier As [d] {nameof(Type)}")]
     public NodeType AliasExpr3(LyToken Ident, NodeType Type) => new(FromToken(Ident), BuildChildren(Type), ASTNodeType.ReTypeOriginal);
-    [Production($"[{nameof(DeclarationExpr1)} | {nameof(AssignmentExpr)}]")]
+    [Production($"{nameof(DeclarationExpr)}: [{nameof(DeclarationExpr1)} | {nameof(AssignmentExpr)}]")]
     public NodeType DeclarationExpr(NodeType Node) => Node;
-    [Production($"{nameof(DeclarationModifiersCombined)}? {nameof(Type)} Identifier {nameof(AssignmentPrime)}")]
+    [Production($"{nameof(DeclarationExpr1)}: {nameof(DeclarationModifiersCombined)}? {nameof(Type)} Identifier {nameof(AssignmentPrime)}")]
     public NodeType DeclarationExpr1(ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident, ValueOption<NodeType> AAssignmentPrime) => new(FromToken(Ident), BuildChildren(Modifiers, AType, AAssignmentPrime), ASTNodeType.Declaration);
-    [Production($"{nameof(DeclarationModifier)}+")]
+    [Production($"{nameof(DeclarationModifiersCombined)}: {nameof(DeclarationModifier)}+")]
     public NodeType DeclarationModifiersCombined(List<NodeType> Modifiers) => new(null, Modifiers, ASTNodeType.DeclarationModifiersCombined);
-    [Production($"[Ref | Readonly | Frozen | Immut]")]
+    [Production($"{nameof(DeclarationModifier)}: [Ref | Readonly | Frozen | Immut]")]
     public NodeType DeclarationModifier(LyToken Mod) => new(FromToken(Mod), [], ASTNodeType.DeclarationModifier);
-    [Production($"[Ref | Readonly | Frozen | Immut | Copy]")]
+    [Production($"{nameof(FunctionArgDeclModifier)}: [Ref | Readonly | Frozen | Immut | Copy]")]
     public NodeType FunctionArgDeclModifier(LyToken Mod) => DeclarationModifier(Mod) with { NodeType = ASTNodeType.FunctionArgDeclModifiers };
-    [Production($"{nameof(FunctionArgDeclModifier)}+")]
+    [Production($"{nameof(FunctionArgDeclModifiersCombined)}: {nameof(FunctionArgDeclModifier)}+")]
     public NodeType FunctionArgDeclModifiersCombined(List<NodeType> Modifiers) => new(null, Modifiers, ASTNodeType.FunctionArgDeclModifiersCombined);
-    [Production($"Equals {nameof(Expression)}")]
+    [Production($"{nameof(AssignmentPrime)}: Equals {nameof(Expression)}")]
     public NodeType AssignmentPrime(LyToken EQ, NodeType Expr) => new(FromToken(EQ), [Expr], ASTNodeType.AssignmentPrime);
-    [Production($"[{nameof(AssignmentExpr1)} | SmallLangParser_expressions]")]
+    [Production($"{nameof(AssignmentExpr)}: [{nameof(AssignmentExpr1)} | SmallLangParser_expressions]")]
     public NodeType AssignmentExpr(NodeType Node) => Node;
-    [Production($"Identifier {nameof(AssignmentPrime)}?")]
+    [Production($"{nameof(AssignmentExpr1)}: Identifier {nameof(AssignmentPrime)}?")]
     public NodeType AssignmentExpr1(LyToken Ident, ValueOption<NodeType> AAssignmentPrime) => new(FromToken(Ident), BuildChildren(AAssignmentPrime), ASTNodeType.AssignmentExpr);
     [Operand]
-    [Production($"{nameof(LPrimary)} {nameof(PrimaryPrime)}?")]
+    [Production($"{nameof(Primary)}: {nameof(LPrimary)} {nameof(PrimaryPrime)}?")]
     public NodeType Primary(NodeType APrimary, ValueOption<NodeType> Prime)
     {
         if (GetFromValOp(Prime) is NodeType NodePrime)
@@ -182,39 +184,39 @@ public partial class SmallLangParser
         }
         else return APrimary;
     }
-    [Production($"[{nameof(IndexPrime)} | {nameof(FunctionCallPrime)}]")]
+    [Production($"{nameof(PrimaryPrime)}: [{nameof(IndexPrime)} | {nameof(FunctionCallPrime)}]")]
     public NodeType PrimaryPrime(NodeType Node) => Node;
-    [Production($"OpenSquare [d] {nameof(Expression)} CloseSquare [d]")]
+    [Production($"{nameof(IndexPrime)}: OpenSquare [d] {nameof(Expression)} CloseSquare [d]")]
     public NodeType IndexPrime(NodeType Expr) => new(null, [Expr], ASTNodeType.Index);
     [Production($"[{nameof(NewExpr)} | {nameof(LPrimary1)} | {nameof(LPrimary2)} | {nameof(LPrimary3)}]")]
     public NodeType LPrimary(NodeType Node) => Node;
-    [Production($"OpenParen [d] {nameof(Expression)} CloseParen [d]")]
+    [Production($"{nameof(LPrimary1)}: OpenParen [d] {nameof(Expression)} CloseParen [d]")]
     public NodeType LPrimary1(NodeType Expr) => Expr;
-    [Production($"Copy [d] {nameof(Expression)}")]
+    [Production($"{nameof(LPrimary2)}: Copy [d] {nameof(Expression)}")]
     public NodeType LPrimary2(NodeType Expr) => new(null, [Expr], ASTNodeType.CopyExpr);
-    [Production($"[Identifier | Number | String | TrueLiteral | FalseLiteral]")]
+    [Production($"{nameof(LPrimary3)}: [Identifier | Number | String | TrueLiteral | FalseLiteral]")]
     public NodeType LPrimary3(LyToken Token) => new(FromToken(Token), [], ASTNodeType.Primary);
-    [Production($"New [d] {nameof(Type)} OpenParen [d] {nameof(ArgList)}?")]
+    [Production($"{nameof(NewExpr)}: New [d] {nameof(Type)} OpenParen [d] {nameof(ArgList)}?")]
     public NodeType NewExpr(NodeType AType, ValueOption<NodeType> AArgList) => new(null, BuildChildren(AType, AArgList), ASTNodeType.NewExpr);
-    [Production($"Dot? OpenParen [d] {nameof(ArgList)} CloseParen [d]")]
+    [Production($"{nameof(FunctionCallPrime)}: Dot? OpenParen [d] {nameof(ArgList)} CloseParen [d]")]
     public NodeType FunctionCallPrime(ValueOption<LyToken> Dot, NodeType AArgList) => new(FromToken(Dot), BuildChildren(AArgList), ASTNodeType.FunctionCall);
-    [Production($"{nameof(ArgListElement)} {nameof(ArgListPrime)}+")]
+    [Production($"{nameof(ArgList)}: {nameof(ArgListElement)} {nameof(ArgListPrime)}+")]
     public NodeType ArgList(NodeType Element, List<NodeType> Elements) => new(null, [Element, .. Elements], ASTNodeType.ArgList);
-    [Production($"{nameof(ArgumentLabel)}? {nameof(Expression)}")]
+    [Production($"{nameof(ArgListElement)}: {nameof(ArgumentLabel)}? {nameof(Expression)}")]
     public NodeType ArgListElement(ValueOption<NodeType> Label, NodeType Expr) => new(null, BuildChildren(Label, Expr), ASTNodeType.ArgListElement);
-    [Production($"Comma [d] {nameof(ArgListElement)}")]
+    [Production($"{nameof(ArgListPrime)}: Comma [d] {nameof(ArgListElement)}")]
     public NodeType ArgListPrime(NodeType Element) => Element;
-    [Production($"Identifier Colon [d]")]
+    [Production($"{nameof(ArgumentLabel)}: Identifier Colon [d]")]
     public NodeType ArgumentLabel(LyToken Ident) => new(FromToken(Ident), [], ASTNodeType.Identifier);
-    [Production($"{nameof(Type)} (Comma [d] {nameof(Type)})")]
+    [Production($"{nameof(TypeCSV)}: {nameof(Type)} (Comma [d] {nameof(Type)})")]
     public NodeType TypeCSV(NodeType AType, List<Group<TokenType, NodeType>> OtherTypes)
     {
         return new(null, [AType, .. OtherTypes.Select(x => x.Items.First().Value)], ASTNodeType.TypeCSV);
     }
-    [Production($"[{nameof(BaseType)} | {nameof(GenericType)}]")]
+    [Production($"{nameof(Type)}: [{nameof(BaseType)} | {nameof(GenericType)}]")]
     public NodeType Type(NodeType Node) => Node;
-    [Production($"[TypeArray | TypeList | TypeSet | TypeDict | TypeCollection] OpenAngleSquare [d] {nameof(TypeCSV)} CloseAngleSquare [d]")]
+    [Production($"{nameof(GenericType)}: [TypeArray | TypeList | TypeSet | TypeDict | TypeCollection] OpenAngleSquare [d] {nameof(TypeCSV)} CloseAngleSquare [d]")]
     public NodeType GenericType(LyToken TypeToken, NodeType TypeArgs) => new(FromToken(TypeToken), [TypeArgs], ASTNodeType.GenericType);
-    [Production($"byte | short | int | long | bigint | float | double | rational | bigfloat | string | char | void")]
+    [Production($"{nameof(BaseType)}: byte | short | int | long | bigint | float | double | rational | bigfloat | string | char | void")]
     public NodeType BaseType(LyToken TypeToken) => new(FromToken(TypeToken), [], ASTNodeType.BaseType);
 }

@@ -1,5 +1,6 @@
 namespace SmallLang.Parser;
 
+using System.Text;
 using Common.Tokens;
 using sly.buildresult;
 using sly.parser;
@@ -18,7 +19,7 @@ public class Parser
     private LYParser GetParser()
     {
         var def = new SmallLangParser();
-        BuildResult<LYParser> parserResult = new ParserBuilder<TokenType, NodeType>().BuildParser(def, ParserType.EBNF_LL_RECURSIVE_DESCENT, "Section");
+        BuildResult<LYParser> parserResult = new ParserBuilder<TokenType, NodeType>().BuildParser(def, ParserType.EBNF_LL_RECURSIVE_DESCENT, "NTSection");
         if (parserResult.IsOk)
         {
             // everythin'fine : we have a configured parser
@@ -36,6 +37,20 @@ public class Parser
     }
     public NodeType Parse()
     {
-        throw new NotImplementedException();
+        var r = LyParser.Parse(input);
+        if (!r.IsError && r.Result != null && r.Result is NodeType)
+        {
+            return r.Result;
+        }
+        else
+        {
+            StringBuilder sb = new(r.Errors.Count * 25);
+            if (r.Errors != null && r.Errors.Any())
+            {
+                // display errors
+                r.Errors.ForEach(error => { sb.Append(error.ErrorMessage); Console.WriteLine(error.ErrorMessage); });
+            }
+            throw new Exception(sb.ToString());
+        }
     }
 }

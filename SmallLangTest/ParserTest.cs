@@ -65,8 +65,8 @@ public class ParserTest
         {
             Assert.That(res.NodeType, Is.EqualTo(NodeType.OperatorExpressionPair));
             Assert.That(res.Children[0].NodeType, Is.EqualTo(ExprType));
-            Assert.That(res.Children[0].Data!.TT, Is.EqualTo(OpTT));
-            Assert.That(res.Children[0].Data!.Lexeme, Is.EqualTo(OpLexeme));
+            Assert.That(res.Data!.TT, Is.EqualTo(OpTT));
+            Assert.That(res.Data!.Lexeme, Is.EqualTo(OpLexeme));
         });
     }
     [Test]
@@ -85,7 +85,7 @@ public class ParserTest
             {
                 Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.Primary));
                 Assert.That(res.Children[0].Data!.Lexeme, Is.EqualTo("1"));
-                Assert.That(res.Children[1].Data!.TT, Is.EqualTo(TokenType.Number));
+                Assert.That(res.Children[0].Data!.TT, Is.EqualTo(TokenType.Number));
             });
             AssertOpExprPair(res.Children[1], "==", TokenType.EqualTo, NodeType.Identifier);
             AssertOpExprPair(res.Children[2], "!=", TokenType.NotEqualTo, NodeType.Declaration);

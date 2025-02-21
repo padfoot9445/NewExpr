@@ -20,7 +20,7 @@ public class ParserTest
         Assert.Multiple(() =>
         {
             //var res = new Parser("int i = 0; Function(1, 2, 3); if(i == 2){return 1;} while(true){i += 1;} return 2; break ident;").Parse();
-            new Parser(":").Parse();
+            new Parser("1;").Parse();
             return;
 
             var res = new Parser("1").Parse();

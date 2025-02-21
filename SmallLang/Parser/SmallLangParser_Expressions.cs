@@ -37,7 +37,8 @@ public partial class SmallLangParser
     }
     #endregion
     #region OtherExpressions
-    const int ImpliesExprPrecedence = 1;
+    const int AssignmentExprPrecedence = 1;
+    const int ImpliesExprPrecedence = AssignmentExprPrecedence + 1;
     const int OrExprPrecedence = ImpliesExprPrecedence + 1;
 
     const int XorExprPrecedence = OrExprPrecedence + 1;
@@ -81,6 +82,7 @@ public partial class SmallLangParser
     [Prefix((int)TokenType.BitwiseNegation, Associativity.Right, BitwiseNotExprPrecedence)]
     [Prefix((int)TokenType.Subtraction, Associativity.Right, NegationPrecedence)]
     public NodeType Prefix(LyToken Op, NodeType Right) => new(FromToken(Op), [Right], ASTNodeType.UnaryExpression);
+    [Infix((int)TokenType.Equals, Associativity.Right, AssignmentExprPrecedence)]
     [Infix((int)TokenType.LogicalOr, Associativity.Left, OrExprPrecedence)]
     [Infix((int)TokenType.LogicalXor, Associativity.Left, XorExprPrecedence)]
     [Infix((int)TokenType.LogicalAnd, Associativity.Left, AndExprPrecedence)]

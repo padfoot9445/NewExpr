@@ -159,19 +159,8 @@ public partial class SmallLangParser
     public NodeType NTAssignmentPrime(LyToken EQ, NodeType Expr) => new(FromToken(EQ), [Expr], ASTNodeType.AssignmentPrime);
     [Production($"{nameof(NTAssignmentExpr)}: {nameof(NTAssignmentExpr1)}")]
     public NodeType NTAssignmentExpr(NodeType Node) => Node;
-    [Production($"{nameof(NTAssignmentExpr1)}: SmallLangParser_expressions {nameof(NTAssignmentPrime)}?")]
-    public NodeType NTAssignmentExpr1(NodeType P1, ValueOption<NodeType> AAssignmentPrime)
-    {
-        if (GetFromValOp(AAssignmentPrime) is NodeType NodeAssignmentPrime)
-        {
-            if (P1.NodeType != ASTNodeType.Identifier)
-            {
-                throw new Exception($"Expected identifier in assignment");
-            }
-            return new(P1.Data, [NodeAssignmentPrime], ASTNodeType.AssignmentExpr);
-        }
-        else return P1;
-    }
+    [Production($"{nameof(NTAssignmentExpr1)}: SmallLangParser_expressions")]
+    public NodeType NTAssignmentExpr1(NodeType P1) => P1;
     [Operand]
     [Production($"{nameof(NTPrimary)}: {nameof(NTLPrimary)} {nameof(NTPrimaryPrime)}?")]
     public NodeType NTPrimary(NodeType APrimary, ValueOption<NodeType> Prime)

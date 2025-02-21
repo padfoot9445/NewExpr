@@ -20,8 +20,10 @@ public class ParserTest
         Assert.Multiple(() =>
         {
             //var res = new Parser("int i = 0; Function(1, 2, 3); if(i == 2){return 1;} while(true){i += 1;} return 2; break ident;").Parse();
-            var res = new Parser("1;").Parse();
+            new Parser(":").Parse();
             return;
+
+            var res = new Parser("1").Parse();
             Assert.That(res.NodeType, Is.EqualTo(NodeType.Section));
             Assert.That(res.Children, Has.Count.EqualTo(6));
             Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.Declaration));

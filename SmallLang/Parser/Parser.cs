@@ -19,7 +19,7 @@ public class Parser
     private LYParser GetParser()
     {
         var def = new SmallLangParser();
-        BuildResult<LYParser> parserResult = new ParserBuilder<TokenType, NodeType>().BuildParser(def, ParserType.EBNF_LL_RECURSIVE_DESCENT, "NTSection");
+        BuildResult<LYParser> parserResult = new ParserBuilder<TokenType, NodeType>().BuildParser(def, ParserType.EBNF_LL_RECURSIVE_DESCENT, "NTSCExpr");
         if (parserResult.IsOk)
         {
             // everythin'fine : we have a configured parser

@@ -1,8 +1,8 @@
 Section : Statement*
 Statement : SCExpr | Loop | Cond | Function | CascadingFunction | Block | ReturnStatement | LoopControlStatement
 SCExpr : Expression ";"
-ReturnStatement : "return" SCExpr
-LoopControlStatement : ("break" | "continue") NestedValueInLoopControl
+ReturnStatement : "return" Expression ";"
+LoopControlStatement : ("break" | "continue") NestedValueInLoopControl ";"
 NestedValueInLoopControl : IDENTIFIER
 Loop : (ForLoopHeader | WhileLoopHeader) LoopLabel? Statement Else?
 LoopLabel : "as" IDENTIFIER

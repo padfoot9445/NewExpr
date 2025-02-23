@@ -96,7 +96,21 @@ public sealed class Lexer(string input) : Scanner(input)
         ("collection", TokenType.TypeCollection),
         ("123", TokenType.Number),
         ("12.3", TokenType.Number),
-        ("\"123\"", TokenType.String)
+        ("\"123\"", TokenType.String),
+        ("+=", TokenType.PlusEquals),
+        ("-=", TokenType.MinusEquals),
+        ("*=", TokenType.MultiplicationEquals),
+        ("/=", TokenType.DivideEquals),
+        ("**=", TokenType.PowerEquals),
+        ("&=", TokenType.BitwiseAndEquals),
+        ("|=", TokenType.BitwiseOrEquals),
+        ("^=", TokenType.BitwiseXorEquals),
+        ("<<=", TokenType.LeftShiftEquals),
+        (">>=", TokenType.RightShiftEquals),
+        ("~=", TokenType.BitwiseNegateEquals),
+        ("++", TokenType.Increment),
+        ("--", TokenType.Decrement)
+
     };
     public override IEnumerable<IToken> Scan()
     {

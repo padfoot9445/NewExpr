@@ -44,6 +44,34 @@ public enum TokenType
     [Sugar("!")]
     Factorial,
     #endregion
+    #region sugar immediate assign
+    [Sugar("+=")]
+    PlusEquals,
+    [Sugar("-=")]
+    MinusEquals,
+    [Sugar("*=")]
+    MultiplicationEquals,
+    [Sugar("/=")]
+    DivideEquals,
+    [Sugar("**=")]
+    PowerEquals,
+    [Sugar("&=")]
+    BitwiseAndEquals,
+    [Sugar("|=")]
+    BitwiseOrEquals,
+    [Sugar("^=")]
+    BitwiseXorEquals,
+    [Sugar("<<=")]
+    LeftShiftEquals,
+    [Sugar(">>=")]
+    RightShiftEquals,
+    [Sugar("~=")]
+    BitwiseNegateEquals,
+    [Sugar("++")]
+    Increment,
+    [Sugar("--")]
+    Decrement,
+    #endregion
     #region logical operator
     [Keyword("and")]
     LogicalAnd,
@@ -185,6 +213,9 @@ public enum TokenType
     FalseLiteral,
     [Keyword("collection")]
     TypeCollection,
+    [Keyword("pass")]
+    Pass,
+
     [Comment("#", "/*", "*/")]
     Comment
 

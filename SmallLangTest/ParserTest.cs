@@ -115,4 +115,28 @@ public class ParserTest
         Assert.That(res2.Data!.TT, Is.EqualTo(e));
         Assert.That(res2.Children[0].NodeType, Is.EqualTo(NodeType.ValInLCTRL));
     }
+    [Test]
+    public void Parse__For_Loop__Returns_Correct()
+    {
+        var res = Parse($"for (int i = 0; i < Func(); i = i + 1) as Label \n{{\t j = j + 1; \n\t DoSomething(i, j);\n}} else \n{{\n\tDoElse();}}").Children[0];
+        Assert.That(res.NodeType, Is.EqualTo(NodeType.For));
+        Assert.That(res.Children, Has.Count.EqualTo(6));
+        Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.Declaration));
+        Assert.That(res.Children[1].NodeType, Is.EqualTo(NodeType.ComparisionExpression));
+        Assert.That(res.Children[2].NodeType, Is.EqualTo(NodeType.BinaryExpression));
+        Assert.That(res.Children[3].NodeType, Is.EqualTo(NodeType.LoopLabel));
+        Assert.That(res.Children[4].NodeType, Is.EqualTo(NodeType.Section));
+        Assert.That(res.Children[4].Children[0].NodeType, Is.EqualTo(NodeType.BinaryExpression));
+        Assert.That(res.Children[4].Children[1].NodeType, Is.EqualTo(NodeType.FunctionCall));
+        Assert.That(res.Children[5].NodeType, Is.EqualTo(NodeType.Section));
+        Assert.That(res.Children[5].Children[0].NodeType, Is.EqualTo(NodeType.FunctionCall));
+    }
+    [TestCase("for (int i = 0; i < 1; i = i + 1){}", 4)]
+    [TestCase("for (int i = 0; i < 1; i = i + 1) as Label{}", 5)]
+    [TestCase("for (int i = 0; i < 1; i = i + 1){} else {}", 5)]
+    [TestCase("for (int i = 0; i < 1; i = i + 1) as Label {} else {}", 6)]
+    public void Parse__Loop__Returns_Correct_Length_Children(string loop, int expected)
+    {
+        Assert.That(Parse(loop).Children[0].Children, Has.Count.EqualTo(expected));
+    }
 }

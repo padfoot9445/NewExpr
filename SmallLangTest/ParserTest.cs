@@ -131,10 +131,27 @@ public class ParserTest
         Assert.That(res.Children[5].NodeType, Is.EqualTo(NodeType.Section));
         Assert.That(res.Children[5].Children[0].NodeType, Is.EqualTo(NodeType.FunctionCall));
     }
+    [Test]
+    public void Parse__While_Loop__Returns_Correct()
+    {
+        var res = Parse($"while (Func()) {{\n\t j = j + 1;\n\t DoSomething(i, j);\n}} else {{}}").Children[0];
+        Assert.That(res.NodeType, Is.EqualTo(NodeType.While));
+        Assert.That(res.Children, Has.Count.EqualTo(3));
+        Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.FunctionCall));
+        Assert.That(res.Children[1].NodeType, Is.EqualTo(NodeType.Section));
+        Assert.That(res.Children[1].Children[0].NodeType, Is.EqualTo(NodeType.BinaryExpression));
+        Assert.That(res.Children[1].Children[1].NodeType, Is.EqualTo(NodeType.FunctionCall));
+        Assert.That(res.Children[2].NodeType, Is.EqualTo(NodeType.Section));
+    }
     [TestCase("for (int i = 0; i < 1; i = i + 1){}", 4)]
     [TestCase("for (int i = 0; i < 1; i = i + 1) as Label{}", 5)]
     [TestCase("for (int i = 0; i < 1; i = i + 1){} else {}", 5)]
     [TestCase("for (int i = 0; i < 1; i = i + 1) as Label {} else {}", 6)]
+    [TestCase("for (int i = 0; i < 1; i = i + 1){}", 4)]
+    [TestCase("while (i < 1) as Label{}", 3)]
+    [TestCase("while (i < 1){} else {}", 3)]
+    [TestCase("while (i < 1) as Label {} else {}", 4)]
+    [TestCase("while (i){}", 2)]
     public void Parse__Loop__Returns_Correct_Length_Children(string loop, int expected)
     {
         Assert.That(Parse(loop).Children[0].Children, Has.Count.EqualTo(expected));
@@ -178,5 +195,38 @@ public class ParserTest
         Assert.That(add.Children[1].Data!.TT, Is.EqualTo(TokenType.Number));
         Assert.That(add.Children[1].Data!.Lexeme, Is.EqualTo("1"));
         Assert.That(add.Data!.TT, Is.EqualTo(expected));
+    }
+    [Test]
+    public void Parse__If__Returns_Correct()
+    {
+        var res = Parse("if(i){} else if (i < 2)i + 1; else {}").Children[0];
+        Assert.That(res.NodeType, Is.EqualTo(NodeType.If));
+        Assert.That(res.Children, Has.Count.EqualTo(3));
+        Assert.That(res.Children[1].NodeType == res.Children[0].NodeType);
+        Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.ExprStatementCombined));
+        Assert.That(res.Children[2].NodeType, Is.EqualTo(NodeType.Section));
+        Assert.That(res.Children[1].Children[1].NodeType, Is.EqualTo(NodeType.BinaryExpression));
+        Assert.That(res.Children[0].Children[0].NodeType, Is.EqualTo(NodeType.Identifier));
+    }
+    [Test]
+    public void Parse__Switch__Returns_Correct()
+    {
+        string i = @"
+        switch (FunctionCall())
+        {
+            1: DoOne();
+            2: {
+            ++j;}
+            hree(): D1();
+            our(): {D2();}
+        }";
+        var res = Parse(i).Children[0];
+        Assert.That(res.NodeType, Is.EqualTo(NodeType.Switch));
+        Assert.That(res.Children, Has.Count.EqualTo(5));
+        Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.FunctionCall));
+        Assert.That(res.Children[1].Children[0].NodeType, Is.EqualTo(NodeType.Primary));
+        Assert.That(res.Children[1].Children[1].NodeType, Is.EqualTo(NodeType.FunctionCall));
+        Assert.That(res.Children[2].NodeType, Is.EqualTo(NodeType.ExprStatementCombined));
+        //if does not throw, good enough tbh
     }
 }

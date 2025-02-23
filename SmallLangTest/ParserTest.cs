@@ -229,4 +229,18 @@ public class ParserTest
         Assert.That(res.Children[2].NodeType, Is.EqualTo(NodeType.ExprStatementCombined));
         //if does not throw, good enough tbh
     }
+    [Test]
+    public void Test__Function_Definition__Does_Not_Throw()
+    {
+        string i = @"
+        collection<[list<[int]>, number]> Transform(copy ref immut readonly frozen number x, 
+        int y, frozen readonly 
+        immut int z)
+        {
+            return new collection<[list<[int]>, number]>(x, y: y, z);
+            return new int(1);
+        }";
+        Parse(i);
+        Assert.DoesNotThrow(() => Parse(i));
+    }
 }

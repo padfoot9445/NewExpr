@@ -139,4 +139,44 @@ public class ParserTest
     {
         Assert.That(Parse(loop).Children[0].Children, Has.Count.EqualTo(expected));
     }
+    [TestCase("+=", TokenType.Addition)]
+    [TestCase("-=", TokenType.Subtraction)]
+    [TestCase("*=", TokenType.Multiplication)]
+    [TestCase("/=", TokenType.Division)]
+    [TestCase("**=", TokenType.Exponentiation)]
+    [TestCase("&=", TokenType.BitwiseAnd)]
+    [TestCase("|=", TokenType.BitwiseOr)]
+    [TestCase("^=", TokenType.BitwiseXor)]
+    [TestCase("<<=", TokenType.BitwiseLeftShift)]
+    [TestCase(">>=", TokenType.BitwiseRightShift)]
+    [TestCase("~=", TokenType.BitwiseNegation)]
+    public void Parse__Immediate_Assignment_Operators__Returns_Correct(string i, TokenType expected)
+    {
+        var res = Parse($"x {i} 1;").Children[0];
+        Assert.That(res.NodeType, Is.EqualTo(NodeType.BinaryExpression));
+        Assert.That(res.Data!.TT, Is.EqualTo(TokenType.Equals));
+        Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.Identifier));
+        Assert.That(res.Children[0].Data!.Lexeme, Is.EqualTo("x"));
+        var add = res.Children[1];
+        Assert.That(add.NodeType, Is.EqualTo(NodeType.BinaryExpression));
+        Assert.That(add.Children[0].Data!.Lexeme, Is.EqualTo("x"));
+        Assert.That(add.Children[1].Data!.TT, Is.EqualTo(TokenType.Number));
+        Assert.That(add.Data!.TT, Is.EqualTo(expected));
+    }
+    [TestCase("++", TokenType.Addition)]
+    [TestCase("--", TokenType.Subtraction)]
+    public void Parse__Precrement_Assignment_Operators__Returns_Correct(string i, TokenType expected)
+    {
+        var res = Parse($"{i}x;").Children[0];
+        Assert.That(res.NodeType, Is.EqualTo(NodeType.BinaryExpression));
+        Assert.That(res.Data!.TT, Is.EqualTo(TokenType.Equals));
+        Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.Identifier));
+        Assert.That(res.Children[0].Data!.Lexeme, Is.EqualTo("x"));
+        var add = res.Children[1];
+        Assert.That(add.NodeType, Is.EqualTo(NodeType.BinaryExpression));
+        Assert.That(add.Children[0].Data!.Lexeme, Is.EqualTo("x"));
+        Assert.That(add.Children[1].Data!.TT, Is.EqualTo(TokenType.Number));
+        Assert.That(add.Children[1].Data!.Lexeme, Is.EqualTo("1"));
+        Assert.That(add.Data!.TT, Is.EqualTo(expected));
+    }
 }

@@ -69,9 +69,9 @@ public partial class SmallLangParser
     [Production($"{nameof(NTSCExpr)}: {nameof(NTExpression)} Semicolon [d]")]
 
     public NodeType NTSCExpr(NodeType Expression) => Expression;
-    [Production($"{nameof(NTReturnStatement)}: Return [d] {nameof(NTSCExpr)}")]
+    [Production($"{nameof(NTReturnStatement)}: Return [d] {nameof(NTExpression)} Semicolon [d]")]
     public NodeType NTReturnStatement(NodeType SCExpr) => SCExpr with { NodeType = ASTNodeType.Return };
-    [Production($"{nameof(NTLoopControlStatement)}: [Break | Continue] {nameof(NTNestedValueInLoopControl)}?")]
+    [Production($"{nameof(NTLoopControlStatement)}: [Break | Continue] {nameof(NTNestedValueInLoopControl)}? Semicolon [d]")]
     public NodeType NTLoopControlStatement(LyToken Operator, ValueOption<NodeType> NestedVal)
     {
         List<NodeType> rc = [];

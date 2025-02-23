@@ -103,4 +103,16 @@ public class ParserTest
         Assert.That(res.Children.Count, Is.EqualTo(1));
         Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.BinaryExpression));
     }
+    [TestCase("break", TokenType.Break)]
+    [TestCase("continue", TokenType.Continue)]
+    public void Parse__LCTRLStatements__Returns_Correct(string i, TokenType e)
+    {
+        var res = Parse($"{i};").Children[0];
+        Assert.That(res.NodeType, Is.EqualTo(NodeType.LoopCTRL));
+        Assert.That(res.Data!.TT, Is.EqualTo(e));
+        var res2 = Parse($"{i} ident;").Children[0];
+        Assert.That(res2.NodeType, Is.EqualTo(NodeType.LoopCTRL));
+        Assert.That(res2.Data!.TT, Is.EqualTo(e));
+        Assert.That(res2.Children[0].NodeType, Is.EqualTo(NodeType.ValInLCTRL));
+    }
 }

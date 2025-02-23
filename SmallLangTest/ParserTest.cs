@@ -9,6 +9,7 @@ using NodeType = SmallLang.ASTNodeType;
 [TestFixture]
 public class ParserTest
 {
+    Node Parse(string input) => new Parser(input).Parse();
     [Test]
     public void Ctor__Any_Input__Does_Not_Throw()
     {
@@ -92,5 +93,14 @@ public class ParserTest
             AssertOpExprPair(res.Children[5], ">=", TokenType.GreaterThanOrEqualTo, NodeType.Index);
             AssertOpExprPair(res.Children[6], ">", TokenType.GreaterThan, NodeType.Identifier);
         });
+    }
+    [Test]
+    public void Parse__Return_Statement__Returns_Correct()
+    {
+        var res1 = Parse("return 1 + 1 - 2 * FunctionCall(1, 2, 3, 4, 5);");
+        var res = res1.Children[0];
+        Assert.That(res.NodeType, Is.EqualTo(NodeType.Return));
+        Assert.That(res.Children.Count, Is.EqualTo(1));
+        Assert.That(res.Children[0].NodeType, Is.EqualTo(NodeType.BinaryExpression));
     }
 }

@@ -187,7 +187,7 @@ public partial class SmallLangParser
         IToken oT = FromToken(Token)!;
         return new(oT, [], oT.TT == TokenType.Identifier ? ASTNodeType.Identifier : ASTNodeType.Primary);
     }
-    [Production($"{nameof(NTNewExpr)}: New [d] {nameof(NTType)} OpenParen [d] {nameof(NTArgList)}?")]
+    [Production($"{nameof(NTNewExpr)}: New [d] {nameof(NTType)} OpenParen [d] {nameof(NTArgList)}? CloseParen [d]")]
     public NodeType NTNewExpr(NodeType AType, ValueOption<NodeType> AArgList) => new(null, BuildChildren(AType, AArgList), ASTNodeType.NewExpr);
     [Production($"{nameof(NTFunctionCallPrime)}:OpenParen [d] {nameof(NTArgList)}? CloseParen [d]")]
     public NodeType NTFunctionCallPrime(ValueOption<NodeType> AArgList) => new(null, BuildChildren(AArgList), ASTNodeType.FunctionCall);

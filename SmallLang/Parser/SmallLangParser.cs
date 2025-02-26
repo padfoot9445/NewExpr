@@ -1,5 +1,6 @@
 
 using System.Data;
+using System.Diagnostics;
 using Common.AST;
 using Common.Tokens;
 using sly.lexer;
@@ -171,7 +172,8 @@ public partial class SmallLangParser
         }
         else return APrimary;
     }
-    [Production($"{nameof(NTPrimaryPrime)}: [{nameof(NTIndexPrime)} | {nameof(NTFunctionCallPrime)}]")]
+    [Production($"{nameof(NTPrimaryPrime)}: {nameof(NTIndexPrime)}")]
+    [Production($"{nameof(NTPrimaryPrime)}:  {nameof(NTFunctionCallPrime)}")]
     public NodeType NTPrimaryPrime(NodeType Node) => Node;
     [Production($"{nameof(NTIndexPrime)}: OpenSquare [d] {nameof(NTExpression)} CloseSquare [d]")]
     public NodeType NTIndexPrime(NodeType Expr) => new(null, [Expr], ASTNodeType.Index);

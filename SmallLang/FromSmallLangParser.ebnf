@@ -1,55 +1,55 @@
-NTSection: NTStatement*
-NTStatement: [NTSCExpr | NTLoop | NTCond | NTFunction | NTBlock | NTReturnStatement | NTLoopControlStatement]
-NTSCExpr: NTExpression Semicolon [d]
-NTReturnStatement: Return [d] NTExpression Semicolon [d]
-NTLoopControlStatement: [Break | Continue] NTNestedValueInLoopControl? Semicolon [d]
-NTNestedValueInLoopControl: Identifier
-NTLoop: NTForLoopHeader NTLoopLabel? NTStatement NTElse?
-NTLoop: NTWhileLoopHeader NTLoopLabel? NTStatement NTElse?
-NTLoopLabel: As [d] Identifier
-NTForLoopHeader: For [d] OpenParen [d] NTExpression Semicolon [d] NTExpression Semicolon [d] NTExpression CloseParen [d]
-NTWhileLoopHeader: While [d] OpenParen [d] NTExpression CloseParen [d]
-NTCond: [NTSwitch | NTIf]
-NTIf: If [d] OpenParen [d] NTExpression CloseParen [d] NTStatement NTElse?
-NTElse: Else [d] NTStatement
-NTSwitch: Switch [d] OpenParen [d] NTExpression CloseParen [d] OpenCurly [d] NTSwitchBody* CloseCurly [d]
-NTSwitchBody: NTExpression Colon [d] NTStatement
-NTFunction: NTType Identifier OpenParen [d] NTTypeAndIdentifierCSV? CloseParen [d] NTStatement
-NTTypeAndIdentifierCSV: NTTypeAndIdentifierCSVElement (Comma [d] NTTypeAndIdentifierCSV)*
-NTTypeAndIdentifierCSVElement: NTFunctionArgDeclModifiersCombined? NTType Identifier
-NTBlock: OpenCurly [d] NTSection CloseCurly [d]
-NTExpression: NTAliasExpr
-NTAliasExpr: [NTAliasExpr1 | NTAliasExpr2 | NTAliasExpr3 | NTDeclarationExpr]
-NTAliasExpr1: Identifier As [d] Identifier
-NTAliasExpr2: Identifier As [d] NTType Identifier
-NTAliasExpr3: Identifier As [d] NTType
-NTDeclarationExpr: [NTDeclarationExpr1 | NTAssignmentExpr]
-NTDeclarationExpr1: NTDeclarationModifiersCombined? NTType Identifier NTAssignmentPrime?
-NTDeclarationModifiersCombined: NTDeclarationModifier+
-NTDeclarationModifier: [Ref | Readonly | Frozen | Immut]
-NTFunctionArgDeclModifier: [Ref | Readonly | Frozen | Immut | Copy]
-NTFunctionArgDeclModifiersCombined: NTFunctionArgDeclModifier+
-NTAssignmentPrime: Equals NTExpression
-NTAssignmentExpr: NTAssignmentExpr1
-NTAssignmentExpr1: SmallLangParser_expressions
-NTPrimary: NTLPrimary NTPrimaryPrime?
-NTPrimaryPrime: NTIndexPrime
-NTPrimaryPrime:  NTFunctionCallPrime
-NTIndexPrime: OpenSquare [d] NTExpression CloseSquare [d]
-NTLPrimary: [NTNewExpr | NTLPrimary1 | NTLPrimary2 | NTLPrimary3]
-NTLPrimary1: OpenParen [d] NTExpression CloseParen [d]
-NTLPrimary2: Copy [d] NTExpression
-NTLPrimary3: [Identifier | Number | String | TrueLiteral | FalseLiteral]
-NTNewExpr: New [d] NTType OpenParen [d] NTArgList? CloseParen [d]
-NTFunctionCallPrime:OpenParen [d] NTArgList? CloseParen [d]
-NTArgList: NTArgListElement NTArgListPrime*
-NTArgListElement: NTArgumentLabel? NTExpression
-NTArgListPrime: Comma [d] NTArgListElement
-NTArgumentLabel: Identifier Colon [d]
-NTTypeCSV: NTType (Comma [d] NTType)*
-NTType: [NTBaseType | NTGenericType]
-NTGenericType: [TypeArray | TypeList | TypeSet | TypeDict | TypeCollection] OpenAngleSquare [d] NTTypeCSV CloseAngleSquare [d]
-NTBaseType: [TypeByte | TypeShort | TypeInt | TypeLong | TypeLongInt | TypeFloat | TypeDouble | TypeRational | TypeNumber | TypeString | TypeChar | TypeVoid]
+Section: Statement*
+Statement: [SCExpr | Loop | Cond | Function | Block | ReturnStatement | LoopControlStatement]
+SCExpr: Expression Semicolon [d]
+ReturnStatement: Return [d] Expression Semicolon [d]
+LoopControlStatement: [Break | Continue] NestedValueInLoopControl? Semicolon [d]
+NestedValueInLoopControl: Identifier
+Loop: ForLoopHeader LoopLabel? Statement Else?
+Loop: WhileLoopHeader LoopLabel? Statement Else?
+LoopLabel: As [d] Identifier
+ForLoopHeader: For [d] OpenParen [d] Expression Semicolon [d] Expression Semicolon [d] Expression CloseParen [d]
+WhileLoopHeader: While [d] OpenParen [d] Expression CloseParen [d]
+Cond: [Switch | If]
+If: If [d] OpenParen [d] Expression CloseParen [d] Statement Else?
+Else: Else [d] Statement
+Switch: Switch [d] OpenParen [d] Expression CloseParen [d] OpenCurly [d] SwitchBody* CloseCurly [d]
+SwitchBody: Expression Colon [d] Statement
+Function: Type Identifier OpenParen [d] TypeAndIdentifierCSV? CloseParen [d] Statement
+TypeAndIdentifierCSV: TypeAndIdentifierCSVElement (Comma [d] TypeAndIdentifierCSV)*
+TypeAndIdentifierCSVElement: FunctionArgDeclModifiersCombined? Type Identifier
+Block: OpenCurly [d] Section CloseCurly [d]
+Expression: AliasExpr
+AliasExpr: [AliasExpr1 | AliasExpr2 | AliasExpr3 | DeclarationExpr]
+AliasExpr1: Identifier As [d] Identifier
+AliasExpr2: Identifier As [d] Type Identifier
+AliasExpr3: Identifier As [d] Type
+DeclarationExpr: [DeclarationExpr1 | AssignmentExpr]
+DeclarationExpr1: DeclarationModifiersCombined? Type Identifier AssignmentPrime?
+DeclarationModifiersCombined: DeclarationModifier+
+DeclarationModifier: [Ref | Readonly | Frozen | Immut]
+FunctionArgDeclModifier: [Ref | Readonly | Frozen | Immut | Copy]
+FunctionArgDeclModifiersCombined: FunctionArgDeclModifier+
+AssignmentPrime: Equals Expression
+AssignmentExpr: AssignmentExpr1
+AssignmentExpr1: SmallLangParser_expressions
+Primary: LPrimary PrimaryPrime?
+PrimaryPrime: IndexPrime
+PrimaryPrime:  FunctionCallPrime
+IndexPrime: OpenSquare [d] Expression CloseSquare [d]
+LPrimary: [NewExpr | LPrimary1 | LPrimary2 | LPrimary3]
+LPrimary1: OpenParen [d] Expression CloseParen [d]
+LPrimary2: Copy [d] Expression
+LPrimary3: [Identifier | Number | String | TrueLiteral | FalseLiteral]
+NewExpr: New [d] Type OpenParen [d] ArgList? CloseParen [d]
+FunctionCallPrime:OpenParen [d] ArgList? CloseParen [d]
+ArgList: ArgListElement ArgListPrime*
+ArgListElement: ArgumentLabel? Expression
+ArgListPrime: Comma [d] ArgListElement
+ArgumentLabel: Identifier Colon [d]
+TypeCSV: Type (Comma [d] Type)*
+Type: [BaseType | GenericType]
+GenericType: [TypeArray | TypeList | TypeSet | TypeDict | TypeCollection] OpenAngleSquare [d] TypeCSV CloseAngleSquare [d]
+BaseType: [TypeByte | TypeShort | TypeInt | TypeLong | TypeLongInt | TypeFloat | TypeDouble | TypeRational | TypeNumber | TypeString | TypeChar | TypeVoid]
 
 
 Expression EqualTo Expression - Right Associative

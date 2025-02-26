@@ -1,8 +1,10 @@
 namespace Common.Tokens;
 using Common.AST;
-public interface IToken : IValidASTLeaf
+public interface IToken
 {
     public TokenType TT { get; }
     public string Lexeme { get; }
-    public static IToken NewToken(TokenType type, string Lexeme, int position) => Token.NewToken(type, Lexeme);
+    public string Literal { get; }
+    public int Position { get; }
+    public static IToken NewToken(TokenType type, string Lexeme, int position, string? literal = null) => Token.NewToken(type, Lexeme, position, literal);
 }

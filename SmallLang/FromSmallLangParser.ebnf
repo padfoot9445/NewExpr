@@ -1,0 +1,91 @@
+NTSection: NTStatement*
+NTStatement: [NTSCExpr | NTLoop | NTCond | NTFunction | NTBlock | NTReturnStatement | NTLoopControlStatement]
+NTSCExpr: NTExpression Semicolon [d]
+NTReturnStatement: Return [d] NTExpression Semicolon [d]
+NTLoopControlStatement: [Break | Continue] NTNestedValueInLoopControl? Semicolon [d]
+NTNestedValueInLoopControl: Identifier
+NTLoop: NTForLoopHeader NTLoopLabel? NTStatement NTElse?
+NTLoop: NTWhileLoopHeader NTLoopLabel? NTStatement NTElse?
+NTLoopLabel: As [d] Identifier
+NTForLoopHeader: For [d] OpenParen [d] NTExpression Semicolon [d] NTExpression Semicolon [d] NTExpression CloseParen [d]
+NTWhileLoopHeader: While [d] OpenParen [d] NTExpression CloseParen [d]
+NTCond: [NTSwitch | NTIf]
+NTIf: If [d] OpenParen [d] NTExpression CloseParen [d] NTStatement NTElse?
+NTElse: Else [d] NTStatement
+NTSwitch: Switch [d] OpenParen [d] NTExpression CloseParen [d] OpenCurly [d] NTSwitchBody* CloseCurly [d]
+NTSwitchBody: NTExpression Colon [d] NTStatement
+NTFunction: NTType Identifier OpenParen [d] NTTypeAndIdentifierCSV? CloseParen [d] NTStatement
+NTTypeAndIdentifierCSV: NTTypeAndIdentifierCSVElement (Comma [d] NTTypeAndIdentifierCSV)*
+NTTypeAndIdentifierCSVElement: NTFunctionArgDeclModifiersCombined? NTType Identifier
+NTBlock: OpenCurly [d] NTSection CloseCurly [d]
+NTExpression: NTAliasExpr
+NTAliasExpr: [NTAliasExpr1 | NTAliasExpr2 | NTAliasExpr3 | NTDeclarationExpr]
+NTAliasExpr1: Identifier As [d] Identifier
+NTAliasExpr2: Identifier As [d] NTType Identifier
+NTAliasExpr3: Identifier As [d] NTType
+NTDeclarationExpr: [NTDeclarationExpr1 | NTAssignmentExpr]
+NTDeclarationExpr1: NTDeclarationModifiersCombined? NTType Identifier NTAssignmentPrime?
+NTDeclarationModifiersCombined: NTDeclarationModifier+
+NTDeclarationModifier: [Ref | Readonly | Frozen | Immut]
+NTFunctionArgDeclModifier: [Ref | Readonly | Frozen | Immut | Copy]
+NTFunctionArgDeclModifiersCombined: NTFunctionArgDeclModifier+
+NTAssignmentPrime: Equals NTExpression
+NTAssignmentExpr: NTAssignmentExpr1
+NTAssignmentExpr1: SmallLangParser_expressions
+NTPrimary: NTLPrimary NTPrimaryPrime?
+NTPrimaryPrime: NTIndexPrime
+NTPrimaryPrime:  NTFunctionCallPrime
+NTIndexPrime: OpenSquare [d] NTExpression CloseSquare [d]
+NTLPrimary: [NTNewExpr | NTLPrimary1 | NTLPrimary2 | NTLPrimary3]
+NTLPrimary1: OpenParen [d] NTExpression CloseParen [d]
+NTLPrimary2: Copy [d] NTExpression
+NTLPrimary3: [Identifier | Number | String | TrueLiteral | FalseLiteral]
+NTNewExpr: New [d] NTType OpenParen [d] NTArgList? CloseParen [d]
+NTFunctionCallPrime:OpenParen [d] NTArgList? CloseParen [d]
+NTArgList: NTArgListElement NTArgListPrime*
+NTArgListElement: NTArgumentLabel? NTExpression
+NTArgListPrime: Comma [d] NTArgListElement
+NTArgumentLabel: Identifier Colon [d]
+NTTypeCSV: NTType (Comma [d] NTType)*
+NTType: [NTBaseType | NTGenericType]
+NTGenericType: [TypeArray | TypeList | TypeSet | TypeDict | TypeCollection] OpenAngleSquare [d] NTTypeCSV CloseAngleSquare [d]
+NTBaseType: [TypeByte | TypeShort | TypeInt | TypeLong | TypeLongInt | TypeFloat | TypeDouble | TypeRational | TypeNumber | TypeString | TypeChar | TypeVoid]
+
+
+Expression EqualTo Expression - Right Associative
+Expression NotEqualTo Expression - Right Associative
+Expression GreaterThan Expression - Right Associative
+Expression LessThan Expression - Right Associative
+Expression GreaterThanOrEqualTo Expression - Right Associative
+Expression LessThanOrEqualTo Expression - Right Associative
+LogicalNot Expression - Right Associative
+BitwiseNegation Expression - Right Associative
+Subtraction Expression - Right Associative
+Expression Equals Expression - Right Associative
+Expression LogicalOr Expression - Left Associative
+Expression LogicalXor Expression - Left Associative
+Expression LogicalAnd Expression - Left Associative
+Expression Addition Expression - Left Associative
+Expression Subtraction Expression - Left Associative
+Expression Division Expression - Left Associative
+Expression Multiplication Expression - Left Associative
+Expression Exponentiation Expression - Right Associative
+Expression Subtraction Expression - Left Associative
+Expression BitwiseOr Expression - Left Associative
+Expression BitwiseXor Expression - Left Associative
+Expression BitwiseAnd Expression - Left Associative
+Expression BitwiseLeftShift Expression - Left Associative
+Expression BitwiseRightShift Expression - Left Associative
+Expression PlusEquals Expression - Right Associative
+Expression MinusEquals Expression - Right Associative
+Expression MultiplicationEquals Expression - Right Associative
+Expression DivideEquals Expression - Right Associative
+Expression PowerEquals Expression - Right Associative
+Expression BitwiseAndEquals Expression - Right Associative
+Expression BitwiseOrEquals Expression - Right Associative
+Expression BitwiseXorEquals Expression - Right Associative
+Expression BitwiseNegateEquals Expression - Right Associative
+Expression LeftShiftEquals Expression - Right Associative
+Expression RightShiftEquals Expression - Right Associative
+Increment Expression - Left Associative
+Decrement Expression - Right Associative

@@ -8,9 +8,9 @@ public abstract class Scanner : IScanner
     {
         this.input = input.Trim();
     }
-    public string input { get; set; }
-    int Current = 0;
-    int Start = 0;
+    public string input { get; protected set; }
+    protected int Current = 0;
+    protected int Start = 0;
     protected virtual ICollection<char> WhiteSpace { get; } = new HashSet<char>() { ' ', '\t', '\n', '\r' };
     public IEnumerable<(string, TokenType)> SymbolTTMappingSortedReverse => MCTTM.OrderBy(x => x.Item1.Length).Reverse();
     protected abstract IEnumerable<(string, TokenType)> MCTTM { get; }
@@ -77,7 +77,7 @@ public abstract class Scanner : IScanner
         }
         return Skipped;
     }
-    public IEnumerable<IToken> Scan()
+    public virtual IEnumerable<IToken> Scan()
     {
         while (Current < input.Length)
         {
@@ -98,7 +98,7 @@ public abstract class Scanner : IScanner
             yield return GetLiteral();
         }
     }
-    IToken GetLiteral()
+    protected IToken GetLiteral()
     {
         Start = Current;
         //Check if it's a number first

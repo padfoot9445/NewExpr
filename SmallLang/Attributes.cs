@@ -1,7 +1,7 @@
 using Common.AST;
 
 namespace SmallLang;
-record class Attributes : IMetadata
+public record class Attributes : IMetadata
 {
     public void ForcedMerge(IMetadata other, bool PrioritizeOther = false)
     {

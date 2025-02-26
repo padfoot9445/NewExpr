@@ -1,5 +1,6 @@
 using Common.Lexer;
 using Common.Tokens;
+using sly.lexer;
 
 namespace SmallLang;
 public sealed class Lexer(string input) : Scanner(input)
@@ -91,6 +92,41 @@ public sealed class Lexer(string input) : Scanner(input)
         ("char",TokenType.TypeChar),
         ("void",TokenType.TypeVoid),
         ("true",TokenType.TrueLiteral),
-        ("false",TokenType.FalseLiteral)
+        ("false",TokenType.FalseLiteral),
+        ("collection", TokenType.TypeCollection),
+        ("123", TokenType.Number),
+        ("12.3", TokenType.Number),
+        ("\"123\"", TokenType.String),
+        ("+=", TokenType.PlusEquals),
+        ("-=", TokenType.MinusEquals),
+        ("*=", TokenType.MultiplicationEquals),
+        ("/=", TokenType.DivideEquals),
+        ("**=", TokenType.PowerEquals),
+        ("&=", TokenType.BitwiseAndEquals),
+        ("|=", TokenType.BitwiseOrEquals),
+        ("^=", TokenType.BitwiseXorEquals),
+        ("<<=", TokenType.LeftShiftEquals),
+        (">>=", TokenType.RightShiftEquals),
+        ("~=", TokenType.BitwiseNegateEquals),
+        ("++", TokenType.Increment),
+        ("--", TokenType.Decrement)
+
     };
+    public override IEnumerable<IToken> Scan()
+    {
+        ILexer<TokenType> lexer = LexerBuilder.BuildLexer<TokenType>().Result;
+        var tokens = lexer.Tokenize(input).Tokens.MainTokens().SkipLast(1);
+        var rt = tokens.Select(x => IToken.NewToken(x.TokenID, x.Value, x.Position.Index, x.StringWithoutQuotes)).ToArray();
+        for (int i = 0; i < rt.Length; i++)
+        {
+            var token = rt[i];
+            if (token.TT == TokenType.String)
+            {
+                input = $"\"{token.Literal}\"";
+                Start = Current = 0;
+                rt[i] = GetLiteral();
+            }
+        }
+        return rt;
+    }
 }

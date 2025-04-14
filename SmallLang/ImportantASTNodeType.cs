@@ -1,18 +1,6 @@
 namespace SmallLang;
-public enum ASTNodeType
+public enum ImportantASTNodeType
 {
-
-    ArgListLabel, //data: IDENTIFIER
-    Type, //unused, passthrough
-    Loop, //unused, passthrough
-    Any,
-    Internal, //not exposed and should not be present in the final tree
-    Statement, //data: null, children: array[0] of statement(unused, passthrough, but should probably still handle)
-    Block, //data: null, unused, passthrough
-    Cond, //data: null, unused, passthrough to if or switch
-    Expression, //unused, passthrough
-    UnaryExpression, //data: "not" | "-" | "~" NOT "!", children: [Expression] //x++ x-- etc if implemented can also be deconstructed in the parser
-    Terminal,
     ReTypingAlias, //data: IDENTIFIER, children: [Type Identifier]
     ReTypeOriginal, //data: IDENTIFIER, children: [Type]
     Identifier, //data: IDENTIFIER, children: []
@@ -51,4 +39,5 @@ public enum ASTNodeType
     ArgList, //data: null, children: [ArgListElement+]
     ArgListElement, //data: null, children: [Expression] | [ArgListLabel, Expression]
     TypeCSV, //data: null, children: [Type+]
+    UnaryExpression,
 }

@@ -4,8 +4,8 @@ using SmallLang;
 using SmallLang.Parser;
 
 namespace SmallLangTest;
-using Node = Common.AST.DynamicASTNode<SmallLang.ASTNodeType, SmallLang.Attributes>;
-using NodeType = SmallLang.ASTNodeType;
+using Node = Common.AST.DynamicASTNode<SmallLang.ImportantASTNodeType, SmallLang.Attributes>;
+using NodeType = ImportantASTNodeType;
 [TestFixture]
 public class ParserTest
 {

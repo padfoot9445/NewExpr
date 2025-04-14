@@ -1,4 +1,4 @@
-namespace SmallLang;
+namespace SmallLang.Parser;
 public enum ASTNodeType
 {
 

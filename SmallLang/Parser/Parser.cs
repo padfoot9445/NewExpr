@@ -5,8 +5,8 @@ using Common.Tokens;
 using sly.buildresult;
 using sly.parser;
 using sly.parser.generator;
-using LYParser = sly.parser.Parser<Common.Tokens.TokenType, Common.AST.DynamicASTNode<SmallLang.ASTNodeType, SmallLang.Attributes>>;
-using NodeType = Common.AST.DynamicASTNode<SmallLang.ASTNodeType, SmallLang.Attributes>;
+using LYParser = sly.parser.Parser<Common.Tokens.TokenType, Common.AST.DynamicASTNode<ASTNodeType, SmallLang.Attributes>>;
+using NodeType = Common.AST.DynamicASTNode<ASTNodeType, SmallLang.Attributes>;
 public class Parser
 {
     private LYParser LyParser;

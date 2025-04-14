@@ -1,23 +1,22 @@
 using Common.AST;
 using Common.Tokens;
 using SmallLang;
-using SNode = Common.AST.DynamicASTNode<SmallLang.ImportantASTNodeType, SmallLang.Attributes>;
 namespace SmallLangTest;
 static class ASTSrc
 {
-    public static SNode Addition =>
-    new SNode(
-        TokenSrc.Addition, [Number, NumberTwo], ImportantASTNodeType.BinaryExpression
+    public static DynamicASTNode<ImportantASTNodeType, T> Addition<T>() where T : IMetadata =>
+    new DynamicASTNode<ImportantASTNodeType, T>(
+        TokenSrc.Addition, [Number<T>(), NumberTwo<T>()], ImportantASTNodeType.BinaryExpression
 
 
     );
-    public static SNode Number => new SNode(
+    public static DynamicASTNode<ImportantASTNodeType, T> Number<T>() where T : IMetadata => new DynamicASTNode<ImportantASTNodeType, T>(
         TokenSrc.Number, [], ImportantASTNodeType.Primary
     );
-    public static SNode NumberTwo => new SNode(
+    public static DynamicASTNode<ImportantASTNodeType, T> NumberTwo<T>() where T : IMetadata => new DynamicASTNode<ImportantASTNodeType, T>(
         TokenSrc.Number2, [], ImportantASTNodeType.Primary
     );
-    public static SNode Multiplication => new SNode(
-        TokenSrc.Multiplication, [NumberTwo, Number], ImportantASTNodeType.BinaryExpression
+    public static DynamicASTNode<ImportantASTNodeType, T> Multiplication<T>() where T : IMetadata => new DynamicASTNode<ImportantASTNodeType, T>(
+        TokenSrc.Multiplication, [NumberTwo<T>(), Number<T>()], ImportantASTNodeType.BinaryExpression
     );
 }

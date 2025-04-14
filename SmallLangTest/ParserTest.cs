@@ -1,10 +1,11 @@
 using System.Diagnostics;
 using Common.Tokens;
+using SmallLang;
 using SmallLang.Parser;
 
 namespace SmallLangTest;
-using Node = Common.AST.DynamicASTNode<ASTNodeType, SmallLang.Attributes>;
-using NodeType = ASTNodeType;
+using Node = Common.AST.DynamicASTNode<SmallLang.ImportantASTNodeType, SmallLang.Attributes>;
+using NodeType = ImportantASTNodeType;
 [TestFixture]
 public class ParserTest
 {

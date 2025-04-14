@@ -1,12 +1,14 @@
 namespace SmallLang.Parser;
 
 using System.Text;
+using Common.AST;
 using Common.Tokens;
 using sly.buildresult;
 using sly.parser;
 using sly.parser.generator;
-using LYParser = sly.parser.Parser<Common.Tokens.TokenType, Common.AST.DynamicASTNode<ASTNodeType, SmallLang.Attributes>>;
-using NodeType = Common.AST.DynamicASTNode<ASTNodeType, SmallLang.Attributes>;
+using LYParser = sly.parser.Parser<Common.Tokens.TokenType, Common.AST.DynamicASTNode<ASTNodeType, Attributes>>;
+using NodeType = Common.AST.DynamicASTNode<ASTNodeType, Attributes>;
+using OutNodeType = Common.AST.DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class Parser
 {
     private LYParser LyParser;
@@ -35,12 +37,12 @@ public class Parser
             throw new Exception(string.Join('\n', parserResult.Errors.Select(x => x.Message)));
         }
     }
-    public NodeType Parse()
+    public OutNodeType Parse()
     {
         var r = LyParser.Parse(input);
         if (!r.IsError && r.Result != null && r.Result is NodeType)
         {
-            return r.Result;
+            return Map(r.Result);
         }
         else
         {
@@ -52,5 +54,9 @@ public class Parser
             }
             throw new Exception(sb.ToString());
         }
+    }
+    static OutNodeType Map(NodeType node)
+    {
+        return new OutNodeType(node.Data, node.Children.Select(Map).ToList(), node.NodeType.ToImportant());
     }
 }

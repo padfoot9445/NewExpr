@@ -14,7 +14,7 @@ class Visitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
     {
         Debug.Assert(node.Data!.TT == TokenType.Number);
         double Value = double.Parse(node.Data!.Lexeme);
-        double? RootVal = parent is not null ? parent.Attributes.Value : Value;
+        double? RootVal = parent is not null ? parent.Attributes.RootValue : Value;
         node.Attributes = node.Attributes with { RootValue = RootVal, Value = Value, IsLiteral = true };
     }
     void BinaryExpression(Node? parent, Node node)
@@ -37,7 +37,7 @@ class Visitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
                 break;
             default: throw new Exception();
         }
-        double? RootVal = parent is not null ? parent.Attributes.Value : Value;
+        double? RootVal = parent is not null ? parent.Attributes.RootValue : Value;
         node.Attributes = node.Attributes with { RootValue = RootVal, Value = Value, IsLiteral = false };
     }
     public Action<Node?, Node> Dispatch(Node node)

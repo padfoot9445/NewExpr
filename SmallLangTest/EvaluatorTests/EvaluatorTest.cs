@@ -28,4 +28,46 @@ public class EvaluatorTests
             AssertNode(node.Children[1], 1.1, 0.1, true);
         });
     }
+
+    [Test]
+    public void TestNumberOneCorrect()
+    {
+        var node = ASTSrc.Number<Attributes>();
+        new DynamicASTEvaluator().Evaluate(node, V);
+        AssertNode(node, 1, 1, true);
+    }
+    [Test]
+    public void TestNumberTwoCorrect()
+    {
+        var node = ASTSrc.NumberTwo<Attributes>();
+        new DynamicASTEvaluator().Evaluate(node, V);
+        AssertNode(node, 0.1, 0.1, true);
+    }
+    [Test]
+    public void TestMultiplicationCorrect()
+    {
+        var node = ASTSrc.Multiplication<Attributes>();
+        new DynamicASTEvaluator().Evaluate(node, V);
+        Assert.Multiple(() =>
+        {
+            AssertNode(node, 0.1, 0.1, false);
+            AssertNode(node.Children[1], 0.1, 1, true);
+            AssertNode(node.Children[0], 0.1, 0.1, true);
+        });
+    }
+
+    [Test]
+    public void TestAddMulCorrect()
+    {
+        var node = ASTSrc.AddMul<Attributes>();
+        new DynamicASTEvaluator().Evaluate(node, V);
+        Assert.Multiple(() =>
+        {
+            AssertNode(node, 0.2, 0.2, false);
+            AssertNode(node.Children[0], 0.2, 0.1, false);
+            AssertNode(node.Children[0].Children[0], 0.2, 0.1, true);
+            AssertNode(node.Children[0].Children[1], 0.2, 1, true);
+            AssertNode(node.Children[1], 0.2, 0.1, true);
+        });
+    }
 }

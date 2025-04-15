@@ -13,4 +13,12 @@ record class Attributes(double? Value, bool? IsLiteral, double? RootValue) : IMe
     {
         throw new NotImplementedException();
     }
+    int GH<T>(T? v)
+    {
+        return v is null ? (int.MinValue + 1394) : v.GetHashCode();
+    }
+    public override int GetHashCode()
+    {
+        return GH(Value) + GH(IsLiteral) + GH(RootValue);
+    }
 }

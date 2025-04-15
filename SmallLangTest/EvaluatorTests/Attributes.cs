@@ -21,4 +21,9 @@ record class Attributes(double? Value, bool? IsLiteral, double? RootValue) : IMe
     {
         return GH(Value) + GH(IsLiteral) + GH(RootValue);
     }
+    public virtual bool Equals(Attributes? att)
+    {
+        if (att is null) return false;
+        return att!.Value == Value && att.IsLiteral == IsLiteral && att.RootValue == RootValue;
+    }
 }

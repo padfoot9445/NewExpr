@@ -1,19 +1,46 @@
+using System.Diagnostics;
 using System.Linq.Expressions;
 using Common.AST;
+using Common.Tokens;
 using SmallLang;
 using SmallLang.Evaluator;
-
+using Node = Common.AST.DynamicASTNode<SmallLang.ImportantASTNodeType, SmallLangTest.EvaluatorTests.Attributes>;
 namespace SmallLangTest.EvaluatorTests;
 //Primary: True -> IsLiteral, PARSE -> Value, Parent.Value -> RootValue
 //BinaryExperssion: False -> IsLiteral, EVAL(Operator, Op1, Op2) -> Value, parent.Value -> RootValue
-class Visitor : IDynamicASTVisitor
+class Visitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
-    void Primary<T1, T2>(DynamicASTNode<T1, T2>? parent, DynamicASTNode<T1, T2> node) where T2 : IMetadata, new()
+    void Primary(Node? parent, Node node)
     {
-
+        Debug.Assert(node.Data!.TT == TokenType.Number);
+        double Value = double.Parse(node.Data!.Lexeme);
+        double? RootVal = parent?.Attributes.Value ?? Value;
+        node.Attributes = node.Attributes with { RootValue = RootVal, Value = Value, IsLiteral = true };
     }
-    void BinaryExpression<T1, T2>(DynamicASTNode<T1, T2>? parent, DynamicASTNode<T1, T2> node) where T2 : IMetadata, new() { }
-    public Action<DynamicASTNode<T1, T2>?, DynamicASTNode<T1, T2>> Dispatch<T1, T2>(DynamicASTNode<T1, T2> node) where T2 : IMetadata, new()
+    void BinaryExpression(Node? parent, Node node)
+    {
+        Debug.Assert(node.Data!.TT == TokenType.Addition || node.Data!.TT == TokenType.Multiplication);
+        double? Value = null;
+        switch (node.Data!.TT)
+        {
+            case TokenType.Addition:
+                if (node.Children[0].Attributes.Value is not null && node.Children[1].Attributes.Value is not null)
+                {
+                    Value = node.Children[0].Attributes.Value + node.Children[1].Attributes.Value;
+                }
+                break;
+            case TokenType.Multiplication:
+                if (node.Children[0].Attributes.Value is not null && node.Children[1].Attributes.Value is not null)
+                {
+                    Value = node.Children[0].Attributes.Value * node.Children[1].Attributes.Value;
+                }
+                break;
+            default: throw new Exception();
+        }
+        double? RootVal = parent?.Attributes.Value ?? Value;
+        node.Attributes = node.Attributes with { RootValue = RootVal, Value = Value, IsLiteral = false };
+    }
+    public Action<Node?, Node> Dispatch(Node node)
     {
         switch (node.NodeType)
         {

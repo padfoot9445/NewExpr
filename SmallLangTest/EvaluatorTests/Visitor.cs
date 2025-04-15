@@ -10,14 +10,17 @@ namespace SmallLangTest.EvaluatorTests;
 //BinaryExperssion: False -> IsLiteral, EVAL(Operator, Op1, Op2) -> Value, parent.Value -> RootValue
 class Visitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
-    void Primary(Node? parent, Node node)
+
+    bool Primary(Node? parent, Node node)
     {
         Debug.Assert(node.Data!.TT == TokenType.Number);
         double Value = double.Parse(node.Data!.Lexeme);
         double? RootVal = parent is not null ? parent.Attributes.RootValue : Value;
+        var oldAttr = node.Attributes;
         node.Attributes = node.Attributes with { RootValue = RootVal, Value = Value, IsLiteral = true };
+        return oldAttr.Equals(node.Attributes) is false;
     }
-    void BinaryExpression(Node? parent, Node node)
+    bool BinaryExpression(Node? parent, Node node)
     {
         Debug.Assert(node.Data!.TT == TokenType.Addition || node.Data!.TT == TokenType.Multiplication);
         double? Value = null;
@@ -38,9 +41,11 @@ class Visitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
             default: throw new Exception();
         }
         double? RootVal = parent is not null ? parent.Attributes.RootValue : Value;
+        var oldAttr = node.Attributes;
         node.Attributes = node.Attributes with { RootValue = RootVal, Value = Value, IsLiteral = false };
+        return oldAttr.Equals(node.Attributes) is false;
     }
-    public Action<Node?, Node> Dispatch(Node node)
+    public Func<Node?, Node, bool> Dispatch(Node node)
     {
         switch (node.NodeType)
         {

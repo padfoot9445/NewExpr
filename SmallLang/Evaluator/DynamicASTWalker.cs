@@ -3,21 +3,18 @@ using Common.AST;
 namespace SmallLang.Evaluator;
 static class DynamicASTWalker
 {
-    public static DynamicASTNode<T1, T2> Walk<T1, T2>(this DynamicASTNode<T1, T2> node, Action<DynamicASTNode<T1, T2>?, DynamicASTNode<T1, T2>> action) where T2 : IMetadata
+    public static void Walk<T1, T2>(this DynamicASTNode<T1, T2> node, IDynamicASTVisitor<T1, T2> visitor, out bool Changed) where T2 : IMetadata, new()
     {
-        return Walk(node, action);
+        Walk(node, visitor, null, out Changed);
     }
-    static DynamicASTNode<T1, T2> Walk<T1, T2>(DynamicASTNode<T1, T2> node, Action<DynamicASTNode<T1, T2>?, DynamicASTNode<T1, T2>> action, DynamicASTNode<T1, T2>? parent = null) where T2 : IMetadata
+    static void Walk<T1, T2>(DynamicASTNode<T1, T2> node, IDynamicASTVisitor<T1, T2> visitor, DynamicASTNode<T1, T2>? parent, out bool Changed) where T2 : IMetadata, new()
     {
-        action(parent, node);
+        Changed = visitor.Dispatch(node)(parent, node);
+        bool ChildChanged;
         foreach (var child in node.Children)
         {
-            Walk(child, action, node);
+            Walk(child, visitor, node, out ChildChanged);
+            Changed = ChildChanged || Changed;
         }
-        return node;
-    }
-    public static DynamicASTNode<T1, T2> Walk<T1, T2>(this DynamicASTNode<T1, T2> node, IDynamicASTVisitor visitor) where T2 : IMetadata
-    {
-        return Walk(node, visitor.Dispatch(node));
     }
 }

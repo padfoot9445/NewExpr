@@ -4,8 +4,8 @@ using SmallLang;
 using SmallLang.Parser;
 
 namespace SmallLangTest;
-using Node = Common.AST.DynamicASTNode<SmallLang.ASTNodeType, SmallLang.Attributes>;
-using NodeType = SmallLang.ASTNodeType;
+using Node = Common.AST.DynamicASTNode<SmallLang.ImportantASTNodeType, SmallLang.Attributes>;
+using NodeType = ImportantASTNodeType;
 [TestFixture]
 public class ParserTest
 {
@@ -20,7 +20,7 @@ public class ParserTest
     {
         Assert.Multiple(() =>
         {
-            var res = new Parser("int i = 0; Function(1, 2, 3); if(i == 2){return 1;} while(true){i =  i + 1;} return 2; break ident;").Parse();
+            var res = new Parser("frozen readonly int i = 0; Function(1, 2, 3); if(i == 2){return 1;} while(true){i =  i + 1;} return 2; break ident;").Parse();
 
             //var res = new Parser("1").Parse();
             Assert.That(res.NodeType, Is.EqualTo(NodeType.Section));

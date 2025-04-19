@@ -26,7 +26,7 @@ public enum ImportantASTNodeType
     FunctionArgDeclModifiers, //data: *DeclarationModifier | "copy", children: []
     FunctionArgDeclModifiersCombined, //data: null, children: [FunctionArgDeclModifiers+]
     AssignmentPrime, //data: "=", children: [Expression]
-    AssignmentExpr, //data: "=", children: [Identifier, Expression]
+    //AssignmentExpr, //data: "=", children: [Identifier, Expression] 
     FactorialExpression, //data: null, children: [Expression, !+]
     BinaryExpression, //data: "implies" | "or" | "xor" | "and" | "==" | "!=" | ">" | ">=" | "<" | "<=" | "+" | "-" | "*" | "/" | "**" | "|" | "^" | "&", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser
     ComparisionExpression, //data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via 

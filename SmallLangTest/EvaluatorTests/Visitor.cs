@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Linq.Expressions;
 using Common.AST;
+using Common.Evaluator;
 using Common.Tokens;
 using SmallLang;
-using SmallLang.Evaluator;
 using Node = Common.AST.DynamicASTNode<SmallLang.ImportantASTNodeType, SmallLangTest.EvaluatorTests.Attributes>;
 namespace SmallLangTest.EvaluatorTests;
 //Primary: True -> IsLiteral, PARSE -> Value, Parent.Value -> RootValue

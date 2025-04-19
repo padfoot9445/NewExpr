@@ -1,5 +1,5 @@
 using Common.AST;
-using SmallLang.Evaluator;
+using Common.Evaluator;
 
 namespace SmallLang.Backend;
 public class CodeGenerator

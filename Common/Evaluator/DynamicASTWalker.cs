@@ -1,7 +1,7 @@
 using Common.AST;
 
-namespace SmallLang.Evaluator;
-static class DynamicASTWalker
+namespace Common.Evaluator;
+public static class DynamicASTWalker
 {
     public static void Walk<T1, T2>(this DynamicASTNode<T1, T2> node, IDynamicASTVisitor<T1, T2> visitor, out bool Changed) where T2 : IMetadata, new()
     {

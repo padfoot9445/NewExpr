@@ -1,6 +1,6 @@
 using Common.AST;
 
-namespace SmallLang.Evaluator;
+namespace Common.Evaluator;
 public class DynamicASTEvaluator
 {
     public void Evaluate<T, A>(DynamicASTNode<T, A> node, IDynamicASTVisitor<T, A> visitor) where A : IMetadata, new()

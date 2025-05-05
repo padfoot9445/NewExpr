@@ -9,11 +9,10 @@ class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
 
         Debug.Assert(self.NodeType == ImportantASTNodeType.FunctionCall);
         var Function = self.Children[0];
-        var Arguments = self.Children[1];
-        Debug.Assert(Arguments.NodeType == ImportantASTNodeType.ArgList);
-        Debug.Assert(Function.Attributes.DeclArgumentTypes!.Count == 0);
-        Debug.Assert(Arguments.Children.Count == 0);
-        uint FunctionID = Function.Attributes.FunctionID ?? throw new Exception();
+        DynamicASTNode<ImportantASTNodeType, Attributes>? Arguments = self.Children.Count == 2 ? self.Children[1] : null;
+        Debug.Assert(self.Attributes.DeclArgumentTypes!.Count == 0);
+        Debug.Assert(Arguments is null);
+        uint FunctionID = self.Attributes.FunctionID ?? throw new Exception();
         if (Function.NodeType == ImportantASTNodeType.FunctionIdentifier)
         {
             Debug.Assert(Function.Data is not null);

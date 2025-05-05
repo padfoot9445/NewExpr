@@ -12,14 +12,16 @@ class OptimisingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
         return node.NodeType switch
         {
             ImportantASTNodeType.FunctionCall => FunctionCall,
+            ImportantASTNodeType.Section => (x, y) => false,
+            ImportantASTNodeType.FunctionIdentifier => (x, y) => false,
             _ => throw new Exception()
         };
     }
     private bool FunctionCall(Node? parent, Node self)
     {
-        Debug.Assert(self.Children[0].NodeType == ImportantASTNodeType.Primary);
-        Debug.Assert(self.Children[0].Data is IToken token && token.Lexeme is not null);
         if (self.Children[0].NodeType == ImportantASTNodeType.FunctionIdentifier) return false;
+        Debug.Assert(self.Children[0].NodeType == ImportantASTNodeType.Identifier);
+        Debug.Assert(self.Children[0].Data is IToken token && token.Lexeme is not null);
         self.Children[0] = self.Children[0] with { NodeType = ImportantASTNodeType.FunctionIdentifier };
         return true;
     }

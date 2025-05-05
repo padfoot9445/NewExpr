@@ -18,6 +18,8 @@ class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
         return node.NodeType switch
         {
             ImportantASTNodeType.FunctionCall => FunctionCall,
+            ImportantASTNodeType.Section => (x, y) => false,
+            ImportantASTNodeType.Identifier => (x, y) => false,
             _ => throw new Exception()
         };
     }

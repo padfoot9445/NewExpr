@@ -7,6 +7,7 @@ using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 class CodeGenVisitor
 {
     public List<Operation<uint>> Instructions = [];
+    public void Exec(Node? parent, Node node) => Dispatch(node)(parent, node);
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
         switch (node.NodeType)

@@ -32,6 +32,7 @@ public enum ImportantASTNodeType
     ComparisionExpression, //data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via 
     OperatorExpressionPair, //data: cmpOperator, children: [Expression]
     Primary, //data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr
+    FunctionIdentifier, //data: IDENTIFIER, children: []
     CopyExpr, //data: null, children: [Expression] //NO UP FLATTEN
     NewExpr, //data: null, children: [Type, ArgList] | [Type]
     Index, //data: null, children: [Expression, Expression] where Expression1 is Primary or subset (parens etc)

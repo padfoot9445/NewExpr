@@ -6,7 +6,7 @@ namespace SmallLang.Backend;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public abstract class BaseCodeGenVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
-
+    protected bool Exec(Node? parent, Node self) => Dispatch(self)(parent, self);
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
         switch (node.NodeType)

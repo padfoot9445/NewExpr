@@ -8,10 +8,14 @@ namespace SmallLang.Backend;
 public partial class CodeGenVisitor : BaseCodeGenVisitor
 {
     private Dictionary<string, uint> FunctionNameToID = [];
+    private void Emit(Opcode Op) => Emit(Op, new uint[0]);
+    private void Emit(Opcode Op, params uint[] args) => Emit(Op, args.Select(x => (UIntOpArg)x).ToArray());
+    private void Emit(Opcode Op, params IOperationArgument<uint>[] args) => Emit(new Operation<uint>((IOperationArgument<uint>)(new OpcodeWrapper(Op)), args));
     private void Emit(Operation<uint> Instruction)
     {
         throw new NotImplementedException();
     }
+
     protected override bool AliasExpr(DynamicASTNode<ImportantASTNodeType, Attributes>? Parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
     {
         throw new NotImplementedException();

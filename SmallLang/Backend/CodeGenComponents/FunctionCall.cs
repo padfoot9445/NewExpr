@@ -1,12 +1,12 @@
 using System.Diagnostics;
 using Common.AST;
-using Common.LinearIR;
 using static SmallLang.LinearIR.Opcode;
-namespace SmallLang.Backend;
-partial class CodeGenVisitor
+namespace SmallLang.Backend.CodeGenComponents;
+class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
 {
-    protected override bool FunctionCall(DynamicASTNode<ImportantASTNodeType, Attributes>? Parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
+    public override bool GenerateCode(DynamicASTNode<ImportantASTNodeType, Attributes>? parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
     {
+
         Debug.Assert(self.NodeType == ImportantASTNodeType.FunctionCall);
         var Function = self.Children[0];
         var Arguments = self.Children[1];
@@ -23,10 +23,11 @@ partial class CodeGenVisitor
         }
         else
         {
-            Dispatch(Function)(self, Function); //pushes the FunctionID to the top of the stack
+            Driver.Dispatch(Function)(self, Function); //pushes the FunctionID to the top of the stack
             Emit(SCall);
         }
         return true;
+
 
     }
 }

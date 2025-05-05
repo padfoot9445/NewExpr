@@ -1,10 +1,17 @@
 #pragma warning disable IDE0130
 using Common.AST;
+using Common.LinearIR;
+using SmallLang.LinearIR;
 
 namespace SmallLang.Backend;
 #pragma warning restore IDE0130
 public partial class CodeGenVisitor : BaseCodeGenVisitor
 {
+    private Dictionary<string, uint> FunctionNameToID = [];
+    private void Emit(Operation<uint> Instruction)
+    {
+        throw new NotImplementedException();
+    }
     protected override bool AliasExpr(DynamicASTNode<ImportantASTNodeType, Attributes>? Parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
     {
         throw new NotImplementedException();
@@ -90,10 +97,6 @@ public partial class CodeGenVisitor : BaseCodeGenVisitor
         throw new NotImplementedException();
     }
 
-    protected override bool FunctionCall(DynamicASTNode<ImportantASTNodeType, Attributes>? Parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
-    {
-        throw new NotImplementedException();
-    }
 
     protected override bool GenericType(DynamicASTNode<ImportantASTNodeType, Attributes>? Parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
     {

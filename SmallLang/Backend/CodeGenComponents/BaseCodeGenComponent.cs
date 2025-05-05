@@ -13,7 +13,7 @@ abstract class BaseCodeGenComponent(CodeGenVisitor driver)
     protected void Emit(Opcode Op, params IOperationArgument<uint>[] args) => Emit(new Operation<uint>((IOperationArgument<uint>)(new OpcodeWrapper(Op)), args));
     protected void Emit(Operation<uint> Instruction)
     {
-        throw new NotImplementedException();
+        Driver.Instructions.Add(Instruction);
     }
     protected CodeGenVisitor Driver = driver;
     public abstract bool GenerateCode(Node? parent, Node self);

@@ -1,4 +1,5 @@
 using Common.AST;
+using Common.LinearIR;
 using SmallLang.Backend.CodeGenComponents;
 
 namespace SmallLang.Backend;
@@ -6,6 +7,7 @@ using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 class CodeGenVisitor
 {
     public Dictionary<string, uint> FunctionNameToID = [];
+    public List<Operation<uint>> Instructions = [];
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
         switch (node.NodeType)

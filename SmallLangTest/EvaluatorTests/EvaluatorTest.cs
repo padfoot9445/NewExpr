@@ -1,4 +1,4 @@
-using SmallLang.Evaluator;
+using Common.Evaluator;
 using Node = Common.AST.DynamicASTNode<SmallLang.ImportantASTNodeType, SmallLangTest.EvaluatorTests.Attributes>;
 namespace SmallLangTest.EvaluatorTests;
 [TestFixture]

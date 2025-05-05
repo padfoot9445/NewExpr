@@ -60,7 +60,7 @@ class CodeGenVisitor
     private BaseCodeGenComponent? _Identifier = null;
     private BaseCodeGenComponent Identifier => throw new NotImplementedException();
     private BaseCodeGenComponent? _Section = null;
-    private BaseCodeGenComponent Section => throw new NotImplementedException();
+    private BaseCodeGenComponent Section => _Section is null ? _Section = new Section(this) : _Section;
     private BaseCodeGenComponent? _Function = null;
     private BaseCodeGenComponent Function => throw new NotImplementedException();
     private BaseCodeGenComponent? _LoopCTRL = null;

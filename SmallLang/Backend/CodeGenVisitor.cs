@@ -6,7 +6,13 @@ namespace SmallLang.Backend;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 class CodeGenVisitor
 {
+    public uint[] OutputRegisters { get; set; } = [];
+    public bool OutputToRegister { get; set; } = true;
+    public uint? DestinationRegister { get; set; }
+    public uint LastUsedRegister = 0;
     public List<Operation<uint>> Instructions = [];
+    public List<uint> StaticData = [];
+    public Dictionary<string, uint> VariableNameToRegister = [];
     public void Exec(Node? parent, Node node) => Dispatch(node)(parent, node);
     public Action<Node?, Node> Dispatch(Node node)
     {

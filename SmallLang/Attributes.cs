@@ -1,9 +1,9 @@
 using Common.AST;
 
 namespace SmallLang;
-public record class Attributes(List<uint>? DeclArgumentTypes, uint? FunctionID) : IMetadata
+public record class Attributes(List<uint>? DeclArgumentTypes = null, uint? FunctionID = null, uint? TypeOfExpression = null) : IMetadata
 {
-    public Attributes() : this(DeclArgumentTypes: null, null) { }
+    public Attributes() : this(DeclArgumentTypes: null) { }
     public void ForcedMerge(IMetadata other, bool PrioritizeOther = false)
     {
         throw new NotImplementedException();

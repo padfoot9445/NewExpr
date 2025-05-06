@@ -15,5 +15,5 @@ abstract class BaseCodeGenComponent(CodeGenVisitor driver)
         Driver.Instructions.Add(Instruction);
     }
     protected CodeGenVisitor Driver = driver;
-    public abstract bool GenerateCode(Node? parent, Node self);
+    public abstract void GenerateCode(Node? parent, Node self);
 }

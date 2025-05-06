@@ -4,7 +4,7 @@ using static SmallLang.LinearIR.Opcode;
 namespace SmallLang.Backend.CodeGenComponents;
 class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
 {
-    public override bool GenerateCode(DynamicASTNode<ImportantASTNodeType, Attributes>? parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
+    public override void GenerateCode(DynamicASTNode<ImportantASTNodeType, Attributes>? parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
     {
 
         Debug.Assert(self.NodeType == ImportantASTNodeType.FunctionCall);
@@ -22,7 +22,6 @@ class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
         {
             throw new Exception();
         }
-        return true;
 
 
     }

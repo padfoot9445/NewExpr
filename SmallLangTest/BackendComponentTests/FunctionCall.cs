@@ -8,7 +8,7 @@ public class FunctionCall
     [Test]
     public void InputFunctionCall__NoArgs_RetStack__GeneratesCorrectResult()
     {
-        var res = HighToLowLevelCompilerDriver.Compile(HTLDriverTest.Program1, () => new FunctionCallDriverMock(false));
+        var res = HighToLowLevelCompilerDriver.Compile(HTLDriverTest.Program1, () => new FunctionCallDriverMock(false)).Item1;
         Assert.That(res[0].Op.Value, Is.EqualTo((uint)(Opcode.ICallS)));
         Assert.That(res[0].Operands[0].Value, Is.EqualTo(1));
     }
@@ -16,7 +16,7 @@ public class FunctionCall
     public void InputFunctionCall__NoArgs_RetReg__GeneratesCorrectResult()
     {
 
-        var res = HighToLowLevelCompilerDriver.Compile(HTLDriverTest.Program1, () => new FunctionCallDriverMock(true));
+        var res = HighToLowLevelCompilerDriver.Compile(HTLDriverTest.Program1, () => new FunctionCallDriverMock(true)).Item1;
         Assert.That(res[0].Op.Value, Is.EqualTo((uint)(Opcode.ICallR)));
         Assert.That(res[0].Operands[0].Value, Is.EqualTo(1));
         Assert.That(res[0].Operands[1].Value, Is.EqualTo(1));

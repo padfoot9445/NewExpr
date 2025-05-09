@@ -9,6 +9,6 @@ public class HTLDriverTest
     public void ValidPrograms__DoesNotThrowAndReturnsNonEmptyInstructions(string program)
     {
         Assert.That(() => HighToLowLevelCompilerDriver.Compile(program), Throws.Nothing);
-        Assert.That(HighToLowLevelCompilerDriver.Compile(program), Has.Length.GreaterThanOrEqualTo(1));
+        Assert.That(HighToLowLevelCompilerDriver.Compile(program).Item1, Has.Length.GreaterThanOrEqualTo(1));
     }
 }

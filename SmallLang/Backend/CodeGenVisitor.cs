@@ -6,9 +6,9 @@ namespace SmallLang.Backend;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class CodeGenVisitor
 {
-    public uint[] OutputRegisters { get; set; } = [];
-    public bool OutputToRegister { get; set; } = true;
-    public uint? DestinationRegister { get; set; }
+    public virtual uint[] OutputRegisters { get; set; } = [];
+    public virtual bool OutputToRegister { get; set; } = true;
+    public virtual uint? DestinationRegister { get; set; }
     public uint LastUsedRegister = 0;
     public List<Operation<uint>> Instructions = [];
     public List<uint> StaticData = [];

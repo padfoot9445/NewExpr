@@ -1,3 +1,6 @@
+using SmallLang;
+using SmallLang.LinearIR;
+
 namespace SmallLangTest.BackendComponentTests;
 [TestFixture]
 public class PrimaryTest
@@ -11,6 +14,8 @@ public class PrimaryTest
     [Test]
     public void TestPrimary__Char__OutputToStack__PushesCorrect()
     {
-
+        var res = HighToLowLevelCompilerDriver.Compile(Char, () => new PrimaryTestVisitorMock(RetToRegister: false)).Item1[0];
+        Assert.That(res.Op.Value, Is.EqualTo((uint)Opcode.PushI));
+        Assert.That((char)res.Operands[0].Value, Is.EqualTo('a'));
     }
 }

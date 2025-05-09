@@ -7,6 +7,7 @@ namespace SmallLang;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 class OptimisingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
+    Func<Node?, Node, bool> Identity = (x, y) => false;
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
         return node.NodeType switch
@@ -14,6 +15,7 @@ class OptimisingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
             ImportantASTNodeType.FunctionCall => FunctionCall,
             ImportantASTNodeType.Section => (x, y) => false,
             ImportantASTNodeType.FunctionIdentifier => (x, y) => false,
+            ImportantASTNodeType.Primary => Identity,
             _ => throw new Exception()
         };
     }

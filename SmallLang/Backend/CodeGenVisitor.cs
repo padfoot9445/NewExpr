@@ -125,7 +125,7 @@ public class CodeGenVisitor
     private BaseCodeGenComponent? _OperatorExpressionPair = null;
     protected virtual BaseCodeGenComponent OperatorExpressionPair => throw new NotImplementedException();
     private BaseCodeGenComponent? _Primary = null;
-    protected virtual BaseCodeGenComponent Primary => throw new NotImplementedException();
+    protected virtual BaseCodeGenComponent Primary => _Primary is null ? _Primary = new Primary(this) : _Primary;
     private BaseCodeGenComponent? _CopyExpr = null;
     protected virtual BaseCodeGenComponent CopyExpr => throw new NotImplementedException();
     private BaseCodeGenComponent? _NewExpr = null;

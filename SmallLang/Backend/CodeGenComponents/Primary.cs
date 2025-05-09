@@ -34,7 +34,7 @@ class Primary : BaseCodeGenComponent
                 LongintTypeCode => throw new NotImplementedException(),
                 NumberTypeCode => throw new NotImplementedException(),
                 ByteTypeCode => [byte.Parse(data.Lexeme)],
-                CharTypeCode => data.Literal.Length != 1 ? throw new Exception($"Expected char length to be 1, got {data.Literal.Length}") : data.Literal.Select(x => (byte)x).ToArray(),
+                CharTypeCode => data.Literal.Length != 3 ? throw new Exception($"Expected char length to be 3 ( 1 + two quotes), got {data.Literal.Length}") : data.Literal.Select(x => (byte)x).Skip(1).SkipLast(1).ToArray(),
                 _ => throw new Exception($"Unexpected Type {Type}"),
             }
         );

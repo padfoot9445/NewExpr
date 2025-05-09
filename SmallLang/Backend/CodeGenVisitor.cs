@@ -9,7 +9,7 @@ public class CodeGenVisitor
     public virtual uint[] OutputRegisters { get; set; } = [];
     public virtual bool OutputToRegister { get; set; } = true;
     public virtual uint? DestinationRegister { get; set; }
-    public uint LastUsedRegister = 0;
+    public uint LastUsedRegister { get; set; } = 0;
     public List<Operation<uint>> Instructions = [];
     public List<uint> StaticData = [];
     public Dictionary<string, uint> VariableNameToRegister = [];

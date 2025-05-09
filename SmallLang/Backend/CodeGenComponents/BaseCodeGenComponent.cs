@@ -65,7 +65,7 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
     {
         if (Driver.OutputToRegister)
         {
-            Emit(Opcode.LoadI, Val, Driver.DestinationRegister ?? ++Driver.LastUsedRegister);
+            Emit(Opcode.LoadI, Val, GetDestRegister());
             return Driver.DestinationRegister ?? Driver.LastUsedRegister;
         }
         else
@@ -74,6 +74,7 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
             return null;
         }
     }
+    protected uint GetDestRegister() => Driver.DestinationRegister ?? ++Driver.LastUsedRegister;
     protected CodeGenVisitor Driver = driver;
     public abstract void GenerateCode(Node? parent, Node self);
 }

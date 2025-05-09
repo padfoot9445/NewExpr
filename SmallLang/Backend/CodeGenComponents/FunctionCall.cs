@@ -16,7 +16,11 @@ class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
         if (Function.NodeType == ImportantASTNodeType.FunctionIdentifier)
         {
             Debug.Assert(Function.Data is not null);
-            Emit(ICall, FunctionID);
+            if (Driver.OutputToRegister)
+            {
+                Emit(ICallR, FunctionID, GetDestRegister());
+            }
+            Emit(ICallS, FunctionID);
         }
         else
         {

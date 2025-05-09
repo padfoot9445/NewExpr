@@ -6,7 +6,7 @@ using SmallLang.LinearIR;
 namespace SmallLang.Backend.CodeGenComponents;
 
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
-abstract class BaseCodeGenComponent(CodeGenVisitor driver)
+public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
 {
     internal const uint StringTypeCode = 1;
     internal const uint FloatTypeCode = 2;

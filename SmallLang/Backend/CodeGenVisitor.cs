@@ -13,9 +13,16 @@ public class CodeGenVisitor
     public List<Operation<uint>> Instructions = [];
     public List<uint> StaticData = [];
     public Dictionary<string, uint> VariableNameToRegister = [];
-    public void Exec(Node? parent, Node node) => Dispatch(node)(parent, node);
-    public Action<Node?, Node> Dispatch(Node node)
+    public void Exec(Node? parent, Node node, bool? OutputToRegister = null, uint? DestinationRegister = null, uint[]? OutputRegisters = null) => Dispatch(node, OutputToRegister, DestinationRegister, OutputRegisters)(parent, node);
+    void SetState(bool? OTR, uint? DR, uint[]? OR)
     {
+        OutputToRegister = OTR ?? OutputToRegister;
+        DestinationRegister = DR ?? DestinationRegister;
+        OutputRegisters = OR ?? OutputRegisters;
+    }
+    public Action<Node?, Node> Dispatch(Node node, bool? OutputToRegister = null, uint? DestinationRegister = null, uint[]? OutputRegisters = null)
+    {
+        SetState(OutputToRegister, DestinationRegister, OutputRegisters);
         switch (node.NodeType)
         {
             case ImportantASTNodeType.ReTypingAlias: return ReTypingAlias.GenerateCode;

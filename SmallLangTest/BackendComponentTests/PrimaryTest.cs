@@ -35,8 +35,9 @@ public class PrimaryTest
     {
         (var ins, var data) = HighToLowLevelCompilerDriver.Compile(String, () => new PrimaryTestVisitorMock(RetToRegister: false));
         Assert.That(ins[0].Op.Value, Is.EqualTo((uint)Opcode.PushI));
-        uint[] ExpectedData = {(1 << 16) | ((uint)Math.Ceiling(String.Length / 4.0) + 1),//String type << 16 | wordCount
-        (uint)String.Length,
+        //subtract 3 from string.length to account for quotes (2) and semicolon (1) # 1 + 2 = 3
+        uint[] ExpectedData = {(1 << 16) | ((uint)Math.Ceiling((String.Length - 3) / 4.0) + 1),//String type << 16 | wordCount
+        (uint)(String.Length - 3),
         FourCharsGrouping("abcd"),
         FourCharsGrouping("efgh"),
         FourCharsGrouping("ijkl"),

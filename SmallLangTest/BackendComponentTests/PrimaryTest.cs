@@ -30,11 +30,11 @@ public class PrimaryTest
     }
     uint FourCharsGrouping(string a) => FourCharsGrouping(a[0], a[1], a[2], a[3]);
     uint FourCharsGrouping(char a, char b, char c, char d) => (uint)(a << 24 | b << 16 | c << 8 | d);
-    [Test]
-    public void TestPrimary__String__OutputToStack__PushesCorrect_And_HasCorrectStaticData()
+    [TestCase(false)]
+    [TestCase(true)]
+    public void TestPrimary__String__OutputToStackAndReg__PushesCorrect_And_HasCorrectStaticData(bool OutToReg)
     {
-        (var ins, var data) = HighToLowLevelCompilerDriver.Compile(String, () => new PrimaryTestVisitorMock(RetToRegister: false));
-        Assert.That(ins[0].Op.Value, Is.EqualTo((uint)Opcode.PushI));
+        (var ins, var data) = HighToLowLevelCompilerDriver.Compile(String, () => new PrimaryTestVisitorMock(RetToRegister: OutToReg));
         //subtract 3 from string.length to account for quotes (2) and semicolon (1) # 1 + 2 = 3
         uint[] ExpectedData = {(1 << 16) | ((uint)Math.Ceiling((String.Length - 3) / 4.0) + 1),//String type << 16 | wordCount
         (uint)(String.Length - 3),
@@ -45,6 +45,17 @@ public class PrimaryTest
         FourCharsGrouping('q', 'r', 's', (char)0),
         };
         Assert.That(data[0..ExpectedData.Length].SequenceEqual(ExpectedData));
-        Assert.That(ins[0].Operands[0].Value, Is.EqualTo(0));
+        if (OutToReg)
+        {
+            Assert.That(ins[0].Op.Value, Is.EqualTo((uint)Opcode.LoadI));
+            Assert.That(ins[0].Operands.Select(x => x.Value), Is.EquivalentTo(new List<uint>() { 0, 1 }));
+        }
+        else
+        {
+
+            Assert.That(ins[0].Op.Value, Is.EqualTo((uint)Opcode.PushI));
+            Assert.That(ins[0].Operands[0].Value, Is.EqualTo(0));
+        }
     }
+
 }

@@ -82,4 +82,16 @@ public class PrimaryTest
             Assert.That(ins[0].Operands.Skip(1).First().Value, Is.EqualTo(1));
         }
     }
+    [Test]
+    public void TestPrimary__Bool__OutputToStackAndReg([Values(true, false)] bool OTR, [Values(true, false)] bool Val)
+    {
+        string inp = Val ? True : False;
+        (var ins, var _) = HighToLowLevelCompilerDriver.Compile(inp, () => new PrimaryTestVisitorMock(OTR));
+        Assert.That(ins[0].Op.Value, Is.EqualTo((uint)(OTR ? Opcode.LoadI : Opcode.PushI)));
+        Assert.That(ins[0].Operands.First().Value, Is.EqualTo(Val ? uint.MaxValue : 0));
+        if (OTR)
+        {
+            Assert.That(ins[0].Operands.Skip(1).First().Value, Is.EqualTo(1));
+        }
+    }
 }

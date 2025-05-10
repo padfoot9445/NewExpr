@@ -13,7 +13,7 @@ class Primary : BaseCodeGenComponent
     uint? LoadString(IToken data)
     {
         Debug.Assert(data.TT == TokenType.String && data.Literal is not null);
-        char[] Chars = data.Literal.ToCharArray();
+        char[] Chars = data.Literal.ToCharArray().Skip(1).SkipLast(1).ToArray();
         List<uint> write = [(uint)Chars.Length];
         write.AddRange(BytesToUInt(Chars.Select(x => (byte)x).ToArray()));
 

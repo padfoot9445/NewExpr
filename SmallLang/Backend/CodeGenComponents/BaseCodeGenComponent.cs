@@ -44,7 +44,7 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
         uint[] OutVals = new uint[InVals.Length / 4];
         for (int i = 0; i < InVals.Length; i += 4)
         {
-            OutVals[i] = BitConverter.ToUInt32(InVals[i..(i + 4)]);
+            OutVals[i / 4] = BitConverter.ToUInt32(InVals[i..(i + 4)]);
         }
         return OutVals;
 

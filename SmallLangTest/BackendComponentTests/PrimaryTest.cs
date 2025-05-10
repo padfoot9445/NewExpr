@@ -1,4 +1,6 @@
 using SmallLang;
+using SmallLang.Backend;
+using SmallLang.Backend.CodeGenComponents;
 using SmallLang.LinearIR;
 
 namespace SmallLangTest.BackendComponentTests;
@@ -6,7 +8,7 @@ namespace SmallLangTest.BackendComponentTests;
 public class PrimaryTest
 {
     const string Char = "\"a\";";
-    const string String = "\"abc\";";
+    const string String = "\"abcdefghijklmnopqrs\";";
     const string Int = "1;";
     const string Float = "0.1;";
     const string True = "true;";
@@ -25,5 +27,23 @@ public class PrimaryTest
         Assert.That(res.Op.Value, Is.EqualTo((uint)Opcode.LoadI));
         Assert.That((char)res.Operands[0].Value, Is.EqualTo('a'));
         Assert.That(res.Operands[1].Value, Is.EqualTo(1));
+    }
+    uint FourCharsGrouping(string a) => FourCharsGrouping(a[0], a[1], a[2], a[3]);
+    uint FourCharsGrouping(char a, char b, char c, char d) => (uint)(a << 24 | b << 16 | c << 8 | d);
+    [Test]
+    public void TestPrimary__String__OutputToStack__PushesCorrect_And_HasCorrectStaticData()
+    {
+        (var ins, var data) = HighToLowLevelCompilerDriver.Compile(String, () => new PrimaryTestVisitorMock(RetToRegister: false));
+        Assert.That(ins[0].Op.Value, Is.EqualTo((uint)Opcode.PushI));
+        uint[] ExpectedData = {(1 << 16) | ((uint)Math.Ceiling(String.Length / 4.0) + 1),//String type << 16 | wordCount
+        (uint)String.Length,
+        FourCharsGrouping("abcd"),
+        FourCharsGrouping("efgh"),
+        FourCharsGrouping("ijkl"),
+        FourCharsGrouping("mnop"),
+        FourCharsGrouping('q', 'r', 's', (char)0),
+        };
+        Assert.That(data[0..ExpectedData.Length].SequenceEqual(ExpectedData));
+        Assert.That(ins[0].Operands[0].Value, Is.EqualTo(0));
     }
 }

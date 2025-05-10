@@ -29,7 +29,7 @@ public class PrimaryTest
         Assert.That(res.Operands[1].Value, Is.EqualTo(1));
     }
     uint FourCharsGrouping(string a) => FourCharsGrouping(a[0], a[1], a[2], a[3]);
-    uint FourCharsGrouping(char a, char b, char c, char d) => (uint)(a << 24 | b << 16 | c << 8 | d);
+    uint FourCharsGrouping(char a, char b, char c, char d) => (uint)(a | b << 8 | c << 16 | d << 24); // strings are stored in the form (char4, char3, char2, char1), (char8, char7, char6, char5), (padding, padding, char10, char9)
     [TestCase(false)]
     [TestCase(true)]
     public void TestPrimary__String__OutputToStackAndReg__PushesCorrect_And_HasCorrectStaticData(bool OutToReg)

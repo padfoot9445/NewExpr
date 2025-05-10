@@ -44,7 +44,7 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
         uint[] OutVals = new uint[InVals.Length / 4];
         for (int i = 0; i < InVals.Length; i += 4)
         {
-            OutVals[i / 4] = BitConverter.ToUInt32(InVals[i..(i + 4)].Reverse().ToArray()); //reverse because BitConverter.ToUInt32 is little-endian and we want big-endian and I don't want to fuck with the output int so we just put it in in the inverse order and BitConverter flips it around again
+            OutVals[i / 4] = BitConverter.ToUInt32(InVals[i..(i + 4)]);
         }
         return OutVals;
 

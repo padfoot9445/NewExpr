@@ -58,4 +58,28 @@ public class PrimaryTest
         }
     }
 
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestPrimary__Int__OutputToStackAndReg__PushesCorrect(bool OTR)
+    {
+        (var ins, var _) = HighToLowLevelCompilerDriver.Compile(Int, () => new PrimaryTestVisitorMock(OTR));
+        Assert.That(ins[0].Op.Value, Is.EqualTo((uint)(OTR ? Opcode.LoadI : Opcode.PushI)));
+        Assert.That(ins[0].Operands.First().Value, Is.EqualTo(1));
+        if (OTR)
+        {
+            Assert.That(ins[0].Operands.Skip(1).First().Value, Is.EqualTo(1));
+        }
+    }
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestPrimary__Float__OutputToStackAndReg__PushesCorrect(bool OTR)
+    {
+        (var ins, var _) = HighToLowLevelCompilerDriver.Compile(Float, () => new PrimaryTestVisitorMock(OTR));
+        Assert.That(ins[0].Op.Value, Is.EqualTo((uint)(OTR ? Opcode.LoadI : Opcode.PushI)));
+        Assert.That(BitConverter.GetBytes(ins[0].Operands.First().Value), Is.EquivalentTo(BitConverter.GetBytes((float)0.1)));
+        if (OTR)
+        {
+            Assert.That(ins[0].Operands.Skip(1).First().Value, Is.EqualTo(1));
+        }
+    }
 }

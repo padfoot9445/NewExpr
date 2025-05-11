@@ -47,10 +47,12 @@ public class FunctionCall
 
         Assert.DoesNotThrow(() => HighToLowLevelCompilerDriver.Compile("SOut(\"abc\");", () => new FunctionCallDriverMock(false)));
     }
-    [Test]
-    public void SOutFunctionCall__RightArgs__OutputsCorrect()
+    [TestCase("SOut(\"abc\");")]
+    [TestCase("1;SOut(\"abc\");")]
+    [TestCase("\"rkj\"; SOut(\"abc\");")]
+    public void SOutFunctionCall__RightArgs__OutputsCorrect(string Program)
     {
-        (var res, var data) = HighToLowLevelCompilerDriver.Compile("SOut(\"abc\");", () => new FunctionCallDriverMock(false));
+        (var res, var data) = HighToLowLevelCompilerDriver.Compile(Program, () => new FunctionCallDriverMock(false));
         var Out = new CustomTextWriter();
         var interp = new Interpreter(res, data, new StreamReader(Stream.Null), Out);
         interp.Interpret();

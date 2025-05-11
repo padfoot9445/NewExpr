@@ -21,7 +21,7 @@ class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
     {
         if (Arguments is null)
         {
-            if (self.Attributes.DeclArgumentTypes!.Count == 0) throw new ExpaException("Expected arguments but got none");
+            if (self.Attributes.DeclArgumentTypes!.Count != 0) throw new ExpaException("Expected arguments but got none");
             else return;
         }
         if (self.Attributes.DeclArgumentTypes!.Count != Arguments.Children.Count ||

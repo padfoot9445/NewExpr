@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using NUnit.Framework.Constraints;
 using SmallLang;
+using SmallLang.CsIntepreter;
 using SmallLang.LinearIR;
 
 namespace SmallLangTest.BackendComponentTests;
@@ -44,5 +46,14 @@ public class FunctionCall
     {
 
         Assert.DoesNotThrow(() => HighToLowLevelCompilerDriver.Compile("SOut(\"abc\");", () => new FunctionCallDriverMock(false)));
+    }
+    [Test]
+    public void SOutFunctionCall__RightArgs__OutputsCorrect()
+    {
+        (var res, var data) = HighToLowLevelCompilerDriver.Compile("SOut(\"abc\");", () => new FunctionCallDriverMock(false));
+        var Out = new CustomTextWriter();
+        var interp = new Interpreter(res, data, new StreamReader(Stream.Null), Out);
+        interp.Interpret();
+        Assert.That(Out.outStore.ToString(), Is.EqualTo("abc\r\n"));
     }
 }

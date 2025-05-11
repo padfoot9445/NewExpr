@@ -5,7 +5,7 @@ using Common.Tokens;
 namespace SmallLang;
 
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
-class OptimisingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
+class PostProcessingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
     Func<Node?, Node, bool> Identity = (x, y) => false;
     public Func<Node?, Node, bool> Dispatch(Node node)

@@ -11,7 +11,7 @@ public class HighToLowLevelCompilerDriver
         var Ast = new Parser.Parser(Code).Parse();
         var Evaluator = new DynamicASTEvaluator();
         var AttributeAnalyser = new AttributeVisitor();
-        var Optimiser = new OptimisingVisitor();
+        var Optimiser = new PostProcessingVisitor();
         Evaluator.Evaluate(Ast, AttributeAnalyser);
         Evaluator.Evaluate(Ast, Optimiser);
         var Generator = GetCodeGenVisitor();

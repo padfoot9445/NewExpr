@@ -1,5 +1,5 @@
 namespace SmallLang;
-public class ExpaException : Exception
+public class ExpaException(string message) : Exception(message)
 {
 
 }

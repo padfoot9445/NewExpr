@@ -27,4 +27,22 @@ public class FunctionCall
     {
         Assert.Throws<ExpaException>(() => HighToLowLevelCompilerDriver.Compile("input(1);", () => new FunctionCallDriverMock(false)));
     }
+    [Test]
+    public void SOutFunctionCall__NoArgs__Throws()
+    {
+
+        Assert.Throws<ExpaException>(() => HighToLowLevelCompilerDriver.Compile("SOut();", () => new FunctionCallDriverMock(false)));
+    }
+    [Test]
+    public void SOutFunctionCall__WrongArgs__Throws()
+    {
+
+        Assert.Throws<ExpaException>(() => HighToLowLevelCompilerDriver.Compile("SOut(1);", () => new FunctionCallDriverMock(false)));
+    }
+    [Test]
+    public void SOutFunctionCall__RightArgs__DoesNotThrow()
+    {
+
+        Assert.DoesNotThrow(() => HighToLowLevelCompilerDriver.Compile("SOut(\"abc\");", () => new FunctionCallDriverMock(false)));
+    }
 }

@@ -10,11 +10,13 @@ class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
     Dictionary<uint, List<uint>> FunctionToFunctionArgs = new()
     {
-        [1] = []
+        [1] = [],
+        [2] = [BaseCodeGenComponent.StringTypeCode]
     };
     Dictionary<string, uint> FunctionNameToFunctionID = new()
     {
-        ["input"] = 1
+        ["input"] = 1,
+        ["SOut"] = 2,
     };
     public Func<Node?, Node, bool> Dispatch(Node node)
     {

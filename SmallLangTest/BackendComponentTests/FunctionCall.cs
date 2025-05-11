@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using SmallLang;
 using SmallLang.LinearIR;
 
@@ -20,5 +21,10 @@ public class FunctionCall
         Assert.That(res[0].Op.Value, Is.EqualTo((uint)(Opcode.ICallR)));
         Assert.That(res[0].Operands[0].Value, Is.EqualTo(1));
         Assert.That(res[0].Operands[1].Value, Is.EqualTo(1));
+    }
+    [Test]
+    public void InputFunctionCall__Args__Throws()
+    {
+        Assert.Throws<ExpaException>(() => HighToLowLevelCompilerDriver.Compile("input(1);", () => new FunctionCallDriverMock(false)));
     }
 }

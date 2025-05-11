@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using Common.AST;
 using Common.Evaluator;
 using Common.Tokens;
@@ -23,6 +24,8 @@ class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
             ImportantASTNodeType.Section => (x, y) => false,
             ImportantASTNodeType.Identifier => (x, y) => false,
             ImportantASTNodeType.Primary => Primary,
+            ImportantASTNodeType.ArgList => (x, y) => false,
+            ImportantASTNodeType.ArgListElement => (x, y) => false,
             _ => throw new Exception()
         };
     }

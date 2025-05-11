@@ -16,8 +16,26 @@ class PostProcessingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribute
             ImportantASTNodeType.Section => (x, y) => false,
             ImportantASTNodeType.FunctionIdentifier => (x, y) => false,
             ImportantASTNodeType.Primary => Identity,
+            ImportantASTNodeType.ArgList => ArgList,
+            ImportantASTNodeType.ArgListElement => Identity,
             _ => throw new Exception()
         };
+    }
+    private bool ArgList(Node? parent, Node self)
+    {
+        if (self.Children.All(x => x.NodeType != ImportantASTNodeType.ArgListElement))
+            return false;
+        for (int i = 0; i < self.Children.Count; i++)
+        {
+            var child = self.Children[i];
+            Debug.Assert(child.NodeType == ImportantASTNodeType.ArgListElement);
+            if (child.Children.Count != 1)
+            {
+                throw new NotImplementedException("Arg Labels not yet supported"); //transform named into positional arguments here
+            }
+            self.Children[i] = child.Children.First();
+        }
+        return true;
     }
     private bool FunctionCall(Node? parent, Node self)
     {

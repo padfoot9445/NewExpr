@@ -13,6 +13,11 @@ class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
         [1] = [],
         [2] = [BaseCodeGenComponent.StringTypeCode]
     };
+    Dictionary<uint, uint> FunctionToRetType = new()
+    {
+        [1] = 1,
+        [2] = 0,
+    };
     Dictionary<string, uint> FunctionNameToFunctionID = new()
     {
         ["input"] = 1,
@@ -35,8 +40,9 @@ class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
     private bool FunctionCall(Node? parent, Node self)
     {
         uint ID = FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
+        uint RetType = FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
         var oldattr = self.Attributes;
-        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = FunctionToFunctionArgs[ID] };
+        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = FunctionToFunctionArgs[ID], TypeOfExpression = RetType };
         return Changed(oldattr, self.Attributes);
     }
     private bool Primary(Node? parent, Node self)

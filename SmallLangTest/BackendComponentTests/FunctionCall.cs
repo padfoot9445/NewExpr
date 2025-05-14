@@ -58,4 +58,16 @@ public class FunctionCall
         interp.Interpret();
         Assert.That(Out.outStore.ToString(), Is.EqualTo("abc\r\n"));
     }
+    [Test]
+    public void ChainingFunctionCall__SOut_Input__ReturnsCorrect()
+    {
+        const string Program = "SOut(input());";
+        (var res, var data) = HighToLowLevelCompilerDriver.Compile(Program, () => new FunctionCallDriverMock(false));
+        var Out = new CustomTextWriter();
+        var In = new CustomTextReader(new Stack<string>(["InputTestString1"]));
+        var interp = new Interpreter(res, data, In, Out);
+        interp.Interpret();
+        Assert.That(Out.outStore.ToString(), Is.EqualTo("InputTestString1\r\n"));
+
+    }
 }

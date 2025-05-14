@@ -9,6 +9,8 @@ public class Interpreter(Operation<uint>[] Operations, uint[] Data, TextReader r
 {
     readonly Stack<uint> Stack = new Stack<uint>();
     Dictionary<uint, uint> Registers = new();
+    List<uint> RAM = new();
+    const uint RamPointerBit = ((uint)1) << 31;
     public void Interpret()
     {
         foreach (var Op in Operations)
@@ -32,13 +34,17 @@ public class Interpreter(Operation<uint>[] Operations, uint[] Data, TextReader r
             }
         }
     }
-    string DecodeString(int Ptr)
+    string DecodeStringStatic(uint Ptr) => DecodeString(Ptr, Data);
+    string DecodeStringRAM(uint Ptr) => DecodeString((Ptr & (uint.MaxValue >> 1)), RAM.ToArray());
+    string DecodeStringAuto(uint Ptr) => Ptr >> 31 == 1 ? DecodeStringRAM(Ptr) : DecodeStringStatic(Ptr);
+    string DecodeString(uint APtr, uint[] Src)
     {
-        ushort TypeCode = (ushort)(Data[Ptr] >> 16);
+        int Ptr = (int)APtr;
+        ushort TypeCode = (ushort)(Src[Ptr] >> 16);
         Debug.Assert(TypeCode == 1);
-        ushort WordCount = (ushort)(Data[Ptr] & 0xFFFF);
+        ushort WordCount = (ushort)(Src[Ptr] & 0xFFFF);
         Ptr++;
-        uint[] StringStruct = Data[Ptr..(Ptr + WordCount)];
+        uint[] StringStruct = Src[Ptr..(Ptr + WordCount - 1 + 1)];
         uint CharCount = StringStruct[0];
         StringBuilder Chars = new();
         foreach (uint FourChars in StringStruct.Skip(1).SkipLast((CharCount % 4) == 0 ? 0 : 1))
@@ -56,6 +62,51 @@ public class Interpreter(Operation<uint>[] Operations, uint[] Data, TextReader r
 
         return Chars.ToString();
     }
+    uint[] EncodeString(string str)
+    {
+        ushort Typecode = 1;
+        ushort WordCount = (ushort)(Math.Ceiling((double)str.Length / 4) + 1);
+        uint Header = (uint)((Typecode << 16) | WordCount);
+        uint CharCount = (uint)str.Length;
+        List<uint> Out = [Header, CharCount];
+        char[] Buffer = new char[4];
+        int LP = 0;
+        foreach (char i in str)
+        {
+            if (LP == 4)
+            {
+                Out.Add(
+                    (uint)(Buffer[0] |
+                    Buffer[1] << 8 |
+                    Buffer[2] << 16 |
+                    Buffer[3] << 24)
+                );
+                Buffer = new char[4];
+                LP = 0;
+            }
+            Buffer[LP++] = i;
+        }
+        Out.Add(
+                    (uint)(Buffer[0] |
+                    Buffer[1] << 8 |
+                    Buffer[2] << 16 |
+                    Buffer[3] << 24)
+                );
+        return Out.ToArray();
+
+    }
+    uint Alloc() => (uint)RAM.Count;
+    void WriteRam(uint[] Section, uint Ptr)
+    {
+        if (Ptr + Section.Length - 1 >= RAM.Count)
+        {
+            RAM.AddRange(new uint[(Ptr + Section.Length - 1) - RAM.Count + 1]);
+        }
+        for (int i = (int)Ptr; i < (Ptr + Section.Length); i++)
+        {
+            RAM[i] = Section[i - Ptr];
+        }
+    }
     void CallStdLibFunctions(uint FunctionID)
     {
         switch (FunctionID)
@@ -71,10 +122,13 @@ public class Interpreter(Operation<uint>[] Operations, uint[] Data, TextReader r
     }
     void StdLibFunctions__Input()
     {
-        throw new NotImplementedException();
+        string inp = reader.ReadLine()!;
+        uint Ptr = Alloc();
+        WriteRam(EncodeString(inp), Ptr);
+        Stack.Push(Ptr | RamPointerBit);
     }
     void StdLibFunctions__Output()
     {
-        writer.WriteLine(DecodeString((int)Stack.Pop()));
+        writer.WriteLine(DecodeStringAuto(Stack.Pop()));
     }
 }

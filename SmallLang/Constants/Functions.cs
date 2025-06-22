@@ -5,10 +5,10 @@ namespace SmallLang.Constants;
 
 class Functions
 {
-    public static readonly Functions Mapper;
+    public static readonly Functions Values;
     static Functions()
     {
-        Mapper = new Functions();
+        Values = new Functions();
     }
     public Dictionary<FunctionID, List<SmallLangType>> FunctionToFunctionArgs = new()
     {

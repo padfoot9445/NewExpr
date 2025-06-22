@@ -19,4 +19,19 @@ class TypeData
     public readonly SmallLangType RationalTypeCode = new(11);
     public readonly int TypeCodeOffsetInHeader = 16;
 
+    public Dictionary<string, SmallLangType> GetTypeFromTypeName = new()
+    {
+        ["void"] = Data.VoidTypeCode,
+        ["string"] = Data.StringTypeCode,
+        ["float"] = Data.FloatTypeCode,
+        ["int"] = Data.IntTypeCode,
+        ["double"] = Data.DoubleTypeCode,
+        ["number"] = Data.NumberTypeCode,
+        ["long"] = Data.LongTypeCode,
+        ["longint"] = Data.LongintTypeCode,
+        ["byte"] = Data.ByteTypeCode,
+        ["char"] = Data.CharTypeCode,
+        ["bool"] = Data.BooleanTypeCode,
+        ["rational"] = Data.RationalTypeCode,
+    };
 }

@@ -40,7 +40,7 @@ class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
         Node? Arguments = self.Children.Count == 2 ? self.Children[1] : null;
         CheckArgTypes(Arguments, self);
         PushArgsToStack(Arguments, self);
-        uint FunctionID = self.Attributes.FunctionID ?? throw new Exception();
+        FunctionID FunctionID = self.Attributes.FunctionID ?? throw new Exception();
         if (Function.NodeType == ImportantASTNodeType.FunctionIdentifier)
         {
             Debug.Assert(Function.Data is not null);

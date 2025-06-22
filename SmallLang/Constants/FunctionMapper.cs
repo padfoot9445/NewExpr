@@ -10,19 +10,19 @@ class FunctionMapper
     {
         Mapper = new FunctionMapper();
     }
-    public Dictionary<uint, List<SmallLangType>> FunctionToFunctionArgs = new()
+    public Dictionary<FunctionID, List<SmallLangType>> FunctionToFunctionArgs = new()
     {
-        [1] = [],
-        [2] = [TypeData.Data.StringTypeCode]
+        [new(1)] = [],
+        [new(2)] = [TypeData.Data.StringTypeCode]
     };
-    public Dictionary<uint, SmallLangType> FunctionToRetType = new()
+    public Dictionary<FunctionID, SmallLangType> FunctionToRetType = new()
     {
-        [1] = TypeData.Data.StringTypeCode,
-        [2] = TypeData.Data.VoidTypeCode,
+        [new(1)] = TypeData.Data.StringTypeCode,
+        [new(2)] = TypeData.Data.VoidTypeCode,
     };
-    public Dictionary<string, uint> FunctionNameToFunctionID = new()
+    public Dictionary<string, FunctionID> FunctionNameToFunctionID = new()
     {
-        ["input"] = 1,
-        ["SOut"] = 2,
+        ["input"] = new(1),
+        ["SOut"] = new(2),
     };
 }

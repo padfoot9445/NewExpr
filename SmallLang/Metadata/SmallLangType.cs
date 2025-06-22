@@ -1,3 +1,3 @@
 namespace SmallLang.Metadata;
 
-public record struct SmallLangType(uint Value);
+public record class SmallLangType(uint Value) : BaseUIntWrapper(Value);

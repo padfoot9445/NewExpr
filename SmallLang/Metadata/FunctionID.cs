@@ -1,3 +1,3 @@
 namespace SmallLang.Metadata;
 
-public record struct FunctionID(uint Value);
+public record class FunctionID(uint Value) : BaseUIntWrapper(Value);

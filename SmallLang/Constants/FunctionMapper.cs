@@ -12,7 +12,7 @@ class FunctionMapper
     public Dictionary<uint, List<uint>> FunctionToFunctionArgs = new()
     {
         [1] = [],
-        [2] = [BaseCodeGenComponent.StringTypeCode]
+        [2] = [TypeData.Data.StringTypeCode]
     };
     public Dictionary<uint, uint> FunctionToRetType = new()
     {

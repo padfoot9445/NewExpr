@@ -5,6 +5,7 @@ using Common.Tokens;
 using SmallLang.LinearIR;
 
 namespace SmallLang.Backend.CodeGenComponents;
+
 class Primary : BaseCodeGenComponent
 {
     public Primary(CodeGenVisitor driver) : base(driver)
@@ -25,18 +26,17 @@ class Primary : BaseCodeGenComponent
 
         if (ExpectedType is not uint Type) throw new Exception($"Cannot load number {data} as type null");
         return LoadValue(
-            Type switch
-            {
-                FloatTypeCode => BitConverter.GetBytes(float.Parse(data.Lexeme)),
-                IntTypeCode => BitConverter.GetBytes(int.Parse(data.Lexeme)),
-                DoubleTypeCode => BitConverter.GetBytes(double.Parse(data.Lexeme)),
-                LongTypeCode => BitConverter.GetBytes(long.Parse(data.Lexeme)),
-                LongintTypeCode => throw new NotImplementedException(),
-                NumberTypeCode => throw new NotImplementedException(),
-                ByteTypeCode => [byte.Parse(data.Lexeme)],
-                CharTypeCode => data.Literal.Length != 3 ? throw new Exception($"Expected char length to be 3 ( 1 + two quotes), got {data.Literal.Length}") : data.Literal.Select(x => (byte)x).Skip(1).SkipLast(1).ToArray(),
-                _ => throw new Exception($"Unexpected Type {Type}"),
-            }
+            SwitchOnType(Type,
+                () => new NotImplementedException(),
+                (FloatTypeCode, (() => BitConverter.GetBytes(float.Parse(data.Lexeme)))),
+                (IntTypeCode, (() => BitConverter.GetBytes(int.Parse(data.Lexeme)))),
+                (DoubleTypeCode, (() => BitConverter.GetBytes(double.Parse(data.Lexeme)))),
+                (LongTypeCode, (() => BitConverter.GetBytes(long.Parse(data.Lexeme)))),
+                (LongintTypeCode, (() => throw new NotImplementedException())),
+                (NumberTypeCode, (() => throw new NotImplementedException())),
+                (ByteTypeCode, (() => [byte.Parse(data.Lexeme)])),
+                (CharTypeCode, (() => data.Literal.Length != 3 ? throw new Exception($"Expected char length to be 3 ( 1 + two quotes), got {data.Literal.Length}") : data.Literal.Select(x => (byte)x).Skip(1).SkipLast(1).ToArray()))
+            )
         );
     }
     uint? LoadBoolean(IToken data, bool Boolean) => LoadValue(Boolean ? uint.MaxValue : 0);

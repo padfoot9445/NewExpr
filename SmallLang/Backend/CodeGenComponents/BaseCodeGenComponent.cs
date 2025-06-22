@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Common.AST;
 using Common.LinearIR;
+using SmallLang.Constants;
 using SmallLang.LinearIR;
 
 namespace SmallLang.Backend.CodeGenComponents;
@@ -8,18 +9,33 @@ namespace SmallLang.Backend.CodeGenComponents;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
 {
-    internal const uint StringTypeCode = 1;
-    internal const uint FloatTypeCode = 2;
-    internal const uint IntTypeCode = 3;
-    internal const uint DoubleTypeCode = 4;
-    internal const uint NumberTypeCode = 5;
-    internal const uint LongTypeCode = 6;
-    internal const uint LongintTypeCode = 7;
-    internal const uint ByteTypeCode = 8;
-    internal const uint CharTypeCode = 9;
-    internal const uint BooleanTypeCode = 10;
-    internal const uint RationalTypeCode = 11;
-    internal const int TypeCodeOffsetInHeader = 16;
+    protected T SwitchOnType<T>(
+        uint Type,
+        Func<Exception> NotFound,
+        params (uint TypeCode, Func<T>)[] Types
+    )
+    {
+        foreach ((uint TypeCode, Func<T> RetVal) in Types)
+        {
+            if (Type == TypeCode)
+            {
+                return RetVal();
+            }
+        }
+        throw NotFound();
+    }
+    protected uint StringTypeCode => TypeData.Data.StringTypeCode;
+    protected uint FloatTypeCode => TypeData.Data.FloatTypeCode;
+    protected uint IntTypeCode => TypeData.Data.IntTypeCode;
+    protected uint DoubleTypeCode => TypeData.Data.DoubleTypeCode;
+    protected uint NumberTypeCode => TypeData.Data.NumberTypeCode;
+    protected uint LongTypeCode => TypeData.Data.LongTypeCode;
+    protected uint LongintTypeCode => TypeData.Data.LongintTypeCode;
+    protected uint ByteTypeCode => TypeData.Data.ByteTypeCode;
+    protected uint CharTypeCode => TypeData.Data.CharTypeCode;
+    protected uint BooleanTypeCode => TypeData.Data.BooleanTypeCode;
+    protected uint RationalTypeCode => TypeData.Data.RationalTypeCode;
+    protected int TypeCodeOffsetInHeader => TypeData.Data.TypeCodeOffsetInHeader;
     protected void Emit(Opcode Op) => Emit(Op, new uint[0]);
     protected void Emit(Opcode Op, params uint[] args) => Emit(Op, args.Select(x => (UIntOpArg)x).ToArray());
     protected void Emit(Opcode Op, params IOperationArgument<uint>[] args) => Emit(new Operation<uint>(new OpcodeWrapper(Op), args));

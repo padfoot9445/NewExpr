@@ -46,10 +46,10 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
 
             self.Data!.TT switch
             {
-                TokenType.String => self.Data.Literal.Length > 3 ? BaseCodeGenComponent.StringTypeCode : BaseCodeGenComponent.CharTypeCode,
-                TokenType.TrueLiteral => BaseCodeGenComponent.BooleanTypeCode,
-                TokenType.FalseLiteral => BaseCodeGenComponent.BooleanTypeCode,
-                TokenType.Number => self.Data.Literal.Contains('.') ? BaseCodeGenComponent.FloatTypeCode : BaseCodeGenComponent.IntTypeCode,
+                TokenType.String => self.Data.Literal.Length > 3 ? TypeData.Data.StringTypeCode : TypeData.Data.CharTypeCode,
+                TokenType.TrueLiteral => TypeData.Data.BooleanTypeCode,
+                TokenType.FalseLiteral => TypeData.Data.BooleanTypeCode,
+                TokenType.Number => self.Data.Literal.Contains('.') ? TypeData.Data.FloatTypeCode : TypeData.Data.IntTypeCode,
                 _ => throw new Exception($"Unknown primary type {self.Data.TT}"),
             }
 

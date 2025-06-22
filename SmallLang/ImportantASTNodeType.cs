@@ -1,4 +1,5 @@
 namespace SmallLang;
+
 public enum ImportantASTNodeType
 {
     ReTypingAlias, //data: IDENTIFIER, children: [Type Identifier]

@@ -18,6 +18,7 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
     internal const uint ByteTypeCode = 8;
     internal const uint CharTypeCode = 9;
     internal const uint BooleanTypeCode = 10;
+    internal const uint RationalTypeCode = 11;
     internal const int TypeCodeOffsetInHeader = 16;
     protected void Emit(Opcode Op) => Emit(Op, new uint[0]);
     protected void Emit(Opcode Op, params uint[] args) => Emit(Op, args.Select(x => (UIntOpArg)x).ToArray());

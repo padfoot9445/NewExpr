@@ -18,6 +18,11 @@ class PostProcessingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribute
             ImportantASTNodeType.Primary => Identity,
             ImportantASTNodeType.ArgList => ArgList,
             ImportantASTNodeType.ArgListElement => Identity,
+
+            ImportantASTNodeType.NewExpr => (x, y) => false,
+            ImportantASTNodeType.GenericType => (x, y) => false,
+            ImportantASTNodeType.TypeCSV => (x, y) => false,
+            ImportantASTNodeType.BaseType => (x, y) => false,
             _ => throw new Exception()
         };
     }

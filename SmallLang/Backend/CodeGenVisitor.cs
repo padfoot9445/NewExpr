@@ -1,8 +1,10 @@
+using System.Linq.Expressions;
 using Common.AST;
 using Common.LinearIR;
 using SmallLang.Backend.CodeGenComponents;
 
 namespace SmallLang.Backend;
+
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class CodeGenVisitor
 {
@@ -129,7 +131,7 @@ public class CodeGenVisitor
     private BaseCodeGenComponent? _CopyExpr = null;
     protected virtual BaseCodeGenComponent CopyExpr => throw new NotImplementedException();
     private BaseCodeGenComponent? _NewExpr = null;
-    protected virtual BaseCodeGenComponent NewExpr => throw new NotImplementedException();
+    protected virtual BaseCodeGenComponent NewExpr => new NewExpr(this);
     private BaseCodeGenComponent? _Index = null;
     protected virtual BaseCodeGenComponent Index => throw new NotImplementedException();
     private BaseCodeGenComponent? _FunctionCall = null;

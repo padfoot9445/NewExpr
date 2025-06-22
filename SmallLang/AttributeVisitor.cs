@@ -6,8 +6,23 @@ using SmallLang.Backend.CodeGenComponents;
 namespace SmallLang;
 
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
-class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
+public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
+    class TypeCodeProvider
+    {
+        public uint StringTypeCode => BaseCodeGenComponent.StringTypeCode;
+        public uint NumberTypeCode => BaseCodeGenComponent.NumberTypeCode;
+        public uint IntTypeCode => BaseCodeGenComponent.IntTypeCode;
+        public uint FloatTypeCode => BaseCodeGenComponent.FloatTypeCode;
+        public uint CharTypeCode => BaseCodeGenComponent.CharTypeCode;
+        public uint DoubleTypeCode => BaseCodeGenComponent.DoubleTypeCode;
+        public uint LongintTypeCode => BaseCodeGenComponent.LongintTypeCode;
+        public uint RationalTypeCode => BaseCodeGenComponent.RationalTypeCode;
+        public uint ByteTypeCode => BaseCodeGenComponent.ByteTypeCode;
+        public uint BooleanTypeCode => BaseCodeGenComponent.BooleanTypeCode;
+        public uint LongTypeCode => BaseCodeGenComponent.LongTypeCode;
+
+    }
     Dictionary<uint, List<uint>> FunctionToFunctionArgs = new()
     {
         [1] = [],
@@ -33,7 +48,11 @@ class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
             ImportantASTNodeType.Primary => Primary,
             ImportantASTNodeType.ArgList => (x, y) => false,
             ImportantASTNodeType.ArgListElement => (x, y) => false,
-            _ => throw new Exception()
+            ImportantASTNodeType.NewExpr => (x, y) => false,
+            ImportantASTNodeType.GenericType => (x, y) => false,
+            ImportantASTNodeType.TypeCSV => (x, y) => false,
+            ImportantASTNodeType.BaseType => (x, y) => false,
+            _ => throw new Exception(node.NodeType.ToString())
         };
     }
     bool Changed(Attributes oldattr, Attributes newattr) => (oldattr == newattr) is false;

@@ -1,0 +1,6 @@
+{
+    "Functions": [
+        {"name": "input", "returns": "string", "arguments": []},
+        {"name": "SOut", "returns": "void", "arguments": ["string"]}
+    ]
+}

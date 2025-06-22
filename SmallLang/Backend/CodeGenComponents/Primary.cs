@@ -3,6 +3,7 @@ using System.Numerics;
 using Common.AST;
 using Common.Tokens;
 using SmallLang.LinearIR;
+using SmallLang.Metadata;
 
 namespace SmallLang.Backend.CodeGenComponents;
 

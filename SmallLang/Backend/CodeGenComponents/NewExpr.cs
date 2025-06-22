@@ -1,5 +1,6 @@
 using Common.AST;
 using SmallLang.Backend.CodeGenComponents;
+using SmallLang.Metadata;
 namespace SmallLang.Backend.CodeGenComponents;
 
 class NewExpr : BaseCodeGenComponent

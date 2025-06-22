@@ -4,7 +4,7 @@ using Common.Evaluator;
 using Common.Tokens;
 using SmallLang.Backend.CodeGenComponents;
 using SmallLang.Constants;
-namespace SmallLang;
+namespace SmallLang.Metadata;
 
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Common.AST;
 using Common.LinearIR;
 using SmallLang.Backend.CodeGenComponents;
+using SmallLang.Metadata;
 
 namespace SmallLang.Backend;
 

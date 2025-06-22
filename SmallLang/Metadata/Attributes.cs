@@ -1,6 +1,7 @@
 using Common.AST;
 
-namespace SmallLang;
+namespace SmallLang.Metadata;
+
 public record class Attributes(List<uint>? DeclArgumentTypes = null, uint? FunctionID = null, uint? TypeOfExpression = null) : IMetadata
 {
     public Attributes() : this(DeclArgumentTypes: null) { }

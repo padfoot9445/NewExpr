@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using Common.AST;
+using SmallLang.Metadata;
 using static SmallLang.LinearIR.Opcode;
 namespace SmallLang.Backend.CodeGenComponents;
+
 class Section(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
 {
     public override void GenerateCode(DynamicASTNode<ImportantASTNodeType, Attributes>? parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)

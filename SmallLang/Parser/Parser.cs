@@ -1,3 +1,5 @@
+using SmallLang.Metadata;
+
 namespace SmallLang.Parser;
 
 using System.Text;

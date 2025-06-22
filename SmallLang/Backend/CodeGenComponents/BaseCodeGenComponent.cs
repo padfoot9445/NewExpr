@@ -3,6 +3,7 @@ using Common.AST;
 using Common.LinearIR;
 using SmallLang.Constants;
 using SmallLang.LinearIR;
+using SmallLang.Metadata;
 
 namespace SmallLang.Backend.CodeGenComponents;
 

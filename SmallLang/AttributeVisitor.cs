@@ -8,21 +8,6 @@ namespace SmallLang;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
-    class TypeCodeProvider
-    {
-        public uint StringTypeCode => BaseCodeGenComponent.StringTypeCode;
-        public uint NumberTypeCode => BaseCodeGenComponent.NumberTypeCode;
-        public uint IntTypeCode => BaseCodeGenComponent.IntTypeCode;
-        public uint FloatTypeCode => BaseCodeGenComponent.FloatTypeCode;
-        public uint CharTypeCode => BaseCodeGenComponent.CharTypeCode;
-        public uint DoubleTypeCode => BaseCodeGenComponent.DoubleTypeCode;
-        public uint LongintTypeCode => BaseCodeGenComponent.LongintTypeCode;
-        public uint RationalTypeCode => BaseCodeGenComponent.RationalTypeCode;
-        public uint ByteTypeCode => BaseCodeGenComponent.ByteTypeCode;
-        public uint BooleanTypeCode => BaseCodeGenComponent.BooleanTypeCode;
-        public uint LongTypeCode => BaseCodeGenComponent.LongTypeCode;
-
-    }
     Dictionary<uint, List<uint>> FunctionToFunctionArgs = new()
     {
         [1] = [],

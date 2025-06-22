@@ -3,26 +3,12 @@ using Common.AST;
 using Common.Evaluator;
 using Common.Tokens;
 using SmallLang.Backend.CodeGenComponents;
+using SmallLang.Constants;
 namespace SmallLang;
 
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
-    Dictionary<uint, List<uint>> FunctionToFunctionArgs = new()
-    {
-        [1] = [],
-        [2] = [BaseCodeGenComponent.StringTypeCode]
-    };
-    Dictionary<uint, uint> FunctionToRetType = new()
-    {
-        [1] = 1,
-        [2] = 0,
-    };
-    Dictionary<string, uint> FunctionNameToFunctionID = new()
-    {
-        ["input"] = 1,
-        ["SOut"] = 2,
-    };
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
         return node.NodeType switch
@@ -43,10 +29,10 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     bool Changed(Attributes oldattr, Attributes newattr) => (oldattr == newattr) is false;
     private bool FunctionCall(Node? parent, Node self)
     {
-        uint ID = FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
-        uint RetType = FunctionToRetType[ID];
+        uint ID = FunctionMapper.Mapper.FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
+        uint RetType = FunctionMapper.Mapper.FunctionToRetType[ID];
         var oldattr = self.Attributes;
-        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = FunctionToFunctionArgs[ID], TypeOfExpression = RetType };
+        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = FunctionMapper.Mapper.FunctionToFunctionArgs[ID], TypeOfExpression = RetType };
         return Changed(oldattr, self.Attributes);
     }
     private bool Primary(Node? parent, Node self)

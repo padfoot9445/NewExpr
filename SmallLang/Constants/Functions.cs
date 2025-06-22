@@ -1,3 +1,4 @@
+using System.Text.Json;
 using SmallLang.Backend.CodeGenComponents;
 using SmallLang.Metadata;
 
@@ -5,11 +6,39 @@ namespace SmallLang.Constants;
 
 class Functions
 {
+    private Functions()
+    {
+        List<FunctionSignature> signatures = new();
+        ReadJson(signatures);
+    }
+    static void ReadJson(List<FunctionSignature> Signatures)
+    {
+        var filecontent = File.ReadAllText(@"C:\Users\User\coding\nostars\Expa\NewExpr\SmallLang\Constants\Functions.json");
+        using (var document = JsonDocument.Parse(filecontent))
+        {
+            JsonElement functionsarray = document.RootElement.GetProperty("Functions");
+            foreach (JsonElement function in functionsarray.EnumerateArray())
+            {
+                Signatures.Add(GetFSFromJson(function));
+            }
+        }
+    }
+    static FunctionSignature GetFSFromJson(JsonElement FE)
+    {
+        var Args = FE.GetProperty("arguments").EnumerateArray().Select(x => TypeData.Data.GetTypeFromTypeName[x.GetString()!]).ToList();
+        return new(
+            Name: FE.GetProperty("name").GetString()!,
+            ID: new(FE.GetProperty("ID").GetUInt32()),
+            RetVal: TypeData.Data.GetTypeFromTypeName[FE.GetProperty("returns").GetString()!],
+            ArgTypes: Args
+        );
+    }
     public static readonly Functions Values;
     static Functions()
     {
         Values = new Functions();
     }
+    public readonly List<FunctionSignature> Signatures = new();
     public Dictionary<FunctionID, List<SmallLangType>> FunctionToFunctionArgs = new()
     {
         [new(1)] = [],

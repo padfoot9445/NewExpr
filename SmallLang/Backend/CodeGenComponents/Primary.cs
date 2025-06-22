@@ -22,10 +22,10 @@ class Primary : BaseCodeGenComponent
         var Ptr = WriteStaticData(StringTypeCode, write.ToArray());
         return LoadValue(Ptr);
     }
-    uint? LoadNumber(IToken data, uint? ExpectedType)
+    uint? LoadNumber(IToken data, SmallLangType? ExpectedType)
     {
 
-        if (ExpectedType is not uint Type) throw new Exception($"Cannot load number {data} as type null");
+        if (ExpectedType is not SmallLangType Type) throw new Exception($"Cannot load number {data} as type null");
         return LoadValue(
             SwitchOnType(Type,
                 () => new NotImplementedException(),

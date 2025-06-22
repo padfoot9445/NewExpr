@@ -11,12 +11,12 @@ using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
 {
     protected T SwitchOnType<T>(
-        uint Type,
+        SmallLangType Type,
         Func<Exception> NotFound,
-        params (uint TypeCode, Func<T>)[] Types
+        params (SmallLangType TypeCode, Func<T>)[] Types
     )
     {
-        foreach ((uint TypeCode, Func<T> RetVal) in Types)
+        foreach ((SmallLangType TypeCode, Func<T> RetVal) in Types)
         {
             if (Type == TypeCode)
             {
@@ -25,17 +25,17 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
         }
         throw NotFound();
     }
-    protected uint StringTypeCode => TypeData.Data.StringTypeCode;
-    protected uint FloatTypeCode => TypeData.Data.FloatTypeCode;
-    protected uint IntTypeCode => TypeData.Data.IntTypeCode;
-    protected uint DoubleTypeCode => TypeData.Data.DoubleTypeCode;
-    protected uint NumberTypeCode => TypeData.Data.NumberTypeCode;
-    protected uint LongTypeCode => TypeData.Data.LongTypeCode;
-    protected uint LongintTypeCode => TypeData.Data.LongintTypeCode;
-    protected uint ByteTypeCode => TypeData.Data.ByteTypeCode;
-    protected uint CharTypeCode => TypeData.Data.CharTypeCode;
-    protected uint BooleanTypeCode => TypeData.Data.BooleanTypeCode;
-    protected uint RationalTypeCode => TypeData.Data.RationalTypeCode;
+    protected SmallLangType StringTypeCode => TypeData.Data.StringTypeCode;
+    protected SmallLangType FloatTypeCode => TypeData.Data.FloatTypeCode;
+    protected SmallLangType IntTypeCode => TypeData.Data.IntTypeCode;
+    protected SmallLangType DoubleTypeCode => TypeData.Data.DoubleTypeCode;
+    protected SmallLangType NumberTypeCode => TypeData.Data.NumberTypeCode;
+    protected SmallLangType LongTypeCode => TypeData.Data.LongTypeCode;
+    protected SmallLangType LongintTypeCode => TypeData.Data.LongintTypeCode;
+    protected SmallLangType ByteTypeCode => TypeData.Data.ByteTypeCode;
+    protected SmallLangType CharTypeCode => TypeData.Data.CharTypeCode;
+    protected SmallLangType BooleanTypeCode => TypeData.Data.BooleanTypeCode;
+    protected SmallLangType RationalTypeCode => TypeData.Data.RationalTypeCode;
     protected int TypeCodeOffsetInHeader => TypeData.Data.TypeCodeOffsetInHeader;
     protected void Emit(Opcode Op) => Emit(Op, new uint[0]);
     protected void Emit(Opcode Op, params uint[] args) => Emit(Op, args.Select(x => (UIntOpArg)x).ToArray());
@@ -44,7 +44,7 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
     {
         Driver.Instructions.Add(Instruction);
     }
-    protected uint WriteStaticData(uint Typecode, uint[] Data) => WriteStaticData((ushort)Typecode, (ushort)Data.Length, Data);
+    protected uint WriteStaticData(SmallLangType Typecode, uint[] Data) => WriteStaticData((ushort)Typecode.Value, (ushort)Data.Length, Data);
     protected uint WriteStaticData(ushort Typecode, ushort WordLength, uint[] Data)
     {
         uint Header = (uint)((Typecode << TypeCodeOffsetInHeader) | WordLength);

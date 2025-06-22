@@ -30,7 +30,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     private bool FunctionCall(Node? parent, Node self)
     {
         uint ID = FunctionMapper.Mapper.FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
-        uint RetType = FunctionMapper.Mapper.FunctionToRetType[ID];
+        SmallLangType RetType = FunctionMapper.Mapper.FunctionToRetType[ID];
         var oldattr = self.Attributes;
         self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = FunctionMapper.Mapper.FunctionToFunctionArgs[ID], TypeOfExpression = RetType };
         return Changed(oldattr, self.Attributes);

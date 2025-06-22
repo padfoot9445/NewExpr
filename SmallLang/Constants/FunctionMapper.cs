@@ -1,4 +1,5 @@
 using SmallLang.Backend.CodeGenComponents;
+using SmallLang.Metadata;
 
 namespace SmallLang.Constants;
 
@@ -9,15 +10,15 @@ class FunctionMapper
     {
         Mapper = new FunctionMapper();
     }
-    public Dictionary<uint, List<uint>> FunctionToFunctionArgs = new()
+    public Dictionary<uint, List<SmallLangType>> FunctionToFunctionArgs = new()
     {
         [1] = [],
         [2] = [TypeData.Data.StringTypeCode]
     };
-    public Dictionary<uint, uint> FunctionToRetType = new()
+    public Dictionary<uint, SmallLangType> FunctionToRetType = new()
     {
-        [1] = 1,
-        [2] = 0,
+        [1] = TypeData.Data.StringTypeCode,
+        [2] = TypeData.Data.VoidTypeCode,
     };
     public Dictionary<string, uint> FunctionNameToFunctionID = new()
     {

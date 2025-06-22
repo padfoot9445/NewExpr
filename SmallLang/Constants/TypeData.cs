@@ -1,18 +1,21 @@
+using SmallLang.Metadata;
+
 namespace SmallLang.Constants;
 
 class TypeData
 {
     public static readonly TypeData Data = new();
-    public uint StringTypeCode = 1;
-    public uint FloatTypeCode = 2;
-    public uint IntTypeCode = 3;
-    public uint DoubleTypeCode = 4;
-    public uint NumberTypeCode = 5;
-    public uint LongTypeCode = 6;
-    public uint LongintTypeCode = 7;
-    public uint ByteTypeCode = 8;
-    public uint CharTypeCode = 9;
-    public uint BooleanTypeCode = 10;
-    public uint RationalTypeCode = 11;
+    public SmallLangType VoidTypeCode = new(0);
+    public SmallLangType StringTypeCode = new(1);
+    public SmallLangType FloatTypeCode = new(2);
+    public SmallLangType IntTypeCode = new(3);
+    public SmallLangType DoubleTypeCode = new(4);
+    public SmallLangType NumberTypeCode = new(5);
+    public SmallLangType LongTypeCode = new(6);
+    public SmallLangType LongintTypeCode = new(7);
+    public SmallLangType ByteTypeCode = new(8);
+    public SmallLangType CharTypeCode = new(9);
+    public SmallLangType BooleanTypeCode = new(10);
+    public SmallLangType RationalTypeCode = new(11);
     public int TypeCodeOffsetInHeader = 16;
 }

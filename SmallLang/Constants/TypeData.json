@@ -1,0 +1,14 @@
+{
+    "void":0,
+    "string":1,
+    "float":2,
+    "int":3,
+    "double":4,
+    "number":5,
+    "long":6,
+    "longint":7,
+    "byte":8,
+    "char":9,
+    "bool":10,
+    "rational":11
+}

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using SmallLang.Metadata;
 
 namespace SmallLang.Constants;
@@ -6,37 +7,46 @@ class TypeData
 {
     private TypeData()
     {
+        var filecontent = File.ReadAllText(@"C:\Users\User\coding\nostars\Expa\NewExpr\SmallLang\Constants\TypeData.json");
+        using (var document = JsonDocument.Parse(filecontent))
+        {
 
+            VoidTypeCode = TypeCodeAndInitDictFromTypeIndex(0, document, GetTypeFromTypeName);
+            StringTypeCode = TypeCodeAndInitDictFromTypeIndex(1, document, GetTypeFromTypeName);
+            FloatTypeCode = TypeCodeAndInitDictFromTypeIndex(2, document, GetTypeFromTypeName);
+            IntTypeCode = TypeCodeAndInitDictFromTypeIndex(3, document, GetTypeFromTypeName);
+            DoubleTypeCode = TypeCodeAndInitDictFromTypeIndex(4, document, GetTypeFromTypeName);
+            NumberTypeCode = TypeCodeAndInitDictFromTypeIndex(5, document, GetTypeFromTypeName);
+            LongTypeCode = TypeCodeAndInitDictFromTypeIndex(6, document, GetTypeFromTypeName);
+            LongintTypeCode = TypeCodeAndInitDictFromTypeIndex(7, document, GetTypeFromTypeName);
+            ByteTypeCode = TypeCodeAndInitDictFromTypeIndex(8, document, GetTypeFromTypeName);
+            CharTypeCode = TypeCodeAndInitDictFromTypeIndex(9, document, GetTypeFromTypeName);
+            BooleanTypeCode = TypeCodeAndInitDictFromTypeIndex(10, document, GetTypeFromTypeName);
+            RationalTypeCode = TypeCodeAndInitDictFromTypeIndex(11, document, GetTypeFromTypeName);
+        }
+    }
+    static SmallLangType TypeCodeAndInitDictFromTypeIndex(int ind, JsonDocument document, Dictionary<string, SmallLangType> d)
+    {
+
+        string[] types = ["void", "string", "float", "int", "double", "number", "long", "longint", "byte", "char", "bool", "rational"];
+        SmallLangType _out = new(document.RootElement.GetProperty(types[ind]).GetUInt32());
+        d[types[ind]] = _out;
+        return _out;
     }
     public static readonly TypeData Data = new();
-    public readonly SmallLangType VoidTypeCode = new(0);
-    public readonly SmallLangType StringTypeCode = new(1);
-    public readonly SmallLangType FloatTypeCode = new(2);
-    public readonly SmallLangType IntTypeCode = new(3);
-    public readonly SmallLangType DoubleTypeCode = new(4);
-    public readonly SmallLangType NumberTypeCode = new(5);
-    public readonly SmallLangType LongTypeCode = new(6);
-    public readonly SmallLangType LongintTypeCode = new(7);
-    public readonly SmallLangType ByteTypeCode = new(8);
-    public readonly SmallLangType CharTypeCode = new(9);
-    public readonly SmallLangType BooleanTypeCode = new(10);
-    public readonly SmallLangType RationalTypeCode = new(11);
+    public readonly SmallLangType VoidTypeCode;
+    public readonly SmallLangType StringTypeCode;
+    public readonly SmallLangType FloatTypeCode;
+    public readonly SmallLangType IntTypeCode;
+    public readonly SmallLangType DoubleTypeCode;
+    public readonly SmallLangType NumberTypeCode;
+    public readonly SmallLangType LongTypeCode;
+    public readonly SmallLangType LongintTypeCode;
+    public readonly SmallLangType ByteTypeCode;
+    public readonly SmallLangType CharTypeCode;
+    public readonly SmallLangType BooleanTypeCode;
+    public readonly SmallLangType RationalTypeCode;
     public readonly int TypeCodeOffsetInHeader = 16;
 
-    public Dictionary<string, SmallLangType> GetTypeFromTypeName => __gtftni ?? (__gtftni = new()
-    {
-        ["void"] = Data.VoidTypeCode,
-        ["string"] = Data.StringTypeCode,
-        ["float"] = Data.FloatTypeCode,
-        ["int"] = Data.IntTypeCode,
-        ["double"] = Data.DoubleTypeCode,
-        ["number"] = Data.NumberTypeCode,
-        ["long"] = Data.LongTypeCode,
-        ["longint"] = Data.LongintTypeCode,
-        ["byte"] = Data.ByteTypeCode,
-        ["char"] = Data.CharTypeCode,
-        ["bool"] = Data.BooleanTypeCode,
-        ["rational"] = Data.RationalTypeCode,
-    });
-    public Dictionary<string, SmallLangType>? __gtftni = null;
+    public Dictionary<string, SmallLangType> GetTypeFromTypeName = new();
 }

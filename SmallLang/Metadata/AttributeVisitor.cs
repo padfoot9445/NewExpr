@@ -29,10 +29,10 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     bool Changed(Attributes oldattr, Attributes newattr) => (oldattr == newattr) is false;
     private bool FunctionCall(Node? parent, Node self)
     {
-        FunctionID ID = FunctionMapper.Mapper.FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
-        SmallLangType RetType = FunctionMapper.Mapper.FunctionToRetType[ID];
+        FunctionID ID = Functions.Mapper.FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
+        SmallLangType RetType = Functions.Mapper.FunctionToRetType[ID];
         var oldattr = self.Attributes;
-        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = FunctionMapper.Mapper.FunctionToFunctionArgs[ID], TypeOfExpression = RetType };
+        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = Functions.Mapper.FunctionToFunctionArgs[ID], TypeOfExpression = RetType };
         return Changed(oldattr, self.Attributes);
     }
     private bool Primary(Node? parent, Node self)

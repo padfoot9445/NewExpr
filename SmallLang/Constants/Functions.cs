@@ -3,12 +3,12 @@ using SmallLang.Metadata;
 
 namespace SmallLang.Constants;
 
-class FunctionMapper
+class Functions
 {
-    public static readonly FunctionMapper Mapper;
-    static FunctionMapper()
+    public static readonly Functions Mapper;
+    static Functions()
     {
-        Mapper = new FunctionMapper();
+        Mapper = new Functions();
     }
     public Dictionary<FunctionID, List<SmallLangType>> FunctionToFunctionArgs = new()
     {

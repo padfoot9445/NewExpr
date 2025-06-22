@@ -4,6 +4,10 @@ namespace SmallLang.Constants;
 
 class TypeData
 {
+    private TypeData()
+    {
+
+    }
     public static readonly TypeData Data = new();
     public readonly SmallLangType VoidTypeCode = new(0);
     public readonly SmallLangType StringTypeCode = new(1);
@@ -19,7 +23,7 @@ class TypeData
     public readonly SmallLangType RationalTypeCode = new(11);
     public readonly int TypeCodeOffsetInHeader = 16;
 
-    public Dictionary<string, SmallLangType> GetTypeFromTypeName = new()
+    public Dictionary<string, SmallLangType> GetTypeFromTypeName => __gtftni ?? (__gtftni = new()
     {
         ["void"] = Data.VoidTypeCode,
         ["string"] = Data.StringTypeCode,
@@ -33,5 +37,6 @@ class TypeData
         ["char"] = Data.CharTypeCode,
         ["bool"] = Data.BooleanTypeCode,
         ["rational"] = Data.RationalTypeCode,
-    };
+    });
+    public Dictionary<string, SmallLangType>? __gtftni = null;
 }

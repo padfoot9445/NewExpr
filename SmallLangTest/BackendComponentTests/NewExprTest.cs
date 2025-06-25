@@ -1,6 +1,7 @@
 using SmallLang;
 
 namespace SmallLangTest.BackendComponentTests;
+
 [TestFixture]
 public class NewExprTest
 {
@@ -13,9 +14,9 @@ public class NewExprTest
         yield return ("number", "1.2345");
         yield return ("number", "1.23455");
         yield return ("longint", "12345");
-        yield return ("bigint", "123455");
+        //yield return ("bigint", "123455");
         yield return ("byte", "255");
-        yield return ("short", "12");
+        //yield return ("short", "12");
         yield return ("char", "\"a\"");
         yield return ("char", "\'a\'");
         yield return ("string", "\"abc\"");

@@ -27,6 +27,15 @@ class NewExpr : BaseCodeGenComponent
         var type = self.Children[0];
         Debug.Assert(type.Children[0].NodeType == ImportantASTNodeType.TypeCSV);
         var innertype = type.Children[0];
-        Emit(innertype.Children.Select(x => TypeData.Data.IsPointerType(x.Attributes.TypeLiteralType!)).Any() ? Opcode.NewP : Opcode.NewD, type.Attributes.TypeLiteralType!, (uint)Count);
+        bool IsPointer = innertype.Children.Select(x => TypeData.Data.IsPointerType(x.Attributes.TypeLiteralType!)).Any();
+        Opcode[] opcodecandidates = IsPointer ? [Opcode.NewPR, Opcode.NewPS] : [Opcode.NewDR, Opcode.NewDS];
+        if (Driver.OutputToRegister)
+        {
+            Emit(opcodecandidates[0], type.Attributes.TypeLiteralType!, (uint)Count, GetDestRegister());
+        }
+        else
+        {
+            Emit(opcodecandidates[1], type.Attributes.TypeLiteralType!, (uint)Count);
+        }
     }
 }

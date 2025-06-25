@@ -93,6 +93,18 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
             return null;
         }
     }
+    protected void PushArgsToStack(Node? Arguments, Node self)
+    {
+        if (Arguments is not Node arg)
+            return;
+        else
+        {
+            foreach (var ia in arg.Children)
+            {
+                Driver.Exec(self, ia);
+            }
+        }
+    }
     protected uint GetDestRegister() => Driver.DestinationRegister ?? ++Driver.LastUsedRegister;
     protected CodeGenVisitor Driver = driver;
     public abstract void GenerateCode(Node? parent, Node self);

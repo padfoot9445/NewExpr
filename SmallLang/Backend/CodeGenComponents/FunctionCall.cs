@@ -7,18 +7,6 @@ namespace SmallLang.Backend.CodeGenComponents;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
 {
-    void PushArgsToStack(Node? Arguments, Node self)
-    {
-        if (Arguments is not Node arg)
-            return;
-        else
-        {
-            foreach (var ia in arg.Children)
-            {
-                Driver.Exec(self, ia);
-            }
-        }
-    }
     void CheckArgTypes(Node? Arguments, Node self)
     {
         if (Arguments is null)

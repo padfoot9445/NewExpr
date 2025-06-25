@@ -13,6 +13,7 @@ class TypeData
         {
 
             types = document.RootElement.GetProperty("typenames").EnumerateArray().Select(x => x.GetString()).ToArray()!;
+            PointerTypes = document.RootElement.GetProperty("pointers").EnumerateArray().Select(x => x.GetUInt32()).ToHashSet();
             VoidTypeCode = TypeCodeAndInitDictFromTypeIndex(0, document, GetTypeFromTypeName);
             StringTypeCode = TypeCodeAndInitDictFromTypeIndex(1, document, GetTypeFromTypeName);
             FloatTypeCode = TypeCodeAndInitDictFromTypeIndex(2, document, GetTypeFromTypeName);
@@ -35,7 +36,12 @@ class TypeData
         d[types[ind]] = _out;
         return _out;
     }
+    public bool IsPointerType(SmallLangType type)
+    {
+        return PointerTypes.Contains(type.Value);
+    }
     public static readonly TypeData Data = new();
+    private readonly HashSet<uint> PointerTypes;
     public readonly SmallLangType VoidTypeCode;
     public readonly SmallLangType StringTypeCode;
     public readonly SmallLangType FloatTypeCode;

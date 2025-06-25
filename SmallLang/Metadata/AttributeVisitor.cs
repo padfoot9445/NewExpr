@@ -20,13 +20,22 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
             ImportantASTNodeType.ArgList => (x, y) => false,
             ImportantASTNodeType.ArgListElement => (x, y) => false,
             ImportantASTNodeType.NewExpr => (x, y) => false,
-            ImportantASTNodeType.GenericType => (x, y) => false,
+            ImportantASTNodeType.GenericType => GenericType,
             ImportantASTNodeType.TypeCSV => (x, y) => false,
-            ImportantASTNodeType.BaseType => (x, y) => false,
+            ImportantASTNodeType.BaseType => BaseType,
             _ => throw new Exception(node.NodeType.ToString())
         };
     }
     bool Changed(Attributes oldattr, Attributes newattr) => (oldattr == newattr) is false;
+    private bool GenericType(Node? parent, Node self) => BaseType(parent, self);
+    private bool BaseType(Node? parent, Node self)
+    {
+        var oldattr = self.Attributes;
+        var typename = self.Data!.Lexeme;
+        var Typecode = TypeData.Data.GetTypeFromTypeName[typename];
+        self.Attributes = self.Attributes with { TypeLiteralType = Typecode };
+        return Changed(oldattr, self.Attributes);
+    }
     private bool FunctionCall(Node? parent, Node self)
     {
         FunctionID ID = Functions.Values.FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];

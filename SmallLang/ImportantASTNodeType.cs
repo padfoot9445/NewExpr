@@ -14,7 +14,7 @@ public enum ImportantASTNodeType
     LoopLabel, //data: identifier
     Return, //NO FLATTEN, data: null, children: [Expression]
     BaseType, //data: base type, children: []
-    GenericType, //data: generic type, children: []
+    GenericType, //data: generic type, children: [] // maybe children:[typecsv]?
     If, //data: null, children: [ExprStatementCombined+, OptionalElse as Statement] where OptionalElse is not EMPTY| [ExprStatementCombined+]
     Switch, //data: null, children: [Expression, ExprStatementCombined*]
     ExprStatementCombined, //data: null, children: [Expression, Statement]

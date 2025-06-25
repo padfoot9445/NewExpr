@@ -10,5 +10,9 @@
     "byte":8,
     "char":9,
     "bool":10,
-    "rational":11
+    "rational":11,
+    "array": 12,
+    "list": 13,
+    "set": 14,
+    "dict": 15
 }

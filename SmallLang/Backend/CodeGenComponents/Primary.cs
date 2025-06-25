@@ -33,7 +33,7 @@ class Primary : BaseCodeGenComponent
                 (IntTypeCode, (() => BitConverter.GetBytes(int.Parse(data.Lexeme)))),
                 (DoubleTypeCode, (() => BitConverter.GetBytes(double.Parse(data.Lexeme)))),
                 (LongTypeCode, (() => BitConverter.GetBytes(long.Parse(data.Lexeme)))),
-                (LongintTypeCode, (() => throw new NotImplementedException())),
+                (LongintTypeCode, (() => throw new NotImplementedException())),//these two will be writestaticdata when the time comes
                 (NumberTypeCode, (() => throw new NotImplementedException())),
                 (ByteTypeCode, (() => [byte.Parse(data.Lexeme)])),
                 (CharTypeCode, (() => data.Literal.Length != 3 ? throw new Exception($"Expected char length to be 3 ( 1 + two quotes), got {data.Literal.Length}") : data.Literal.Select(x => (byte)x).Skip(1).SkipLast(1).ToArray()))

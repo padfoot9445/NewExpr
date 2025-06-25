@@ -26,6 +26,10 @@ class TypeData
             CharTypeCode = TypeCodeAndInitDictFromTypeIndex(9, document, GetTypeFromTypeName);
             BooleanTypeCode = TypeCodeAndInitDictFromTypeIndex(10, document, GetTypeFromTypeName);
             RationalTypeCode = TypeCodeAndInitDictFromTypeIndex(11, document, GetTypeFromTypeName);
+            ArrayTypeCode = TypeCodeAndInitDictFromTypeIndex(12, document, GetTypeFromTypeName);
+            ListTypeCode = TypeCodeAndInitDictFromTypeIndex(13, document, GetTypeFromTypeName);
+            SetTypeCode = TypeCodeAndInitDictFromTypeIndex(14, document, GetTypeFromTypeName);
+            DictTypeCode = TypeCodeAndInitDictFromTypeIndex(15, document, GetTypeFromTypeName);
         }
     }
     SmallLangType TypeCodeAndInitDictFromTypeIndex(int ind, JsonDocument document, Dictionary<string, SmallLangType> d)
@@ -54,6 +58,10 @@ class TypeData
     public readonly SmallLangType CharTypeCode;
     public readonly SmallLangType BooleanTypeCode;
     public readonly SmallLangType RationalTypeCode;
+    public readonly SmallLangType ArrayTypeCode;
+    public readonly SmallLangType ListTypeCode;
+    public readonly SmallLangType SetTypeCode;
+    public readonly SmallLangType DictTypeCode;
     public readonly int TypeCodeOffsetInHeader = 16;
 
     public Dictionary<string, SmallLangType> GetTypeFromTypeName = new();

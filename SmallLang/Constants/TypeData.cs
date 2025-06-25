@@ -5,12 +5,14 @@ namespace SmallLang.Constants;
 
 class TypeData
 {
+    readonly string[] types;
     private TypeData()
     {
         var filecontent = File.ReadAllText(@"C:\Users\User\coding\nostars\Expa\NewExpr\SmallLang\Constants\TypeData.json");
         using (var document = JsonDocument.Parse(filecontent))
         {
 
+            types = document.RootElement.GetProperty("typenames").EnumerateArray().Select(x => x.GetString()).ToArray()!;
             VoidTypeCode = TypeCodeAndInitDictFromTypeIndex(0, document, GetTypeFromTypeName);
             StringTypeCode = TypeCodeAndInitDictFromTypeIndex(1, document, GetTypeFromTypeName);
             FloatTypeCode = TypeCodeAndInitDictFromTypeIndex(2, document, GetTypeFromTypeName);
@@ -25,10 +27,10 @@ class TypeData
             RationalTypeCode = TypeCodeAndInitDictFromTypeIndex(11, document, GetTypeFromTypeName);
         }
     }
-    static SmallLangType TypeCodeAndInitDictFromTypeIndex(int ind, JsonDocument document, Dictionary<string, SmallLangType> d)
+    SmallLangType TypeCodeAndInitDictFromTypeIndex(int ind, JsonDocument document, Dictionary<string, SmallLangType> d)
     {
 
-        string[] types = ["void", "string", "float", "int", "double", "number", "long", "longint", "byte", "char", "bool", "rational"];
+        // string[] types = ["void", "string", "float", "int", "double", "number", "long", "longint", "byte", "char", "bool", "rational"];
         SmallLangType _out = new(document.RootElement.GetProperty(types[ind]).GetUInt32());
         d[types[ind]] = _out;
         return _out;

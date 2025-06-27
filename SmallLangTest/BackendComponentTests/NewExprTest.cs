@@ -90,4 +90,10 @@ public class NewExprTest
             return $"{Outer}<[{VV1}]>";
         }
     }
+    [Test]
+    public void OutputNewIntList()
+    {
+        (var x, var y) = HighToLowLevelCompilerDriver.Compile("new list<[int]>(1,2,3,4);");
+        Console.WriteLine(x.Select(j => j.ToString()).Aggregate((i, j) => $"{i}\n{j}"));
+    }
 }

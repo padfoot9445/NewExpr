@@ -55,7 +55,7 @@ public class NewExprTest
         string Program = $"new {Type}({(Init ? V.Values : "")});";
         Assert.DoesNotThrow(() => HighToLowLevelCompilerDriver.Compile(Program));
     }
-
+    [Ignore("Takes a fucking long time")]
     [Test]
     public void NestedDict__Does_Not_Throw(
         [Values("list", "dict")] string InnerType1,

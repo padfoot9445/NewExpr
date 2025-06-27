@@ -55,7 +55,7 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
     }
     protected uint[] BytesToUInt(params byte[] Vals)
     {
-        byte[] InVals = new byte[Vals.Length + (4 - (Vals.Length % 4))];
+        byte[] InVals = new byte[Vals.Length + (Vals.Length % 4 == 0 ? 0 : (4 - (Vals.Length % 4)))];
         Vals.CopyTo(InVals, 0);
         Debug.Assert(InVals[Vals.Length..^0].All(x => x == 0));
         Debug.Assert(InVals.Length % 4 == 0);
@@ -97,12 +97,17 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
     {
         if (Arguments is not Node arg)
             return;
+
         else
         {
+
+            var before = Driver.OutputToRegister;
+            Driver.OutputToRegister = false;
             foreach (var ia in arg.Children)
             {
                 Driver.Exec(self, ia);
             }
+            Driver.OutputToRegister = before;
         }
     }
     protected uint GetDestRegister() => Driver.DestinationRegister ?? ++Driver.LastUsedRegister;

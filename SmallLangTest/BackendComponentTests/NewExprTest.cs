@@ -90,10 +90,17 @@ public class NewExprTest
             return $"{Outer}<[{VV1}]>";
         }
     }
+    [Ignore("Human Test")]
     [Test]
     public void OutputNewIntList()
     {
         (var x, var y) = HighToLowLevelCompilerDriver.Compile("new list<[int]>(1,2,3,4);");
         Console.WriteLine(x.Select(j => j.ToString()).Aggregate((i, j) => $"{i}\n{j}"));
+    }
+    [Test]
+    public void NewList__Int_Four_Args__Outputs_Correct_ToString()
+    {
+        (var x, var y) = HighToLowLevelCompilerDriver.Compile("new list<[int]>(1,2,3,4);");
+        Assert.That(x.Select(j => j.ToString()).Aggregate((i, j) => $"{i}\n{j}"), Is.EqualTo("PushI 1\nPushI 2\nPushI 3\nPushI 4\nNewPR 13 4 1"));
     }
 }

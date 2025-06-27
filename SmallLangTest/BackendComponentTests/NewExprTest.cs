@@ -7,22 +7,42 @@ public class NewExprTest
 {
     static IEnumerable<(string, string)> GetInternalValueAndValuePairs()
     {
-        yield return ("float", "1.23");
-        yield return ("int", "123");
-        yield return ("long", "1234");
-        yield return ("double", "1.234");
-        yield return ("number", "1.2345");
-        yield return ("number", "1.23455");
-        yield return ("longint", "12345");
-        //yield return ("bigint", "123455");
-        yield return ("byte", "255");
-        //yield return ("short", "12");
+        foreach (var v in _GetInternalValueAndValuePairs())
+        {
+            yield return v;
+        }
+    }
+    static IEnumerable<(string, string)> Short_GetInternalValueAndValuePairs()
+    {
+        foreach (var v in _GetInternalValueAndValuePairs(true))
+        {
+            yield return v;
+        }
+    }
+    static IEnumerable<(string, string)> _GetInternalValueAndValuePairs(bool shorten = false)
+    {
+
         yield return ("char", "\"a\"");
         yield return ("char", "\'a\'");
         yield return ("string", "\"abc\"");
+        yield return ("float", "1.23");
+        yield return ("int", "123");
+        if (!shorten)
+        {
+
+            yield return ("long", "1234");
+            yield return ("double", "1.234");
+            yield return ("number", "1.2345");
+            yield return ("number", "1.23455");
+            yield return ("longint", "12345");
+            //yield return ("bigint", "123455");
+            yield return ("byte", "255");
+            //yield return ("short", "12");
+        }
     }
     [Test]
-    public void Test__NewExpr__SingleGeneric__Does_Not_Throw(
+    public void Test__NewExpr__Generics__Does_Not_Throw(
+        [Values("list", "array", "set", "")] string OuterGeneric,
         [Values("list", "array", "set", "dict")]
         string GenericType,
         [ValueSource(nameof(GetInternalValueAndValuePairs))]
@@ -31,8 +51,43 @@ public class NewExprTest
     )
     {
         if (GenericType == "dict" && Init == true) Assert.Pass();
-
-        string Program = $"new {GenericType}<[{V.NestedType}]>({(Init ? V.Values : "")});";
+        string Type = OuterGeneric == "" ? $"{GenericType}<[{V.NestedType}]>" : $"{OuterGeneric}<[{GenericType}<[{V.NestedType}]>]>";
+        string Program = $"new {Type}({(Init ? V.Values : "")});";
         Assert.DoesNotThrow(() => HighToLowLevelCompilerDriver.Compile(Program));
+    }
+
+    [Test]
+    public void NestedDict__Does_Not_Throw(
+        [Values("list", "dict")] string InnerType1,
+        [Values("list", "dict")] string InnerType2,
+        [ValueSource(nameof(Short_GetInternalValueAndValuePairs))] (string Type, string Value) VT1,
+        [ValueSource(nameof(Short_GetInternalValueAndValuePairs))] (string Type, string Value) VT2,
+        [ValueSource(nameof(Short_GetInternalValueAndValuePairs))] (string Type, string Value) VT3,
+        [ValueSource(nameof(Short_GetInternalValueAndValuePairs))] (string Type, string Value) VT4,
+        [Values(true, false)] bool Init
+    )
+    {
+        string BIT1 = BuildType(InnerType1, VT1, VT2, false);
+        string BIT2 = BuildType(InnerType2, VT3, VT4, false);
+        string InitExpression = $"{BuildType(InnerType1, VT1, VT2, true)}, {BuildType(InnerType2, VT3, VT4, true)}";
+        string Final = $"new dict<[{BIT1}, {BIT2}]>({(Init ? InitExpression : "")});";
+        Assert.DoesNotThrow(() => HighToLowLevelCompilerDriver.Compile(Final));
+    }
+    static string BuildType(string Outer, (string Type, string Value) VT1, (string Type, string Value) VT2, bool Init = false)
+    {
+        if (Init == false) return BuildType(Outer, VT1.Type, VT2.Type);
+        else if (Outer == "dict") return $"new {BuildType(Outer, VT1.Type, VT2.Type)}({VT1.Value}, {VT2.Value})";
+        else return $"new {BuildType(Outer, VT1.Type, VT2.Type)}({VT1.Value})";
+    }
+    static string BuildType(string Outer, string VV1, string VV2)
+    {
+        if (Outer == "dict")
+        {
+            return $"{Outer}<[{VV1}, {VV2}]>";
+        }
+        else
+        {
+            return $"{Outer}<[{VV1}]>";
+        }
     }
 }

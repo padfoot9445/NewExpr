@@ -24,6 +24,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
             ImportantASTNodeType.TypeCSV => (x, y) => false,
             ImportantASTNodeType.BaseType => BaseType,
             ImportantASTNodeType.Declaration => (x, y) => false,
+            ImportantASTNodeType.AssignmentPrime => (x, y) => false,
             _ => throw new Exception(node.NodeType.ToString())
         };
     }

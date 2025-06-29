@@ -25,6 +25,8 @@ class PostProcessingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribute
             ImportantASTNodeType.TypeCSV => (x, y) => false,
             ImportantASTNodeType.BaseType => (x, y) => false,
             ImportantASTNodeType.Declaration => (x, y) => false,
+
+            ImportantASTNodeType.AssignmentPrime => (x, y) => false,
             _ => throw new Exception()
         };
     }

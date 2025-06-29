@@ -5,14 +5,14 @@ namespace SmallLangTest.BackendComponentTests;
 [TestFixture]
 public class NewExprTest
 {
-    static IEnumerable<(string, string)> GetInternalValueAndValuePairs()
+    public static IEnumerable<(string, string)> GetInternalValueAndValuePairs()
     {
         foreach (var v in _GetInternalValueAndValuePairs())
         {
             yield return v;
         }
     }
-    static IEnumerable<(string, string)> Short_GetInternalValueAndValuePairs()
+    public static IEnumerable<(string, string)> Short_GetInternalValueAndValuePairs()
     {
         foreach (var v in _GetInternalValueAndValuePairs(true))
         {

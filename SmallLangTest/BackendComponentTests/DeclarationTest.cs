@@ -29,7 +29,7 @@ class DeclarationTest
         [ValueSource(nameof(GetTypeAndValuePairs))] (string type, string value) tv,
         [Values(true, false)] bool assign)
     {
-        string Compile = assign ? $"{tv.type} abc" : $"{tv.type} abc = {tv.value}";
+        string Compile = assign ? $"{tv.type} abc" : $"{tv.type} abc = {tv.value};";
         Assert.DoesNotThrow(() => HighToLowLevelCompilerDriver.Compile(Compile));
     }
 }

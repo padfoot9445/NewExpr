@@ -27,9 +27,10 @@ class DeclarationTest
     [Test]
     public void SimpleTypeDeclaration__Does_Not_Throw(
         [ValueSource(nameof(GetTypeAndValuePairs))] (string type, string value) tv,
+        [Values("frozen", "immut", "readonly", "ref", "")] string Modifier,
         [Values(true, false)] bool assign)
     {
-        string Compile = assign ? $"{tv.type} abc" : $"{tv.type} abc = {tv.value};";
+        string Compile = assign ? $"{Modifier} {tv.type} abc" : $"{tv.type} abc = {tv.value};";
         Assert.DoesNotThrow(() => HighToLowLevelCompilerDriver.Compile(Compile));
     }
 }

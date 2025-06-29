@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Xml;
 using Common.AST;
 using Common.LinearIR;
 using SmallLang.Backend.CodeGenComponents;
@@ -108,7 +109,7 @@ public class CodeGenVisitor
     private BaseCodeGenComponent? _AliasExpr = null;
     protected virtual BaseCodeGenComponent AliasExpr => throw new NotImplementedException();
     private BaseCodeGenComponent? _Declaration = null;
-    protected virtual BaseCodeGenComponent Declaration => throw new NotImplementedException();
+    protected virtual BaseCodeGenComponent Declaration => new Declaration(this);
     private BaseCodeGenComponent? _DeclarationModifiersCombined = null;
     protected virtual BaseCodeGenComponent DeclarationModifiersCombined => throw new NotImplementedException();
     private BaseCodeGenComponent? _DeclarationModifier = null;

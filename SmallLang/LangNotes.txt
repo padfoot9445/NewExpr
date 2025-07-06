@@ -1,2 +1,3 @@
 for any pointer Ptr, if Ptr & 0x80000000 (if the first bit is 1) then fetch from RAM, else ROM
 must remember to typecheck in attribute evaluator
+must remember to handle closures, although currently we might well just not support

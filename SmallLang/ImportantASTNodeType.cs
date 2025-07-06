@@ -21,7 +21,7 @@ public enum ImportantASTNodeType
     TypeAndIdentifierCSV, //data: null, children: [TypeAndIdentifierCSVElement+]
     TypeAndIdentifierCSVElement, //data: Identifier, children: [FunctionArgDeclModifiersCombined, Type]
     AliasExpr, //data: IDENTIFIER, children: [Identifier]
-    Declaration, //data: Identifier, children: [DeclarationModifiersCombined, Type, AssignmentPrime] | [Type, AssignmentPrime] | [Type]
+    Declaration, //data: Identifier, children: [DeclarationModifiersCombined, Type, AssignmentPrime] | [Type, AssignmentPrime] | [Type] | [Type, AssignmentPrime]
     DeclarationModifiersCombined, //data: null, children: [DeclarationModifier*]
     DeclarationModifier, //data: "ref" | "readonly" | "frozen" | "immut", children: []
     FunctionArgDeclModifiers, //data: *DeclarationModifier | "copy", children: []

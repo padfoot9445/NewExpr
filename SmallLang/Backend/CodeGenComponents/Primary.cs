@@ -41,9 +41,9 @@ class Primary : BaseCodeGenComponent
         );
     }
     uint? LoadBoolean(IToken data, bool Boolean) => LoadValue(Boolean ? uint.MaxValue : 0);
-    uint? LoadVariable(IToken data)
+    uint? LoadVariable(IToken data, VariableName name)
     {
-        return Driver.OutputToRegister ? Driver.VariableNameToRegister[data.Lexeme] : LoadValue(Driver.VariableNameToRegister[data.Lexeme]);
+        return Driver.OutputToRegister ? Driver.VariableNameToRegister[name] : LoadValue(Driver.VariableNameToRegister[name]);
     }
     public override void GenerateCode(DynamicASTNode<ImportantASTNodeType, Attributes>? parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
     {
@@ -54,7 +54,7 @@ class Primary : BaseCodeGenComponent
             TokenType.Number => LoadNumber(self.Data, self.Attributes.TypeOfExpression),
             TokenType.TrueLiteral => LoadBoolean(self.Data, true),
             TokenType.FalseLiteral => LoadBoolean(self.Data, false),
-            TokenType.Identifier => LoadVariable(self.Data),
+            TokenType.Identifier => LoadVariable(self.Data, self.Attributes.VariableName!),
             _ => throw new Exception($"Unexpected {self.Data.TT} in data slot of Primary"),
         };
         if (ResultLocation is not null) Driver.OutputRegisters = [(uint)ResultLocation];

@@ -63,7 +63,8 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
                 TokenType.FalseLiteral => TypeData.Data.BooleanTypeCode,
                 TokenType.Number => self.Data.Literal.Contains('.') ? TypeData.Data.FloatTypeCode : TypeData.Data.IntTypeCode,
                 _ => throw new Exception($"Unknown primary type {self.Data.TT}"),
-            }
+            },
+                VariableName = new(self.Data.Lexeme),
 
             };
         }

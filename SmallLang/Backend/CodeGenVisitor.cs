@@ -17,7 +17,7 @@ public class CodeGenVisitor
     public List<Operation<uint>> Instructions = [];
     public List<uint> StaticData = [];
     public Dictionary<VariableName, uint> VariableNameToRegister = [];
-    public Dictionary<VariableName, DeclarationModifiers> VariableNameToDeclModifiers = [];
+    public Dictionary<VariableName, VariableModifiers> VariableNameToModifiers = [];
     public void Exec(Node? parent, Node node, bool? OutputToRegister = null, uint? DestinationRegister = null, uint[]? OutputRegisters = null) => Dispatch(node, OutputToRegister, DestinationRegister, OutputRegisters)(parent, node);
     void SetState(bool? OTR, uint? DR, uint[]? OR)
     {

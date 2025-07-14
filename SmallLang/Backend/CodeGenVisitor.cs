@@ -10,7 +10,7 @@ namespace SmallLang.Backend;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class CodeGenVisitor
 {
-    public virtual uint[] OutputRegisters { get; set; } = [];
+    public virtual uint[] OutputRegisters { get; set; } = []; //modified by the callee to propagate where it put the value
     public virtual bool OutputToRegister { get; set; } = true;
     public virtual uint? DestinationRegister { get; set; }
     public uint LastUsedRegister { get; set; } = 0;

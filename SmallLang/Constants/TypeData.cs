@@ -26,9 +26,9 @@ class TypeData
     public readonly SmallLangType StringTypeCode = new(GetTypeCode, "string", true);
     public readonly SmallLangType FloatTypeCode = new(GetTypeCode, "float");
     public readonly SmallLangType IntTypeCode = new(GetTypeCode, "int");
-    public readonly SmallLangType DoubleTypeCode = new(GetTypeCode, "double");
+    public readonly SmallLangType DoubleTypeCode = new(GetTypeCode, "double", Size: 2);
     public readonly SmallLangType NumberTypeCode = new(GetTypeCode, "number", true);
-    public readonly SmallLangType LongTypeCode = new(GetTypeCode, "long");
+    public readonly SmallLangType LongTypeCode = new(GetTypeCode, "long", Size: 2);
     public readonly SmallLangType LongintTypeCode = new(GetTypeCode, "longint", true);
     public readonly SmallLangType ByteTypeCode = new(GetTypeCode, "byte");
     public readonly SmallLangType CharTypeCode = new(GetTypeCode, "char");

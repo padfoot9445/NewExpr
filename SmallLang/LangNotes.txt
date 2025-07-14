@@ -1,3 +1,6 @@
 for any pointer Ptr, if Ptr & 0x80000000 (if the first bit is 1) then fetch from RAM, else ROM
 must remember to typecheck in attribute evaluator
 must remember to handle closures, although currently we might well just not support
+optimise registers later. 
+
+Make sure that the option to specify which register to load to is only used when we know for a fact there's enough space at that register-hole

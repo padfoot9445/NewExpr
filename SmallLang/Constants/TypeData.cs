@@ -8,61 +8,37 @@ class TypeData
     readonly string[] types;
     private TypeData()
     {
-        var filecontent = File.ReadAllText(@"C:\Users\User\coding\nostars\Expa\NewExpr\SmallLang\Constants\TypeData.json");
-        using (var document = JsonDocument.Parse(filecontent))
-        {
-
-            types = document.RootElement.GetProperty("typenames").EnumerateArray().Select(x => x.GetString()).ToArray()!;
-            PointerTypes = document.RootElement.GetProperty("pointers").EnumerateArray().Select(x => x.GetUInt32()).ToHashSet();
-            VoidTypeCode = TypeCodeAndInitDictFromTypeIndex(0, document, GetTypeFromTypeName);
-            StringTypeCode = TypeCodeAndInitDictFromTypeIndex(1, document, GetTypeFromTypeName);
-            FloatTypeCode = TypeCodeAndInitDictFromTypeIndex(2, document, GetTypeFromTypeName);
-            IntTypeCode = TypeCodeAndInitDictFromTypeIndex(3, document, GetTypeFromTypeName);
-            DoubleTypeCode = TypeCodeAndInitDictFromTypeIndex(4, document, GetTypeFromTypeName);
-            NumberTypeCode = TypeCodeAndInitDictFromTypeIndex(5, document, GetTypeFromTypeName);
-            LongTypeCode = TypeCodeAndInitDictFromTypeIndex(6, document, GetTypeFromTypeName);
-            LongintTypeCode = TypeCodeAndInitDictFromTypeIndex(7, document, GetTypeFromTypeName);
-            ByteTypeCode = TypeCodeAndInitDictFromTypeIndex(8, document, GetTypeFromTypeName);
-            CharTypeCode = TypeCodeAndInitDictFromTypeIndex(9, document, GetTypeFromTypeName);
-            BooleanTypeCode = TypeCodeAndInitDictFromTypeIndex(10, document, GetTypeFromTypeName);
-            RationalTypeCode = TypeCodeAndInitDictFromTypeIndex(11, document, GetTypeFromTypeName);
-            ArrayTypeCode = TypeCodeAndInitDictFromTypeIndex(12, document, GetTypeFromTypeName);
-            ListTypeCode = TypeCodeAndInitDictFromTypeIndex(13, document, GetTypeFromTypeName);
-            SetTypeCode = TypeCodeAndInitDictFromTypeIndex(14, document, GetTypeFromTypeName);
-            DictTypeCode = TypeCodeAndInitDictFromTypeIndex(15, document, GetTypeFromTypeName);
-        }
-    }
-    SmallLangType TypeCodeAndInitDictFromTypeIndex(int ind, JsonDocument document, Dictionary<string, SmallLangType> d)
-    {
-
-        // string[] types = ["void", "string", "float", "int", "double", "number", "long", "longint", "byte", "char", "bool", "rational"];
-        SmallLangType _out = new(document.RootElement.GetProperty(types[ind]).GetUInt32());
-        d[types[ind]] = _out;
-        return _out;
+        Types = [VoidTypeCode, StringTypeCode, FloatTypeCode, IntTypeCode, DoubleTypeCode, NumberTypeCode, LongTypeCode, LongintTypeCode, ByteTypeCode, CharTypeCode, BooleanTypeCode, RationalTypeCode, ArrayTypeCode, ListTypeCode, SetTypeCode, DictTypeCode];
+        PointerTypes = Types.Select(x => x).Where(x => x.IsRefType).Select(x => x.Value).ToHashSet();
+        types = Types.Select(x => x.Name).ToArray();
+        GetTypeFromTypeName = Types.ToDictionary(x => x.Name);
     }
     public bool IsPointerType(SmallLangType type)
     {
         return PointerTypes.Contains(type.Value);
     }
     public static readonly TypeData Data = new();
+    private static uint NextTypeCode = 1;
+    private static uint GetTypeCode => NextTypeCode++;
     private readonly HashSet<uint> PointerTypes;
-    public readonly SmallLangType VoidTypeCode;
-    public readonly SmallLangType StringTypeCode;
-    public readonly SmallLangType FloatTypeCode;
-    public readonly SmallLangType IntTypeCode;
-    public readonly SmallLangType DoubleTypeCode;
-    public readonly SmallLangType NumberTypeCode;
-    public readonly SmallLangType LongTypeCode;
-    public readonly SmallLangType LongintTypeCode;
-    public readonly SmallLangType ByteTypeCode;
-    public readonly SmallLangType CharTypeCode;
-    public readonly SmallLangType BooleanTypeCode;
-    public readonly SmallLangType RationalTypeCode;
-    public readonly SmallLangType ArrayTypeCode;
-    public readonly SmallLangType ListTypeCode;
-    public readonly SmallLangType SetTypeCode;
-    public readonly SmallLangType DictTypeCode;
+    SmallLangType[] Types;
+    public readonly SmallLangType VoidTypeCode = new(GetTypeCode, "void");
+    public readonly SmallLangType StringTypeCode = new(GetTypeCode, "string", true);
+    public readonly SmallLangType FloatTypeCode = new(GetTypeCode, "float");
+    public readonly SmallLangType IntTypeCode = new(GetTypeCode, "int");
+    public readonly SmallLangType DoubleTypeCode = new(GetTypeCode, "double");
+    public readonly SmallLangType NumberTypeCode = new(GetTypeCode, "number", true);
+    public readonly SmallLangType LongTypeCode = new(GetTypeCode, "long");
+    public readonly SmallLangType LongintTypeCode = new(GetTypeCode, "longint", true);
+    public readonly SmallLangType ByteTypeCode = new(GetTypeCode, "byte");
+    public readonly SmallLangType CharTypeCode = new(GetTypeCode, "char");
+    public readonly SmallLangType BooleanTypeCode = new(GetTypeCode, "boolean");
+    public readonly SmallLangType RationalTypeCode = new(GetTypeCode, "rational", true);
+    public readonly SmallLangType ArrayTypeCode = new(GetTypeCode, "array", true);
+    public readonly SmallLangType ListTypeCode = new(GetTypeCode, "list", true);
+    public readonly SmallLangType SetTypeCode = new(GetTypeCode, "set", true);
+    public readonly SmallLangType DictTypeCode = new(GetTypeCode, "dict", true);
     public readonly int TypeCodeOffsetInHeader = 16;
 
-    public Dictionary<string, SmallLangType> GetTypeFromTypeName = new();
+    public Dictionary<string, SmallLangType> GetTypeFromTypeName;
 }

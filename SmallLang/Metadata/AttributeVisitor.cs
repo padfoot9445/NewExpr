@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using Common.AST;
 using Common.Evaluator;
 using Common.Tokens;
@@ -11,7 +10,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
 {
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
-        return node.NodeType switch
+        return Combine(node.NodeType switch
         {
             ImportantASTNodeType.FunctionCall => FunctionCall,
             ImportantASTNodeType.Section => (x, y) => false,
@@ -27,7 +26,29 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
             ImportantASTNodeType.AssignmentPrime => (x, y) => false,
             ImportantASTNodeType.DeclarationModifiersCombined => (x, y) => false,
             _ => throw new Exception(node.NodeType.ToString())
-        };
+        });
+    }
+    bool Identity(Node? parent, Node self)
+    {
+        var oldattr = self.Attributes;
+        if (self.Attributes.VariablesInScope is null)
+        {
+            self.Attributes = self.Attributes with { VariablesInScope = new() };
+            return true;
+        }
+        if (parent is not Node nnp) return false;
+        self.Attributes = self.Attributes with { VariablesInScope = ((Scope)nnp.Attributes.VariablesInScope!).ScopeUnion((Scope)self.Attributes.VariablesInScope!) };
+        return Changed(oldattr, self.Attributes);
+    }
+    Func<Node?, Node, bool> Combine(Func<Node?, Node, bool> inner)
+    {
+        bool Inner(Node? parent, Node self)
+        {
+            var c1 = Identity(parent, self);
+            var c2 = inner(parent, self);
+            return c1 || c2;
+        }
+        return Inner;
     }
     bool Changed(Attributes oldattr, Attributes newattr) => (oldattr == newattr) is false;
     private bool GenericType(Node? parent, Node self) => BaseType(parent, self);
@@ -35,7 +56,12 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     {
         var oldattr = self.Attributes;
         self.Attributes = self.Attributes with { VariableName = new(self.Data!.Lexeme) };
-        return Changed(oldattr, self.Attributes);
+        bool Changed2 = !(((Scope)parent!.Attributes.VariablesInScope!).Contains(self.Attributes.VariableName));
+        if (Changed2)
+        {
+            parent!.Attributes = parent.Attributes with { VariablesInScope = ((Scope)parent.Attributes.VariablesInScope).Append(self.Attributes.VariableName) };
+        }
+        return Changed(oldattr, self.Attributes) || Changed2;
     }
     private bool BaseType(Node? parent, Node self)
     {

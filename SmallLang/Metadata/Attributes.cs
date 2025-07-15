@@ -2,7 +2,7 @@ using Common.AST;
 
 namespace SmallLang.Metadata;
 
-public record class Attributes(List<SmallLangType>? DeclArgumentTypes = null, FunctionID? FunctionID = null, SmallLangType? TypeOfExpression = null, SmallLangType? TypeLiteralType = null, VariableName? VariableName = null, VariableModifiers? VarMods = null) : IMetadata
+public record class Attributes(List<SmallLangType>? DeclArgumentTypes = null, FunctionID? FunctionID = null, SmallLangType? TypeOfExpression = null, SmallLangType? TypeLiteralType = null, VariableName? VariableName = null, VariableModifiers? VarMods = null, uint? SizeOfVariable = null) : IMetadata
 {
     public Attributes() : this(DeclArgumentTypes: null) { }
     public void ForcedMerge(IMetadata other, bool PrioritizeOther = false)

@@ -110,7 +110,7 @@ public class CodeGenVisitor
     private BaseCodeGenComponent? _AliasExpr = null;
     protected virtual BaseCodeGenComponent AliasExpr => throw new NotImplementedException();
     private BaseCodeGenComponent? _Declaration = null;
-    protected virtual BaseCodeGenComponent Declaration => new Declaration(this);
+    protected virtual BaseCodeGenComponent Declaration => _Declaration ??= new Declaration(this);
     private BaseCodeGenComponent? _DeclarationModifiersCombined = null;
     protected virtual BaseCodeGenComponent DeclarationModifiersCombined => throw new NotImplementedException();
     private BaseCodeGenComponent? _DeclarationModifier = null;
@@ -120,7 +120,7 @@ public class CodeGenVisitor
     private BaseCodeGenComponent? _FunctionArgDeclModifiersCombined = null;
     protected virtual BaseCodeGenComponent FunctionArgDeclModifiersCombined => throw new NotImplementedException();
     private BaseCodeGenComponent? _AssignmentPrime = null;
-    protected virtual BaseCodeGenComponent AssignmentPrime => throw new NotImplementedException();
+    protected virtual BaseCodeGenComponent AssignmentPrime => _AssignmentPrime ??= new AssignmentPrime(this);
     private BaseCodeGenComponent? _FactorialExpression = null;
     protected virtual BaseCodeGenComponent FactorialExpression => throw new NotImplementedException();
     private BaseCodeGenComponent? _BinaryExpression = null;

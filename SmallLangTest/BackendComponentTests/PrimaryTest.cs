@@ -4,6 +4,7 @@ using SmallLang.Backend.CodeGenComponents;
 using SmallLang.LinearIR;
 
 namespace SmallLangTest.BackendComponentTests;
+
 [TestFixture]
 public class PrimaryTest
 {
@@ -13,6 +14,12 @@ public class PrimaryTest
     const string Float = "0.1;";
     const string True = "true;";
     const string False = "false;";
+    const string Var = "string x = \"hello world\"; SOut(x);";
+    [Test]
+    public void TestPrimary__Variable__Does_Not_Throw()
+    {
+        Assert.That(() => HighToLowLevelCompilerDriver.Compile(Var), Throws.Nothing);
+    }
     [Test]
     public void TestPrimary__Char__OutputToStack__PushesCorrect()
     {

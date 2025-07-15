@@ -76,7 +76,7 @@ public class CodeGenVisitor
     private BaseCodeGenComponent? _ReTypeOriginal = null;
     protected virtual BaseCodeGenComponent ReTypeOriginal => throw new NotImplementedException();
     private BaseCodeGenComponent? _Identifier = null;
-    protected virtual BaseCodeGenComponent Identifier => throw new NotImplementedException();
+    protected virtual BaseCodeGenComponent Identifier => Primary;
     private BaseCodeGenComponent? _Section = null;
     protected virtual BaseCodeGenComponent Section => _Section is null ? _Section = new Section(this) : _Section;
     private BaseCodeGenComponent? _Function = null;

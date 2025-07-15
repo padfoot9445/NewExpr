@@ -8,13 +8,14 @@ namespace SmallLang.Metadata;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
+    Dictionary<VariableName, SmallLangType> VariableNameToType = Functions.Values.FunctionNameToFunctionID.Select(x => TypeData.Data.VoidTypeCode).Zip(Functions.Values.FunctionNameToFunctionID.Keys).Select(x => (new VariableName(x.Second), x.First)).ToDictionary();
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
         return Combine(node.NodeType switch
         {
             ImportantASTNodeType.FunctionCall => FunctionCall,
             ImportantASTNodeType.Section => (x, y) => false,
-            ImportantASTNodeType.Identifier => (x, y) => false,
+            ImportantASTNodeType.Identifier => Primary,
             ImportantASTNodeType.Primary => Primary,
             ImportantASTNodeType.ArgList => (x, y) => false,
             ImportantASTNodeType.ArgListElement => (x, y) => false,
@@ -55,13 +56,19 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     private bool Declaration(Node? parent, Node self)
     {
         var oldattr = self.Attributes;
-        self.Attributes = self.Attributes with { VariableName = new(self.Data!.Lexeme) };
+        self.Attributes = self.Attributes with { VariableName = new(self.Data!.Lexeme), TypeOfExpression = self.Children[0].Attributes.TypeLiteralType };
         bool Changed2 = !(((Scope)parent!.Attributes.VariablesInScope!).Contains(self.Attributes.VariableName));
         if (Changed2)
         {
             parent!.Attributes = parent.Attributes with { VariablesInScope = ((Scope)parent.Attributes.VariablesInScope).Append(self.Attributes.VariableName) };
         }
-        return Changed(oldattr, self.Attributes) || Changed2;
+        bool Changed3 = false;
+        if (!VariableNameToType.ContainsKey(self.Attributes.VariableName) || VariableNameToType[self.Attributes.VariableName] != self.Attributes.TypeOfExpression!)
+        {
+            VariableNameToType[self.Attributes.VariableName] = self.Attributes.TypeOfExpression!;
+            Changed3 = true;
+        }
+        return Changed(oldattr, self.Attributes) || Changed2 || Changed3;
     }
     private bool BaseType(Node? parent, Node self)
     {
@@ -82,24 +89,22 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     private bool Primary(Node? parent, Node self)
     {
         var oldattr = self.Attributes;
-        if (self.Attributes.TypeOfExpression is null)
+        self.Attributes = self.Attributes with
         {
-            self.Attributes = self.Attributes with
-            {
-                TypeOfExpression =
+            TypeOfExpression =
 
-            self.Data!.TT switch
-            {
-                TokenType.String => self.Data.Literal.Length > 3 ? TypeData.Data.StringTypeCode : TypeData.Data.CharTypeCode,
-                TokenType.TrueLiteral => TypeData.Data.BooleanTypeCode,
-                TokenType.FalseLiteral => TypeData.Data.BooleanTypeCode,
-                TokenType.Number => self.Data.Literal.Contains('.') ? TypeData.Data.FloatTypeCode : TypeData.Data.IntTypeCode,
-                _ => throw new Exception($"Unknown primary type {self.Data.TT}"),
-            },
-                VariableName = new(self.Data.Lexeme),
+        self.Data!.TT switch
+        {
+            TokenType.String => self.Data.Literal.Length > 3 ? TypeData.Data.StringTypeCode : TypeData.Data.CharTypeCode,
+            TokenType.TrueLiteral => TypeData.Data.BooleanTypeCode,
+            TokenType.FalseLiteral => TypeData.Data.BooleanTypeCode,
+            TokenType.Number => self.Data.Literal.Contains('.') ? TypeData.Data.FloatTypeCode : TypeData.Data.IntTypeCode,
+            TokenType.Identifier => self.Attributes.VariableName is null ? null : VariableNameToType[self.Attributes.VariableName],
+            _ => throw new Exception($"Unknown primary type {self.Data.TT}"),
+        },
+            VariableName = new(self.Data.Lexeme),
 
-            };
-        }
+        };
         return Changed(oldattr, self.Attributes);
     }
 }

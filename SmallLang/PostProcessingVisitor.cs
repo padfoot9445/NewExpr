@@ -29,6 +29,7 @@ class PostProcessingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribute
             ImportantASTNodeType.AssignmentPrime => (x, y) => false,
             ImportantASTNodeType.DeclarationModifiersCombined => (x, y) => false,
             ImportantASTNodeType.Identifier => (x, y) => false,
+            ImportantASTNodeType.DeclarationModifier => (x, y) => false,
             _ => throw new Exception()
         };
     }

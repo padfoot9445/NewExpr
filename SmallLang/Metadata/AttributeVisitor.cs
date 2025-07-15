@@ -26,6 +26,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
             ImportantASTNodeType.Declaration => Declaration,
             ImportantASTNodeType.AssignmentPrime => (x, y) => false,
             ImportantASTNodeType.DeclarationModifiersCombined => (x, y) => false,
+            ImportantASTNodeType.DeclarationModifier => (x, y) => false,
             _ => throw new Exception(node.NodeType.ToString())
         });
     }

@@ -5,8 +5,10 @@ namespace SmallLang.Backend.CodeGenComponents;
 
 class AssignmentPrime(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
 {
-    public override void GenerateCode(DynamicASTNode<ImportantASTNodeType, Attributes>? parent, DynamicASTNode<ImportantASTNodeType, Attributes> self)
+    public override void GenerateCode(Node? parent, Node self)
     {
-        throw new NotImplementedException();
+        uint register = Driver.VariableNameToRegister[parent!.Attributes.VariableName!];
+        Driver.SetState(true, register, null);
+        Driver.Exec(self, self.Children[0]);
     }
 }

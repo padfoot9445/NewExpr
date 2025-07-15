@@ -23,7 +23,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
             ImportantASTNodeType.GenericType => GenericType,
             ImportantASTNodeType.TypeCSV => (x, y) => false,
             ImportantASTNodeType.BaseType => BaseType,
-            ImportantASTNodeType.Declaration => (x, y) => false,
+            ImportantASTNodeType.Declaration => Declaration,
             ImportantASTNodeType.AssignmentPrime => (x, y) => false,
             ImportantASTNodeType.DeclarationModifiersCombined => (x, y) => false,
             _ => throw new Exception(node.NodeType.ToString())
@@ -31,6 +31,12 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     }
     bool Changed(Attributes oldattr, Attributes newattr) => (oldattr == newattr) is false;
     private bool GenericType(Node? parent, Node self) => BaseType(parent, self);
+    private bool Declaration(Node? parent, Node self)
+    {
+        var oldattr = self.Attributes;
+        self.Attributes = self.Attributes with { VariableName = new(self.Data!.Lexeme) };
+        return Changed(oldattr, self.Attributes);
+    }
     private bool BaseType(Node? parent, Node self)
     {
         var oldattr = self.Attributes;

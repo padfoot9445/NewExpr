@@ -20,15 +20,13 @@ class Declaration : BaseCodeGenComponent
         //doing IsModified is not necessary
         bool HasAssignment = self.Children[^1].NodeType == ImportantASTNodeType.AssignmentPrime;
         Node Type = HasAssignment ? self.Children[^2] : self.Children[^1];
+
+        Driver.VariableNameToRegister[self.Attributes.VariableName!] = Driver.LastUsedRegister + 1;
+        Driver.LastUsedRegister += Type.Attributes.TypeLiteralType!.Size;
         if (HasAssignment)
         {
             Driver.Exec(self, self.Children[^1]);
-            Driver.VariableNameToRegister[self.Attributes.VariableName!] = Driver.OutputRegisters[0];
-        }
-        else
-        {
-            Driver.VariableNameToRegister[self.Attributes.VariableName!] = Driver.LastUsedRegister + 1;
-            Driver.LastUsedRegister += Type.Attributes.TypeLiteralType!.Size;
+            //no need to specify dst register through the driver interface since it should be known what register to put it to via the nametoreg dict which we have just updated.
         }
     }
 }

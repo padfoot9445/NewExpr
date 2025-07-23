@@ -17,6 +17,14 @@ public class TypeData
     {
         return PointerTypes.Contains(type.Value);
     }
+    public bool CanDeclareTo(SmallLangType dst, SmallLangType src)
+    {
+        if (src == VoidTypeCode || dst == VoidTypeCode) return false;
+        if ((src == StringTypeCode || dst == StringTypeCode) && dst != src) return false;
+        if (src.IsRefType || dst.IsRefType) return false;
+        return true; //since all other types are number types
+    }
+
     public static readonly TypeData Data = new();
     private static uint NextTypeCode = 1;
     private static uint GetTypeCode => NextTypeCode++;

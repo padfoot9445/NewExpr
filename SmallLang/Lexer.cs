@@ -3,6 +3,7 @@ using Common.Tokens;
 using sly.lexer;
 
 namespace SmallLang;
+
 public sealed class Lexer(string input) : Scanner(input)
 {
     protected override ICollection<string> StringQuotes => ["\"", "'"];
@@ -116,7 +117,7 @@ public sealed class Lexer(string input) : Scanner(input)
     {
         ILexer<TokenType> lexer = LexerBuilder.BuildLexer<TokenType>().Result;
         var tokens = lexer.Tokenize(input).Tokens.MainTokens().SkipLast(1);
-        var rt = tokens.Select(x => IToken.NewToken(x.TokenID, x.Value, x.Position.Index, x.StringWithoutQuotes)).ToArray();
+        var rt = tokens.Select(x => IToken.NewToken(x.TokenID, x.Value, x.Position.Index, x.StringWithoutQuotes, x.Position.Line)).ToArray();
         for (int i = 0; i < rt.Length; i++)
         {
             var token = rt[i];

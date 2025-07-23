@@ -3,7 +3,7 @@ using SmallLang.Metadata;
 
 namespace SmallLang.Constants;
 
-class TypeData
+public class TypeData
 {
     readonly string[] types;
     private TypeData()

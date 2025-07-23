@@ -60,7 +60,7 @@ public partial class SmallLangParser
         }
         return null;
     }
-    IToken? FromToken(LyToken t) => t.IsEmpty ? null : IToken.NewToken(t.TokenID, t.Value, t.Position.Index, null);
+    IToken? FromToken(LyToken t) => t.IsEmpty ? null : IToken.NewToken(t.TokenID, t.Value, t.Position.Index, null, t.Position.Line);
     [Production($"{nameof(NTSection)}: {nameof(NTStatement)}*")]
     public NodeType NTSection(List<NodeType> Statements)
     {

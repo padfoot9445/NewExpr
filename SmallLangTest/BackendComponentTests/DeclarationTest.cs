@@ -13,7 +13,7 @@ class DeclarationTest
         }
         yield return ("list<[int]>", "new list<[int]>(1,2,3,4,5)");
         yield return ("dict<[int, string]>", "new dict<[int, string]>(1, \"abc\")");
-        yield return ("set<[float]>", "new set<[float]>(1.1, 2, 4)");
+        yield return ("set<[float]>", "new set<[float]>(1.1, 2.0, 4.0)");
         yield return ("array<[int]>", "new array<[int]>(1,2,3)");
         yield return ("dict<[set<[string]>, list<[int]>]>", "new dict<[set<[string]>, list<[int]>]>(new set<[string]>(\"abc\", \"def\"), new list<[int]>(1,2))");
     }

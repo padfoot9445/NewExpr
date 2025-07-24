@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Common.AST;
 using Common.Evaluator;
 using Common.Tokens;
@@ -19,7 +20,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
             ImportantASTNodeType.Primary => Primary,
             ImportantASTNodeType.ArgList => (x, y) => false,
             ImportantASTNodeType.ArgListElement => ArgListElement,
-            ImportantASTNodeType.NewExpr => (x, y) => false,
+            ImportantASTNodeType.NewExpr => NewExpr,
             ImportantASTNodeType.GenericType => GenericType,
             ImportantASTNodeType.TypeCSV => (x, y) => false,
             ImportantASTNodeType.BaseType => BaseType,
@@ -59,6 +60,17 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
         var oldattr = self.Attributes;
         self.Attributes = self.Attributes with { TypeOfExpression = self.Children[0].Attributes.TypeOfExpression };
         return Changed(oldattr, self.Attributes);
+    }
+    bool NewExpr(Node? parent, Node self)
+    {
+        if (self.Children.Count == 1) return false;
+        var args = self.Children[1];
+        var type = self.Children[0].Children[0].Children[0];
+        if (type.Attributes.TypeLiteralType is null) return false;
+        var TType = type.Attributes.TypeLiteralType;
+        var j = args.Children.Where(x => x.Attributes.TypeOfExpression is not null).Where(x => !x.Attributes.TypeOfExpression!.ImplicitCast(TType)).Select(x => new TypeErrorException(TType, x.Attributes.TypeOfExpression!, x.GetLine()));
+        if (!j.Any()) return false;
+        throw j.First();
     }
     private bool ArgListElement(Node? parent, Node self)
     {
@@ -112,7 +124,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
         {
             var x = self.Children[^1].Children.Zip(NN).Where(x => x.First.Attributes.TypeOfExpression is not null).Where(x => x.First.Attributes.TypeOfExpression != x.Second).Select(x => new TypeErrorException(Expected: x.Second, Actual: x.First.Attributes.TypeOfExpression!, x.First.GetLine()));
             //TODO: Log all of x
-            if (x.Count() >= 1)
+            if (x.Any())
             {
                 throw x.First();
             }

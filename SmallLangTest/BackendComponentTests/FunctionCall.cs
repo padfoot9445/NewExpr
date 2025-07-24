@@ -5,6 +5,7 @@ using SmallLang.CsIntepreter;
 using SmallLang.LinearIR;
 
 namespace SmallLangTest.BackendComponentTests;
+
 [TestFixture]
 public class FunctionCall
 {
@@ -39,7 +40,7 @@ public class FunctionCall
     public void SOutFunctionCall__WrongArgs__Throws()
     {
 
-        Assert.Throws<ExpaException>(() => HighToLowLevelCompilerDriver.Compile("SOut(1);", () => new FunctionCallDriverMock(false)));
+        Assert.Throws<TypeErrorException>(() => HighToLowLevelCompilerDriver.Compile("SOut(1);", () => new FunctionCallDriverMock(false)));
     }
     [Test]
     public void SOutFunctionCall__RightArgs__DoesNotThrow()

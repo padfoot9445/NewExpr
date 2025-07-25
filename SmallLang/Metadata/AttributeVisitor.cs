@@ -65,10 +65,10 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     {
         if (self.Children.Count == 1) return false;
         var args = self.Children[1];
-        var type = self.Children[0].Children[0].Children[0];
-        if (type.Attributes.TypeLiteralType is null) return false;
-        var TType = type.Attributes.TypeLiteralType;
-        var j = args.Children.Where(x => x.Attributes.TypeOfExpression is not null).Where(x => !x.Attributes.TypeOfExpression!.ImplicitCast(TType)).Select(x => new TypeErrorException(TType, x.Attributes.TypeOfExpression!, x.GetLine()));
+        var types = self.Children[0].Children[0].Children;
+        if (types.Any(x => x.Attributes.TypeLiteralType is null)) return false;
+        var TTypes = types.Select(x => x.Attributes.TypeLiteralType!).ToArray();
+        var j = args.Children.Where(x => x.Attributes.TypeOfExpression is not null).Select((x, i) => (Node: x, IsValid: x.Attributes.TypeOfExpression!.ImplicitCast(TTypes[i % TTypes.Length]), Expected: TTypes[i % TTypes.Length])).Where(x => x.IsValid is false).Select(x => (x.Node, x.Expected)).Select(x => new TypeErrorException(x.Expected, x.Node.Attributes.TypeOfExpression!, x.Node.GetLine()));
         if (!j.Any()) return false;
         throw j.First();
     }

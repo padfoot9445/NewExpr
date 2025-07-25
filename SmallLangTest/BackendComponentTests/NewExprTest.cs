@@ -52,7 +52,7 @@ public class NewExprTest
     {
         if (GenericType == "dict" && Init == true) Assert.Pass();
         string Type = OuterGeneric == "" ? $"{GenericType}<[{V.NestedType}]>" : $"{OuterGeneric}<[{GenericType}<[{V.NestedType}]>]>";
-        string Program = $"new {Type}({(Init ? V.Values : "")});";
+        string Program = OuterGeneric == "" ? $"new {Type}({(Init ? V.Values : "")});" : $"new {Type}({(Init ? $"new {GenericType}<[{V.NestedType}]>({V.Values})" : "")});";
         Assert.DoesNotThrow(() => HighToLowLevelCompilerDriver.Compile(Program));
     }
     // [Ignore("Takes a fucking long time")]

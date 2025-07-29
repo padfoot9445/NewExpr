@@ -4,3 +4,5 @@ must remember to handle closures, although currently we might well just not supp
 optimise registers later. 
 
 Make sure that the option to specify which register to load to is only used when we know for a fact there's enough space at that register-hole
+
+allow everything to be implicit casted to bool I reckon

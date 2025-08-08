@@ -3,14 +3,14 @@ using System.Numerics;
 
 namespace Common.LinearIR;
 
-public abstract class Chunks<T, C> : IChunks<T> where T : INumber<T> where C : IChunk<T>, new()
+public abstract class Chunks<T, C, TOpcode> : IChunks<TOpcode, T> where T : INumber<T> where C : IChunk<TOpcode, T>, new()
 {
-    private readonly List<IChunk<T>> chunks = [new C()];
-    public IChunk<T> this[int index] => chunks[index];
+    private readonly List<IChunk<TOpcode, T>> chunks = [new C()];
+    public IChunk<TOpcode, T> this[int index] => chunks[index];
 
-    public IChunk<T> CurrentChunk => chunks[^1];
+    public IChunk<TOpcode, T> CurrentChunk => chunks[^1];
 
-    public IEnumerator<IChunk<T>> GetEnumerator()
+    public IEnumerator<IChunk<TOpcode, T>> GetEnumerator()
     {
         return chunks.GetEnumerator();
     }

@@ -2,9 +2,9 @@ using System.Numerics;
 
 namespace Common.LinearIR;
 
-public interface IChunks<T> : IEnumerable<IChunk<T>> where T : INumber<T>
+public interface IChunks<TOpcode, T> : IEnumerable<IChunk<TOpcode, T>> where T : INumber<T>
 {
-    public IChunk<T> this[int index] { get; }
+    public IChunk<TOpcode, T> this[int index] { get; }
     public void NewChunk();
-    public IChunk<T> CurrentChunk { get; }
+    public IChunk<TOpcode, T> CurrentChunk { get; }
 }

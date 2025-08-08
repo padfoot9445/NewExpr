@@ -24,6 +24,7 @@ Strategy:
         Chunk CurrentChunk => Sections[^1];
         Hashset<uint> UsedVariableSlots { get; } = new();
         Dictionary<VariableName, uint> NameToVariableSlotDict = new();
+        Rom = new();
     VariableOptimisation -- not supported for now ig
         For every Chunk: //this works if for every path from root chunk to leaf chunk there is no conditional; i.e. each chunk ends at the branch.
             Identify External Variables (used but not declared in that section)

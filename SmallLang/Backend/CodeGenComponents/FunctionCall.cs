@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Common.AST;
+using SmallLang.LinearIR;
 using SmallLang.Metadata;
 using static SmallLang.LinearIR.Opcode;
 namespace SmallLang.Backend.CodeGenComponents;
@@ -34,7 +35,7 @@ class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
             Debug.Assert(Function.Data is not null);
             if (Driver.OutputToRegister)
             {
-                Emit(ICallR, FunctionID, GetDestRegister());
+                Emit(ICallR, FunctionID, (GenericNumberWrapper)GetDestRegister());
             }
             Emit(ICallS, FunctionID);
         }

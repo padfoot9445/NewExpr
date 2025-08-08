@@ -1,8 +1,9 @@
 using Common.LinearIR;
 
 namespace SmallLang.LinearIR;
-
-class Chunks : Chunks<BackingNumberType, Chunk>
+#pragma warning disable IDE0001
+class Chunks : Common.LinearIR.Chunks<BackingNumberType, Chunk, Opcode>
+#pragma warning restore IDE0001
 {
 
 }

@@ -1,8 +1,9 @@
 using SmallLang.Constants;
+using SmallLang.LinearIR;
 
 namespace SmallLang.Metadata;
 
-public record class SmallLangType(uint Value, string Name, bool IsRefType = false, uint Size = 1, bool IsNum = false) : BaseUIntWrapper(Value)
+public record class SmallLangType(uint BaseValue, string Name, bool IsRefType = false, uint Size = 1, bool IsNum = false) : GenericNumberWrapper(BaseValue)
 {
     public bool CanDeclareTo(SmallLangType other)
     {

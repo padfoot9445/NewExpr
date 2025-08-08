@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Numerics;
 using Common.AST;
 using Common.LinearIR;
 using SmallLang.Constants;
@@ -37,14 +38,15 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
     protected SmallLangType BooleanTypeCode => TypeData.Data.BooleanTypeCode;
     protected SmallLangType RationalTypeCode => TypeData.Data.RationalTypeCode;
     protected int TypeCodeOffsetInHeader => TypeData.Data.TypeCodeOffsetInHeader;
-    protected void Emit(Opcode Op) => Emit(Op, new uint[0]);
-    protected void Emit(Opcode Op, params uint[] args) => Emit(Op, args.Select(x => (UIntOpArg)x).ToArray());
-    protected void Emit(Opcode Op, params IOperationArgument<uint>[] args) => Emit(new Operation<uint>(new OpcodeWrapper(Op), args));
-    protected void Emit(Operation<uint> Instruction)
+    protected void Emit(Opcode Op) => Emit(Op, []);
+    protected void Emit<T>(Opcode Op, params GenericOperationArgument<BackingNumberType, T>[] args) => Emit(Op, args.Select(x => x).ToArray());
+    protected void Emit(Opcode Op, params GenericNumberWrapper[] args) => Emit(Op, args.Select(x => x).ToArray());
+    protected void Emit(Opcode Op, params IOperationArgument<BackingNumberType>[] args) => Emit(new Operation<Opcode, BackingNumberType>(new OpcodeWrapper(Op), args));
+    protected void Emit(Operation<Opcode, BackingNumberType> Instruction)
     {
         Driver.Instructions.Add(Instruction);
     }
-    protected uint WriteStaticData(SmallLangType Typecode, uint[] Data) => WriteStaticData((ushort)Typecode.Value, (ushort)Data.Length, Data);
+    protected uint WriteStaticData(SmallLangType Typecode, uint[] Data) => WriteStaticData((ushort)Typecode.BackingValue, (ushort)Data.Length, Data);
     protected uint WriteStaticData(ushort Typecode, ushort WordLength, uint[] Data)
     {
         uint Header = (uint)((Typecode << TypeCodeOffsetInHeader) | WordLength);
@@ -82,16 +84,17 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
     }
     protected uint? LoadValue(uint Val)
     {
-        if (Driver.OutputToRegister)
-        {
-            Emit(Opcode.LoadI, Val, GetDestRegister());
-            return Driver.DestinationRegister ?? Driver.LastUsedRegister;
-        }
-        else
-        {
-            Emit(Opcode.PushI, Val);
-            return null;
-        }
+        throw new NotImplementedException();
+        // if (Driver.OutputToRegister)
+        // {
+        //     Emit(Opcode.LoadI, Val, GetDestRegister());
+        //     return Driver.DestinationRegister ?? Driver.LastUsedRegister;
+        // }
+        // else
+        // {
+        //     Emit(Opcode.PushI, Val);
+        //     return null;
+        // }
     }
     protected void PushArgsToStack(Node? Arguments, Node self)
     {

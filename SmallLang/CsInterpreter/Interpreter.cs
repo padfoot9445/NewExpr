@@ -5,29 +5,31 @@ using Common.LinearIR;
 using SmallLang.LinearIR;
 
 namespace SmallLang.CsIntepreter;
-public class Interpreter(Operation<uint>[] Operations, uint[] Data, TextReader reader, TextWriter writer)
+
+public class Interpreter(Operation<Opcode, BackingNumberType>[] Operations, uint[] Data, TextReader reader, TextWriter writer)
 {
-    readonly Stack<uint> Stack = new Stack<uint>();
+    readonly Stack<BackingNumberType> Stack = new Stack<BackingNumberType>();
     Dictionary<uint, uint> Registers = new();
     List<uint> RAM = new();
     const uint RamPointerBit = ((uint)1) << 31;
     public void Interpret()
     {
+        throw new NotImplementedException();
         foreach (var Op in Operations)
         {
-            switch ((Opcode)Op.Op.Value)
+            switch ((Opcode)Op.Op.BackingValue)
             {
                 case Opcode.ICallS:
-                    CallStdLibFunctions(Op.Operands[0].Value);
+                    CallStdLibFunctions(Op.Operands[0].Value.ToArray());
                     break;
                 case Opcode.SCallS:
                     CallStdLibFunctions(Stack.Pop());
                     break;
                 case Opcode.LoadI:
-                    Registers[Op.Operands[0].Value] = Op.Operands[1].Value;
+                    Registers[Op.Operands[0].Value.Last()] = Op.Operands[1].Value.Last();
                     break;
                 case Opcode.PushI:
-                    Stack.Push(Op.Operands[0].Value);
+                    Stack.Push(Op.Operands[0].Value.Last());
                     break;
                 case Opcode.ICallR:
                     throw new NotImplementedException();
@@ -107,9 +109,9 @@ public class Interpreter(Operation<uint>[] Operations, uint[] Data, TextReader r
             RAM[i] = Section[i - Ptr];
         }
     }
-    void CallStdLibFunctions(uint FunctionID)
+    void CallStdLibFunctions(params byte[] FunctionID)
     {
-        switch (FunctionID)
+        switch (FunctionID.Last())
         {
             case 1:
                 StdLibFunctions__Input();
@@ -125,7 +127,7 @@ public class Interpreter(Operation<uint>[] Operations, uint[] Data, TextReader r
         string inp = reader.ReadLine()!;
         uint Ptr = Alloc();
         WriteRam(EncodeString(inp), Ptr);
-        Stack.Push(Ptr | RamPointerBit);
+        Stack.Push((byte)(Ptr | RamPointerBit));
     }
     void StdLibFunctions__Output()
     {

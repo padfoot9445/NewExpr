@@ -10,13 +10,13 @@ public class TypeData
     private TypeData()
     {
         Types = [VoidTypeCode, StringTypeCode, FloatTypeCode, IntTypeCode, DoubleTypeCode, NumberTypeCode, LongTypeCode, LongintTypeCode, ByteTypeCode, CharTypeCode, BooleanTypeCode, RationalTypeCode, ArrayTypeCode, ListTypeCode, SetTypeCode, DictTypeCode];
-        PointerTypes = Types.Select(x => x).Where(x => x.IsRefType).Select(x => x.Value).ToHashSet();
+        PointerTypes = Types.Select(x => x).Where(x => x.IsRefType).Select(x => x.BackingValue).ToHashSet();
         types = Types.Select(x => x.Name).ToArray();
         GetTypeFromTypeName = Types.ToDictionary(x => x.Name);
     }
     public bool IsPointerType(SmallLangType type)
     {
-        return PointerTypes.Contains(type.Value);
+        return PointerTypes.Contains(type.BackingValue);
     }
     public bool CanDeclareTo(SmallLangType dst, SmallLangType src)
     {

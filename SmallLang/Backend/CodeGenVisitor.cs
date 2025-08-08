@@ -3,6 +3,7 @@ using System.Xml;
 using Common.AST;
 using Common.LinearIR;
 using SmallLang.Backend.CodeGenComponents;
+using SmallLang.LinearIR;
 using SmallLang.Metadata;
 
 namespace SmallLang.Backend;
@@ -14,7 +15,7 @@ public class CodeGenVisitor
     public virtual bool OutputToRegister { get; set; } = true;
     public virtual uint? DestinationRegister { get; set; }
     public uint LastUsedRegister { get; set; } = 0;
-    public List<Operation<uint>> Instructions = [];
+    public List<Operation<Opcode, BackingNumberType>> Instructions = [];
     public List<uint> StaticData = [];
     public Dictionary<VariableName, uint> VariableNameToRegister = [];
     //public Dictionary<VariableName, VariableModifiers> VariableNameToModifiers = [];

@@ -1,6 +1,6 @@
 namespace SmallLang.LinearIR;
 
-public enum Opcode
+public enum Opcode : OpcodeBackingType
 {
     ICallS, //ICallS FunctionID #arguments are in the stack, Function ID immediate. Returns value to the stack. Stack: [Arg1, Arg2...] -> Stack:[Retval]
     SCallS, //SCall #Stack: [FunctionID, Arg1, Arg2...] -> Stack:[Retval]

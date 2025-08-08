@@ -1,13 +1,14 @@
 using Common.Evaluator;
 using Common.LinearIR;
 using SmallLang.Backend;
+using SmallLang.LinearIR;
 using SmallLang.Metadata;
 
 namespace SmallLang;
 
 public class HighToLowLevelCompilerDriver
 {
-    public static (Operation<uint>[], uint[]) Compile(string Code, Func<CodeGenVisitor>? GetCodeGenVisitor = null)
+    public static (Operation<Opcode, BackingNumberType>[], uint[]) Compile(string Code, Func<CodeGenVisitor>? GetCodeGenVisitor = null)
     {
         GetCodeGenVisitor ??= () => new CodeGenVisitor();
         var Ast = new Parser.Parser(Code).Parse();

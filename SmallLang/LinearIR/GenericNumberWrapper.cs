@@ -1,15 +1,17 @@
+using System.Numerics;
 using Common.LinearIR;
 
 namespace SmallLang.LinearIR;
 
-public record class GenericNumberWrapper : NumberWrapper<OpcodeBackingType, BackingNumberType>
+public record class GenericNumberWrapper<TActual> : NumberWrapper<TActual, BackingNumberType>
+where TActual : IBinaryInteger<TActual>, IMinMaxValue<TActual>
 {
-    public GenericNumberWrapper(uint BackingValue) : base(BackingValue)
+    public GenericNumberWrapper(TActual BackingValue) : base(BackingValue)
     {
     }
 
-    protected GenericNumberWrapper(NumberWrapper<uint, byte> original) : base(original)
+    protected GenericNumberWrapper(NumberWrapper<TActual, BackingNumberType> original) : base(original)
     {
     }
-    public static implicit operator GenericNumberWrapper(uint other) => new(other);
+    public static implicit operator GenericNumberWrapper<TActual>(TActual other) => new(other);
 }

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reflection.Emit;
 using Common.AST;
+using Common.LinearIR;
 using SmallLang.Backend.CodeGenComponents;
 using SmallLang.Constants;
 using SmallLang.LinearIR;
@@ -31,11 +32,11 @@ class NewExpr : BaseCodeGenComponent
         Opcode[] opcodecandidates = IsPointer ? [Opcode.NewPR, Opcode.NewPS] : [Opcode.NewDR, Opcode.NewDS];
         if (Driver.OutputToRegister)
         {
-            Emit(opcodecandidates[0], type.Attributes.TypeLiteralType!, (uint)Count, GetDestRegister());
+            Emit<uint, uint, uint>(opcodecandidates[0], type.Attributes.TypeLiteralType!, (uint)Count, GetDestRegister());
         }
         else
         {
-            Emit(opcodecandidates[1], type.Attributes.TypeLiteralType!, (uint)Count);
+            Emit<uint, uint>(opcodecandidates[1], type.Attributes.TypeLiteralType!, (uint)Count);
         }
     }
 }

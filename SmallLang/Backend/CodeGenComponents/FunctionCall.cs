@@ -35,7 +35,7 @@ class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
             Debug.Assert(Function.Data is not null);
             if (Driver.OutputToRegister)
             {
-                Emit(ICallR, FunctionID, (GenericNumberWrapper)GetDestRegister());
+                Emit(ICallR, FunctionID, (GenericNumberWrapper<uint>)GetDestRegister());
             }
             Emit(ICallS, FunctionID);
         }

@@ -40,7 +40,25 @@ public abstract class BaseCodeGenComponent(CodeGenVisitor driver)
     protected int TypeCodeOffsetInHeader => TypeData.Data.TypeCodeOffsetInHeader;
     protected void Emit(Opcode Op) => Emit(Op, []);
     protected void Emit<T>(Opcode Op, params GenericOperationArgument<BackingNumberType, T>[] args) => Emit(Op, args.Select(x => x).ToArray());
-    protected void Emit(Opcode Op, params GenericNumberWrapper[] args) => Emit(Op, args.Select(x => x).ToArray());
+    protected void Emit<T1>(Opcode Op, GenericNumberWrapper<T1> a1)
+    where T1 : IBinaryInteger<T1>, IMinMaxValue<T1>
+    => Emit(Op, a1);
+    protected void Emit<T1, T2>(Opcode Op, GenericNumberWrapper<T1> a1, GenericNumberWrapper<T2> a2)
+    where T1 : IBinaryInteger<T1>, IMinMaxValue<T1>
+    where T2 : IBinaryInteger<T2>, IMinMaxValue<T2>
+    => Emit(Op, a1, a2);
+    // protected void Emit<T1>(Opcode Op, T1 a1)
+    // where T1 : IBinaryInteger<T1>, IMinMaxValue<T1>
+    // => Emit(Op, a1);
+    // protected void Emit<T1, T2>(Opcode Op, T1 a1, T2 a2)
+    // where T1 : IBinaryInteger<T1>, IMinMaxValue<T1>
+    // where T2 : IBinaryInteger<T2>, IMinMaxValue<T2>
+    // => Emit(Op, a1, a2);
+    protected void Emit<T1, T2, T3>(Opcode Op, GenericNumberWrapper<T1> a1, GenericNumberWrapper<T2> a2, GenericNumberWrapper<T3> a3)
+    where T1 : IBinaryInteger<T1>, IMinMaxValue<T1>
+    where T2 : IBinaryInteger<T2>, IMinMaxValue<T2>
+    where T3 : IBinaryInteger<T3>, IMinMaxValue<T3>
+    => Emit(Op, a1, a2, a3);
     protected void Emit(Opcode Op, params IOperationArgument<BackingNumberType>[] args) => Emit(new Operation<Opcode, BackingNumberType>(new OpcodeWrapper(Op), args));
     protected void Emit(Operation<Opcode, BackingNumberType> Instruction)
     {

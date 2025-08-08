@@ -3,7 +3,7 @@ using SmallLang.LinearIR;
 
 namespace SmallLang.Metadata;
 
-public record class SmallLangType(uint BaseValue, string Name, bool IsRefType = false, uint Size = 1, bool IsNum = false) : GenericNumberWrapper(BaseValue)
+public record class SmallLangType(uint BaseValue, string Name, bool IsRefType = false, uint Size = 1, bool IsNum = false) : GenericNumberWrapper<uint>(BaseValue)
 {
     public bool CanDeclareTo(SmallLangType other)
     {

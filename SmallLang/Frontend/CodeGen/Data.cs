@@ -3,7 +3,7 @@ using Common.LinearIR;
 using Common.Metadata;
 using SmallLang.LinearIR;
 
-namespace SmallLang;
+namespace SmallLang.Frontend.CodeGen;
 
 record class Data
 {

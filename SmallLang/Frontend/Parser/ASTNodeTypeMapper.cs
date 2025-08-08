@@ -1,4 +1,5 @@
-namespace SmallLang.Parser;
+namespace SmallLang.Frontend.Parser;
+
 static class ASTNodeTypeMapper
 {
     public static ImportantASTNodeType ToImportant(this ASTNodeType NodeType)

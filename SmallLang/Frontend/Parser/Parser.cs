@@ -1,6 +1,6 @@
-using SmallLang.Metadata;
+using SmallLang.Frontend.ASTVisitors;
 
-namespace SmallLang.Parser;
+namespace SmallLang.Frontend.Parser;
 
 using System.Text;
 using Common.AST;

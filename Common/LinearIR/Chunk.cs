@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace Common.LinearIR;
 
-class Chunk<T> : IChunk<T> where T : INumber<T>
+public abstract class Chunk<T> : IChunk<T> where T : INumber<T>
 {
     private readonly List<Operation<T>> operations = [];
 

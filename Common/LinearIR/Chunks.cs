@@ -3,9 +3,9 @@ using System.Numerics;
 
 namespace Common.LinearIR;
 
-class Chunks<T> : IChunks<T> where T : INumber<T>
+public abstract class Chunks<T, C> : IChunks<T> where T : INumber<T> where C : IChunk<T>, new()
 {
-    private readonly List<IChunk<T>> chunks = [new Chunk<T>()];
+    private readonly List<IChunk<T>> chunks = [new C()];
     public IChunk<T> this[int index] => chunks[index];
 
     public IChunk<T> CurrentChunk => chunks[^1];
@@ -17,7 +17,7 @@ class Chunks<T> : IChunks<T> where T : INumber<T>
 
     public void NewChunk()
     {
-        chunks.Add(new Chunk<T>());
+        chunks.Add(new C());
     }
 
     IEnumerator IEnumerable.GetEnumerator()

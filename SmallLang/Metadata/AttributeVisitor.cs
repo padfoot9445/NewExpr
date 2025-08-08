@@ -3,7 +3,6 @@ using Common.AST;
 using Common.Evaluator;
 using Common.Metadata;
 using Common.Tokens;
-using SmallLang.Backend.CodeGenComponents;
 using SmallLang.Constants;
 namespace SmallLang.Metadata;
 

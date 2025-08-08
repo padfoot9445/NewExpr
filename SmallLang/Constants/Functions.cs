@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Common.Metadata;
-using SmallLang.Backend.CodeGenComponents;
 using SmallLang.Metadata;
 
 namespace SmallLang.Constants;

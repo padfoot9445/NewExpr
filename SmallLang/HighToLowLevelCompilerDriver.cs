@@ -1,15 +1,15 @@
 using Common.Evaluator;
 using Common.LinearIR;
-using SmallLang.Backend;
 using SmallLang.LinearIR;
 using SmallLang.Metadata;
 
 namespace SmallLang;
-
+#if false
 public class HighToLowLevelCompilerDriver
 {
     public static (Operation<Opcode, BackingNumberType>[], uint[]) Compile(string Code, Func<CodeGenVisitor>? GetCodeGenVisitor = null)
     {
+        throw new NotImplementedException();
         GetCodeGenVisitor ??= () => new CodeGenVisitor();
         var Ast = new Parser.Parser(Code).Parse();
         var Evaluator = new DynamicASTEvaluator();
@@ -22,3 +22,4 @@ public class HighToLowLevelCompilerDriver
         return (Generator.Instructions.ToArray(), Generator.StaticData.ToArray());
     }
 }
+#endif

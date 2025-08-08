@@ -5,7 +5,7 @@ using SmallLang.LinearIR;
 
 namespace SmallLang.Frontend.CodeGen;
 
-record class Data
+public record class Data
 {
     public Chunks Sections { get; init; } = new();
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> VariableSlots = new();

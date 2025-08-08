@@ -2,7 +2,7 @@ using Common.LinearIR;
 
 namespace SmallLang.LinearIR;
 
-class Chunk : Chunk<Opcode, BackingNumberType>
+public class Chunk : Chunk<Opcode, BackingNumberType>
 {
 
 }

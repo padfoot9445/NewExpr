@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Common.AST;
 using Common.Evaluator;
+using Common.Metadata;
 using Common.Tokens;
 using SmallLang.Backend.CodeGenComponents;
 using SmallLang.Constants;
@@ -116,7 +117,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     }
     private bool FunctionCall(Node? parent, Node self)
     {
-        FunctionID ID = Functions.Values.FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
+        FunctionID<BackingNumberType> ID = Functions.Values.FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
         SmallLangType RetType = Functions.Values.FunctionToRetType[ID];
         var oldattr = self.Attributes;
         self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = Functions.Values.FunctionToFunctionArgs[ID], TypeOfExpression = RetType };

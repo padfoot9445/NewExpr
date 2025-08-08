@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Common.Metadata;
 using SmallLang.Backend.CodeGenComponents;
 using SmallLang.Metadata;
 
@@ -39,17 +40,17 @@ class Functions
         Values = new Functions();
     }
     public readonly List<FunctionSignature> Signatures = new();
-    public Dictionary<FunctionID, List<SmallLangType>> FunctionToFunctionArgs = new()
+    public Dictionary<FunctionID<BackingNumberType>, List<SmallLangType>> FunctionToFunctionArgs = new()
     {
         [new(1)] = [],
         [new(2)] = [TypeData.Data.StringTypeCode]
     };
-    public Dictionary<FunctionID, SmallLangType> FunctionToRetType = new()
+    public Dictionary<FunctionID<BackingNumberType>, SmallLangType> FunctionToRetType = new()
     {
         [new(1)] = TypeData.Data.StringTypeCode,
         [new(2)] = TypeData.Data.VoidTypeCode,
     };
-    public Dictionary<string, FunctionID> FunctionNameToFunctionID = new()
+    public Dictionary<string, FunctionID<BackingNumberType>> FunctionNameToFunctionID = new()
     {
         ["input"] = new(1),
         ["SOut"] = new(2),

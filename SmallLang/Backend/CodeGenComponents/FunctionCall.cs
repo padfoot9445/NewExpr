@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Common.AST;
+using Common.Metadata;
 using SmallLang.LinearIR;
 using SmallLang.Metadata;
 using static SmallLang.LinearIR.Opcode;
@@ -29,7 +30,7 @@ class FunctionCall(CodeGenVisitor driver) : BaseCodeGenComponent(driver)
         Node? Arguments = self.Children.Count == 2 ? self.Children[1] : null;
         CheckArgTypes(Arguments, self);
         PushArgsToStack(Arguments, self);
-        FunctionID FunctionID = self.Attributes.FunctionID ?? throw new Exception();
+        FunctionID<BackingNumberType> FunctionID = self.Attributes.FunctionID ?? throw new Exception();
         if (Function.NodeType == ImportantASTNodeType.FunctionIdentifier)
         {
             Debug.Assert(Function.Data is not null);

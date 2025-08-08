@@ -3,7 +3,7 @@ using System.Numerics;
 namespace Common.LinearIR;
 
 public record class NumberWrapper<T, TBacking> : GenericOperationArgument<TBacking, T>
-where T : IBinaryInteger<T>, IMinMaxValue<T>, IUnsignedNumber<T>
+where T : IBinaryInteger<T>, IMinMaxValue<T>
 where TBacking : IBinaryInteger<TBacking>, IMinMaxValue<TBacking>
 {
     public NumberWrapper(T BackingValue) : base(BackingValue)

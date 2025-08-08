@@ -9,10 +9,10 @@ class Functions
 {
     private Functions()
     {
-        List<FunctionSignature> signatures = new();
+        List<FunctionSignature<BackingNumberType, SmallLangType>> signatures = new();
         ReadJson(signatures);
     }
-    static void ReadJson(List<FunctionSignature> Signatures)
+    static void ReadJson(List<FunctionSignature<BackingNumberType, SmallLangType>> Signatures)
     {
         var filecontent = File.ReadAllText(@"C:\Users\User\coding\nostars\Expa\NewExpr\SmallLang\Constants\Functions.json");
         using (var document = JsonDocument.Parse(filecontent))
@@ -24,14 +24,14 @@ class Functions
             }
         }
     }
-    static FunctionSignature GetFSFromJson(JsonElement FE)
+    static FunctionSignature<BackingNumberType, SmallLangType> GetFSFromJson(JsonElement FE)
     {
         var Args = FE.GetProperty("arguments").EnumerateArray().Select(x => TypeData.Data.GetTypeFromTypeName[x.GetString()!]).ToList();
         return new(
             Name: FE.GetProperty("name").GetString()!,
             ID: new(FE.GetProperty("ID").GetUInt32()),
             RetVal: TypeData.Data.GetTypeFromTypeName[FE.GetProperty("returns").GetString()!],
-            ArgTypes: Args
+            ArgTypes: Args.Select(x => (IMetadataTypes<SmallLangType>)x).ToList()
         );
     }
     public static readonly Functions Values;
@@ -39,7 +39,7 @@ class Functions
     {
         Values = new Functions();
     }
-    public readonly List<FunctionSignature> Signatures = new();
+    public readonly List<FunctionSignature<BackingNumberType, SmallLangType>> Signatures = new();
     public Dictionary<FunctionID<BackingNumberType>, List<SmallLangType>> FunctionToFunctionArgs = new()
     {
         [new(1)] = [],

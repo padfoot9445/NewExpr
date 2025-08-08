@@ -1,12 +1,16 @@
 using System.Collections;
-
+using System.Numerics;
 namespace Common.LinearIR;
 
-public record class StaticDataArea<T> : IList<T>
+using Common.Metadata;
+
+public record class DataCollection<T> : IList<T>
+where T : IBinaryInteger<T>, IMinMaxValue<T>
 {
     private readonly List<T> Data = new();
+    T IList<T>.this[int index] { get => this[new Pointer<T>(index)]; set => this[new Pointer<T>(index)] = value; }
 
-    public T this[int index] { get => Data[index]; set => Data[index] = value; }
+    public T this[Pointer<T> index] { get => Data[index.BackingValue]; set => Data[index.BackingValue] = value; }
 
     public int Count => Data.Count;
 

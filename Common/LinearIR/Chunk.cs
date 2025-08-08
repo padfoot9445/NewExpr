@@ -5,7 +5,7 @@ namespace Common.LinearIR;
 
 class Chunk<T> : IChunk<T> where T : INumber<T>
 {
-    private List<Operation<T>> operations = [];
+    private readonly List<Operation<T>> operations = [];
 
     public Operation<T> this[int index] => operations[index];
 

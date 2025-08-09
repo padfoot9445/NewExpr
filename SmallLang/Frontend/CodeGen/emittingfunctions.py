@@ -40,7 +40,7 @@ public partial class CodeGenerator
     , file=file) #header
     for j in range(1, AMOUNT + 1):
         generics = get_generics(j)
-        print(f"\tvoid Emit<{", ".join(generics)}>({get_params(generics)})", file=file)
+        print(f"{TAB}void Emit<{", ".join(generics)}>({get_params(generics)})", file=file)
         print(TAB + f"\n{TAB}".join(get_constraint(i) for i in generics), file=file)
         print(TAB * 2 + f"=> Emit({get_arguments(generics)});",file=file)
     print("}",file=file)

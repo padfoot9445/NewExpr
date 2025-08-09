@@ -54,7 +54,7 @@ Strategy:
             Primary
             NEXT
     Function: [Type Identifier (TypeAndIdentifierCSV) Statement]
-        ENTERING CHUNK //should have a JMP CHUNK1
+        ENTERING CHUNK //should not have a jump CHUNK1
         Make new chunk of Data CHUNK1
             compile statement
             Store Function in dict in analyser

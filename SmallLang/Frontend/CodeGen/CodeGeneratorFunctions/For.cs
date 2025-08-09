@@ -9,7 +9,9 @@ public partial class CodeGenerator
 {
     private void ParseFor(Node Self)
     {
-        Node Statement = Self.Children[3].NodeType == ImportantASTNodeType.LoopLabel ? Self.Children[4] : Self.Children[3];
+        bool HasLabel = Self.Children[3].NodeType == ImportantASTNodeType.LoopLabel;
+        Node Statement = HasLabel ? Self.Children[4] : Self.Children[3];
+        Node? Else = Self.Children.Count == (HasLabel ? 6 : 5) ? Self.Children[^1] : null;
         //[expression, expression, expression, Label?, statement, else as Statement?]
         Verify(Self, ImportantASTNodeType.For);
         SETCHUNK();
@@ -30,7 +32,14 @@ public partial class CodeGenerator
 
         //CHUNK3
         NewChunk();
+        if (Else is not null)
+        {
+            DynamicDispatch(Else);
+        }
+        Emit(JMP, ACHUNK(4));
 
+        //CHUNK4
+        NewChunk();
         data.LoopData[(LoopGUID)Self.Attributes.LoopGUID!] = (ACHUNK(2), ACHUNK(3));
     }
 }

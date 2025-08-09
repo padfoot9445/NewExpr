@@ -91,6 +91,7 @@ Strategy:
         In static analyser:
             assign a guid
         ENTERING CHUNK
+            JMP CHUNK1
         make new chunk CHUNK1
             Compile Expression1
             BRCH Chunk2 Chunk3

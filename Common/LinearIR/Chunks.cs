@@ -9,6 +9,7 @@ public abstract class Chunks<T, C, TOpcode> : IChunks<TOpcode, T> where T : INum
     public IChunk<TOpcode, T> this[int index] => chunks[index];
 
     public IChunk<TOpcode, T> CurrentChunk => chunks[^1];
+    public int CurrentChunkPtr => chunks.Count;
 
     public IEnumerator<IChunk<TOpcode, T>> GetEnumerator()
     {

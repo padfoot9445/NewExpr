@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using Common.Backend;
+using static SmallLang.ImportantASTNodeType;
 
 namespace SmallLang.Frontend.CodeGen;
 
@@ -14,4 +16,9 @@ public partial class CodeGenerator(Node RootNode)
     {
         Debug.Assert(node.NodeType == Expected);
     }
+    private void DynamicDispatch(Node node) =>
+    Common.Backend.CodeGenerator.Dispatch(node,
+
+    (Section, ParseSection)
+    );
 }

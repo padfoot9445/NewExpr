@@ -81,7 +81,7 @@ Strategy:
         make new chunk CHUNK 3
             NEXT
         Assign to dictionary: guid: (CHUNK1 index, CHUNK3 index) //continue, break
-    Else: [Statement]
+    Else: [Statement] //DOES NOT EXIST //TODO: While, If, For need custom else handlers as follows
         ENTERING CHUNK
             Compile Statement1
             JMP CHUNK1

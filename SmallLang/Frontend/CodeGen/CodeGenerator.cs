@@ -6,6 +6,7 @@ namespace SmallLang.Frontend.CodeGen;
 
 public partial class CodeGenerator(Node RootNode)
 {
+    readonly OpcodeCodeEmitter Emitter = new();
     private readonly Data data = new();
     public Data Parse()
     {
@@ -19,7 +20,8 @@ public partial class CodeGenerator(Node RootNode)
     private void DynamicDispatch(Node node) =>
     Common.Backend.CodeGenerator.Dispatch(node,
 
-    (Section, ParseSection)
+    (Section, ParseSection),
     //TODO: Activate (Identifier, ParsePrimary)
+    (Function, ParseFunction)
     );
 }

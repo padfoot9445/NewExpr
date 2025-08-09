@@ -18,7 +18,8 @@ public partial class CodeGenerator(Node RootNode)
         Emit(new Operation<Opcode, byte>((OpcodeWrapper)op, args));
     }
     void NewChunk() => data.Sections.NewChunk();
-
+    int CHUNKI(int ChunkRelOffset) => CurrentChunkPtr + ChunkRelOffset; //first chunk is chunk1; entering chunk is chunk0
+    IOperationArgument<BackingNumberType> CHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(CHUNKI(ChunkRelOffset));
     private readonly Data data = new();
     public Data Parse()
     {

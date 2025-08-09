@@ -134,11 +134,11 @@ Strategy:
         ENTERING CHUNK CHUNK0
             Compile Expression1
             JMP CHUNK[LENGTH * 2 + 1]
-        for i in range(LENGTH):
+        for i in range(LENGTH): //this is probably [1...LENGTH] actually
             make new chunk CHUNK[i * 2 - 1]
-                Compile Expressions[i]
+                Compile Expressions[i - 1]
             make new chunk CHUNK[i * 2]
-                Compile Statements[i]
+                Compile Statements[i - 1]
         make new chunk CHUNK[LENGTH * 2 + 1]
             SWITCH LENGTH CHUNK0.Index
             //switch instruction: SWITCH Length StartIndex

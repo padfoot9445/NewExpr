@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Common.AST;
 using Common.Evaluator;
 using Common.Tokens;
+using SmallLang.Metadata;
 
 namespace SmallLang.Frontend.ASTVisitors;
 

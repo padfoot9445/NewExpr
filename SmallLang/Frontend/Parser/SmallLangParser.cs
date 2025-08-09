@@ -8,7 +8,7 @@ using sly.parser.generator;
 using sly.parser.parser;
 using SmallLang.Frontend.Parser;
 using LyToken = sly.lexer.Token<Common.Tokens.TokenType>;
-using NodeType = Common.AST.DynamicASTNode<SmallLang.Frontend.Parser.ASTNodeType, SmallLang.Frontend.ASTVisitors.Attributes>;
+using NodeType = Common.AST.DynamicASTNode<SmallLang.Frontend.Parser.ASTNodeType, SmallLang.Metadata.Attributes>;
 namespace SmallLang.Frontend.Parser;
 
 public partial class SmallLangParser

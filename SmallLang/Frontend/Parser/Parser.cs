@@ -1,4 +1,4 @@
-using SmallLang.Frontend.ASTVisitors;
+using SmallLang.Metadata;
 
 namespace SmallLang.Frontend.Parser;
 

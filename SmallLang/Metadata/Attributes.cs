@@ -1,8 +1,7 @@
 using Common.AST;
 using Common.Metadata;
-using SmallLang.Metadata;
 
-namespace SmallLang.Frontend.ASTVisitors;
+namespace SmallLang.Metadata;
 
 public record class Attributes(List<SmallLangType>? DeclArgumentTypes = null, FunctionID<BackingNumberType>? FunctionID = null, SmallLangType? TypeOfExpression = null, SmallLangType? TypeLiteralType = null, VariableName? VariableName = null, VariableModifiers? VarMods = null, uint? SizeOfVariable = null, Scope? VariablesInScope = null, LoopGUID? LoopGUID = null) : IMetadata
 {

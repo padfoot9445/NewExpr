@@ -1,4 +1,4 @@
-!Obselete [Put ROM in the RAM]: for any pointer Ptr, if Ptr & 0x80000000 (if the first bit is 1) then fetch from RAM, else ROM
+for any pointer Ptr, if Ptr & 0x80000000 (if the first bit is 1) then fetch from RAM, else ROM
 must remember to typecheck in attribute evaluator
 must remember to handle closures, although currently we might well just not support
 optimise registers later. 
@@ -15,6 +15,8 @@ Schema:
     - Each Section outputs a Chunk. Chunks are treated as functions of Action<>; no arguments and no ret-types. Hence, blocks do not have a value.
     - Chunks are obviously seperately bonded and stuff yk
     - Hence, functions
+
+    On dynamically allocated alternate data-areas, i.e. RAM, it's [Typecode] [Data]; On the static data area I suppose it can just be [Data]
 
 Store data as BYTES not UINTs, and just use multiple instructions for different widths ig
 Strategy:
@@ -198,6 +200,10 @@ Strategy:
         //yk what? We're mixing register and stack again. 
         //actually no we're not we just use the "variable store" which is tbh basically just a register, but still
         TODO: FINISH
+        Constant values:
+            String:
+                Store into static data area, push
+
         Identifier:
             //Static analyser gives enough information to deduce the index into the variable store
             PUSHVAR Index

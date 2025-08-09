@@ -1,11 +1,17 @@
+using System.Diagnostics;
+
 namespace SmallLang.Frontend.CodeGen;
 
-public class CodeGenerator(Node RootNode)
+public partial class CodeGenerator(Node RootNode)
 {
     private readonly Data data = new();
     public Data Parse()
     {
         throw new NotImplementedException();
         return data;
+    }
+    private void Verify(Node node, ImportantASTNodeType Expected)
+    {
+        Debug.Assert(node.NodeType == Expected);
     }
 }

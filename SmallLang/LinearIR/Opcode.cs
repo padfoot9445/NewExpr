@@ -19,4 +19,12 @@ public enum Opcode : OpcodeBackingType
           //         run CHUNKS[i * 2]
           //         jump to CHUNKS[LENGTH * 2 + 1]
           // jump to CHUNKS[LENGTH * 2 + 1]
+    IFELSE, //IFELSE [StartingIndex] [Length]
+            // IFELSE StartIndex Length
+            // for i in [1...LENGTH]:
+            //     run CHUNKS[i * 2 - 1]
+            //     if (POP) is TRUE:
+            //         run CHUNKS[i * 2]
+            //         jump to CHUNKs[LENGTH * 2 + 2]
+            // jump to CHUNKS[LENGTH * 2 + 1]
 }

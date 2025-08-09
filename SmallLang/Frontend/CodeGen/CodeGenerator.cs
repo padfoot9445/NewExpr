@@ -20,9 +20,9 @@ public partial class CodeGenerator(Node RootNode)
     void NewChunk() => data.Sections.NewChunk();
     int ParseBeginningChunk = 0;
     void SETCHUNK() => ParseBeginningChunk = CurrentChunkPtr;
-    IOperationArgument<BackingNumberType> RCHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(CurrentChunkPtr + ChunkRelOffset);
+    GenericNumberWrapper<int> RCHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(CurrentChunkPtr + ChunkRelOffset);
 
-    IOperationArgument<BackingNumberType> ACHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(ParseBeginningChunk + ChunkRelOffset);
+    GenericNumberWrapper<int> ACHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(ParseBeginningChunk + ChunkRelOffset);
     private readonly Data data = new();
     public Data Parse()
     {

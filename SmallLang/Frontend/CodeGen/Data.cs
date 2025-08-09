@@ -11,5 +11,5 @@ public record class Data
     public Chunks Sections { get; init; } = new();
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> VariableSlots = new();
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> StaticDataArea = new();
-    public Dictionary<LoopGUID, (int ContinueDSTChunk, int BreakDSTChunk)> LoopData = new();
+    public Dictionary<LoopGUID, (GenericNumberWrapper<int> ContinueDSTChunk, GenericNumberWrapper<int> BreakDSTChunk)> LoopData = new();
 }

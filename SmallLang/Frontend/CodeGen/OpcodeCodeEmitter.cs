@@ -4,17 +4,18 @@ using SmallLang.LinearIR;
 namespace SmallLang.Frontend.CodeGen;
 
 using static Opcode;
+using Op = Operation<Opcode, BackingNumberType>;
 class OpcodeCodeEmitter
 {
-    Operation<Opcode, BackingNumberType> Emit(Opcode opcode, params IOperationArgument<byte>[] args)
+    static Op Emit(Opcode opcode, params IOperationArgument<byte>[] args)
     {
         return new((OpcodeWrapper)opcode, args);
     }
-    Operation<Opcode, BackingNumberType> JMP(GenericNumberWrapper<int> DestinationChunk, int width)
+    static Op JMP(GenericNumberWrapper<int> DestinationChunk, int width)
     {
         return Emit(JMPu8, DestinationChunk);
     }
-    public Operation<Opcode, BackingNumberType> JMP(GenericNumberWrapper<int> DestinationChunk)
+    public static Op JMP(GenericNumberWrapper<int> DestinationChunk)
     {
         if (DestinationChunk.BackingValue <= byte.MaxValue)
         {
@@ -22,4 +23,5 @@ class OpcodeCodeEmitter
         }
         throw new NotImplementedException($"JMP not implemented for chunk-id of values larger than 255. Got {DestinationChunk}.");
     }
+
 }

@@ -2,5 +2,6 @@ namespace SmallLang.LinearIR;
 
 public enum Opcode : OpcodeBackingType
 {
-    JMPu8,//JMP [Chunk ID: u8] #Jumps unconditionally to the chunk given by the chunk-id
+    JMP,//JMP [Chunk ID] #Jumps unconditionally to the chunk given by the chunk-id
+    BRZ, //BRZ [Chunk0 ID] [Chunk1 ID] #if the value at the top of the stack is 0, jump to Chunk0, otherwise jump to Chunk1
 }

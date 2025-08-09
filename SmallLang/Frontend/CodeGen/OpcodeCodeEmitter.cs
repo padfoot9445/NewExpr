@@ -1,3 +1,4 @@
+#if false
 using Common.LinearIR;
 using SmallLang.LinearIR;
 
@@ -11,6 +12,7 @@ class OpcodeCodeEmitter
     {
         return new((OpcodeWrapper)opcode, args);
     }
+    static 
     static Op JMP(GenericNumberWrapper<int> DestinationChunk, int width)
     {
         return Emit(JMPu8, DestinationChunk);
@@ -23,5 +25,5 @@ class OpcodeCodeEmitter
         }
         throw new NotImplementedException($"JMP not implemented for chunk-id of values larger than 255. Got {DestinationChunk}.");
     }
-
 }
+#endif

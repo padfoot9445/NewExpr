@@ -39,6 +39,8 @@ public partial class CodeGenerator(Node RootNode)
     (Section, ParseSection),
     //TODO: Activate (Identifier, ParsePrimary)
     (Function, ParseFunction),
-    (For, ParseFor)
+    (For, ParseFor),
+    (While, ParseWhile),
+    (Return, ParseReturn)
     );
 }

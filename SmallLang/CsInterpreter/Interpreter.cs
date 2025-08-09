@@ -3,7 +3,7 @@ using System.Reflection.Emit;
 using System.Text;
 using Common.LinearIR;
 using SmallLang.LinearIR;
-
+#if false
 namespace SmallLang.CsIntepreter;
 
 public class Interpreter(Operation<Opcode, BackingNumberType>[] Operations, uint[] Data, TextReader reader, TextWriter writer)
@@ -134,3 +134,4 @@ public class Interpreter(Operation<Opcode, BackingNumberType>[] Operations, uint
         writer.WriteLine(DecodeStringAuto(Stack.Pop()));
     }
 }
+#endif

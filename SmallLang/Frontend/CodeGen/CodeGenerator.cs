@@ -26,7 +26,7 @@ public partial class CodeGenerator(Node RootNode)
     private readonly Data data = new();
     public Data Parse()
     {
-        throw new NotImplementedException();
+        DynamicDispatch(RootNode);
         return data;
     }
     private void Verify(Node node, ImportantASTNodeType Expected)

@@ -14,7 +14,7 @@ class OpcodeCodeEmitter
     {
         return Emit(JMPu8, DestinationChunk);
     }
-    Operation<Opcode, BackingNumberType> JMP(GenericNumberWrapper<int> DestinationChunk)
+    public Operation<Opcode, BackingNumberType> JMP(GenericNumberWrapper<int> DestinationChunk)
     {
         if (DestinationChunk.BackingValue <= byte.MaxValue)
         {

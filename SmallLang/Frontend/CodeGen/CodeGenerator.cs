@@ -41,6 +41,9 @@ public partial class CodeGenerator(Node RootNode)
     (Function, ParseFunction),
     (For, ParseFor),
     (While, ParseWhile),
-    (Return, ParseReturn)
+    (Return, ParseReturn),
+    (LoopCTRL, ParseLoopCTRL),
+    (ImportantASTNodeType.Switch, ParseSwitch),
+    (If, ParseIf)
     );
 }

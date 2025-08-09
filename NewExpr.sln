@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonTests", "CommonTests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallLang", "SmallLang\SmallLang.csproj", "{FAD9806B-71D1-45BD-821B-9FCCA98B97D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallLangTest", "SmallLangTest\SmallLangTest.csproj", "{E6F17E43-092F-4748-9AE7-FFCD09026001}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

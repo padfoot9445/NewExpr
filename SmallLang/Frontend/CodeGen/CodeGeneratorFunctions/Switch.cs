@@ -35,7 +35,7 @@ public partial class CodeGenerator
 
         //CHUNK [LENGTH * 2 + 1]
         NewChunk();
-        Emit<int, int, byte>(SWITCH, Length, ACHUNK(0), TypeData.Data.IsPointerType(Expression.Attributes.TypeOfExpression!) ? TrueValue : FalseValue);
+        Emit<int, int, uint>(SWITCH, Length, ACHUNK(0), Expression.Attributes.TypeOfExpression!);
 
 
         //CHUNK [LENGTH * 2 + 2]

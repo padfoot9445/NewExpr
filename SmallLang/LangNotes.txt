@@ -197,12 +197,21 @@ Strategy:
         Only used in static analyser
         In function declaration, static analyser should provide the register which the variable will be stored in or declare so if neccesary.
     Primary:
-        //yk what? We're mixing register and stack again. 
+        //yk what? We're mixing register and stack again.
         //actually no we're not we just use the "variable store" which is tbh basically just a register, but still
         TODO: FINISH
         Constant values:
             String:
-                Store into static data area, push
+                Store into ram, push ptr to stack
+            Value-Number and char:
+                Parse into relevant number-type, push.
+            Pointer-Number:
+                Parse into byte sequence and load into ram, push ptr to stack.
+            Boolean:
+                Push 0xFF if true else 0
+            Other pointer type:
+                Store into ram, push ptr to stack.
+            
 
         Identifier:
             //Static analyser gives enough information to deduce the index into the variable store
@@ -219,7 +228,22 @@ Strategy:
                 Compile Else
             else:
                 NEXT
+    Declaration: [Identifier; DeclarationModifiersCombined?, Type, AssignmentPrime?]
+        Assign declaration modifiers in static analyser. If there's any modification where there shouldn't be, we throw in the static analyser.
 
+        Also, when we do static analyser:
+        TODO: make Data have a constructor where we inject VariableSlots, which we compile from the static analyser.
+        ENTERING CHUNK
+            if AssignmentPrime is not null:
+                Embeded Compile AssignmentPrime:[=; Expression]
+                    Compile Expression
+                    Look up identifier's variable slot.
+                    If Expression's type isn't the same, cast.
+                    LOADVAR Slot
+            NEXT
+    DeclarationModifier, DeclarationModifiersCombined:
+        Static analyser
+    
     ExprStatementCombined
 
     - ReTypingAlias, //data: IDENTIFIER, children: [Type Identifier]

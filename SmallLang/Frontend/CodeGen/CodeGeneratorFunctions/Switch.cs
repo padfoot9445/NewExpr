@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using SmallLang.Constants;
 using SmallLang.LinearIR;
 using SmallLang.Metadata;
 namespace SmallLang.Frontend.CodeGen;
@@ -23,7 +24,7 @@ public partial class CodeGenerator
 
             //CHUNK [i * 2 - 1]
             NewChunk();
-            DynamicDispatch(Expressions[i - 1]);
+            Cast(Expressions[i - 1], Expression.Attributes.TypeLiteralType!);
 
 
             //CHUNK [i * 2]
@@ -34,7 +35,7 @@ public partial class CodeGenerator
 
         //CHUNK [LENGTH * 2 + 1]
         NewChunk();
-        Emit<int, int>(SWITCH, Length, ACHUNK(0));
+        Emit<int, int, byte>(SWITCH, Length, ACHUNK(0), TypeData.Data.IsPointerType(Expression.Attributes.TypeOfExpression!) ? TrueValue : FalseValue);
 
 
         //CHUNK [LENGTH * 2 + 2]

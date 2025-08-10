@@ -8,6 +8,8 @@ namespace SmallLang.Frontend.CodeGen;
 
 public partial class CodeGenerator(Node RootNode)
 {
+    private const byte TrueValue = 0xFF;
+    private const byte FalseValue = 0;
     int CurrentChunkPtr => data.Sections.CurrentChunkPtr;
     void Emit(Operation<Opcode, BackingNumberType> Op)
     {

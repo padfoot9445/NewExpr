@@ -138,15 +138,18 @@ Strategy:
             JMP CHUNK[LENGTH * 2 + 1]
         for i in range(LENGTH): //this is probably [1...LENGTH] actually
             make new chunk CHUNK[i * 2 - 1]
-                Compile Expressions[i - 1]
+                Compile Expressions[i - 1] cast to the same type as Expression1
             make new chunk CHUNK[i * 2]
                 Compile Statements[i - 1]
         make new chunk CHUNK[LENGTH * 2 + 1]
-            SWITCH LENGTH CHUNK0.Index
-            //switch instruction: SWITCH Length StartIndex
+            SWITCH LENGTH CHUNK0.Index IsPointerType
+            //switch instruction: SWITCH Length StartIndex 
+            if the expression we're switching on is a pointer-number-type we call the equality function else we subtract. Cast all expressions in the body to be the same type as the expression we're switchig on.
+
+            TODO: In static analyser make sure the cast as mentioned above is valid.
                 For i in [1...Length]:
                     run CHUNKS[StartIndex + i * 2 - 1]
-                    if Top of Stack == 2nd value on stack: {bottom}[3rd value, 2nd value, 1st value (aka top of stack)]{top}
+                    if Top of Stack == 2nd value on stack : {bottom}[3rd value, 2nd value, 1st value (aka top of stack)]{top}
                         run CHUNKS[StartIndex + i * 2]
                         run CHUNKS[StartIndex + Length * 2 + 2]
         make new chunk CHUNK[Length * 2 + 2]

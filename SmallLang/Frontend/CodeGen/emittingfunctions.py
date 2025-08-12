@@ -1,8 +1,10 @@
 Generics = list[str]
 Generic = str
 Code = str
+PATH: str = r"C:\Users\User\coding\nostars\Expa\NewExpr\SmallLang\Frontend\CodeGen\CodeGenerator__emittingfunctions.cs"
 TAB = "    "
 AMOUNT: int = 5
+BackingNumberType = "BackingNumberType"
 def get_generics(n: int) -> Generics:
     return [f"T{i}" for i in range(n)]
 def get_constraint(generic: Generic) -> Code:
@@ -10,7 +12,7 @@ def get_constraint(generic: Generic) -> Code:
 def get_variable_name(i: Generic) -> Code:
     return "N" + i[1:]
 def get_param(i: Generic) -> Code:
-    return f"GenericNumberWrapper<{i}> {get_variable_name(i)}"
+    return f"NumberWrapper<{i}, {BackingNumberType}> {get_variable_name(i)}"
 def get_params(generics: Generics):
     return ", ".join(
         ["Opcode op"] +
@@ -26,12 +28,12 @@ def get_arguments(generics: Generics) -> Code:
         ]
     )
 
-with open("CodeGenerator__emittingfunctions.cs", "w") as file:
+with open(PATH, "w") as file:
     print(
         """
 using System.Numerics;
 using SmallLang.LinearIR;
-
+using Common.LinearIR;
 namespace SmallLang.Frontend.CodeGen;
 
 public partial class CodeGenerator

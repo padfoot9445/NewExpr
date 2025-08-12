@@ -19,5 +19,5 @@ where TBacking : IBinaryInteger<TBacking>, IMinMaxValue<TBacking>
             yield return TBacking.CreateTruncating(op >> (TBits - i));
         }
     }
-
+    public static implicit operator NumberWrapper<T, TBacking>(T inp) => new(inp);
 }

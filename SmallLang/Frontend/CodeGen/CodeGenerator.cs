@@ -3,6 +3,7 @@ using System.Numerics;
 using Common.Dispatchers;
 using Common.LinearIR;
 using SmallLang.LinearIR;
+using SmallLang.Metadata;
 using static SmallLang.ImportantASTNodeType;
 
 namespace SmallLang.Frontend.CodeGen;
@@ -49,4 +50,8 @@ public partial class CodeGenerator(Node RootNode)
     (ImportantASTNodeType.Switch, ParseSwitch),
     (If, ParseIf)
     );
+    private void DispatchExpressionType(Node node, params (SmallLangType, Action<Node>)[] Cases)
+    {
+        node.DispatchGeneric(Cases.Select<(SmallLangType, Action<Node>), (Func<Node, bool>, Action<Node>)>(x => (y => y.Attributes.TypeOfExpression == x.Item1, x.Item2)).ToArray());
+    }
 }

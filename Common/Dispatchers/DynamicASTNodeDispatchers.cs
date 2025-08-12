@@ -1,10 +1,20 @@
 using Common.AST;
 using Common.Evaluator;
+using Newtonsoft.Json;
 using sly.i18n;
 namespace Common.Dispatchers;
 
 public static class DynamicASTNodeDispatchers
 {
+    private static (TSelector, Func<DynamicASTNode<TN, TA>, TReturn>)[] NoReturnToHasReturnConverter<TSelector, TN, TA, TReturn>(
+        (TSelector, Action<DynamicASTNode<TN, TA>>)[] Cases
+    ) where TA : IMetadata, new()
+    {
+        return Cases.Select<(TSelector, Action<DynamicASTNode<TN, TA>>), (TSelector, Func<DynamicASTNode<TN, TA>, TReturn>)>(x => (x.Item1, y => { x.Item2(y); return default; })).ToArray();
+    }
+    private static (TSelector, Func<DynamicASTNode<TN, TA>, bool>)[] NoReturnToHasReturnConverter<TSelector, TN, TA>(
+        (TSelector, Action<DynamicASTNode<TN, TA>>)[] Cases
+    ) where TA : IMetadata, new() => NoReturnToHasReturnConverter<TSelector, TN, TA, bool>(Cases);
     public static TReturn DispatchNodeType<TN, TAC, TReturn>
     (
         this DynamicASTNode<TN, TAC> node,
@@ -35,7 +45,7 @@ public static class DynamicASTNodeDispatchers
     )
     where TA : IMetadata, new()
     {
-        node.DispatchNodeType(Cases.Select<(TN, Action<DynamicASTNode<TN, TA>>), (TN, Func<DynamicASTNode<TN, TA>, bool>)>(x => (x.Item1, y => { x.Item2(y); return true; })).ToArray());
+        node.DispatchNodeType(NoReturnToHasReturnConverter(Cases));
         //Don't question it too hard
         //this takes the Action<Node> of the cases, turns them into Func<Node, bool>, and then calls Dispatch with return-type bool and then discards the return
     }
@@ -49,7 +59,7 @@ public static class DynamicASTNodeDispatchers
 
     where TA : IMetadata, new()
     {
-        node.DispatchGeneric(Cases.Select<(Func<DynamicASTNode<TN, TA>, bool>, Action<DynamicASTNode<TN, TA>>), (Func<DynamicASTNode<TN, TA>, bool>, Func<DynamicASTNode<TN, TA>, bool>)>(x => (x.Item1, y => { x.Item2(y); return true; })).ToArray());
+        node.DispatchGeneric(NoReturnToHasReturnConverter(Cases));
         //Don't question it too hard
         //this takes the Action<Node> of the cases, turns them into Func<Node, bool>, and then calls Dispatch with return-type bool and then discards the return
     }
@@ -67,5 +77,34 @@ public static class DynamicASTNodeDispatchers
             if (cond(node)) return func(node);
         }
         throw new Exception("DispatchGeneric ran out of conditions");
+    }
+    public static TReturnType DispatchProperty<TN, TA, TProperty, TReturnType>(this DynamicASTNode<TN, TA> node,
+    Func<DynamicASTNode<TN, TA>, TProperty> Accessor,
+    params
+    (
+        TProperty,
+        Func<DynamicASTNode<TN, TA>, TReturnType>
+    )[] Cases
+    )
+    where TA : IMetadata, new()
+    {
+        return node.DispatchGeneric(Cases.Select
+        <
+            (TProperty, Func<DynamicASTNode<TN, TA>, TReturnType>),
+            (Func<DynamicASTNode<TN, TA>, bool>, Func<DynamicASTNode<TN, TA>, TReturnType>)
+        >
+        (x => (y => Accessor(node)!.Equals(x.Item1), x.Item2)).ToArray());
+    }
+    public static void DispatchProperty<TN, TA, TProperty>(this DynamicASTNode<TN, TA> node,
+    Func<DynamicASTNode<TN, TA>, TProperty> Accessor,
+    params
+    (
+        TProperty,
+        Action<DynamicASTNode<TN, TA>>
+    )[] Cases
+    )
+    where TA : IMetadata, new()
+    {
+        node.DispatchProperty(Accessor, NoReturnToHasReturnConverter(Cases));
     }
 }

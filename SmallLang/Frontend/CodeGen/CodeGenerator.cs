@@ -38,20 +38,19 @@ public partial class CodeGenerator(Node RootNode)
         Debug.Assert(node.NodeType == Expected);
     }
     private void DynamicDispatch(Node node) =>
-    node.DispatchNodeType(
+        node.Switch(
+            Accessor: x => x.NodeType,
+            Comparer: (x, y) => x == y,
 
-    (Section, ParseSection),
-    //TODO: Activate (Identifier, ParsePrimary)
-    (Function, ParseFunction),
-    (For, ParseFor),
-    (While, ParseWhile),
-    (Return, ParseReturn),
-    (LoopCTRL, ParseLoopCTRL),
-    (ImportantASTNodeType.Switch, ParseSwitch),
-    (If, ParseIf)
-    );
-    private void DispatchExpressionType(Node node, params (SmallLangType, Action<Node>)[] Cases)
-    {
-        node.DispatchGeneric(Cases.Select<(SmallLangType, Action<Node>), (Func<Node, bool>, Action<Node>)>(x => (y => y.Attributes.TypeOfExpression == x.Item1, x.Item2)).ToArray());
-    }
+
+            (Section, ParseSection),
+            //TODO: Activate (Identifier, ParsePrimary)
+            (Function, ParseFunction),
+            (For, ParseFor),
+            (While, ParseWhile),
+            (Return, ParseReturn),
+            (LoopCTRL, ParseLoopCTRL),
+            (ImportantASTNodeType.Switch, ParseSwitch),
+            (If, ParseIf)
+        );
 }

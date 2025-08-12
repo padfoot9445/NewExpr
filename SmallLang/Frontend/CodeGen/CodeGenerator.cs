@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Numerics;
+using Common.Dispatchers;
 using Common.LinearIR;
 using SmallLang.LinearIR;
 using static SmallLang.ImportantASTNodeType;
@@ -36,7 +37,7 @@ public partial class CodeGenerator(Node RootNode)
         Debug.Assert(node.NodeType == Expected);
     }
     private void DynamicDispatch(Node node) =>
-    Common.Backend.CodeGenerator.Dispatch(node,
+    node.DispatchNodeType(
 
     (Section, ParseSection),
     //TODO: Activate (Identifier, ParsePrimary)

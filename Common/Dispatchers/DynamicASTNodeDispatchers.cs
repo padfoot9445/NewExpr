@@ -1,12 +1,12 @@
 using Common.AST;
 using Common.Evaluator;
-namespace Common.Backend;
+namespace Common.Dispatchers;
 
-public class CodeGenerator
+public static class DynamicASTNodeDispatchers
 {
-    public static TReturn Dispatch<TN, TAC, TReturn>
+    public static TReturn DispatchNodeType<TN, TAC, TReturn>
     (
-        DynamicASTNode<TN, TAC> node,
+        this DynamicASTNode<TN, TAC> node,
         params
         (
             TN,
@@ -21,9 +21,9 @@ public class CodeGenerator
         }
         throw new Exception($"Ran out of cases when switching on {node.NodeType}");
     }
-    public static void Dispatch<TN, TA>
+    public static void DispatchNodeType<TN, TA>
     (
-        DynamicASTNode<TN, TA> node,
+        this DynamicASTNode<TN, TA> node,
         params
         (
             TN,
@@ -32,7 +32,7 @@ public class CodeGenerator
     )
     where TA : IMetadata, new()
     {
-        Dispatch(node, Cases.Select<(TN, Action<DynamicASTNode<TN, TA>>), (TN, Func<DynamicASTNode<TN, TA>, bool>)>(x => (x.Item1, y => { x.Item2(y); return true; })).ToArray());
+        node.DispatchNodeType(Cases.Select<(TN, Action<DynamicASTNode<TN, TA>>), (TN, Func<DynamicASTNode<TN, TA>, bool>)>(x => (x.Item1, y => { x.Item2(y); return true; })).ToArray());
         //Don't question it too hard
         //this takes the Action<Node> of the cases, turns them into Func<Node, bool>, and then calls Dispatch with return-type bool and then discards the return
     }

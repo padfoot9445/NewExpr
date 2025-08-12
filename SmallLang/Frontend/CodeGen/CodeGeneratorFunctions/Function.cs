@@ -11,7 +11,7 @@ public partial class CodeGenerator
         //assume that Entering chunk does not have JMP CHUNK1
 
         //CHUNK1
-        data.Sections.NewChunk();
+        Data.Sections.NewChunk();
         DynamicDispatch(Self.Children.Last());
     }
 }

@@ -26,7 +26,7 @@ public partial class CodeGenerator
         }
         else
         {
-            (var Break, var Cont) = data.LoopData[(LoopGUID)Self.Attributes.GUIDOfLoopLabel!];
+            (var Break, var Cont) = Data.LoopData[(LoopGUID)Self.Attributes.GUIDOfLoopLabel!];
             if (IsBreak)
             {
                 Emit(JMP, Break);

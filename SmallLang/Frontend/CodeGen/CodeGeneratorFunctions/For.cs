@@ -40,6 +40,6 @@ public partial class CodeGenerator
 
         //CHUNK4
         NewChunk();
-        data.LoopData[(LoopGUID)Self.Attributes.LoopGUID!] = (ACHUNK(2), ACHUNK(3));
+        Data.LoopData[(LoopGUID)Self.Attributes.LoopGUID!] = (ACHUNK(2), ACHUNK(3));
     }
 }

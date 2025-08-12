@@ -12,26 +12,26 @@ public partial class CodeGenerator(Node RootNode)
 {
     private const byte TrueValue = 0xFF;
     private const byte FalseValue = 0;
-    int CurrentChunkPtr => data.Sections.CurrentChunkPtr;
+    int CurrentChunkPtr => Data.Sections.CurrentChunkPtr;
     void Emit(Operation<Opcode, BackingNumberType> Op)
     {
-        data.Sections.CurrentChunk.Add(Op);
+        Data.Sections.CurrentChunk.Add(Op);
     }
     void Emit(Opcode op, params IOperationArgument<byte>[] args)
     {
         Emit(new Operation<Opcode, byte>((OpcodeWrapper)op, args));
     }
-    void NewChunk() => data.Sections.NewChunk();
+    void NewChunk() => Data.Sections.NewChunk();
     int ParseBeginningChunk = 0;
     void SETCHUNK() => ParseBeginningChunk = CurrentChunkPtr;
     GenericNumberWrapper<int> RCHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(CurrentChunkPtr + ChunkRelOffset);
 
     GenericNumberWrapper<int> ACHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(ParseBeginningChunk + ChunkRelOffset);
-    private readonly Data data = new();
+    private readonly Data Data = new();
     public Data Parse()
     {
         DynamicDispatch(RootNode);
-        return data;
+        return Data;
     }
     private void Verify(Node node, ImportantASTNodeType Expected)
     {

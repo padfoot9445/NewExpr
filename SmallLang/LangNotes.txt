@@ -222,6 +222,7 @@ Strategy:
     AliasExpr: [Identifier, Identifier]// Identifier as Identifier
         //Only in static analyser, TODO: Complete
 
+NULL:
         ENTERING CHUNK
             Compile Expression
         make new chunk CHUNK1
@@ -242,11 +243,87 @@ Strategy:
                     Compile Expression
                     Look up identifier's variable slot.
                     If Expression's type isn't the same, cast.
-                    LOADVAR Slot
+                    LOADVAR Slot type of identifier
             NEXT
     DeclarationModifier, DeclarationModifiersCombined:
         Static analyser
-    
+    FactorialExpression: [Expression, !+]
+        ENTERING CHUNK
+            Compile expression
+            FACTORIAL Expression.Type Number of Exclamation marks
+            NEXT
+    BinaryExpression: [Operator; Expression1, Expression2]
+        ENTERING CHUNK
+            if Operator != "==":
+                Assert in static analyser that the types and operation are valid
+                Find type of arguments Type
+                Cast Expression1 -> Type
+                Cast Expression2 -> Type
+                OPCODE[Operator] Type
+            else:
+                Assert in static analyser that the assignment is valid.
+                Cast Expression2 -> Type of Expression1
+                Expression1 must be an Identifier, so
+                Locate variable slot containing Expression1 -> SlotNo
+                LOADVAR SlotNo Type of Expression1
+            NEXT
+    ComparisonExpression: [Expression, OperatorExpressionPair+]
+        OperatorExpressionPair: [Operator; Expression]
+        Expressions = Children.Select(x => x is OperatorExpressionPair? x.Children[0] : x);
+        Length = Children.Length;
+        Tuples = Children.Skip(1).Select((x, i) => (OPCODE[x.Data], Length - i, Length - i - 1))
+        Determine base type of all the expressions
+        ENTERING CHUNK
+            for i in range(len(children) - 1):
+                Cast Children[i + 1] Base-Type
+            BATCHAND 
+        for Opcode, i1, i2, enumerate -> i in Tuples:
+            NEW CHUNK [i]
+                Opcode i1 i2 Base-Type
+    OperatorExpressionPair:
+        Not really used, I think
+    FunctionIdentifier:
+        I guess in static analyser assign the function-code
+    CopyExpr: [Expression]
+        ENTERING CHUNK
+            Compile Expression
+            CAST TypeofExpression
+            NEXT
+    NewExpr: [Type, ArgList]:
+        Assert every argument is right in the static analyser
+        FunctionCall(GetFuncNew(Type), ArgList);
+        Exit();
+        
+    Index: [Expression1, Expression2]
+        Validate that Expression1 is indexable
+        If Expression1 is Dictionary:
+            Cast Expression2 Expression1.Keytype
+            Compile Expression1
+            Lookup
+        else:
+            Cast Expression2 INTEGER
+            Compile Expression1
+            INDEX
+    FunctionCall: [Expression, ArgList]
+        ENTERING CHUNK:
+            MaxArgNum <- Get from func name, maybe in static analyser
+            for ArgListElement -> [ArgListLabel as Identifier? Expression], enumerate -> i in ArgList.Children:
+                Argslot <- GetArgListSlotFromPosition(i)
+                
+                Cast Expression Function.ExpectedArgType(i)
+                if Argslot > MaxArgNum:
+                    LOADQUEUE Sizeof(Function.ExpectedArgType(ArgListLabel, i))
+                else:
+                    LOADARG Function.GetArgListSlot(ArgListLabel, i) Sizeof(Function.ExpectedArgType(ArgListLabel, i))
+    ArgList, ArgListElement, TypeCSV:
+        Static analyser
+    UnaryExpression: [Operation; Expression]
+        Assert that the operation is valid.
+        ENTERING CHUNK:
+            Compile Expression
+            Opcode[Operation] Type of Expression
+
+
     ExprStatementCombined
 
     - ReTypingAlias, //data: IDENTIFIER, children: [Type Identifier]

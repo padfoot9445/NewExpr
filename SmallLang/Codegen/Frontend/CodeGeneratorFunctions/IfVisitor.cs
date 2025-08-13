@@ -5,9 +5,9 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
-internal static class If
+internal static class IfVisitor
 {
-    public static void ParseIf(Node Self, CodeGenerator Driver)
+    public static void Visit(Node Self, CodeGenerator Driver)
     {
         Driver.SETCHUNK();
         //[ExpressionStatementCombined+, Else as statement?]

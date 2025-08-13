@@ -3,9 +3,9 @@ using SmallLang.IR.AST;
 
 namespace SmallLang.CodeGen.Frontend;
 
-internal static class Function
+internal static class FunctionVisitor
 {
-    public static void ParseFunction(Node Self, CodeGenerator Driver)
+    public static void Visit(Node Self, CodeGenerator Driver)
     {
         Driver.Verify(Self, ImportantASTNodeType.Function);
         //assume that Entering chunk does not have JMP CHUNK1

@@ -11,14 +11,14 @@ namespace SmallLang.CodeGen.Frontend;
 using static ImportantASTNodeType;
 using static Opcode;
 
-internal static partial class PrimaryParser
+internal static partial class PrimaryVisitor
 {
     static void ParseIdentifier(Node self, CodeGenerator Driver)
     {
         Driver.Emit<int, int>(DeloadVar, Driver.Data.VariableSlots.KeyToPointerStartMap[self.Attributes.VariableName!], Driver.Data.VariableSlots.KeyToNumberOfCellsUsed[self.Attributes.VariableName!]);
     }
     static void ParseValNum(Node self, CodeGenerator Driver) => ValNumParser.Parse(self, Driver);
-    internal static void Parse(Node Self, CodeGenerator Driver)
+    internal static void Visit(Node Self, CodeGenerator Driver)
     {
         Driver.SETCHUNK();
         if (Self.NodeType == Identifier) { ParseIdentifier(Self, Driver); return; }

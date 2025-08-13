@@ -6,9 +6,9 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
-internal static class While
+internal static class WhileVisitor
 {
-    public static void ParseWhile(Node Self, CodeGenerator Driver)
+    public static void Visit(Node Self, CodeGenerator Driver)
     {
         bool HasLabel = Self.Children[1].NodeType == ImportantASTNodeType.LoopLabel;
         Node Statement = HasLabel ? Self.Children[2] : Self.Children[1];

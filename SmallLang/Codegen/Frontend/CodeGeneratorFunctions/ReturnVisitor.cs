@@ -4,9 +4,9 @@ using SmallLang.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
-internal static class Return
+internal static class ReturnVisitor
 {
-    public static void ParseReturn(Node Self, CodeGenerator Driver)
+    public static void Visit(Node Self, CodeGenerator Driver)
     {
         //[Expression]
 

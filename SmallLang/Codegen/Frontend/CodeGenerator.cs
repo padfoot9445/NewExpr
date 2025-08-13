@@ -50,14 +50,14 @@ public partial class CodeGenerator(Node RootNode)
             Comparer: (x, y) => x == y,
 
 
-            (NodeType.Section, Section.ParseSection),
+            (NodeType.Section, SectionVisitor.Visit),
             //TODO: Activate (Identifier, ParsePrimary)
-            (NodeType.Function, Function.ParseFunction),
-            (NodeType.For, For.ParseFor),
-            (NodeType.While, While.ParseWhile),
-            (NodeType.Return, Return.ParseReturn),
-            (NodeType.LoopCTRL, LoopCtrl.ParseLoopCTRL),
-            (NodeType.Switch, Switch.ParseSwitch),
-            (NodeType.If, If.ParseIf)
+            (NodeType.Function, FunctionVisitor.Visit),
+            (NodeType.For, ForVisitor.Visit),
+            (NodeType.While, WhileVisitor.Visit),
+            (NodeType.Return, ReturnVisitor.Visit),
+            (NodeType.LoopCTRL, LoopCtrlVisitor.Visit),
+            (NodeType.Switch, SwitchVisitor.Visit),
+            (NodeType.If, IfVisitor.Visit)
         )(node, this);
 }

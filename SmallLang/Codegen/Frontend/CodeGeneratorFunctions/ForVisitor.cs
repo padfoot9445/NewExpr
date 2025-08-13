@@ -6,9 +6,9 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
-internal static class For
+internal static class ForVisitor
 {
-    public static void ParseFor(Node Self, CodeGenerator Driver)
+    public static void Visit(Node Self, CodeGenerator Driver)
     {
         bool HasLabel = Self.Children[3].NodeType == ImportantASTNodeType.LoopLabel;
         Node Statement = HasLabel ? Self.Children[4] : Self.Children[3];

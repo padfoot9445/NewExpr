@@ -3,9 +3,9 @@ using SmallLang.IR.LinearIR;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
-internal static class Switch
+internal static class SwitchVisitor
 {
-    public static void ParseSwitch(Node Self, CodeGenerator Driver)
+    public static void Visit(Node Self, CodeGenerator Driver)
     {
         Driver.SETCHUNK();
         Node Expression = Self.Children[0];

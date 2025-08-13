@@ -32,7 +32,7 @@ internal static class SwitchVisitor
 
         //CHUNK [LENGTH * 2 + 1]
         Driver.NewChunk();
-        Driver.Emit<int, int, uint>(SWITCH, Length, Driver.ACHUNK(0), Expression.Attributes.TypeOfExpression!);
+        Driver.Emit<int, int, BackingNumberType>(SWITCH, Length, Driver.ACHUNK(0), Expression.Attributes.TypeOfExpression!);
 
 
         //CHUNK [LENGTH * 2 + 2]

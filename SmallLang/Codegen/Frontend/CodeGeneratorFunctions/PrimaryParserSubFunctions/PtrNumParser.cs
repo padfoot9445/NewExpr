@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using Common.Dispatchers;
+using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-
+using static SmallLang.IR.LinearIR.Opcode;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
 
 internal static class PtrNumParser
@@ -15,18 +17,42 @@ internal static class PtrNumParser
             (TypeData.Data.NumberTypeCode, VisitNumber)
             );
     }
+    static List<BackingNumberType> GetArrayOfBNTs(string number)
+    {
+        int width = (int)Math.Ceiling(Math.Log10(BackingNumberType.MaxValue));
+
+        number = number.PadLeft((int)(Math.Ceiling((double)number.Length / width) * width));
+        List<BackingNumberType> Chars = [];
+        for (int i = 0; i < number.Length; i += width)
+        {
+            Chars.Add(BackingNumberType.Parse(number[i..(i + width)]));
+        }
+
+        //Add typecode and length prefix
+        var LengthArray = new GenericNumberWrapper<int>(Chars.Count).Value;
+
+        foreach (var i in LengthArray.Reverse())//Chars.Count = 15: [0x00, 0x00, 0x00, 0x0F] -> [0x0F, 0x00, 0x00, 0x00] which is then prepended from start to finish to get back to big-endian order
+        {
+            Chars.Prepend(i);
+        }
+        Chars.Prepend(TypeData.Data.LongintTypeCode.Value.First());
+        return Chars;
+    }
     static void VisitLongInt(Node Self, CodeGenerator Driver)
     {
-        List<byte> Chars = [];
-        for (int i = 0; i < Self.Data!.Lexeme.Length; i += 2)
-        {
-            Chars.Add(byte.Parse(Self.Data.Lexeme[i..(i + 2)]));
-        }
-        var Ptr = Driver.AddStaticData(Chars);
+        var Chars = GetArrayOfBNTs(Self.Data!.Lexeme);
+        var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
+        Driver.Emit(Push, Ptr);
     }
     static void VisitRational(Node Self, CodeGenerator Driver)
     {
-        throw new NotImplementedException();
+        var parts = Self.Data!.Lexeme.Split('.');
+        Debug.Assert(parts.Length == 2);
+        string Denominator = "1".PadRight(parts[1].Length);
+        Debug.Assert(Denominator[0] == '1');
+        var NumeratorList = GetArrayOfBNTs(parts[0] + parts[1]);
+        var DenominatorList = GetArrayOfBNTs(Denominator);
+
     }
     static void VisitNumber(Node Self, CodeGenerator Driver)
     {

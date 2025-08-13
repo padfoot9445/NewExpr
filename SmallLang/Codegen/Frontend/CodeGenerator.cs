@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Common.Dispatchers;
 using Common.LinearIR;
+using Common.Metadata;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using SmallLang.IR.AST;
 using SmallLang.IR.LinearIR;
@@ -63,4 +64,13 @@ public partial class CodeGenerator(Node RootNode)
 
 
             );
+    internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)
+    {
+        var ptr = Data.StaticDataArea.Allocate(Area.Count());
+        foreach (var i in Area)
+        {
+            Data.StaticDataArea.Store.Add(i);
+        }
+        return ptr;
+    }
 }

@@ -1,48 +1,58 @@
-Generics = list[str]
-Generic = str
-Code = str
-PATH: str = r"C:\Users\User\coding\nostars\Expa\NewExpr\SmallLang\Codegen\Frontend\CodeGenerator__emittingfunctions.cs"
-TAB = "    "
-AMOUNT: int = 5
-BackingNumberType = "BackingNumberType"
-def get_generics(n: int) -> Generics:
-    return [f"T{i}" for i in range(n)]
-def get_constraint(generic: Generic) -> Code:
-    return f"where {generic} : IBinaryInteger<{generic}>, IMinMaxValue<{generic}>"
-def get_variable_name(i: Generic) -> Code:
-    return "N" + i[1:]
-def get_param(i: Generic) -> Code:
-    return f"NumberWrapper<{i}, {BackingNumberType}> {get_variable_name(i)}"
-def get_params(generics: Generics):
-    return ", ".join(
-        ["Opcode op"] +
-        [
-            get_param(i) for i in generics
-        ]
-    )
-def get_arguments(generics: Generics) -> Code:
-    return ", ".join(
-        ["op"] +
-        [
-            get_variable_name(i) for i in generics
-        ]
-    )
+import os
+from pathlib import Path
 
-with open(PATH, "w") as file:
-    print(
-        """
-using System.Numerics;
-using SmallLang.IR.LinearIR;
-using Common.LinearIR;
-namespace SmallLang.CodeGen.Frontend;
 
-public partial class CodeGenerator
-{
-"""
-    , file=file) #header
-    for j in range(1, AMOUNT + 1):
-        generics = get_generics(j)
-        print(f"{TAB}internal void Emit<{", ".join(generics)}>({get_params(generics)})", file=file)
-        print(TAB + f"\n{TAB}".join(get_constraint(i) for i in generics), file=file)
-        print(TAB * 2 + f"=> Emit({get_arguments(generics)});",file=file)
-    print("}",file=file)
+def generate_emitting_functions(amount_of_generics: int = 5) -> None:
+    module_path = Path(os.path.dirname(__file__))
+
+    emitting_functions_file_path = Path(module_path / "CodeGenerator__emittingfunctions.cs")
+
+    with open(emitting_functions_file_path, "w") as emitting_functions_file:
+        output = (
+            "using System.Numerics;\n"
+            "using SmallLang.IR.LinearIR;\n"
+            "using Common.LinearIR;\n"
+            "namespace SmallLang.CodeGen.Frontend;\n"
+            "\n"
+            "public partial class CodeGenerator\n"
+            "{\n"
+        )
+
+        get_generic_variable_name = lambda i: ("N" + i[1:])
+
+        for current_generic_index in range(1, amount_of_generics + 1):
+            generics: list[str] = [f"T{i}" for i in range(current_generic_index)]
+            parameters: str = ", ".join([
+                "Opcode op",
+                *[
+                    f"NumberWrapper<{i}, BackingNumberType {get_generic_variable_name(i)}"
+                    for i
+                    in generics
+                ]
+            ])
+            arguments: str = ", ".join([
+                "op",
+                *[
+                    get_generic_variable_name(i)
+                    for i
+                    in generics
+                ]
+            ])
+
+            output += (
+                f"    internal void Emit<{', '.join(generics)}> {parameters};\n"
+                f"    {'\n    '.join(
+                    f"where {generic} : IBinaryInteger<{generic}>, IMinMaxValue<{generic}>"
+                    for generic
+                    in generics
+                )};\n"
+                f"        => Emit({arguments});\n"
+            )
+
+        output += "}"
+
+        print(f"Generated code for {emitting_functions_file_path}:\n----")
+        print(output)
+        print("----")
+
+        emitting_functions_file.write(output)

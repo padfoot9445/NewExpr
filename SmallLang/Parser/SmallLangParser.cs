@@ -1,9 +1,6 @@
 
 using System.Data;
-using System.Diagnostics;
-using Common.AST;
 using Common.Tokens;
-using sly.lexer;
 using sly.parser.generator;
 using sly.parser.parser;
 using SmallLang.IR.AST;

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Common.AST;
 using Common.Evaluator;
 using Common.Metadata;

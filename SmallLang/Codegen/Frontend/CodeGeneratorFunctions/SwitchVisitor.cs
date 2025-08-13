@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using SmallLang.IR.LinearIR;
 namespace SmallLang.CodeGen.Frontend;
 

@@ -1,7 +1,3 @@
-using Common.Evaluator;
-using Common.LinearIR;
-using SmallLang.Metadata;
-
 namespace SmallLang.Drivers;
 #if false
 public class HighToLowLevelCompilerDriver

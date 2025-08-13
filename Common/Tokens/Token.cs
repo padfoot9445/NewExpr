@@ -1,5 +1,3 @@
-using Common.AST;
-
 namespace Common.Tokens;
 
 record class Token : IToken

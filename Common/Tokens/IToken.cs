@@ -1,6 +1,5 @@
 namespace Common.Tokens;
 
-using Common.AST;
 public interface IToken
 {
     public TokenType TT { get; }

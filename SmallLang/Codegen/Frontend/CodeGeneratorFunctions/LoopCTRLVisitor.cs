@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Common.Tokens;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;

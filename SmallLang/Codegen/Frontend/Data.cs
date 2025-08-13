@@ -1,5 +1,3 @@
-using System.Collections;
-using Common.LinearIR;
 using Common.Metadata;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;

@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using SmallLang.IR.LinearIR;
-using SmallLang.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;

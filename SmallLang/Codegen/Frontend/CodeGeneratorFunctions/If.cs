@@ -2,7 +2,6 @@ using System.Diagnostics;
 using SmallLang.IR.AST;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-using SmallLang.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;

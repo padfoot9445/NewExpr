@@ -1,6 +1,6 @@
 namespace SmallLang.IR.AST;
 
-static class ASTNodeTypeMapper
+public static class ASTNodeTypeMapper
 {
     public static ImportantASTNodeType ToImportant(this ASTNodeType NodeType)
     {

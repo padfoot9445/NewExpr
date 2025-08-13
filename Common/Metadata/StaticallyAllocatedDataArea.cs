@@ -35,12 +35,16 @@ where TKey : notnull
             Store.Add(new());
         }
     }
-    public void AllocateAndFill(TKey Key, int width, params IEnumerable<TBacking> Values)
+    public Pointer<TBacking> AllocateAndFill(TKey Key, int width, params IEnumerable<TBacking> Values)
     {
-        FillFrom(Allocate(Key, width), Values);
+        var ptr = Allocate(Key, width);
+        FillFrom(ptr, Values);
+        return ptr;
     }
-    public void AllocateAndFill(int width, params IEnumerable<TBacking> Values)
+    public Pointer<TBacking> AllocateAndFill(int width, params IEnumerable<TBacking> Values)
     {
-        FillFrom(Allocate(width), Values);
+        var ptr = Allocate(width);
+        FillFrom(ptr, Values);
+        return ptr;
     }
 }

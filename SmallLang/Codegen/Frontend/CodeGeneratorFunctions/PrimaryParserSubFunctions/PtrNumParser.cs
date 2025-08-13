@@ -35,7 +35,7 @@ internal static class PtrNumParser
         {
             Chars.Prepend(i);
         }
-        Chars.Prepend(TypeData.Data.LongintTypeCode.Value.First());
+        Chars.Prepend(TypeData.Data.LongintTypeCode.Value.Single());
         return Chars;
     }
     static void VisitLongInt(Node Self, CodeGenerator Driver)

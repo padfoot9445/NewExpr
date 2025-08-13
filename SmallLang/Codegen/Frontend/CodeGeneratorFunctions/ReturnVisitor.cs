@@ -9,7 +9,7 @@ internal static class ReturnVisitor
         //[Expression]
 
         //CHUNK ENTERING
-        Driver.DynamicDispatch(Self.Children[0]);
+        Driver.Exec(Self.Children[0]);
         Driver.Emit(RET);
     }
 }

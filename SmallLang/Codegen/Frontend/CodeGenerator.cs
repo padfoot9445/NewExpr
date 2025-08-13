@@ -15,7 +15,7 @@ public partial class CodeGenerator(Node RootNode)
     int CurrentChunkPtr => Data.Sections.CurrentChunkPtr;
     internal void Cast(Node self, SmallLangType dstType)
     {
-        if (self.Attributes.TypeLiteralType! == dstType) DynamicDispatch(self);
+        if (self.Attributes.TypeLiteralType! == dstType) Exec(self);
         throw new NotImplementedException();
     }
     internal void Emit(Operation<Opcode, BackingNumberType> Op)
@@ -35,30 +35,32 @@ public partial class CodeGenerator(Node RootNode)
     internal Data Data { get; init; } = new();
     public Data Parse()
     {
-        DynamicDispatch(RootNode);
+        Exec(RootNode);
         return Data;
     }
     internal void Verify(Node node, ImportantASTNodeType Expected)
     {
         Debug.Assert(node.NodeType == Expected);
     }
-    internal void DynamicDispatch(Node node) =>
+    internal void Exec(Node node) =>
+        DynamicDispatch(node)(node, this);
+    static Action<Node, CodeGenerator> DynamicDispatch(Node node) =>
         node.Switch(
-            Accessor: x => x.NodeType,
-            Comparer: (x, y) => x == y,
+                Accessor: x => x.NodeType,
+                Comparer: (x, y) => x == y,
 
 
-            (NodeType.Section, SectionVisitor.Visit),
-            (NodeType.Identifier, PrimaryVisitor.Visit),
-            (NodeType.Function, FunctionVisitor.Visit),
-            (NodeType.For, ForVisitor.Visit),
-            (NodeType.While, WhileVisitor.Visit),
-            (NodeType.Return, ReturnVisitor.Visit),
-            (NodeType.LoopCTRL, LoopCtrlVisitor.Visit),
-            (NodeType.Switch, SwitchVisitor.Visit),
-            (NodeType.If, IfVisitor.Visit),
-            (NodeType.Primary, PrimaryVisitor.Visit)
+                (NodeType.Section, SectionVisitor.Visit),
+                (NodeType.Identifier, PrimaryVisitor.Visit),
+                (NodeType.Function, FunctionVisitor.Visit),
+                (NodeType.For, ForVisitor.Visit),
+                (NodeType.While, WhileVisitor.Visit),
+                (NodeType.Return, ReturnVisitor.Visit),
+                (NodeType.LoopCTRL, LoopCtrlVisitor.Visit),
+                (NodeType.Switch, SwitchVisitor.Visit),
+                (NodeType.If, IfVisitor.Visit),
+                (NodeType.Primary, PrimaryVisitor.Visit)
 
 
-        )(node, this);
+            );
 }

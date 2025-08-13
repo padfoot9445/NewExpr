@@ -11,6 +11,6 @@ internal static class FunctionVisitor
 
         //CHUNK1
         Driver.Data.Sections.NewChunk();
-        Driver.DynamicDispatch(Self.Children.Last());
+        Driver.Exec(Self.Children.Last());
     }
 }

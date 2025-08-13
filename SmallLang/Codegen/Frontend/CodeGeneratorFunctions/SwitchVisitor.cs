@@ -13,7 +13,7 @@ internal static class SwitchVisitor
         int Length = Self.Children.Count - 1;
 
         //ENTERING CHUNK CHUNK0
-        Driver.DynamicDispatch(Expression);
+        Driver.Exec(Expression);
         Driver.Emit(JMP, Driver.ACHUNK(Length * 2 + 1));
 
         for (int i = 1; i <= Length; i++)
@@ -26,7 +26,7 @@ internal static class SwitchVisitor
 
             //CHUNK [i * 2]
             Driver.NewChunk();
-            Driver.DynamicDispatch(Statements[i - 1]);
+            Driver.Exec(Statements[i - 1]);
         }
 
 

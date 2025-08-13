@@ -9,7 +9,7 @@ internal static class SectionVisitor
         Driver.Verify(Self, ImportantASTNodeType.Section);
         foreach (var child in Self.Children)
         {
-            Driver.DynamicDispatch(child);
+            Driver.Exec(child);
         }
     }
 }

@@ -24,7 +24,7 @@ internal static class ValNumParser
     }
     internal static void Parse(Node self, CodeGenerator Driver)
     {
-        self.Switch
+        Action Emitter = self.Switch
             (
                 Accessor: x => x.Attributes.TypeOfExpression!,
                 Comparer: (x, y) => x == y,
@@ -35,6 +35,7 @@ internal static class ValNumParser
                 (TypeData.Data.ByteTypeCode, EmitCodeDelegateGenerator(byte.Parse, self, Driver)),
                 (TypeData.Data.LongTypeCode, EmitCodeDelegateGenerator(long.Parse, self, Driver))
             );
+        Emitter();
     }
 
 }

@@ -1,6 +1,6 @@
 using SmallLang.IR.AST;
 
-namespace SmallLang.CodeGen.Frontend;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 internal static class FunctionVisitor
 {
@@ -11,6 +11,6 @@ internal static class FunctionVisitor
 
         //CHUNK1
         Driver.Data.Sections.NewChunk();
-        Driver.DynamicDispatch(Self.Children.Last());
+        Driver.Exec(Self.Children.Last());
     }
 }

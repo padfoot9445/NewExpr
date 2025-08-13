@@ -1,5 +1,5 @@
 using SmallLang.IR.LinearIR;
-namespace SmallLang.CodeGen.Frontend;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static Opcode;
 internal static class ReturnVisitor
@@ -9,7 +9,7 @@ internal static class ReturnVisitor
         //[Expression]
 
         //CHUNK ENTERING
-        Driver.DynamicDispatch(Self.Children[0]);
+        Driver.Exec(Self.Children[0]);
         Driver.Emit(RET);
     }
 }

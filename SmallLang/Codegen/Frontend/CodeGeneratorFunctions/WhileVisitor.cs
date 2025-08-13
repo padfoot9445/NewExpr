@@ -2,7 +2,7 @@ using SmallLang.IR.AST;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 
-namespace SmallLang.CodeGen.Frontend;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static Opcode;
 internal static class WhileVisitor
@@ -20,19 +20,19 @@ internal static class WhileVisitor
 
         //CHUNK1
         Driver.NewChunk();
-        Driver.DynamicDispatch(Self.Children[0]);//Compile conditional expression. This puts a 0 on the stack if false and a non-zero (probably 1 or 0xFF) onto the stack if true.
+        Driver.Exec(Self.Children[0]);//Compile conditional expression. This puts a 0 on the stack if false and a non-zero (probably 1 or 0xFF) onto the stack if true.
         Driver.Emit(BRZ, Driver.ACHUNK(2), Driver.ACHUNK(3));
 
         //CHUNK2
         Driver.NewChunk();
-        Driver.DynamicDispatch(Statement);
+        Driver.Exec(Statement);
         Driver.Emit(JMP, Driver.ACHUNK(1));
 
         //CHUNK3
         Driver.NewChunk();
         if (Else is not null)
         {
-            Driver.DynamicDispatch(Else);
+            Driver.Exec(Else);
         }
         Driver.Emit(JMP, Driver.ACHUNK(4));
 

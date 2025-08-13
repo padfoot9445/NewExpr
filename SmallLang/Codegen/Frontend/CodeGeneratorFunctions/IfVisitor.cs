@@ -1,7 +1,7 @@
 using SmallLang.IR.AST;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-namespace SmallLang.CodeGen.Frontend;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static Opcode;
 internal static class IfVisitor
@@ -35,7 +35,7 @@ internal static class IfVisitor
 
             //CHUNK [i * 2]
             Driver.NewChunk();
-            Driver.DynamicDispatch(Statements[i]);
+            Driver.Exec(Statements[i]);
         }
         if (Else is null)
         {
@@ -49,7 +49,7 @@ internal static class IfVisitor
 
             //CHUNK [i * 2 + 1]
             Driver.NewChunk();
-            Driver.DynamicDispatch(Else);
+            Driver.Exec(Else);
 
             //CHUNK [i * 2 + 2]
             Driver.NewChunk();

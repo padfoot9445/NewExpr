@@ -56,7 +56,7 @@ public class TypeData
     public static readonly TypeData Data = new();
     private static uint NextTypeCode = 1;
     private static uint GetTypeCode => NextTypeCode++;
-    private readonly HashSet<uint> PointerTypes;
+    private readonly HashSet<BackingNumberType> PointerTypes;
     SmallLangType[] Types;
     public readonly SmallLangType VoidTypeCode = new(GetTypeCode, "void");
     public readonly SmallLangType StringTypeCode = new(GetTypeCode, "string", true);

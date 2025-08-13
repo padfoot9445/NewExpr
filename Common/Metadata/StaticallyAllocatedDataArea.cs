@@ -35,4 +35,5 @@ where TKey : notnull
             Store.Add(new());
         }
     }
+    public void AllocateAndFill(TKey Key, int width, params IEnumerable<TBacking> Values)
 }

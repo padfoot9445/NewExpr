@@ -3,15 +3,15 @@ using SmallLang.IR.AST;
 
 namespace SmallLang.CodeGen.Frontend;
 
-public partial class CodeGenerator
+internal static class Function
 {
-    private void ParseFunction(Node Self)
+    public static void ParseFunction(Node Self, CodeGenerator Driver)
     {
-        Verify(Self, ImportantASTNodeType.Function);
+        Driver.Verify(Self, ImportantASTNodeType.Function);
         //assume that Entering chunk does not have JMP CHUNK1
 
         //CHUNK1
-        Data.Sections.NewChunk();
-        DynamicDispatch(Self.Children.Last());
+        Driver.Data.Sections.NewChunk();
+        Driver.DynamicDispatch(Self.Children.Last());
     }
 }

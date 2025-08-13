@@ -6,9 +6,9 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
-public partial class CodeGenerator
+internal static class LoopCtrl
 {
-    private void ParseLoopCTRL(Node Self)
+    public static void ParseLoopCTRL(Node Self, CodeGenerator Driver)
     {
         //[Data: Break | Continue; Label?]
 
@@ -18,23 +18,23 @@ public partial class CodeGenerator
         {
             if (IsBreak)
             {
-                Emit(JMP, RCHUNK(2));
+                Driver.Emit(JMP, Driver.RCHUNK(2));
             }
             else
             {
-                Emit(JMP, RCHUNK(-1));
+                Driver.Emit(JMP, Driver.RCHUNK(-1));
             }
         }
         else
         {
-            (var Break, var Cont) = Data.LoopData[(LoopGUID)Self.Attributes.GUIDOfLoopLabel!];
+            (var Break, var Cont) = Driver.Data.LoopData[(LoopGUID)Self.Attributes.GUIDOfLoopLabel!];
             if (IsBreak)
             {
-                Emit(JMP, Break);
+                Driver.Emit(JMP, Break);
             }
             else
             {
-                Emit(JMP, Cont);
+                Driver.Emit(JMP, Cont);
             }
         }
     }

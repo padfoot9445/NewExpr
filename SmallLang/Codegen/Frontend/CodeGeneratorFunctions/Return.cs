@@ -4,14 +4,14 @@ using SmallLang.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
-public partial class CodeGenerator
+internal static class Return
 {
-    private void ParseReturn(Node Self)
+    public static void ParseReturn(Node Self, CodeGenerator Driver)
     {
         //[Expression]
 
         //CHUNK ENTERING
-        DynamicDispatch(Self.Children[0]);
-        Emit(RET);
+        Driver.DynamicDispatch(Self.Children[0]);
+        Driver.Emit(RET);
     }
 }

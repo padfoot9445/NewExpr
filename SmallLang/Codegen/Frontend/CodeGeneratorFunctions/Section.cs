@@ -2,14 +2,14 @@ using SmallLang.IR.AST;
 
 namespace SmallLang.CodeGen.Frontend;
 
-public partial class CodeGenerator
+internal static class Section
 {
-    private void ParseSection(Node Self)
+    public static void ParseSection(Node Self, CodeGenerator Driver)
     {
-        Verify(Self, ImportantASTNodeType.Section);
+        Driver.Verify(Self, ImportantASTNodeType.Section);
         foreach (var child in Self.Children)
         {
-            DynamicDispatch(child);
+            Driver.DynamicDispatch(child);
         }
     }
 }

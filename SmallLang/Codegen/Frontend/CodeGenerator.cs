@@ -4,8 +4,9 @@ using Common.Dispatchers;
 using Common.LinearIR;
 using SmallLang.IR.AST;
 using SmallLang.IR.LinearIR;
+using SmallLang.IR.Metadata;
 using SmallLang.Metadata;
-using static SmallLang.IR.AST.ImportantASTNodeType;
+using NodeType = SmallLang.IR.AST.ImportantASTNodeType;
 
 namespace SmallLang.CodeGen.Frontend;
 
@@ -14,44 +15,49 @@ public partial class CodeGenerator(Node RootNode)
     private const byte TrueValue = 0xFF;
     private const byte FalseValue = 0;
     int CurrentChunkPtr => Data.Sections.CurrentChunkPtr;
-    void Emit(Operation<Opcode, BackingNumberType> Op)
+    internal void Cast(Node self, SmallLangType dstType)
+    {
+        if (self.Attributes.TypeLiteralType! == dstType) DynamicDispatch(self);
+        throw new NotImplementedException();
+    }
+    internal void Emit(Operation<Opcode, BackingNumberType> Op)
     {
         Data.Sections.CurrentChunk.Add(Op);
     }
-    void Emit(Opcode op, params IOperationArgument<byte>[] args)
+    internal void Emit(Opcode op, params IOperationArgument<byte>[] args)
     {
         Emit(new Operation<Opcode, byte>((OpcodeWrapper)op, args));
     }
-    void NewChunk() => Data.Sections.NewChunk();
+    internal void NewChunk() => Data.Sections.NewChunk();
     int ParseBeginningChunk = 0;
-    void SETCHUNK() => ParseBeginningChunk = CurrentChunkPtr;
-    GenericNumberWrapper<int> RCHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(CurrentChunkPtr + ChunkRelOffset);
+    internal void SETCHUNK() => ParseBeginningChunk = CurrentChunkPtr;
+    internal GenericNumberWrapper<int> RCHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(CurrentChunkPtr + ChunkRelOffset);
 
-    GenericNumberWrapper<int> ACHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(ParseBeginningChunk + ChunkRelOffset);
-    private readonly Data Data = new();
+    internal GenericNumberWrapper<int> ACHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(ParseBeginningChunk + ChunkRelOffset);
+    internal Data Data { get; init; } = new();
     public Data Parse()
     {
         DynamicDispatch(RootNode);
         return Data;
     }
-    private void Verify(Node node, ImportantASTNodeType Expected)
+    internal void Verify(Node node, ImportantASTNodeType Expected)
     {
         Debug.Assert(node.NodeType == Expected);
     }
-    private void DynamicDispatch(Node node) =>
+    internal void DynamicDispatch(Node node) =>
         node.Switch(
             Accessor: x => x.NodeType,
             Comparer: (x, y) => x == y,
 
 
-            (Section, ParseSection),
+            (NodeType.Section, Section.ParseSection),
             //TODO: Activate (Identifier, ParsePrimary)
-            (Function, ParseFunction),
-            (For, ParseFor),
-            (While, ParseWhile),
-            (Return, ParseReturn),
-            (LoopCTRL, ParseLoopCTRL),
-            (ImportantASTNodeType.Switch, ParseSwitch),
-            (If, ParseIf)
-        );
+            (NodeType.Function, Function.ParseFunction),
+            (NodeType.For, For.ParseFor),
+            (NodeType.While, While.ParseWhile),
+            (NodeType.Return, Return.ParseReturn),
+            (NodeType.LoopCTRL, LoopCtrl.ParseLoopCTRL),
+            (NodeType.Switch, Switch.ParseSwitch),
+            (NodeType.If, If.ParseIf)
+        )(node, this);
 }

@@ -6,41 +6,41 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
-public partial class CodeGenerator
+internal static class For
 {
-    private void ParseFor(Node Self)
+    public static void ParseFor(Node Self, CodeGenerator Driver)
     {
         bool HasLabel = Self.Children[3].NodeType == ImportantASTNodeType.LoopLabel;
         Node Statement = HasLabel ? Self.Children[4] : Self.Children[3];
         Node? Else = Self.Children.Count == (HasLabel ? 6 : 5) ? Self.Children[^1] : null;
         //[expression, expression, expression, Label?, statement, else as Statement?]
-        Verify(Self, ImportantASTNodeType.For);
-        SETCHUNK();
+        Driver.Verify(Self, ImportantASTNodeType.For);
+        Driver.SETCHUNK();
         //entering chunk
-        DynamicDispatch(Self.Children[0]); //Compile initializing expression
-        Emit(JMP, ACHUNK(1));
+        Driver.DynamicDispatch(Self.Children[0]); //Compile initializing expression
+        Driver.Emit(JMP, Driver.ACHUNK(1));
 
         //CHUNK1
-        NewChunk();
-        DynamicDispatch(Self.Children[1]);//Compile conditional expression. This puts a 0 on the stack if false and a non-zero (probably 1 or 0xFF) onto the stack if true.
-        Emit(BRZ, ACHUNK(2), ACHUNK(3));
+        Driver.NewChunk();
+        Driver.DynamicDispatch(Self.Children[1]);//Compile conditional expression. This puts a 0 on the stack if false and a non-zero (probably 1 or 0xFF) onto the stack if true.
+        Driver.Emit(BRZ, Driver.ACHUNK(2), Driver.ACHUNK(3));
 
         //CHUNK2
-        NewChunk();
-        DynamicDispatch(Statement);
-        DynamicDispatch(Self.Children[2]); //Compile 3rd expression. This is what happens every loop; the i++, if you may.
-        Emit(JMP, ACHUNK(1));
+        Driver.NewChunk();
+        Driver.DynamicDispatch(Statement);
+        Driver.DynamicDispatch(Self.Children[2]); //Compile 3rd expression. This is what happens every loop; the i++, if you may.
+        Driver.Emit(JMP, Driver.ACHUNK(1));
 
         //CHUNK3
-        NewChunk();
+        Driver.NewChunk();
         if (Else is not null)
         {
-            DynamicDispatch(Else);
+            Driver.DynamicDispatch(Else);
         }
-        Emit(JMP, ACHUNK(4));
+        Driver.Emit(JMP, Driver.ACHUNK(4));
 
         //CHUNK4
-        NewChunk();
-        Data.LoopData[(LoopGUID)Self.Attributes.LoopGUID!] = (ACHUNK(2), ACHUNK(3));
+        Driver.NewChunk();
+        Driver.Data.LoopData[(LoopGUID)Self.Attributes.LoopGUID!] = (Driver.ACHUNK(2), Driver.ACHUNK(3));
     }
 }

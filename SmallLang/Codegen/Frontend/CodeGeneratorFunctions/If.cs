@@ -5,11 +5,11 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
-public partial class CodeGenerator
+internal static class If
 {
-    private void ParseIf(Node Self)
+    public static void ParseIf(Node Self, CodeGenerator Driver)
     {
-        SETCHUNK();
+        Driver.SETCHUNK();
         //[ExpressionStatementCombined+, Else as statement?]
         var ESC = Self.Children.Where(x => x.NodeType == ImportantASTNodeType.ExprStatementCombined);
         var Expressions = ESC.Select(x => x.Children[0]).ToArray();
@@ -19,41 +19,41 @@ public partial class CodeGenerator
         //ENTERING CHUNK CHUNK0
         if (Else is null)
         {
-            Emit<int, int>(IFNE, ACHUNK(0), Length);
+            Driver.Emit<int, int>(IFNE, Driver.ACHUNK(0), Length);
         }
         else
         {
-            Emit<int, int>(IFELSE, ACHUNK(0), Length);
+            Driver.Emit<int, int>(IFELSE, Driver.ACHUNK(0), Length);
         }
 
         for (int i = 1; i <= Length; i++)
         {
 
             //CHUNK [i * 2 - 1]
-            NewChunk();
-            Cast(Expressions[i], TypeData.Data.BooleanTypeCode);
+            Driver.NewChunk();
+            Driver.Cast(Expressions[i], TypeData.Data.BooleanTypeCode);
 
 
             //CHUNK [i * 2]
-            NewChunk();
-            DynamicDispatch(Statements[i]);
+            Driver.NewChunk();
+            Driver.DynamicDispatch(Statements[i]);
         }
         if (Else is null)
         {
 
             //CHUNK [i * 2 + 1]
-            NewChunk();
+            Driver.NewChunk();
             //Next
         }
         else
         {
 
             //CHUNK [i * 2 + 1]
-            NewChunk();
-            DynamicDispatch(Else);
+            Driver.NewChunk();
+            Driver.DynamicDispatch(Else);
 
             //CHUNK [i * 2 + 2]
-            NewChunk();
+            Driver.NewChunk();
             //next
         }
     }

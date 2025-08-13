@@ -49,13 +49,16 @@ public partial class CodeGenerator(Node RootNode)
 
 
             (NodeType.Section, SectionVisitor.Visit),
-            //TODO: Activate (Identifier, ParsePrimary)
+            (NodeType.Identifier, PrimaryVisitor.Visit),
             (NodeType.Function, FunctionVisitor.Visit),
             (NodeType.For, ForVisitor.Visit),
             (NodeType.While, WhileVisitor.Visit),
             (NodeType.Return, ReturnVisitor.Visit),
             (NodeType.LoopCTRL, LoopCtrlVisitor.Visit),
             (NodeType.Switch, SwitchVisitor.Visit),
-            (NodeType.If, IfVisitor.Visit)
+            (NodeType.If, IfVisitor.Visit),
+            (NodeType.Primary, PrimaryVisitor.Visit)
+
+
         )(node, this);
 }

@@ -33,9 +33,9 @@ internal static class PtrNumParser
 
         foreach (var i in LengthArray.Reverse())//Chars.Count = 15: [0x00, 0x00, 0x00, 0x0F] -> [0x0F, 0x00, 0x00, 0x00] which is then prepended from start to finish to get back to big-endian order
         {
-            Chars.Prepend(i);
+            Chars = Chars.Prepend(i).ToList();
         }
-        Chars.Prepend(TypeData.Data.LongintTypeCode.Value.Single());
+        Chars = Chars.Prepend(TypeData.Data.LongintTypeCode.Value.Single()).ToList();
         return Chars;
     }
     static void VisitLongInt(Node Self, CodeGenerator Driver)

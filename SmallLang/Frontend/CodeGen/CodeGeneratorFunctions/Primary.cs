@@ -39,14 +39,20 @@ public partial class CodeGenerator
             Emit<int, int>(DeloadVar, Data.VariableSlots.KeyToPointerStartMap[self.Attributes.VariableName!], Data.VariableSlots.KeyToNumberOfCellsUsed[self.Attributes.VariableName!]);
         }
 
-        Action EmitCodeDelegateGenerator<T>(Func<string, T> parser, Node self) where T : INumber<T>
+        Action EmitCodeDelegateGenerator<T>(Func<string, T> parser, Node self) where T : IBinaryInteger<T>, IMinMaxValue<T>
         {
 
-            void EmitCode<T>() where T : INumber<T>
+            void EmitCode()
             {
                 Emit<T>(Push, parser(self.Data!.Lexeme));
             }
-            return EmitCode<T>;
+            return EmitCode;
+        }
+        Func<string, TOut> GetIntParseFunctionFromFloatParseFunction<TIn, TOut>(Func<string, TIn> FloatParseFunction, Func<TIn, TOut> Converter)
+        where TIn : IBinaryFloatingPointIeee754<TIn>
+        where TOut : IBinaryInteger<TOut>
+        {
+            return x => Converter(FloatParseFunction(x));
         }
         void ParseValNum(Node self)
         {
@@ -55,9 +61,9 @@ public partial class CodeGenerator
                     Accessor: x => x.Attributes.TypeOfExpression!,
                     Comparer: (x, y) => x == y,
                     (TypeData.Data.CharTypeCode, EmitCodeDelegateGenerator(char.Parse, self)),
-                    (TypeData.Data.FloatTypeCode, EmitCodeDelegateGenerator(float.Parse, self)),
+                    (TypeData.Data.FloatTypeCode, EmitCodeDelegateGenerator(GetIntParseFunctionFromFloatParseFunction(float.Parse, BitConverter.SingleToUInt32Bits), self)),
                     (TypeData.Data.IntTypeCode, EmitCodeDelegateGenerator(int.Parse, self)),
-                    (TypeData.Data.DoubleTypeCode, EmitCodeDelegateGenerator(double.Parse, self)),
+                    (TypeData.Data.DoubleTypeCode, EmitCodeDelegateGenerator(GetIntParseFunctionFromFloatParseFunction(double.Parse, BitConverter.DoubleToUInt64Bits), self)),
                     (TypeData.Data.ByteTypeCode, EmitCodeDelegateGenerator(byte.Parse, self)),
                     (TypeData.Data.LongTypeCode, EmitCodeDelegateGenerator(long.Parse, self))
                 );

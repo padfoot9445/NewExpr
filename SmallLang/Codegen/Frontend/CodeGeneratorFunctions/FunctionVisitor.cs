@@ -1,6 +1,6 @@
 using SmallLang.IR.AST;
 
-namespace SmallLang.CodeGen.Frontend;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 internal static class FunctionVisitor
 {

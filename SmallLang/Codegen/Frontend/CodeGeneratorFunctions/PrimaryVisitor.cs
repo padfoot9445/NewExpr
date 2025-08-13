@@ -1,8 +1,10 @@
 using Common.Dispatchers;
+using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
+
 using SmallLang.IR.AST;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-namespace SmallLang.CodeGen.Frontend;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static ImportantASTNodeType;
 using static Opcode;

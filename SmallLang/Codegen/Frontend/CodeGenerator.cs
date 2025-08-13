@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using Common.Dispatchers;
 using Common.LinearIR;
+using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using SmallLang.IR.AST;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 using NodeType = SmallLang.IR.AST.ImportantASTNodeType;
-
 namespace SmallLang.CodeGen.Frontend;
 
 public partial class CodeGenerator(Node RootNode)

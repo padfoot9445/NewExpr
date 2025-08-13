@@ -1,7 +1,7 @@
 using System.Numerics;
 using Common.Dispatchers;
 using SmallLang.IR.Metadata;
-namespace SmallLang.CodeGen.Frontend;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
 
 using static SmallLang.IR.LinearIR.Opcode;
 

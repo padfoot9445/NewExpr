@@ -2,7 +2,7 @@ using SmallLang.IR.AST;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 
-namespace SmallLang.CodeGen.Frontend;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static Opcode;
 internal static class ForVisitor

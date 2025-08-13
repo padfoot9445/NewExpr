@@ -1,5 +1,5 @@
 using SmallLang.IR.LinearIR;
-namespace SmallLang.CodeGen.Frontend;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static Opcode;
 internal static class SwitchVisitor

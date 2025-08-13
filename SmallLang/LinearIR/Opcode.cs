@@ -27,4 +27,6 @@ public enum Opcode : OpcodeBackingType
             //         run CHUNKS[i * 2]
             //         jump to CHUNKs[LENGTH * 2 + 2]
             // jump to CHUNKS[LENGTH * 2 + 1]
+    DeloadVar, //DeloadVar [SlotStartingIndex] [Width] #Pushes the variable onto the stack
+    Push, //Push [Inline Constant Number]
 }

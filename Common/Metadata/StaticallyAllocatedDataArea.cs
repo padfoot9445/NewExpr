@@ -4,7 +4,7 @@ using Common.LinearIR;
 namespace Common.Metadata;
 
 public record class StaticallyAllocatedDataArea<TKey, TBacking>
-where TBacking : IBinaryInteger<TBacking>, IMinMaxValue<TBacking>
+where TBacking : IBinaryInteger<TBacking>, IMinMaxValue<TBacking>, new()
 where TKey : notnull
 {
     public HashSet<Pointer<TBacking>> UsedPositions { get; init; } = new();
@@ -27,5 +27,12 @@ where TKey : notnull
         KeyToNumberOfCellsUsed[Key] = width;
         KeyToPointerStartMap[Key] = AllFreePointer;
         return Allocate(width);
+    }
+    public void FillFrom(Pointer<TBacking> start, params IEnumerable<TBacking> Values)
+    {
+        while (Store.Count < start.BackingValue + Values.Count())
+        {
+            Store.Add(new());
+        }
     }
 }

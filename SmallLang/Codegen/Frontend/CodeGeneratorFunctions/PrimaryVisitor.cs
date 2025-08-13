@@ -52,7 +52,18 @@ internal static partial class PrimaryVisitor
         {
             Driver.Emit<BackingNumberType>(Push, self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue)));
         }
-        void ParseString(Node self, CodeGenerator Driver) => throw new NotImplementedException();
+        void ParseString(Node self, CodeGenerator Driver)
+        {
+            List<byte> Chars =
+            [
+                TypeData.Data.StringTypeCode.Value.Single(),
+                .. ((GenericNumberWrapper<int>)self.Data!.Lexeme.Length).Value,
+                .. self.Data!.Lexeme.Select(x => (byte)x)
+            ];
+
+            var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
+            Driver.Emit(Push, Ptr);
+        }
         void ParseCollection(Node self, CodeGenerator Driver) => throw new NotImplementedException();
 
     }

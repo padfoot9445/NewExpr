@@ -11,8 +11,8 @@ namespace SmallLang.CodeGen.Frontend;
 
 public partial class CodeGenerator(Node RootNode)
 {
-    private const byte TrueValue = 0xFF;
-    private const byte FalseValue = 0;
+    internal const BackingNumberType TrueValue = BackingNumberType.MaxValue;
+    internal const BackingNumberType FalseValue = BackingNumberType.MinValue;
     int CurrentChunkPtr => Data.Sections.CurrentChunkPtr;
     internal void Cast(Node self, SmallLangType dstType)
     {

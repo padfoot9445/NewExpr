@@ -35,6 +35,6 @@ def add_global_usings_to_cs_projects() -> None:
 
                 global_usings_file.write(
                     f"global using BackingNumberType = byte;\n"
-                    f"global using OpcodeBackingType = uint;\n"
-                    "global using Node = Common.AST.DynamicASTNode<SmallLang.IR.AST.ImportantASTNodeType, SmallLang.IR.Metadata.Attributes>;\n" if reference_ir_in_cs_project_file else ""
+                    f"global using OpcodeBackingType = uint;\n" +
+                    ("global using Node = Common.AST.DynamicASTNode<SmallLang.IR.AST.ImportantASTNodeType, SmallLang.IR.Metadata.Attributes>;\n" if reference_ir_in_cs_project_file else "")
                 )

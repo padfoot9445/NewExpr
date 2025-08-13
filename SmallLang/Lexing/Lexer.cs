@@ -2,7 +2,7 @@ using Common.Lexer;
 using Common.Tokens;
 using sly.lexer;
 
-namespace SmallLang.Frontend;
+namespace SmallLang.Lexing;
 
 public sealed class Lexer(string input) : Scanner(input)
 {

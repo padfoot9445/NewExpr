@@ -1,8 +1,7 @@
 using Common.Metadata;
-using SmallLang.Constants;
-using SmallLang.LinearIR;
+using SmallLang.IR.LinearIR;
 
-namespace SmallLang.Metadata;
+namespace SmallLang.IR.Metadata;
 
 public record class SmallLangType(uint BaseValue, string Name, bool IsRefType = false, uint Size = 1, bool IsNum = false) : GenericNumberWrapper<uint>(BaseValue), IMetadataTypes<SmallLangType>
 {

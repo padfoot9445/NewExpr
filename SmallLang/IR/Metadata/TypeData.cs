@@ -1,8 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
-using SmallLang.Metadata;
 
-namespace SmallLang.Constants;
+namespace SmallLang.IR.Metadata;
 
 public class TypeData
 {

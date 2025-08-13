@@ -1,9 +1,9 @@
 using System.Numerics;
 using Common.Dispatchers;
-using SmallLang.Constants;
-namespace SmallLang.Frontend.CodeGen;
+using SmallLang.IR.Metadata;
+namespace SmallLang.CodeGen.Frontend;
 
-using static SmallLang.LinearIR.Opcode;
+using static SmallLang.IR.LinearIR.Opcode;
 
 public partial class CodeGenerator
 {

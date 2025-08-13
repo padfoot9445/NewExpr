@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using SmallLang.LinearIR;
+using SmallLang.IR.AST;
 
-namespace SmallLang.Frontend.CodeGen;
+namespace SmallLang.CodeGen.Frontend;
 
 public partial class CodeGenerator
 {

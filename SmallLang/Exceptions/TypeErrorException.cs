@@ -1,6 +1,6 @@
-using SmallLang.Metadata;
+using SmallLang.IR.Metadata;
 
-namespace SmallLang;
+namespace SmallLang.Exceptions;
 
 public class TypeErrorException : ExpaException
 {

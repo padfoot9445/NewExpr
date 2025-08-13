@@ -1,9 +1,8 @@
 using Common.Evaluator;
 using Common.LinearIR;
-using SmallLang.LinearIR;
 using SmallLang.Metadata;
 
-namespace SmallLang;
+namespace SmallLang.Drivers;
 #if false
 public class HighToLowLevelCompilerDriver
 {

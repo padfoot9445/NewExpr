@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Reflection.Emit;
 using System.Text;
 using Common.LinearIR;
-using SmallLang.LinearIR;
 #if false
 namespace SmallLang.CsIntepreter;
 

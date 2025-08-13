@@ -1,4 +1,4 @@
-namespace SmallLang.Metadata;
+namespace SmallLang.IR.Metadata;
 
 public struct Scope()
 {

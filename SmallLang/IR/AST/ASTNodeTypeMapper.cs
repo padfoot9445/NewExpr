@@ -1,4 +1,4 @@
-namespace SmallLang.Frontend.Parser;
+namespace SmallLang.IR.AST;
 
 static class ASTNodeTypeMapper
 {

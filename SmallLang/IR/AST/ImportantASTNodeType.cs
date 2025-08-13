@@ -1,4 +1,4 @@
-namespace SmallLang;
+namespace SmallLang.IR.AST;
 
 public enum ImportantASTNodeType
 {

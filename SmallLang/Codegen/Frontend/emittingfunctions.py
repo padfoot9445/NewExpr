@@ -34,7 +34,7 @@ with open(PATH, "w") as file:
 using System.Numerics;
 using SmallLang.LinearIR;
 using Common.LinearIR;
-namespace SmallLang.Frontend.CodeGen;
+namespace SmallLang.CodeGen.Frontend;
 
 public partial class CodeGenerator
 {

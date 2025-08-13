@@ -1,8 +1,9 @@
 using System.Diagnostics;
 using Common.Tokens;
-using SmallLang.LinearIR;
-using SmallLang.Metadata;
-namespace SmallLang.Frontend.CodeGen;
+using SmallLang.IR.LinearIR;
+using SmallLang.IR.Metadata;
+
+namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
 public partial class CodeGenerator

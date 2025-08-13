@@ -2,7 +2,7 @@ using System.Text.Json;
 using Common.Metadata;
 using SmallLang.Metadata;
 
-namespace SmallLang.Constants;
+namespace SmallLang.IR.Metadata;
 
 class Functions
 {

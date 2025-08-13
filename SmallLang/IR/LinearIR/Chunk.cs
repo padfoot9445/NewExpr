@@ -1,6 +1,6 @@
 using Common.LinearIR;
 
-namespace SmallLang.LinearIR;
+namespace SmallLang.IR.LinearIR;
 
 public class Chunk : Chunk<Opcode, BackingNumberType>
 {

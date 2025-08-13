@@ -1,6 +1,7 @@
-using SmallLang.Metadata;
+using SmallLang.IR.AST;
+using SmallLang.IR.Metadata;
 
-namespace SmallLang.Frontend.Parser;
+namespace SmallLang.Parser;
 
 using System.Text;
 using Common.AST;

@@ -1,4 +1,6 @@
-namespace SmallLang.Frontend.CodeGen;
+using SmallLang.IR.AST;
+
+namespace SmallLang.CodeGen.Frontend;
 
 public partial class CodeGenerator
 {

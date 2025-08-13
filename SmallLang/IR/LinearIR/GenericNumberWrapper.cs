@@ -1,7 +1,7 @@
 using System.Numerics;
 using Common.LinearIR;
 
-namespace SmallLang.LinearIR;
+namespace SmallLang.IR.LinearIR;
 
 public record class GenericNumberWrapper<TActual> : NumberWrapper<TActual, BackingNumberType>
 where TActual : IBinaryInteger<TActual>, IMinMaxValue<TActual>

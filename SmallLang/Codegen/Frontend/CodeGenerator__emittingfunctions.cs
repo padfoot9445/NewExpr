@@ -1,8 +1,9 @@
 
 using System.Numerics;
-using SmallLang.LinearIR;
 using Common.LinearIR;
-namespace SmallLang.Frontend.CodeGen;
+using SmallLang.IR.LinearIR;
+
+namespace SmallLang.CodeGen.Frontend;
 
 public partial class CodeGenerator
 {

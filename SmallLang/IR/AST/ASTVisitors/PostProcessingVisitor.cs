@@ -2,9 +2,9 @@ using System.Diagnostics;
 using Common.AST;
 using Common.Evaluator;
 using Common.Tokens;
-using SmallLang.Metadata;
+using SmallLang.IR.Metadata;
 
-namespace SmallLang.Frontend.ASTVisitors;
+namespace SmallLang.IR.AST.ASTVisitors;
 
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 class PostProcessingVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>

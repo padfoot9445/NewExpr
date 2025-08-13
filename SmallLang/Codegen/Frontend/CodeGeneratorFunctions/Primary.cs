@@ -2,10 +2,11 @@ using System.Diagnostics;
 using System.Numerics;
 using Common.Dispatchers;
 using Common.LinearIR;
-using SmallLang.Constants;
-using SmallLang.LinearIR;
+using SmallLang.IR.AST;
+using SmallLang.IR.LinearIR;
+using SmallLang.IR.Metadata;
 using SmallLang.Metadata;
-namespace SmallLang.Frontend.CodeGen;
+namespace SmallLang.CodeGen.Frontend;
 
 using static ImportantASTNodeType;
 using static Opcode;

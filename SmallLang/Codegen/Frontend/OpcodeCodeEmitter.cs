@@ -2,7 +2,7 @@
 using Common.LinearIR;
 using SmallLang.LinearIR;
 
-namespace SmallLang.Frontend.CodeGen;
+namespace SmallLang.CodeGen.Frontend;
 
 using static Opcode;
 using Op = Operation<Opcode, BackingNumberType>;

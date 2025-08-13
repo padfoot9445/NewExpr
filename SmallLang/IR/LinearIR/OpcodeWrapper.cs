@@ -1,6 +1,6 @@
 using Common.LinearIR;
 
-namespace SmallLang.LinearIR;
+namespace SmallLang.IR.LinearIR;
 
 public record class OpcodeWrapper(Opcode Op) : GenericOperationArgument<BackingNumberType, Opcode>(Op)
 {

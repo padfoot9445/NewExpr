@@ -1,4 +1,4 @@
-namespace SmallLang.Metadata;
+namespace SmallLang.IR.Metadata;
 
 public readonly record struct LoopGUID
 {

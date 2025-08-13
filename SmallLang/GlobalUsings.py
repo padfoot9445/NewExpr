@@ -24,7 +24,7 @@ def add_global_usings_to_cs_projects() -> None:
             print(f"Too many .csproj files in {directory} ({len(cs_project_paths)})")
             sys.exit(1)
         elif len(cs_project_paths) == 0:
-            print(f"No .csproj files in {directory}. Continuing.")
+            # print(f"No .csproj files in {directory}. Continuing.")
             continue
         print(f"Processing {directory}.")
         cs_project_path: str = cs_project_paths[0]

@@ -36,4 +36,11 @@ where TKey : notnull
         }
     }
     public void AllocateAndFill(TKey Key, int width, params IEnumerable<TBacking> Values)
+    {
+        FillFrom(Allocate(Key, width), Values);
+    }
+    public void AllocateAndFill(int width, params IEnumerable<TBacking> Values)
+    {
+        FillFrom(Allocate(width), Values);
+    }
 }

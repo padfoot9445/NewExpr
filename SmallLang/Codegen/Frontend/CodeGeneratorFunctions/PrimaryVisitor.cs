@@ -64,7 +64,7 @@ internal static partial class PrimaryVisitor
             var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
             Driver.Emit(Push, Ptr);
         }
-        void ParseCollection(Node self, CodeGenerator Driver) => throw new NotImplementedException();
+        void ParseCollection(Node self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
 
     }
 }

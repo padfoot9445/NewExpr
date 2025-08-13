@@ -1,7 +1,7 @@
 Generics = list[str]
 Generic = str
 Code = str
-PATH: str = r"C:\Users\User\coding\nostars\Expa\NewExpr\SmallLang\Frontend\CodeGen\CodeGenerator__emittingfunctions.cs"
+PATH: str = r"C:\Users\User\coding\nostars\Expa\NewExpr\SmallLang\Codegen\Frontend\CodeGenerator__emittingfunctions.cs"
 TAB = "    "
 AMOUNT: int = 5
 BackingNumberType = "BackingNumberType"

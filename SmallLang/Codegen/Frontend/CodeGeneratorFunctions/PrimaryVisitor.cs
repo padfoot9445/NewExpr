@@ -1,4 +1,5 @@
 using Common.Dispatchers;
+using Common.Tokens;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
 
 using SmallLang.IR.AST;
@@ -46,8 +47,11 @@ internal static partial class PrimaryVisitor
 
 
 
-        void ParsePtrNum(Node self, CodeGenerator Driver) => throw new NotImplementedException();
-        void ParseBool(Node self, CodeGenerator Driver) => throw new NotImplementedException();
+        void ParsePtrNum(Node self, CodeGenerator Driver) => PtrNumParser.Parse(self, Driver);
+        void ParseBool(Node self, CodeGenerator Driver)
+        {
+            Driver.Emit<BackingNumberType>(Push, self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue)));
+        }
         void ParseString(Node self, CodeGenerator Driver) => throw new NotImplementedException();
         void ParseCollection(Node self, CodeGenerator Driver) => throw new NotImplementedException();
 

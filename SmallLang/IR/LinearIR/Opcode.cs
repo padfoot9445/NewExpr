@@ -30,4 +30,5 @@ public enum Opcode : OpcodeBackingType
         DeloadVar, //DeloadVar [SlotStartingIndex] [Width] #Pushes the variable onto the stack
         Push, //Push [Inline Constant Number]
         LoadVar, //LoadVar [SlotStartingIndex] [Width] #Loads the stuff on stack to the variable slot. For now, at least, the deeper you are into the stack the higher endian you are.
+        Factorial, //Factorial [Type] [Number of exclamation marks]
 }

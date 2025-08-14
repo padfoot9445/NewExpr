@@ -10,7 +10,7 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using static ImportantASTNodeType;
 using static Opcode;
 
-internal static partial class PrimaryVisitor
+internal static class PrimaryVisitor
 {
     static void ParseIdentifier(Node self, CodeGenerator Driver)
     {

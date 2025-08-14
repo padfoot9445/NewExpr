@@ -1,0 +1,23 @@
+using Common.Tokens;
+using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
+using SmallLang.IR.AST;
+using SmallLang.IR.LinearIR;
+using SmallLang.IR.Metadata;
+
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
+
+using static ImportantASTNodeType;
+using static Opcode;
+
+internal static class FactorialExpressionVisitor
+{
+    internal static void Visit(Node Self, CodeGenerator Driver)
+    {
+        Driver.SETCHUNK();
+
+        //ENTERING CHUNK
+        Driver.Exec(Self.Children[0]);
+        Driver.Emit<BackingNumberType, int>(Factorial, Self.Children[0].Attributes.TypeOfExpression!, Self.Children.Count - 1);
+
+    }
+}

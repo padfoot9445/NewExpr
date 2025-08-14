@@ -254,7 +254,7 @@ NULL:
             NEXT
     BinaryExpression: [Operator; Expression1, Expression2]
         ENTERING CHUNK
-            if Operator != "==":
+            if Operator != "=":
                 Assert in static analyser that the types and operation are valid
                 Find type of arguments Type
                 Cast Expression1 -> Type

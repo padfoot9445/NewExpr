@@ -60,8 +60,9 @@ public partial class CodeGenerator(Node RootNode)
                 (NodeType.LoopCTRL, LoopCtrlVisitor.Visit),
                 (NodeType.Switch, SwitchVisitor.Visit),
                 (NodeType.If, IfVisitor.Visit),
-                (NodeType.Primary, PrimaryVisitor.Visit)
-
+                (NodeType.Primary, PrimaryVisitor.Visit),
+                (NodeType.Declaration, DeclarationVisitor.Visit),
+                (NodeType.FactorialExpression, FactorialExpressionVisitor.Visit)
 
             );
     internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)

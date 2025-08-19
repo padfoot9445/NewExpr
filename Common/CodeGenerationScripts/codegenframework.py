@@ -63,3 +63,5 @@ def code_ctor(class_name: str, content: list[str], access_modifier: str | Access
         modifiers=[access_modifier],
         affixes=affixes
     )
+def code_method(method_name: str, content: list[str], return_type: str, parameters: list[str] = [], access_modifier: str | AccessModifiers = AccessModifiers.Empty):
+    return code_block(method_name, "", content, prefix=[return_type], affixes=[f"({", ".join(parameters)})"], modifiers=[access_modifier])

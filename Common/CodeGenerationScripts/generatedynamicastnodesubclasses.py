@@ -56,6 +56,10 @@ f"""expected structure:
 
 def generate_dynamicastnode_subclass(subclass: classtype) -> str:
 
+    ADATA: Literal["AData"] = "AData"
+    DVF_NAME: Literal["AdditionalDataValidationFunction"] = "AdditionalDataValidationFunction"
+    DATACHECKER_NAME: Literal["DataChecker"] = "DataChecker"
+
     def get_children_properties(children: list[childtype]):
         for child in children:
             name = cast(str, child[NAME])
@@ -64,7 +68,7 @@ def generate_dynamicastnode_subclass(subclass: classtype) -> str:
 
     def get_parameters(self: classtype):
         if self[HAS_DATA]:
-            yield "IToken Data"
+            yield f"IToken {ADATA}"
         for child in cast(list[childtype], self[CHILDREN]):
             if child[IS_OPTIONAL]:
                 yield f"{child[NAME]}? {child[NAME]}"
@@ -76,11 +80,25 @@ def generate_dynamicastnode_subclass(subclass: classtype) -> str:
         yield f"[{", ".join(cast(str, child[NAME]) for child in cast(list[childtype], self[CHILDREN]))}]" #children list
         yield f"{self[ENUM_TYPE]}.{self[NAME]}" #node type enum
 
+    def get_ctor_content(child_names: list[str], has_data: bool, has_dvf: bool, check_data_type: bool):
+        if has_data:
+            yield f"Data = {ADATA};"
+        
+        if has_dvf:
+            yield f"if(!{DVF_NAME}()) throw new Exception(\"Invalid data submitted\");"
+
+        if check_data_type:
+            yield f"if(!{DATACHECKER_NAME}()) throw new Exception(\"Invalid data type submitted\");"
+        
+        for child_name in child_names:
+            yield f"this.{child_name} = {child_name}s"
 
     children: list[childtype] = cast(list[childtype], subclass[CHILDREN])
     content = [i for i in get_children_properties(children)]
     has_data: bool = cast(bool, subclass[HAS_DATA])
     class_name = cast(str, subclass[NAME])
+    check_data_type = cast(bool, subclass[CHECK_DATA_TYPE])
+    has_dvf = cast(bool, subclass[HAS_ADDITIONAL_DVF])
 
     if has_data:
         content.append(
@@ -91,6 +109,23 @@ def generate_dynamicastnode_subclass(subclass: classtype) -> str:
         f"public bool HasData => {"true" if has_data else "false"};"
     )
 
+    if check_data_type:
+        content.append(code_method(
+            method_name=DATACHECKER_NAME,
+            content=[
+                f"if(Data.TT == TokenType.{TTName}) return true;"
+                for TTName in cast(list[str], subclass[VALID_DATA_TYPES])
+            ] + ["return false;"],
+            return_type="bool"
+        ))
+    
+    if has_dvf:
+        content.append(code_method(
+            DVF_NAME,
+            [cast(str, subclass[DATA_VALIDATION_FUNCTION])],
+            "bool"
+        ))
+
     return "\n".join(
         [
             "namespace SmallLang.IR.AST.Generated;",
@@ -100,7 +135,12 @@ def generate_dynamicastnode_subclass(subclass: classtype) -> str:
                 ctors=[
                     code_ctor(
                         class_name=class_name,
-                        content=[],
+                        content = list(get_ctor_content(
+                            child_names =[cast(str, i[NAME]) for i in cast(list[childtype], subclass[CHILDREN])],
+                            has_data = has_data,
+                            has_dvf = has_dvf,
+                            check_data_type = check_data_type
+                        )),
                         parameters=list(get_parameters(subclass)),
                         access_modifier=AccessModifiers.Public,
                         delegated_ctor="base",

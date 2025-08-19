@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any, cast, Literal
 from enum import Enum
 TAB: str = "    "
 class Keywords(Enum):
@@ -48,11 +48,18 @@ def code_property(name: str, type: str, access_modifier: str | AccessModifiers =
         optional_str(initializing_expression, initializing_expression),
         ";"
     ])
-def code_ctor(class_name: str, content: list[str], access_modifier: str | AccessModifiers = AccessModifiers.Empty, parameters: list[str] = []) -> str:
+def code_ctor(class_name: str, content: list[str], access_modifier: str | AccessModifiers = AccessModifiers.Empty, parameters: list[str] = [], delegated_ctor: Literal["this"] | Literal["base"] | None = None, delegated_ctor_arguments: list[str] = []) -> str:
+    affixes = [f"({", ".join(parameters)})"]
+    if delegated_ctor is not None:
+        affixes += [
+            ":",
+            delegated_ctor,
+            f"({", ".join(delegated_ctor_arguments)})"
+        ]
     return code_block(
         name=class_name,
         keyword="",
         content=content,
         modifiers=[access_modifier],
-        affixes=[f"({", ".join(parameters)})"]
+        affixes=affixes
     )

@@ -21,7 +21,7 @@ def code_class(name: str, content: list[str], modifiers: list[str | AccessModifi
     return code_block(
         name,
         keyword=Keywords.Class,
-        content= content + ctors,
+        content=content + ctors,
         modifiers=modifiers,
         affixes=[
             f"({", ".join(primary_ctor)})",

@@ -112,7 +112,7 @@ def generate_dynamicastnode_subclass(subclass: classtype) -> str:
         ]
     )
 
-def generate_dynamicastnode_subclasses(config_path: str, output_directory: str):
+def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory: str | Path):
     with open(config_path) as config_file:
         subclasses: classestype = yaml.load(config_file, Loader=yaml.Loader)[HEADER_NAME]
 

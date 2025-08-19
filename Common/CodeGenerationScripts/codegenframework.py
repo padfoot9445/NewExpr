@@ -18,8 +18,12 @@ def code_block(name: str, keyword: str | Keywords, content: list[str], prefix: l
 def write_block(block: str, out: Any):
     print(block, file=out)
 def code_class(name: str, content: list[str], modifiers: list[str] = [], primary_ctor: list[str] = [], parents: list[str] = [], constraints: list[str] = []) -> str:
-    return code_block(name, keyword=Keywords.Class, content=content, modifiers=modifiers, affixes=
-        [
+    return code_block(
+        name,
+        keyword=Keywords.Class,
+        content=content,
+        modifiers=modifiers,
+        affixes=[
             f"({", ".join(primary_ctor)})",
             ":",
             ", ".join(parents),

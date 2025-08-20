@@ -662,3 +662,9 @@ dynamicastnode subclasses:
 
   enum type: ImportantASTNodeType
   annotation type: Attributes
+
+chunktree classes: #not subclasses of Chunks since Chunks implies all the chunk pointers are resolved
+  - 
+    name: *Function
+    children:
+      - Child1

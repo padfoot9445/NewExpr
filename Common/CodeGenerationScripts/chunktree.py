@@ -3,10 +3,11 @@ import yaml
 from sys import argv
 from pathlib import Path
 from codegenframework import *
-
+from generatedynamicastnodesubclasses import write_header
 SECTION_KEY: Literal["chunktree classes"] = "chunktree classes"
 NAME: Literal["name"] = 'name'
 CHILDREN: Literal["children"] = "children"
+DATA: Literal["data"] = "data"
 
 def header():
     yield "namespace SmallLang.IR.LinearIR.Generated;"
@@ -14,7 +15,8 @@ def generate_classes(config_path: str | Path, output_directory: str | Path):
     output_directory = Path(output_directory)
 
     with open(config_path) as config_file:
-        config: Any = yaml.load(config_file, Loader=yaml.Loader)[SECTION_KEY]
+        raw_config: Any = yaml.load(config_file, Loader=yaml.Loader)[SECTION_KEY]
+        config = raw_config[DATA]
     
 
     for ChunkType in config:
@@ -24,7 +26,8 @@ def generate_classes(config_path: str | Path, output_directory: str | Path):
             
             children_names: list[str] = cast(list[str],ChunkType[CHILDREN])
 
-            write_block("\n".join(header()),file)
+            # write_block("\n".join(header()),file)
+            write_header(raw_config, file)
             write_block(
                 code_class(
                     name = cast(str, ChunkType[NAME]) + "TreeChunk",

@@ -221,7 +221,7 @@ def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory
                 base_class(
                     _base_class[NAME] + "Node",
                     config,
-                    _base_class[PARENT] if _base_class[PARENT] is not False else generic_base_type
+                    (_base_class[PARENT] + "Node" if _base_class[PARENT] is not False else generic_base_type)
                 ),
                 file
             )

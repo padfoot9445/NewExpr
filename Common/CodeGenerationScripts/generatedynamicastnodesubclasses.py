@@ -129,7 +129,7 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
         
         for child_name in child_names:
             new_name = get_name(child_name, names)
-            yield f"this.{new_name} = {new_name}"
+            yield f"this.{new_name} = {new_name};"
 
     children: list[childtype] = cast(list[childtype], subclass[CHILDREN])
     content = [i for i in get_children_properties(children)]

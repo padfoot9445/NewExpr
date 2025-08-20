@@ -1,8 +1,10 @@
 NodeTypeDefinitions:
   namespace: SmallLang.IR.AST
   usings: []
-  generator: nodetypegenerator
+  generator: nodetypegenerator.py
   dst: IR/AST/Generated/ImportantASTNodeType.cs
+  display name: "Dynamic astnode subclasses generation"
+
   name: ImportantASTNodeType
   data:
     - &ReTypingAlias ReTypingAlias: "data: IDENTIFIER, children: [Type Identifier]"
@@ -70,6 +72,11 @@ NodeTypeDefinitions:
 dynamicastnode subclasses:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: generatedynamicastnodesubclasses.py
+  dst: "IR/AST/Generated"
+  display name: ImportantASTNodeType generation
+
+
   base classes:
     - name: &SmallLangNode SmallLang
       parent: no
@@ -675,6 +682,10 @@ dynamicastnode subclasses:
 chunktree classes: #not subclasses of Chunks since Chunks implies all the chunk pointers are resolved
   namespace: SmallLang.IR.LinearIR.Generated
   usings: []
+  generator: chunktree.py
+  dst: "IR/LinearIR/Generated"
+  display name: Chunktrees generation
+
   data:
     - name: *Function
       children:

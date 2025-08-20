@@ -1,0 +1,4 @@
+files:
+  - NodeTypeGeneratorConfig.yaml
+
+generators relative path: ../Common/CodeGenerationScripts

@@ -78,8 +78,9 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
     def get_children_properties(children: list[childtype]):
         names: dict[str, int] = {}
         for child in children:
-            type = cast(str, child[NAME])
-            name = get_name(type, names)
+            raw_name = cast(str, child[NAME])
+            type =  raw_name + "Node"
+            name = get_name(raw_name, names)
     
             is_optional = cast(bool, child[IS_OPTIONAL])
             type = (type + ("?" if is_optional else ""))
@@ -96,9 +97,9 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
             yield f"IToken {ADATA}"
         for child in cast(list[childtype], self[CHILDREN]):
             if child[IS_OPTIONAL]:
-                type = f"{child[NAME]}?"
+                type = f"{child[NAME]}Node?"
             else:
-                type = cast(str, child[NAME])
+                type = f"{child[NAME]}Node"
             
             yield f"{type} {get_name(cast(str,child[NAME]), names)}"
     def get_name(name: str, names: dict[str, int]):
@@ -218,7 +219,7 @@ def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory
             write_header(file)
             write_block(
                 base_class(
-                    _base_class[NAME],
+                    _base_class[NAME] + "Node",
                     config,
                     _base_class[PARENT] if _base_class[PARENT] is not False else generic_base_type
                 ),

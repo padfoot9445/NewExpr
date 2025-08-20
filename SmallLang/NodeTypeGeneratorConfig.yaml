@@ -1,4 +1,4 @@
-ImportantASTNodeTypeDefinitions:
+NodeTypeDefinitions:
   namespace: SmallLang.IR.AST
   usings: []
   data:

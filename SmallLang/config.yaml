@@ -2,3 +2,5 @@ files:
   - NodeTypeGeneratorConfig.yaml
 
 generators relative path: ../Common/CodeGenerationScripts
+
+configuration directory: ./Configurations

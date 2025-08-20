@@ -74,18 +74,19 @@ if __name__ == "__main__":
 
     with open(working_directory/"config.yaml") as file_path:
         config = yaml.load(file_path, yaml.Loader)
+        configurations_path = working_directory/config["configuration directory"]
         file_paths = config["files"]
         code_generation_scripts_directory = working_directory/Path(config["generators relative path"])
     
     for file_path in file_paths:
-        with open(working_directory/file_path) as file:
+        with open(configurations_path/file_path) as file:
             current_file_dict: dict[str, Any] = yaml.load(file, yaml.Loader)
             for step_name in current_file_dict.keys():
                 generator = current_file_dict[step_name]["generator"]
                 dst = current_file_dict[step_name]["dst"]
                 display_name = current_file_dict[step_name]["display name"]
                 build_steps.append((
-                    [sys.executable, code_generation_scripts_directory/generator, working_directory/file_path, working_directory/dst],
+                    [sys.executable, code_generation_scripts_directory/generator, configurations_path/file_path, working_directory/dst],
                     display_name
                 ))
 

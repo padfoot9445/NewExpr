@@ -14,8 +14,10 @@ Command = tuple[list[str | Path], str]
 working_directory = Path(os.path.dirname(__file__))
 
 TIME_ROUND: int = 2
+BOLD = "\033[1m"
 END = '\033[0m'
 SUCCEED = f"\033[92m\033[1msucceeded{END} in"
+FAIL = f"\033[31m{BOLD}failed{END} in"
 BUILD = f"\033[90m\033[1mBUILD{END}"
 
 custom_code_generators: list[Callable[[], None]] = [
@@ -23,13 +25,22 @@ custom_code_generators: list[Callable[[], None]] = [
     generate_emitting_functions
 ]
 
+def custom_run(command: Any, path:Any, out: list[bool]):
+    try:
+        subprocess.run(command, check=True, stdout=path)
+    except subprocess.CalledProcessError:
+        out[0] = False
+    else:
+        out[0] = True
+
 def time_command(command: list[str], path: Any, name: str):
     
     splitname = name.split(" ")
     name = f"\033[1m{splitname[0]}{END}{(" " + " ".join(splitname[1:])) if len(splitname) > 1 else ""}"
     
-    
-    work_thread = Thread(target=subprocess.run, args=[command], kwargs={"check": True, "stdout": path})
+    out = [True]
+
+    work_thread = Thread(target=custom_run, args=[command, path, out])
     work_thread.start()
 
     start_time = time()
@@ -46,8 +57,9 @@ def time_command(command: list[str], path: Any, name: str):
 
     sys.stdout.write("\b" * (len(SUCCEED) + len(time_str) + 1)) #+1 to account for the space between succeed and time_str
     time_str = f"({round(time() - start_time, TIME_ROUND)}s)"
-    sys.stdout.write(f"{SUCCEED} {time_str} {" " * 20}"); print() #flush and newline
+    sys.stdout.write(f"{SUCCEED if out[0] else FAIL} {time_str} {" " * 20}"); print() #flush and newline
     assert not work_thread.is_alive()
+    return out[0]
 
 
     
@@ -87,15 +99,18 @@ if __name__ == "__main__":
     restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore")
     build_command: Command = (["dotnet", "build", "--no-restore"], "Dotnet-Build")
 
+
+    dotnet_build_steps: list[Command] = []
+
     #add unconditional additional build steps
     build_steps.append(restore_command)
 
 
     #handle commmand line arguments
     flags: list[tuple[str, Callable[[], None], bool]] = [ #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
-        ("--no-build", lambda: build_steps.append(build_command), False),
+        ("--no-build", lambda: dotnet_build_steps.append(build_command), False),
         ("--whitespace", lambda: fmt_command[0].append("whitespace"), True),
-        ("--no-format", lambda: build_steps.append(fmt_command), False)
+        ("--no-format", lambda: dotnet_build_steps.append(fmt_command), False)
     ]
 
     for flag, action, desired in flags:
@@ -128,10 +143,19 @@ if __name__ == "__main__":
             os.remove(file)
 
     #run build steps
+    success = True
+
+    #run non-dotnet steps
     for command, msg in build_steps:
-        t = time()
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
-            time_command(command, file_path, msg)
-    build_code = "\033[092m\033[1m"
-    print(f"{build_code}BUILD: Build succeeded in {round(time() - total_time, TIME_ROUND)}s{END}")
+            success = time_command(command, file_path, msg) and success
+
+    for command, msg in dotnet_build_steps:
+        command = [str(i) for i in command]
+        with open(log_file_path, "a") as file_path:
+            success = time_command(command, file_path, msg) and success
+            if not success: break
+
+    build_code = "\033[092m\033[1m" if success else f"\033[31m{BOLD}"
+    print(f"{build_code}BUILD: Build {"succeeded" if success else "failed"} in {round(time() - total_time, TIME_ROUND)}s{END}")

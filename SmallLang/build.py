@@ -7,15 +7,17 @@ import os
 import sys
 
 smalllang = Path(os.path.dirname(__file__))
-
+common_codegenscripts = smalllang/"../Common/CodeGenerationScripts"
+yaml_path = smalllang/"config.yaml"
 if __name__ == "__main__":
     code_generators: list[Callable[[], None]] = [
         add_global_usings_to_cs_projects,
         generate_emitting_functions
     ]
 
-    commands: list[list[str]] = [
-        [sys.executable, str(smalllang/"../Common/CodeGenerationScripts/generatedynamicastnodesubclasses.py"), str(smalllang/"config.yaml"), str(smalllang/"IR"/"AST"/"Generated")],
+    commands: list[list[str | Path]] = [
+        [sys.executable, common_codegenscripts/"generatedynamicastnodesubclasses.py", yaml_path, smalllang/"IR"/"AST"/"Generated"],
+        [sys.executable, common_codegenscripts/"chunktree.py", yaml_path, smalllang/"IR"/"LinearIR"/"Generated"],
         ["dotnet", "restore"],
         ["dotnet", "format", "--no-restore",],
         ["dotnet", "build", "--no-restore"]
@@ -25,4 +27,5 @@ if __name__ == "__main__":
         code_generator()
 
     for command in commands:
+        command = [str(i) for i in command]
         subprocess.run(command, check=True)

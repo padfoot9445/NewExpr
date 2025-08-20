@@ -3,7 +3,7 @@ NodeTypeDefinitions:
   usings: []
   generator: nodetypegenerator.py
   dst: IR/AST/Generated/ImportantASTNodeType.cs
-  display name: "Dynamic astnode subclasses generation"
+  display name: "Node-Subclasses generation"
 
   name: ImportantASTNodeType
   data:

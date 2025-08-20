@@ -41,7 +41,7 @@ def time_command(command: list[str], path: Any, name: str):
 
     sys.stdout.write("\b" * (len(SUCCEED) + len(time_str) + 1)) #+1 to account for the space between succeed and time_str
     time_str = f"({round(time() - start_time, TIME_ROUND)}s)"
-    sys.stdout.write(f"{SUCCEED} {time_str}"); print() #flush and newline
+    sys.stdout.write(f"{SUCCEED} {time_str} {" " * 20}"); print() #flush and newline
     assert not work_thread.is_alive()
 
 

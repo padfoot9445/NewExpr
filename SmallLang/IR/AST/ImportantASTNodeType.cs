@@ -10,7 +10,7 @@ public enum ImportantASTNodeType
     LoopCTRL, //data: break | continue, children: [] | [identifier: opnestedvalinloopcontrol]
     For, //data: null, children: [expression, expression, expression, Label, statement, else as Statement]
     While, //data: null, children: [expression, statement, Label, else as Statement]
-    ValInLCTRL, //data: identifier
+    ValInLCTRL, //data: identifier //TODO: Remove
     LoopLabel, //data: identifier
     Return, //NO FLATTEN, data: null, children: [Expression]
     BaseType, //data: base type, children: []

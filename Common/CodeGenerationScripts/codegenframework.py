@@ -66,3 +66,5 @@ def code_ctor(class_name: str, content: list[str], access_modifier: str | Access
     )
 def code_method(method_name: str, content: list[str], return_type: str, parameters: list[str] = [], access_modifier: str | AccessModifiers = AccessModifiers.Empty):
     return code_block(method_name, "", content, prefix=[return_type], affixes=[f"({", ".join(parameters)})"], modifiers=[access_modifier])
+def code_using_statements(namespaces: list[str]):
+    return "\n".join(f"using {i};" for i in namespaces)

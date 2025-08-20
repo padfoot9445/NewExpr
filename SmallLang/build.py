@@ -8,12 +8,12 @@ import sys
 import yaml
 from time import time, sleep
 import glob
-from threading import Thread, Event
+from threading import Thread
 
 Command = tuple[list[str | Path], str]
 working_directory = Path(os.path.dirname(__file__))
 
-TIME_ROUND: int = 1
+TIME_ROUND: int = 2
 
 
 custom_code_generators: list[Callable[[], None]] = [
@@ -21,32 +21,29 @@ custom_code_generators: list[Callable[[], None]] = [
     generate_emitting_functions
 ]
 
-def time_command(command: list[str], path: Any, msg: str):
+def time_command(command: list[str], path: Any, name: str):
     SUCCEED = "succeeded in"
-    def inner_timer(name: str, finished: Event):
-        start_time = time()
-        elapsed = 0
-        time_str = f"(0.0s)"
+    
+    work_thread = Thread(target=subprocess.run, args=[command], kwargs={"check": True, "stdout": path})
+    work_thread.start()
 
-        sys.stdout.write(f"BUILD: {name} {" " * len(SUCCEED)} {time_str}"); sys.stdout.flush()
+    start_time = time()
+    time_str = f"(0.0s)"
+    sys.stdout.write(f"BUILD: {name} {" " * len(SUCCEED)} {time_str}"); sys.stdout.flush()
 
-        while True:
-            sleep(0.1)
-            elapsed += 1
-            sys.stdout.write("\b" * len(time_str))
-            time_str = f"({round(elapsed // 10, TIME_ROUND)}s)"
-            sys.stdout.write(time_str); sys.stdout.flush()
-            if finished.is_set(): break
-        
-        sys.stdout.write("\b" * (len(SUCCEED) + len(time_str) + 1)) #+1 to account for the space between succeed and time_str
-        time_str = f"({round(time() - start_time)}s)"
-        sys.stdout.write(f"{SUCCEED} {time_str}"); print() #flush and newline
-    finished_event = Event()
-    timer_thread = Thread(target=inner_timer, args=(msg, finished_event))
-    timer_thread.start()
-    subprocess.run(command, check=True, stdout=path)
-    finished_event.set()
-    timer_thread.join()
+    while True:
+        sleep(0.01)
+        sys.stdout.write("\b" * len(time_str))
+        time_str = f"({round(time() - start_time , TIME_ROUND)}s)"
+        sys.stdout.write(time_str); sys.stdout.flush()
+        if not work_thread.is_alive(): break
+
+
+    sys.stdout.write("\b" * (len(SUCCEED) + len(time_str) + 1)) #+1 to account for the space between succeed and time_str
+    time_str = f"({round(time() - start_time, TIME_ROUND)}s)"
+    sys.stdout.write(f"{SUCCEED} {time_str}"); print() #flush and newline
+    assert not work_thread.is_alive()
+
 
     
 

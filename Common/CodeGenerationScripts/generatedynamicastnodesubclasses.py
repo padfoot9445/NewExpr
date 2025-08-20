@@ -19,6 +19,9 @@ CLASSES: Literal["classes"] = "classes"
 ENUM_TYPE: Literal["enum type"] = "enum type"
 ANNOTATION_TYPE: Literal["annotation type"] = "annotation type"
 BASE_CLASS_NAME: Literal["base class name"] = "base class name"
+
+USINGS: list[str] = ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+NAMESPACE: str = "SmallLang.IR.AST.Generated"
 childtype = dict[str, str | bool]
 classtype = \
 dict[ #dictionary representing an individual class
@@ -129,10 +132,7 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
             "bool"
         ))
 
-    return "\n".join(
-        [
-            "namespace SmallLang.IR.AST.Generated;",
-            code_class(
+    return code_class(
                 name=class_name,
                 content = content,
                 ctors=[
@@ -152,17 +152,25 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
                 ],
                 parents=[cast(str,subclass[PARENT])]
             )
-        ]
-    )
+
+
+def write_header(dst: Any):
+    write_block(code_using_statements(USINGS), dst)
+    write_block(f"namespace {NAMESPACE};", dst)
 
 def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory: str | Path):
     output_directory = Path(output_directory)
+
     with open(config_path) as config_file:
         config: Any = yaml.load(config_file, Loader=yaml.Loader)[HEADER_NAME]
         subclasses: classestype = config[CLASSES]
         base_class_name = config[BASE_CLASS_NAME]
+
     assert isinstance(subclasses, list)
+
+    generic_base_type = f"DynamicASTNode<{config[ENUM_TYPE]}, {config[ANNOTATION_TYPE]}>"
     with open(str(output_directory/f"{base_class_name}.cs"), "w") as file:
+        write_header(file)
         write_block(
             code_class(
                 name = base_class_name, 
@@ -170,15 +178,16 @@ def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory
                 modifiers = [AccessModifiers.Public, "record"], 
                 primary_ctor =[
                     "IToken? Data", 
-                    f"List<{base_class_name}> Children",
+                    f"List<{generic_base_type}> Children",
                     f"{config[ENUM_TYPE]} NodeType"
                 ],
-                parents = [f"DynamicASTNode<{config[ENUM_TYPE]}, {config[ANNOTATION_TYPE]}>(Data, Children, NodeType)"]
+                parents = [f"{generic_base_type}(Data, Children, NodeType)"]
             ),
             file
         )
     for subclass in subclasses:
         with open(str(output_directory/f"{subclass[NAME]}.cs"), "w") as file:
+            write_header(file)
             write_block(generate_dynamicastnode_subclass(subclass, config[ENUM_TYPE]), file)
 
 

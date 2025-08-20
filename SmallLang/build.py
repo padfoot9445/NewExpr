@@ -16,7 +16,9 @@ if __name__ == "__main__":
 
     commands: list[list[str]] = [
         [sys.executable, str(smalllang/"../Common/CodeGenerationScripts/generatedynamicastnodesubclasses.py"), str(smalllang/"config.yaml"), str(smalllang/"IR"/"AST"/"Generated")],
-        ["dotnet", "build"]
+        ["dotnet", "restore"],
+        ["dotnet", "format", "--no-restore",],
+        ["dotnet", "build", "--no-restore"]
     ]
 
     for code_generator in code_generators:

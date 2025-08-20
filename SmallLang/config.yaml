@@ -61,6 +61,8 @@ Anchors:
 #//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
 #endregion
 dynamicastnode subclasses:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
   base classes:
     - name: &SmallLangNode SmallLang
       parent: no

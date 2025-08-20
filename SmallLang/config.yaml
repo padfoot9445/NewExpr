@@ -56,7 +56,13 @@ Anchors:
 #    annotation type: [Annotation Type Name]
 #//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
 dynamicastnode subclasses:
-  base class name: &SmalllangNode SmalllangNode
+  base classes:
+    - name: &SmallLangNode SmallLangNode
+      parent: no
+    - name: &Statement Statement
+      parent: no
+    - name: &Expression Expression
+      parent: no
   classes:
     - name: *Function
       children:
@@ -68,7 +74,7 @@ dynamicastnode subclasses:
           is optional: yes
         - name: statement
           is optional: no
-      parent: *SmalllangNode
+      parent: *SmallLangNode
       has data: yes
       check data type: yes
       valid data types:

@@ -203,18 +203,18 @@ def base_class(base_class_name: str, config:Any, base_base_type: str):
                     code_ctor(
                         class_name=base_class_name, 
                         content = [
-                            "Children = AChildren;"
+                            "this.Children = Children;"
                         ],
                         access_modifier=AccessModifiers.Public,
                         parameters= [
                             "IToken? Data", 
-                            f"{ChildrenType} AChildren",
+                            f"{ChildrenType} Children",
                             f"{config[ENUM_TYPE]} NodeType"
                         ],
                         delegated_ctor="base",
                         delegated_ctor_arguments=[
                             "Data",
-                            f"AChildren.Select(x => ({base_base_type})x).ToList()",
+                            f"Children.Select(x => ({base_base_type})x).ToList()",
                             "NodeType"
                         ]
                     )

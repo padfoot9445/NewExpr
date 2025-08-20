@@ -116,9 +116,9 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
         names: dict[str, int] = {}
 
         yield (ADATA if self[HAS_DATA] else "null") # data
-        yield f"[{", ".join(
+        yield f"GetList([{", ".join(
             f"{".." if child[IS_MULTIPLE] else ""}{get_name(cast(str, child[NAME]), names)}"
-            for child in cast(list[childtype], self[CHILDREN]))}]" #children list
+            for child in cast(list[childtype], self[CHILDREN]))}])" #children list
         yield f"{enum_type}.{self[NAME]}" #node type enum
 
     def get_ctor_content(child_names: list[str], has_data: bool, has_dvf: bool, check_data_type: bool):
@@ -168,6 +168,20 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
             [cast(str, subclass[DATA_VALIDATION_FUNCTION])],
             "bool"
         ))
+
+    content.append(
+        code_method(
+            method_name="GetList",
+            return_type="List<SmallLangNode>",
+            parameters=[
+                "IEnumerable<SmallLangNode?> Nodes"
+            ],
+            access_modifier="private static",
+            content=[
+                "return Nodes.Where(x => x is not null).Select(x => x!).ToList();"
+            ]
+        )
+    )
 
     return code_class(
                 name=class_name,

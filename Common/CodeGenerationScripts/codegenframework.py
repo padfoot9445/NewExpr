@@ -25,7 +25,7 @@ def code_class(name: str, content: list[str], modifiers: list[str | AccessModifi
         modifiers=modifiers,
         affixes=[
             f"({", ".join(primary_ctor)})" if primary_ctor is not None else "",
-            ":",
+            ":" if len(parents) > 0 else "",
             ", ".join(parents),
             "\n".join(constraints)
         ]

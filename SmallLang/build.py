@@ -8,7 +8,7 @@ import sys
 
 smalllang = Path(os.path.dirname(__file__))
 common_codegenscripts = smalllang/"../Common/CodeGenerationScripts"
-yaml_path = smalllang/"config.yaml"
+yaml_path = smalllang/"NodeTypeGeneratorConfig.yaml"
 if __name__ == "__main__":
     code_generators: list[Callable[[], None]] = [
         add_global_usings_to_cs_projects,

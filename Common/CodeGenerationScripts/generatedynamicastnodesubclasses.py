@@ -16,6 +16,7 @@ NAME: Literal["name"] = "name"
 IS_OPTIONAL: Literal["is optional"] = "is optional"
 CHECK_DATA_TYPE: Literal["check data type"] = "check data type"
 PARENT: Literal["parent"] = "parent"
+IS_MULTIPLE: Literal["is multiple"] = "is multiple"
 
 CLASSES: Literal["classes"] = "classes"
 ENUM_TYPE: Literal["enum type"] = "enum type"
@@ -56,6 +57,7 @@ f"""expected structure:
                     -
                         {NAME}: [child name]
                         {IS_OPTIONAL}: [yes | no]
+                        {IS_MULTIPLE}: [yes | no]
                 {HAS_DATA}: [yes | no]
                 {CHECK_DATA_TYPE}: [yes | no]
                 {VALID_DATA_TYPES}:
@@ -77,7 +79,12 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
         for child in children:
             name = cast(str, child[NAME])
             is_optional = cast(bool, child[IS_OPTIONAL])
-            yield code_property(name=name, type=(name + ("?" if is_optional else "")), access_modifier=AccessModifiers.Public, setter_access_modifier=AccessModifiers.Private)
+            type = (name + ("?" if is_optional else ""))
+            if child[IS_MULTIPLE]:
+                type = f"IEnumerable<{type}>"
+            yield code_property(
+                name=name, 
+                type=type, access_modifier=AccessModifiers.Public, setter_access_modifier=AccessModifiers.Private)
 
     def get_parameters(self: classtype):
         if self[HAS_DATA]:

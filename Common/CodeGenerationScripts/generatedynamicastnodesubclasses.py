@@ -108,7 +108,7 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
 
     if has_data:
         content.append(
-            code_property("Data", "IToken", access_modifier="public new", getter_access_modifier=AccessModifiers.Public, setter_access_modifier=AccessModifiers.Private)
+            code_property("Data", "IToken", access_modifier="public new", setter_access_modifier=AccessModifiers.Private)
         )
 
     content.append(

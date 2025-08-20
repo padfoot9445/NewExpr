@@ -13,11 +13,12 @@ DATA_VALIDATION_FUNCTION: Literal["data validation function"] = "data validation
 NAME: Literal["name"] = "name"
 IS_OPTIONAL: Literal["is optional"] = "is optional"
 CHECK_DATA_TYPE: Literal["check data type"] = "check data type"
+PARENT: Literal["parent"] = "parent"
 
 CLASSES: Literal["classes"] = "classes"
 ENUM_TYPE: Literal["enum type"] = "enum type"
 ANNOTATION_TYPE: Literal["annotation type"] = "annotation type"
-
+BASE_CLASS_NAME: Literal["base class name"] = "base class name"
 childtype = dict[str, str | bool]
 classtype = \
 dict[ #dictionary representing an individual class
@@ -40,6 +41,7 @@ f"""expected structure:
         {CLASSES}:
             -
                 {NAME}: [class name]
+                {PARENT}: [Parent Name]
                 {CHILDREN}:
                     -
                         {NAME}: [child name]
@@ -55,7 +57,7 @@ f"""expected structure:
         {ANNOTATION_TYPE}: [Annotation Type Name]
     """
 
-def generate_dynamicastnode_subclass(subclass: classtype) -> str:
+def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str:
 
     ADATA: Literal["AData"] = "AData"
     DVF_NAME: Literal["AdditionalDataValidationFunction"] = "AdditionalDataValidationFunction"
@@ -76,10 +78,10 @@ def generate_dynamicastnode_subclass(subclass: classtype) -> str:
             else:
                 yield f"{child[NAME]} {child[NAME]}"
 
-    def get_delegate_ctor_arguments(self: classtype):
+    def get_delegate_ctor_arguments(self: classtype, enum_type: str):
         yield ("Data" if self[HAS_DATA] else "null") # data
         yield f"[{", ".join(cast(str, child[NAME]) for child in cast(list[childtype], self[CHILDREN]))}]" #children list
-        yield f"{self[ENUM_TYPE]}.{self[NAME]}" #node type enum
+        yield f"{enum_type}.{self[NAME]}" #node type enum
 
     def get_ctor_content(child_names: list[str], has_data: bool, has_dvf: bool, check_data_type: bool):
         if has_data:
@@ -145,21 +147,39 @@ def generate_dynamicastnode_subclass(subclass: classtype) -> str:
                         parameters=list(get_parameters(subclass)),
                         access_modifier=AccessModifiers.Public,
                         delegated_ctor="base",
-                        delegated_ctor_arguments=list(get_delegate_ctor_arguments(subclass))
+                        delegated_ctor_arguments=list(get_delegate_ctor_arguments(subclass, enum_type))
                     )
                 ],
-                parents=[f"DynamicASTNode<{subclass[ENUM_TYPE]}, {subclass[ANNOTATION_TYPE]}>"]
+                parents=[cast(str,subclass[PARENT])]
             )
         ]
     )
 
 def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory: str | Path):
+    output_directory = Path(output_directory)
     with open(config_path) as config_file:
-        subclasses: classestype = yaml.load(config_file, Loader=yaml.Loader)[HEADER_NAME][CLASSES]
+        config: Any = yaml.load(config_file, Loader=yaml.Loader)[HEADER_NAME]
+        subclasses: classestype = config[CLASSES]
+        base_class_name = config[BASE_CLASS_NAME]
     assert isinstance(subclasses, list)
+    with open(str(output_directory/f"{base_class_name}.cs"), "w") as file:
+        write_block(
+            code_class(
+                name = base_class_name, 
+                content = [], 
+                modifiers = [AccessModifiers.Public, "record"], 
+                primary_ctor =[
+                    "IToken? Data", 
+                    f"List<{base_class_name}> Children",
+                    f"{config[ENUM_TYPE]} NodeType"
+                ],
+                parents = [f"DynamicASTNode<{config[ENUM_TYPE]}, {config[ANNOTATION_TYPE]}>(Data, Children, NodeType)"]
+            ),
+            file
+        )
     for subclass in subclasses:
-        with open(str(Path(output_directory)/cast(str,(subclass[NAME]))) + ".cs", "w") as file:
-            print(generate_dynamicastnode_subclass(subclass), file=file)
+        with open(str(output_directory/f"{subclass[NAME]}.cs"), "w") as file:
+            write_block(generate_dynamicastnode_subclass(subclass, config[ENUM_TYPE]), file)
 
 
 if __name__ == "__main__":

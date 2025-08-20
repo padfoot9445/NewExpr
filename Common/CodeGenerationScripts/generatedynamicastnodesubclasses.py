@@ -2,6 +2,7 @@ import yaml
 from pathlib import Path
 from typing import Literal, cast
 from codegenframework import *
+from sys import argv
 
 HEADER_NAME: Literal["dynamicastnode subclasses"] = "dynamicastnode subclasses"
 CHILDREN: Literal["children"] = "children"
@@ -154,12 +155,14 @@ def generate_dynamicastnode_subclass(subclass: classtype) -> str:
 
 def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory: str | Path):
     with open(config_path) as config_file:
-        subclasses: classestype = yaml.load(config_file, Loader=yaml.Loader)[HEADER_NAME]
-
+        subclasses: classestype = yaml.load(config_file, Loader=yaml.Loader)[HEADER_NAME][CLASSES]
     assert isinstance(subclasses, list)
     for subclass in subclasses:
-        with open(Path(output_directory)/cast(str,(subclass[NAME])), "w") as file:
+        with open(str(Path(output_directory)/cast(str,(subclass[NAME]))) + ".cs", "w") as file:
             print(generate_dynamicastnode_subclass(subclass), file=file)
 
 
-
+if __name__ == "__main__":
+    config_path = argv[1]
+    output_dir = argv[2]
+    generate_dynamicastnode_subclasses(config_path, output_dir)

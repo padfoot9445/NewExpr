@@ -1,0 +1,85 @@
+Anchors:
+  - &Function Function
+  - &LoopCTRL LoopCTRL
+  - &For For
+  - &While While
+  - &ValInLCTRL ValInLCTRL
+  - &LoopLabel LoopLabel
+  - &Return Return
+  - &BaseType BaseType
+  - &GenericType GenericType
+  - &If If
+  - &Switch Switch
+  - &ExprStatementCombined ExprStatementCombined
+  - &TypeAndIdentifierCSV TypeAndIdentifierCSV
+  - &TypeAndIdentifierCSVElement TypeAndIdentifierCSVElement
+  - &AliasExpr AliasExpr
+  - &Declaration Declaration
+  - &DeclarationModifiersCombined DeclarationModifiersCombined
+  - &DeclarationModifier DeclarationModifier
+  - &FunctionArgDeclModifiers FunctionArgDeclModifiers
+  - &FunctionArgDeclModifiersCombined FunctionArgDeclModifiersCombined
+  - &AssignmentPrime AssignmentPrime
+  - &FactorialExpression FactorialExpression
+  - &BinaryExpression BinaryExpression
+  - &ComparisionExpression ComparisionExpression
+  - &OperatorExpressionPair OperatorExpressionPair
+  - &Primary Primary
+  - &FunctionIdentifier FunctionIdentifier
+  - &CopyExpr CopyExpr
+  - &NewExpr NewExpr
+  - &Index Index
+  - &FunctionCall FunctionCall
+  - &ArgList ArgList
+  - &ArgListElement ArgListElement
+  - &TypeCSV TypeCSV
+  - &UnaryExpression UnaryExpression
+
+
+
+# expected structure:
+
+#dynamicastnode subclasses:
+#    classes:
+#        -
+#            name: [class name]
+#            children:
+#                -
+#                    name: [child name]
+#                    is optional: [yes | no]
+#            has data: [yes | no]
+#            check data type: [yes | no]
+#            valid data types:
+#                - [data type]
+#            has additional data validation function: [yes | no]
+#            data validation function: |
+#                [valid c# BODY (everything between the curly brackets). Should probably just be a return [Expression]]
+#    enum type: [Enum Type Name]
+#    annotation type: [Annotation Type Name]
+#//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
+dynamicastnode subclasses:
+  classes:
+    -
+      name: *Function
+      children:
+        -
+          name: *BaseType
+          is optional: no
+        -
+          name: *GenericType
+          is optional: no
+        -
+          name: *TypeAndIdentifierCSV
+          is optional: yes
+        -
+          name: statement
+          is optional: no
+      has data: yes
+      check data type: yes
+      valid data types:
+        - identifier
+      has additional data validation function: yes
+      data validation function: |
+        return true;
+      enum type: ImportantASTNodeType
+      annotation type: Attributes

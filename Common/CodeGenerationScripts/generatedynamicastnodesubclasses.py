@@ -215,7 +215,7 @@ def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory
 
     generic_base_type = f"DynamicASTNode<{config[ENUM_TYPE]}, {config[ANNOTATION_TYPE]}>"
     for _base_class in config[BASE_CLASSES]:
-        with open(str(output_directory/f"{_base_class[NAME]}.cs"), "w") as file:
+        with open(str(output_directory/f"{_base_class[NAME]}Node.cs"), "w") as file:
             write_header(file)
             write_block(
                 base_class(

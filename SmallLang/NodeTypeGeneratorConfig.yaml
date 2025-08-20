@@ -1,46 +1,45 @@
-Anchors:
-  - &ReTypingAlias ReTypingAlias
-  - &ReTypeOriginal ReTypeOriginal
-  - &Identifier Identifier
-  - &Section Section
-  - &Function Function
-  - &LoopCTRL LoopCTRL
-  - &For For
-  - &While While
-  - &ValInLCTRL ValInLCTRL
-  - &LoopLabel LoopLabel
-  - &Return Return
-  - &BaseType BaseType
-  - &GenericType GenericType
-  - &If If
-  - &Switch Switch
-  - &ExprStatementCombined ExprStatementCombined
-  - &TypeAndIdentifierCSV TypeAndIdentifierCSV
-  - &TypeAndIdentifierCSVElement TypeAndIdentifierCSVElement
-  - &AliasExpr AliasExpr
-  - &Declaration Declaration
-  - &DeclarationModifiersCombined DeclarationModifiersCombined
-  - &DeclarationModifier DeclarationModifier
-  - &FunctionArgDeclModifiers FunctionArgDeclModifiers
-  - &FunctionArgDeclModifiersCombined FunctionArgDeclModifiersCombined
-  - &AssignmentPrime AssignmentPrime
-  - &FactorialExpression FactorialExpression
-  - &BinaryExpression BinaryExpression
-  - &ComparisionExpression ComparisionExpression
-  - &OperatorExpressionPair OperatorExpressionPair
-  - &Primary Primary
-  - &FunctionIdentifier FunctionIdentifier
-  - &CopyExpr CopyExpr
-  - &NewExpr NewExpr
-  - &Index Index
-  - &FunctionCall FunctionCall
-  - &ArgList ArgList
-  - &ArgListElement ArgListElement
-  - &TypeCSV TypeCSV
-  - &UnaryExpression UnaryExpression
-  - &Else Else
-  - &FactorialSymbol FactorialSymbol
-
+ImportantASTNodeTypeDefinitions:
+  - &ReTypingAlias ReTypingAlias: "//data: IDENTIFIER, children: [Type Identifier]"
+  - &ReTypeOriginal ReTypeOriginal: "//data: IDENTIFIER, children: [Type]"
+  - &Identifier Identifier: "//data: IDENTIFIER, children: []"
+  - &Section Section: "//data: null, children: flattened array of statements"
+  - &Function Function: "//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]"
+  - &LoopCTRL LoopCTRL: "//data: break | continue, children: [] | [identifier: opnestedvalinloopcontrol]"
+  - &For For: "//data: null, children: [expression, expression, expression, Label, statement, else as Statement]"
+  - &While While: "//data: null, children: [expression, statement, Label, else as Statement]"
+  - &ValInLCTRL ValInLCTRL: "//data: identifier //TODO: Remove"
+  - &LoopLabel LoopLabel: "//data: identifier"
+  - &Return Return: "//NO FLATTEN, data: null, children: [Expression]"
+  - &BaseType BaseType: "//data: base type, children: []"
+  - &GenericType GenericType: "//data: generic type, children: [] // maybe children:[typecsv]?"
+  - &If If: "//data: null, children: [ExprStatementCombined+, OptionalElse as Statement] where OptionalElse is not EMPTY| [ExprStatementCombined+]"
+  - &Switch Switch: "//data: null, children: [Expression, ExprStatementCombined*]"
+  - &ExprStatementCombined ExprStatementCombined: "//data: null, children: [Expression, Statement]"
+  - &TypeAndIdentifierCSV TypeAndIdentifierCSV: "//data: null, children: [TypeAndIdentifierCSVElement+]"
+  - &TypeAndIdentifierCSVElement TypeAndIdentifierCSVElement: "//data: Identifier, children: [FunctionArgDeclModifiersCombined, Type]"
+  - &AliasExpr AliasExpr: "//data: IDENTIFIER, children: [Identifier]"
+  - &Declaration Declaration: "//data: Identifier, children: [DeclarationModifiersCombined, Type, AssignmentPrime] | [Type, AssignmentPrime] | [Type] | [Type, AssignmentPrime]"
+  - &DeclarationModifiersCombined DeclarationModifiersCombined: "//data: null, children: [DeclarationModifier*]"
+  - &DeclarationModifier DeclarationModifier: "//data: \"ref\" | \"readonly\" | \"frozen\" | \"immut\", children: []"
+  - &FunctionArgDeclModifiers FunctionArgDeclModifiers: "//data: *DeclarationModifier | \"copy\", children: []"
+  - &FunctionArgDeclModifiersCombined FunctionArgDeclModifiersCombined: "//data: null, children: [FunctionArgDeclModifiers+]"
+  - &AssignmentPrime AssignmentPrime: "//data: \"=\", children: [Expression]"
+  - &FactorialExpression FactorialExpression: "//data: null, children: [Expression, !+]"
+  - &BinaryExpression BinaryExpression: "//data: \"implies\" | \"or\" | \"xor\" | \"and\" | \"==\" | \"!=\" | \">\" | \">=\" | \"<\" | \"<=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"**\" | \"|\" | \"^\" | \"&\", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser"
+  - &ComparisionExpression ComparisionExpression: "//data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via "
+  - &OperatorExpressionPair OperatorExpressionPair: "//data: cmpOperator, children: [Expression]"
+  - &Primary Primary: "//data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr"
+  - &FunctionIdentifier FunctionIdentifier: "//data: IDENTIFIER, children: []"
+  - &CopyExpr CopyExpr: "//data: null, children: [Expression] //NO UP FLATTEN"
+  - &NewExpr NewExpr: "//data: null, children: [Type, ArgList] | [Type]"
+  - &Index Index: "//data: null, children: [Expression, Expression] where Expression1 is Primary or subset (parens etc)"
+  - &FunctionCall FunctionCall: "//data: null | \".\", children: [Expression, ArgList] | [Expression] where Expression1 i"
+  - &ArgList ArgList: "//data: null, children: [ArgListElement+]"
+  - &ArgListElement ArgListElement: "//data: null, children: [Expression] | [ArgListLabel, Expression]"
+  - &TypeCSV TypeCSV: "//data: null, children: [Type+]"
+  - &UnaryExpression UnaryExpression: ""
+  - &Else Else: ""
+  - &FactorialSymbol FactorialSymbol: ""
 #region expected structure:
 
 #dynamicastnode subclasses:

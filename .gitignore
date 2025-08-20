@@ -5,7 +5,7 @@
 
 #generated files
 generated.*
-
+Generated/
 *.exe
 .vscode/
 coverage_report/

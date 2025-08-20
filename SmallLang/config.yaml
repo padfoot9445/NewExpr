@@ -298,7 +298,7 @@ dynamicastnode subclasses:
         - name: *Statement
           is optional: no
           is multiple: no
-      parent: *SmalllangNode
+      parent: *SmallLangNode
       has data: no
       check data type: no
       valid data types: []
@@ -325,7 +325,7 @@ dynamicastnode subclasses:
         - name: *Type
           is optional: no
           is multiple: no
-      parent: *SmalllangNode
+      parent: *SmallLangNode
       has data: yes
       check data type: yes
       valid data types:
@@ -370,7 +370,7 @@ dynamicastnode subclasses:
         - name: *DeclarationModifier
           is optional: no
           is multiple: yes
-      parent: *SmalllangNode
+      parent: *SmallLangNode
       has data: no
       check data type: no
       valid data types: []
@@ -386,10 +386,10 @@ dynamicastnode subclasses:
       has data: yes
       check data type: yes
       valid data types:
-      - "ref"
-      - "readonly"
-      - "frozen"
-      - "immut"
+      - "Ref"
+      - "Readonly"
+      - "Frozen"
+      - "Immut"
       has additional data validation function: no
       data validation function: no
     
@@ -399,11 +399,11 @@ dynamicastnode subclasses:
       has data: yes
       check data type: yes
       valid data types:
-      - "ref"
-      - "readonly"
-      - "frozen"
-      - "immut"
-      - "copy"
+      - "Ref"
+      - "Readonly"
+      - "Frozen"
+      - "Immut"
+      - "Copy"
       has additional data validation function: no
       data validation function: no
     
@@ -428,15 +428,29 @@ dynamicastnode subclasses:
       has data: yes
       check data type: yes
       valid data types:
-      - "="
+      - "Equals"
       has additional data validation function: no
       data validation function: no
     
+    - name: &FactorialSymbol FactorialSymbol
+      children: []
+      parent: *SmallLangNode
+      has data: yes
+      check data type: yes
+      valid data types:
+      - Factorial
+      has additional data validation function: no
+      data validation function: no
+    
+
     - name: *FactorialExpression
       children:
         - name: *Expression
           is optional: no
           is multiple: no
+        - name: *FactorialSymbol
+          is optional: no
+          is multiple: yes
       parent: *Expression
       has data: no
       check data type: no
@@ -456,24 +470,24 @@ dynamicastnode subclasses:
       has data: yes
       check data type: yes
       valid data types:
-      - "implies"
-      - "or"
-      - "xor"
-      - "and"
-      - "=="
-      - "!="
-      - ">"
-      - ">="
-      - "<"
-      - "<="
-      - "+"
-      - "-"
-      - "*"
-      - "/"
-      - "**"
-      - "|"
-      - "^"
-      - "&"
+      - "LogicalImplies"
+      - "LogicalOr"
+      - "LogicalXor"
+      - "LogicalAnd"
+      # - "=="
+      # - "!="
+      # - ">"
+      # - ">="
+      # - "<"
+      # - "<="
+      - Addition
+      - Subtraction
+      - Multiplication
+      - Division
+      - Exponentiation
+      - BitwiseOr
+      - BitwiseXor
+      - BitwiseAnd
       has additional data validation function: no
       data validation function: no
     
@@ -519,7 +533,8 @@ dynamicastnode subclasses:
       - Identifier
       - Number
       - String
-      - Bool
+      - "True"
+      - "False"
       has additional data validation function: no
       data validation function: no
     
@@ -607,6 +622,9 @@ dynamicastnode subclasses:
         - name: *Expression
           is optional: no
           is multiple: no
+        - name: *Identifier
+          is optional: yes
+          is multiple: no
       parent: *SmallLangNode
       has data: no
       check data type: no
@@ -635,22 +653,12 @@ dynamicastnode subclasses:
       has data: yes
       check data type: yes
       valid data types:
-      - "~"
-      - "-"
-      - "+"
-      - "!"
+      - BitwiseNegation
+      - Subtraction
+      - "LogicalNot"
       has additional data validation function: no
       data validation function: no
     
-    - name: *ValInLCTRL
-      children: []
-      parent: *SmallLangNode
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
 
   enum type: ImportantASTNodeType
   annotation type: Attributes

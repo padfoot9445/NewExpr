@@ -188,7 +188,7 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
             )
 
 def base_class(base_class_name: str, config:Any, base_base_type: str):
-    ChildrenType = f"List<{base_base_type}>"
+    ChildrenType = f"List<SmallLangNode>"
     return code_class(
                 name = base_class_name,
                 content = [
@@ -214,7 +214,7 @@ def base_class(base_class_name: str, config:Any, base_base_type: str):
                         delegated_ctor="base",
                         delegated_ctor_arguments=[
                             "Data",
-                            "AChildren",
+                            f"AChildren.Select(x => ({base_base_type})x).ToList()",
                             "NodeType"
                         ]
                     )

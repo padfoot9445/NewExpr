@@ -20,6 +20,7 @@ if __name__ == "__main__":
     commands: list[tuple[list[str | Path], str]] = [
         ([sys.executable, common_codegenscripts/"generatedynamicastnodesubclasses.py", yaml_path, smalllang/"IR"/"AST"/"Generated"], "Dynamic astnode subclasses generation succeeded"),
         ([sys.executable, common_codegenscripts/"chunktree.py", yaml_path, smalllang/"IR"/"LinearIR"/"Generated"], "Chunktrees generation succeeded"),
+        ([sys.executable, common_codegenscripts/"nodetypegenerator.py", yaml_path, smalllang/"IR/AST/Generated/ImportantASTNodeType.cs"], "ImportantASTNodeType generation succeeded"),
 
         (["dotnet", "restore"], "Restored")
     ]

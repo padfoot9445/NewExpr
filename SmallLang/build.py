@@ -14,7 +14,9 @@ Command = tuple[list[str | Path], str]
 working_directory = Path(os.path.dirname(__file__))
 
 TIME_ROUND: int = 2
-
+END = '\033[0m'
+SUCCEED = f"\033[92m\033[1msucceeded{END} in"
+BUILD = f"\033[90m\033[1mBUILD{END}"
 
 custom_code_generators: list[Callable[[], None]] = [
     add_global_usings_to_cs_projects,
@@ -22,14 +24,17 @@ custom_code_generators: list[Callable[[], None]] = [
 ]
 
 def time_command(command: list[str], path: Any, name: str):
-    SUCCEED = "succeeded in"
+    
+    splitname = name.split(" ")
+    name = f"\033[1m{splitname[0]}{END}{(" " + " ".join(splitname[1:])) if len(splitname) > 1 else ""}"
+    
     
     work_thread = Thread(target=subprocess.run, args=[command], kwargs={"check": True, "stdout": path})
     work_thread.start()
 
     start_time = time()
     time_str = f"(0.0s)"
-    sys.stdout.write(f"BUILD: {name} {" " * len(SUCCEED)} {time_str}"); sys.stdout.flush()
+    sys.stdout.write(f"{BUILD}: {name} {" " * len(SUCCEED)} {time_str}"); sys.stdout.flush()
 
     while True:
         sleep(0.01)
@@ -121,7 +126,6 @@ if __name__ == "__main__":
     for dst_dir in dst_directories:
         for file in glob.glob(str(dst_dir/"*")):
             os.remove(file)
-    print(f"BUILD: Clear Destination Directories succeeded in {round(time() - del_time, TIME_ROUND)}s")
 
     #run build steps
     for command, msg in build_steps:
@@ -129,5 +133,5 @@ if __name__ == "__main__":
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
             time_command(command, file_path, msg)
-        print(f"BUILD: {msg} succeeded in {round(time() - t, TIME_ROUND)}s")
-    print(f"BUILD: Build Steps executed in {round(time() - total_time, TIME_ROUND)}s")
+    build_code = "\033[092m\033[1m"
+    print(f"{build_code}BUILD: Build succeeded in {round(time() - total_time, TIME_ROUND)}s{END}")

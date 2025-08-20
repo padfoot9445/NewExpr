@@ -515,12 +515,12 @@ dynamicastnode subclasses:
       has data: yes
       check data type: yes
       valid data types:
-      - "=="
-      - "!="
-      - ">"
-      - ">="
-      - "<"
-      - "<="
+      - EqualTo
+      - NotEqualTo
+      - GreaterThan
+      - GreaterThanOrEqualTo
+      - LessThan
+      - LessThanOrEqualTo
       has additional data validation function: no
       data validation function: no
     

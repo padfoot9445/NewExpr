@@ -104,7 +104,7 @@ if __name__ == "__main__":
     dotnet_build_steps: list[Command] = []
 
     #add unconditional additional build steps
-    build_steps.append(restore_command)
+    dotnet_build_steps.append(restore_command)
 
 
     #handle commmand line arguments
@@ -153,10 +153,11 @@ if __name__ == "__main__":
             success = time_command(command, file_path, msg) and success
 
     for command, msg in dotnet_build_steps:
+        if not success: break
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
             success = time_command(command, file_path, msg) and success
-            if not success: break
+            
 
     build_code = "\033[092m\033[1m" if success else f"\033[31m{BOLD}"
     print(f"{build_code}BUILD: Build {"succeeded" if success else "failed"} in {round(time() - total_time, TIME_ROUND)}s{END}")

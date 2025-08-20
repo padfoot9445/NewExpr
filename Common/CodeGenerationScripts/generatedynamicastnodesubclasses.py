@@ -3,6 +3,8 @@ from pathlib import Path
 from typing import Literal, cast
 from codegenframework import *
 from sys import argv
+import glob
+import os
 
 HEADER_NAME: Literal["dynamicastnode subclasses"] = "dynamicastnode subclasses"
 CHILDREN: Literal["children"] = "children"
@@ -206,4 +208,10 @@ def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory
 if __name__ == "__main__":
     config_path = argv[1]
     output_dir = argv[2]
+    
+    files = glob.glob(str(Path(output_dir)/"*"))
+    for file in files:
+        os.remove(file)
+    
     generate_dynamicastnode_subclasses(config_path, output_dir)
+

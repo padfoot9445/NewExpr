@@ -113,7 +113,7 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
 
         names: dict[str, int] = {}
 
-        yield ("Data" if self[HAS_DATA] else "null") # data
+        yield (ADATA if self[HAS_DATA] else "null") # data
         yield f"[{", ".join(get_name(cast(str, child[NAME]), names) for child in cast(list[childtype], self[CHILDREN]))}]" #children list
         yield f"{enum_type}.{self[NAME]}" #node type enum
 

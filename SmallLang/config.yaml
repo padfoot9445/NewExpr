@@ -35,8 +35,6 @@ Anchors:
   - &TypeCSV TypeCSV
   - &UnaryExpression UnaryExpression
 
-
-
 # expected structure:
 
 #dynamicastnode subclasses:
@@ -60,20 +58,15 @@ Anchors:
 dynamicastnode subclasses:
   base class name: &SmalllangNode SmalllangNode
   classes:
-    -
-      name: *Function
+    - name: *Function
       children:
-        -
-          name: *BaseType
+        - name: *BaseType
           is optional: no
-        -
-          name: *GenericType
+        - name: *GenericType
           is optional: no
-        -
-          name: *TypeAndIdentifierCSV
+        - name: *TypeAndIdentifierCSV
           is optional: yes
-        -
-          name: statement
+        - name: statement
           is optional: no
       parent: *SmalllangNode
       has data: yes

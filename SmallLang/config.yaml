@@ -533,8 +533,8 @@ dynamicastnode subclasses:
       - Identifier
       - Number
       - String
-      - "True"
-      - "False"
+      - TrueLiteral
+      - FalseLiteral
       has additional data validation function: no
       data validation function: no
     

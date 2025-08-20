@@ -17,9 +17,9 @@ internal static class PtrNumParser
             (
                 x => x.Attributes.TypeOfExpression!,
                 Comparer: (x, y) => x == y,
-                (TypeData.Data.LongintTypeCode, VisitLongInt),
-                (TypeData.Data.RationalTypeCode, VisitRational),
-                (TypeData.Data.NumberTypeCode, VisitNumber)
+                (TypeData.Longint, VisitLongInt),
+                (TypeData.Rational, VisitRational),
+                (TypeData.Number, VisitNumber)
 
             )
                 (Self, Driver)
@@ -43,7 +43,7 @@ internal static class PtrNumParser
         {
             Chars = Chars.Prepend(i).ToList();
         }
-        Chars = Chars.Prepend(TypeData.Data.LongintTypeCode.Value.Single()).ToList();
+        Chars = Chars.Prepend(TypeData.Longint.Value.Single()).ToList();
         return Chars;
     }
     static Pointer<BackingNumberType> VisitLongInt(Node Self, CodeGenerator Driver)
@@ -68,7 +68,7 @@ internal static class PtrNumParser
 
         List<BackingNumberType> PtrList = [.. NumeratorPtr.Value, .. DenominatorPtr.Value];
         Debug.Assert(PtrList.Count <= BackingNumberType.MaxValue);
-        List<BackingNumberType> RationalList = [TypeData.Data.RationalTypeCode.Value.Single(), (BackingNumberType)PtrList.Count, .. PtrList];
+        List<BackingNumberType> RationalList = [TypeData.Rational.Value.Single(), (BackingNumberType)PtrList.Count, .. PtrList];
 
         var RationalPtr = Driver.Data.StaticDataArea.AllocateAndFill(RationalList.Count, RationalList);
 

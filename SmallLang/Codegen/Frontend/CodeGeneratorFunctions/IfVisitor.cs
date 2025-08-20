@@ -30,7 +30,7 @@ internal static class IfVisitor
 
             //CHUNK [i * 2 - 1]
             Driver.NewChunk();
-            Driver.Cast(Expressions[i], TypeData.Data.BooleanTypeCode);
+            Driver.Cast(Expressions[i], TypeData.Bool);
 
 
             //CHUNK [i * 2]

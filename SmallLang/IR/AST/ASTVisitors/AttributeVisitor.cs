@@ -9,7 +9,7 @@ namespace SmallLang.IR.AST.ASTVisitors;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
-    Dictionary<VariableName, SmallLangType> VariableNameToType = Functions.Values.FunctionNameToFunctionID.Select(x => TypeData.Data.VoidTypeCode).Zip(Functions.Values.FunctionNameToFunctionID.Keys).Select(x => (new VariableName(x.Second), x.First)).ToDictionary();
+    Dictionary<VariableName, SmallLangType> VariableNameToType = Functions.Values.FunctionNameToFunctionID.Select(x => TypeData.Void).Zip(Functions.Values.FunctionNameToFunctionID.Keys).Select(x => (new VariableName(x.Second), x.First)).ToDictionary();
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
         return Combine(node.NodeType switch
@@ -110,7 +110,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     {
         var oldattr = self.Attributes;
         var typename = self.Data!.Lexeme;
-        var Typecode = TypeData.Data.GetTypeFromTypeName[typename];
+        var Typecode = TypeData.GetType(typename);
         self.Attributes = self.Attributes with { TypeLiteralType = Typecode };
         return Changed(oldattr, self.Attributes);
     }
@@ -140,10 +140,10 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
 
         self.Data!.TT switch
         {
-            TokenType.String => self.Data.Literal.Length > 3 ? TypeData.Data.StringTypeCode : TypeData.Data.CharTypeCode,
-            TokenType.TrueLiteral => TypeData.Data.BooleanTypeCode,
-            TokenType.FalseLiteral => TypeData.Data.BooleanTypeCode,
-            TokenType.Number => self.Data.Literal.Contains('.') ? TypeData.Data.FloatTypeCode : TypeData.Data.IntTypeCode,
+            TokenType.String => self.Data.Literal.Length > 3 ? TypeData.String : TypeData.Char,
+            TokenType.TrueLiteral => TypeData.Bool,
+            TokenType.FalseLiteral => TypeData.Bool,
+            TokenType.Number => self.Data.Literal.Contains('.') ? TypeData.Float : TypeData.Int,
             TokenType.Identifier => self.Attributes.VariableName is null ? null : VariableNameToType[self.Attributes.VariableName],
             _ => throw new Exception($"Unknown primary type {self.Data.TT}"),
         },

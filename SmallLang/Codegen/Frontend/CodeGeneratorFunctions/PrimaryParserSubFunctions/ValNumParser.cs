@@ -28,12 +28,12 @@ internal static class ValNumParser
             (
                 Accessor: x => x.Attributes.TypeOfExpression!,
                 Comparer: (x, y) => x == y,
-                (TypeData.Data.CharTypeCode, EmitCodeDelegateGenerator(char.Parse, self, Driver)),
-                (TypeData.Data.FloatTypeCode, EmitCodeDelegateGenerator(GetIntParseFunctionFromFloatParseFunction(float.Parse, BitConverter.SingleToUInt32Bits), self, Driver)),
-                (TypeData.Data.IntTypeCode, EmitCodeDelegateGenerator(int.Parse, self, Driver)),
-                (TypeData.Data.DoubleTypeCode, EmitCodeDelegateGenerator(GetIntParseFunctionFromFloatParseFunction(double.Parse, BitConverter.DoubleToUInt64Bits), self, Driver)),
-                (TypeData.Data.ByteTypeCode, EmitCodeDelegateGenerator(byte.Parse, self, Driver)),
-                (TypeData.Data.LongTypeCode, EmitCodeDelegateGenerator(long.Parse, self, Driver))
+                (TypeData.Char, EmitCodeDelegateGenerator(char.Parse, self, Driver)),
+                (TypeData.Float, EmitCodeDelegateGenerator(GetIntParseFunctionFromFloatParseFunction(float.Parse, BitConverter.SingleToUInt32Bits), self, Driver)),
+                (TypeData.Int, EmitCodeDelegateGenerator(int.Parse, self, Driver)),
+                (TypeData.Double, EmitCodeDelegateGenerator(GetIntParseFunctionFromFloatParseFunction(double.Parse, BitConverter.DoubleToUInt64Bits), self, Driver)),
+                (TypeData.Byte, EmitCodeDelegateGenerator(byte.Parse, self, Driver)),
+                (TypeData.Long, EmitCodeDelegateGenerator(long.Parse, self, Driver))
             );
         Emitter();
     }

@@ -25,11 +25,11 @@ class Functions
     }
     static FunctionSignature<BackingNumberType, SmallLangType> GetFSFromJson(JsonElement FE)
     {
-        var Args = FE.GetProperty("arguments").EnumerateArray().Select(x => TypeData.Data.GetTypeFromTypeName[x.GetString()!]).ToList();
+        var Args = FE.GetProperty("arguments").EnumerateArray().Select(x => TypeData.GetType(x.GetString()!)).ToList();
         return new(
             Name: FE.GetProperty("name").GetString()!,
             ID: new(FE.GetProperty("ID").GetUInt32()),
-            RetVal: TypeData.Data.GetTypeFromTypeName[FE.GetProperty("returns").GetString()!],
+            RetVal: TypeData.GetType(FE.GetProperty("returns").GetString()!),
             ArgTypes: Args.Select(x => (IMetadataTypes<SmallLangType>)x).ToList()
         );
     }
@@ -42,12 +42,12 @@ class Functions
     public Dictionary<FunctionID<BackingNumberType>, List<SmallLangType>> FunctionToFunctionArgs = new()
     {
         [new(1)] = [],
-        [new(2)] = [TypeData.Data.StringTypeCode]
+        [new(2)] = [TypeData.String]
     };
     public Dictionary<FunctionID<BackingNumberType>, SmallLangType> FunctionToRetType = new()
     {
-        [new(1)] = TypeData.Data.StringTypeCode,
-        [new(2)] = TypeData.Data.VoidTypeCode,
+        [new(1)] = TypeData.String,
+        [new(2)] = TypeData.Void,
     };
     public Dictionary<string, FunctionID<BackingNumberType>> FunctionNameToFunctionID = new()
     {

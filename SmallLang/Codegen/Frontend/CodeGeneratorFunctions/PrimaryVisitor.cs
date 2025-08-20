@@ -26,21 +26,21 @@ internal static class PrimaryVisitor
             Self.Switch(
             x => x.Attributes.TypeOfExpression!,
             (x, y) => x == y,
-            (TypeData.Data.StringTypeCode, ParseString),
-            (TypeData.Data.CharTypeCode, ParseValNum),
-            (TypeData.Data.FloatTypeCode, ParseValNum),
-            (TypeData.Data.IntTypeCode, ParseValNum),
-            (TypeData.Data.DoubleTypeCode, ParseValNum),
-            (TypeData.Data.ByteTypeCode, ParseValNum),
-            (TypeData.Data.LongTypeCode, ParseValNum),
-            (TypeData.Data.NumberTypeCode, ParsePtrNum),
-            (TypeData.Data.LongintTypeCode, ParsePtrNum),
-            (TypeData.Data.RationalTypeCode, ParsePtrNum),
-            (TypeData.Data.BooleanTypeCode, ParseBool),
-            (TypeData.Data.ArrayTypeCode, ParseCollection),
-            (TypeData.Data.ListTypeCode, ParseCollection),
-            (TypeData.Data.SetTypeCode, ParseCollection),
-            (TypeData.Data.DictTypeCode, ParseCollection)
+            (TypeData.String, ParseString),
+            (TypeData.Char, ParseValNum),
+            (TypeData.Float, ParseValNum),
+            (TypeData.Int, ParseValNum),
+            (TypeData.Double, ParseValNum),
+            (TypeData.Byte, ParseValNum),
+            (TypeData.Long, ParseValNum),
+            (TypeData.Number, ParsePtrNum),
+            (TypeData.Longint, ParsePtrNum),
+            (TypeData.Rational, ParsePtrNum),
+            (TypeData.Bool, ParseBool),
+            (TypeData.Array, ParseCollection),
+            (TypeData.List, ParseCollection),
+            (TypeData.Set, ParseCollection),
+            (TypeData.Dict, ParseCollection)
         )
         (Self, Driver);
         }
@@ -56,7 +56,7 @@ internal static class PrimaryVisitor
         {
             List<byte> Chars =
             [
-                TypeData.Data.StringTypeCode.Value.Single(),
+                TypeData.String.Value.Single(),
                 .. ((GenericNumberWrapper<int>)self.Data!.Lexeme.Length).Value,
                 .. self.Data!.Lexeme.Select(x => (byte)x)
             ];

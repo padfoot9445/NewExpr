@@ -9,11 +9,11 @@ public class TypeCheckTest
 {
     public static IEnumerable<TestCaseData> InvalidPrograms()
     {
-        yield return new TestCaseData("int x = \"abc\";", TypeData.Data.IntTypeCode, TypeData.Data.StringTypeCode, 0, null);
-        yield return new TestCaseData("string x = 1;", TypeData.Data.StringTypeCode, TypeData.Data.IntTypeCode, 0, null);
-        yield return new TestCaseData("int x = 1;\n string y = x;", TypeData.Data.StringTypeCode, TypeData.Data.IntTypeCode, 1, null);
-        yield return new TestCaseData("SOut(1);", TypeData.Data.StringTypeCode, TypeData.Data.IntTypeCode, 0, null);
-        yield return new TestCaseData("list<[int]> x = new list<[int]>(\"abc\", \"def\");", TypeData.Data.IntTypeCode, TypeData.Data.StringTypeCode, 0, null);
+        yield return new TestCaseData("int x = \"abc\";", TypeData.Int, TypeData.String, 0, null);
+        yield return new TestCaseData("string x = 1;", TypeData.String, TypeData.Int, 0, null);
+        yield return new TestCaseData("int x = 1;\n string y = x;", TypeData.String, TypeData.Int, 1, null);
+        yield return new TestCaseData("SOut(1);", TypeData.String, TypeData.Int, 0, null);
+        yield return new TestCaseData("list<[int]> x = new list<[int]>(\"abc\", \"def\");", TypeData.Int, TypeData.String, 0, null);
     }
     [TestCaseSource(nameof(InvalidPrograms))]
     public void Test__InvalidPrograms__Throws_Correct(string Program, SmallLangType Expected, SmallLangType Actual, int Position, string? Message)

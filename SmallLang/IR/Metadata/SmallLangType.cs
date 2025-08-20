@@ -7,10 +7,10 @@ public record class SmallLangType(uint BaseValue, string Name, bool IsRefType = 
 {
     public bool CanDeclareTo(SmallLangType other)
     {
-        return TypeData.Data.CanDeclareTo(this, other);
+        return TypeData.CanDeclareTo(this, other);
     }
     public bool ImplicitCast(SmallLangType other)
     {
-        return TypeData.Data.ImplicitCastTo(this, other);
+        return TypeData.ImplicitCastTo(this, other);
     }
 }

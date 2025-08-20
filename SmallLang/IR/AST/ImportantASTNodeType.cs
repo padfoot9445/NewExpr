@@ -42,4 +42,6 @@ public enum ImportantASTNodeType
     ArgListElement, //data: null, children: [Expression] | [ArgListLabel, Expression]
     TypeCSV, //data: null, children: [Type+]
     UnaryExpression,
+    Else,
+    FactorialSymbol
 }

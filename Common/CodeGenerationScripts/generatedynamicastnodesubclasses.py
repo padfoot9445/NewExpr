@@ -183,7 +183,7 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
                         delegated_ctor_arguments=list(get_delegate_ctor_arguments(subclass, enum_type))
                     )
                 ],
-                parents=[cast(str,subclass[PARENT])],
+                parents=[f"{subclass[PARENT]}Node"],
                 modifiers=[AccessModifiers.Public, "record"]
             )
 

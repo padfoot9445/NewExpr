@@ -188,16 +188,38 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
             )
 
 def base_class(base_class_name: str, config:Any, base_base_type: str):
+    ChildrenType = f"List<{base_base_type}>"
     return code_class(
-                name = base_class_name, 
-                content = [], 
+                name = base_class_name,
+                content = [
+                    code_property(
+                        name = "Children",
+                        type = ChildrenType,
+                        access_modifier = "public new"
+                        )
+                ], 
                 modifiers = [AccessModifiers.Public, "record"], 
-                primary_ctor =[
-                    "IToken? Data", 
-                    f"List<{base_base_type}> Children",
-                    f"{config[ENUM_TYPE]} NodeType"
+                ctors=[
+                    code_ctor(
+                        class_name=base_class_name, 
+                        content = [
+                            "Children = AChildren;"
+                        ],
+                        access_modifier=AccessModifiers.Public,
+                        parameters= [
+                            "IToken? Data", 
+                            f"{ChildrenType} AChildren",
+                            f"{config[ENUM_TYPE]} NodeType"
+                        ],
+                        delegated_ctor="base",
+                        delegated_ctor_arguments=[
+                            "Data",
+                            "AChildren",
+                            "NodeType"
+                        ]
+                    )
                 ],
-                parents = [f"{base_base_type}(Data, Children, NodeType)"]
+                parents = [f"{base_base_type}"]
             )
 
 def write_header(dst: Any):

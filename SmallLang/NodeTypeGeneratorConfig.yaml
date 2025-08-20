@@ -1,6 +1,9 @@
 NodeTypeDefinitions:
   namespace: SmallLang.IR.AST
   usings: []
+  generator: nodetypegenerator
+  dst: IR/AST/ImportantASTNodeType.cs
+  name: ImportantASTNodeType
   data:
     - &ReTypingAlias ReTypingAlias: "//data: IDENTIFIER, children: [Type Identifier]"
     - &ReTypeOriginal ReTypeOriginal: "//data: IDENTIFIER, children: [Type]"

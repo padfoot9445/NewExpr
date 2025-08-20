@@ -102,7 +102,7 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
     children: list[childtype] = cast(list[childtype], subclass[CHILDREN])
     content = [i for i in get_children_properties(children)]
     has_data: bool = cast(bool, subclass[HAS_DATA])
-    class_name = cast(str, subclass[NAME])
+    class_name = cast(str, subclass[NAME]) + "Node"
     check_data_type = cast(bool, subclass[CHECK_DATA_TYPE])
     has_dvf = cast(bool, subclass[HAS_ADDITIONAL_DVF])
 
@@ -187,7 +187,7 @@ def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory
             file
         )
     for subclass in subclasses:
-        with open(str(output_directory/f"{subclass[NAME]}.cs"), "w") as file:
+        with open(str(output_directory/f"{subclass[NAME]}Node.cs"), "w") as file:
             write_header(file)
             write_block(generate_dynamicastnode_subclass(subclass, config[ENUM_TYPE]), file)
 

@@ -18,11 +18,14 @@ if __name__ == "__main__":
     commands: list[list[str | Path]] = [
         [sys.executable, common_codegenscripts/"generatedynamicastnodesubclasses.py", yaml_path, smalllang/"IR"/"AST"/"Generated"],
         [sys.executable, common_codegenscripts/"chunktree.py", yaml_path, smalllang/"IR"/"LinearIR"/"Generated"],
+    ]
+    build: list[list[str | Path]] = [
         ["dotnet", "restore"],
         ["dotnet", "format", "--no-restore",],
         ["dotnet", "build", "--no-restore"]
     ]
-
+    if not "--no-build" in sys.argv:
+        commands += build
     for code_generator in code_generators:
         code_generator()
 

@@ -6,19 +6,50 @@ from pathlib import Path
 import os
 import sys
 import yaml
-from time import time
+from time import time, sleep
 import glob
+from threading import Thread, Event
 
 Command = tuple[list[str | Path], str]
 working_directory = Path(os.path.dirname(__file__))
 
-TIME_ROUND: int = 2
+TIME_ROUND: int = 1
 
 
 custom_code_generators: list[Callable[[], None]] = [
     add_global_usings_to_cs_projects,
     generate_emitting_functions
 ]
+
+def time_command(command: list[str], path: Any, msg: str):
+    SUCCEED = "succeeded in"
+    def inner_timer(name: str, finished: Event):
+        start_time = time()
+        elapsed = 0
+        time_str = f"(0.0s)"
+
+        sys.stdout.write(f"BUILD: {name} {" " * len(SUCCEED)} {time_str}"); sys.stdout.flush()
+
+        while True:
+            sleep(0.1)
+            elapsed += 1
+            sys.stdout.write("\b" * len(time_str))
+            time_str = f"({round(elapsed // 10, TIME_ROUND)}s)"
+            sys.stdout.write(time_str); sys.stdout.flush()
+            if finished.is_set(): break
+        
+        sys.stdout.write("\b" * (len(SUCCEED) + len(time_str) + 1)) #+1 to account for the space between succeed and time_str
+        time_str = f"({round(time() - start_time)}s)"
+        sys.stdout.write(f"{SUCCEED} {time_str}"); print() #flush and newline
+    finished_event = Event()
+    timer_thread = Thread(target=inner_timer, args=(msg, finished_event))
+    timer_thread.start()
+    subprocess.run(command, check=True, stdout=path)
+    finished_event.set()
+    timer_thread.join()
+
+    
+
 
 if __name__ == "__main__":
     #get generator-dst-directories to remove
@@ -100,6 +131,6 @@ if __name__ == "__main__":
         t = time()
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
-            subprocess.run(command, check=True, stdout=file_path)
+            time_command(command, file_path, msg)
         print(f"BUILD: {msg} succeeded in {round(time() - t, TIME_ROUND)}s")
     print(f"BUILD: Build Steps executed in {round(time() - total_time, TIME_ROUND)}s")

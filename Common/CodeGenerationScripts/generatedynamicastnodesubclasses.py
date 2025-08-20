@@ -19,6 +19,7 @@ CLASSES: Literal["classes"] = "classes"
 ENUM_TYPE: Literal["enum type"] = "enum type"
 ANNOTATION_TYPE: Literal["annotation type"] = "annotation type"
 BASE_CLASS_NAME: Literal["base class name"] = "base class name"
+BASE_CLASSES: Literal["base classes"] = "base classes"
 
 USINGS: list[str] = ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
 NAMESPACE: str = "SmallLang.IR.AST.Generated"
@@ -41,6 +42,10 @@ list[ #list containing all the classes
 f"""expected structure:
 
     {HEADER_NAME}:
+        {BASE_CLASSES}:
+            -
+                {NAME}: [baseclassname]
+                {PARENT}: [Parent of base class]
         {CLASSES}:
             -
                 {NAME}: [class name]
@@ -154,6 +159,18 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
                 modifiers=[AccessModifiers.Public, "record"]
             )
 
+def base_class(base_class_name: str, config:Any, base_base_type: str):
+    return code_class(
+                name = base_class_name, 
+                content = [], 
+                modifiers = [AccessModifiers.Public, "record"], 
+                primary_ctor =[
+                    "IToken? Data", 
+                    f"List<{base_base_type}> Children",
+                    f"{config[ENUM_TYPE]} NodeType"
+                ],
+                parents = [f"{base_base_type}(Data, Children, NodeType)"]
+            )
 
 def write_header(dst: Any):
     write_block(code_using_statements(USINGS), dst)
@@ -165,27 +182,21 @@ def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory
     with open(config_path) as config_file:
         config: Any = yaml.load(config_file, Loader=yaml.Loader)[HEADER_NAME]
         subclasses: classestype = config[CLASSES]
-        base_class_name = config[BASE_CLASS_NAME]
 
     assert isinstance(subclasses, list)
 
     generic_base_type = f"DynamicASTNode<{config[ENUM_TYPE]}, {config[ANNOTATION_TYPE]}>"
-    with open(str(output_directory/f"{base_class_name}.cs"), "w") as file:
-        write_header(file)
-        write_block(
-            code_class(
-                name = base_class_name, 
-                content = [], 
-                modifiers = [AccessModifiers.Public, "record"], 
-                primary_ctor =[
-                    "IToken? Data", 
-                    f"List<{generic_base_type}> Children",
-                    f"{config[ENUM_TYPE]} NodeType"
-                ],
-                parents = [f"{generic_base_type}(Data, Children, NodeType)"]
-            ),
-            file
-        )
+    for _base_class in config[BASE_CLASSES]:
+        with open(str(output_directory/f"{_base_class[NAME]}.cs"), "w") as file:
+            write_header(file)
+            write_block(
+                base_class(
+                    _base_class[NAME],
+                    config,
+                    _base_class[PARENT] if _base_class[PARENT] is not False else generic_base_type
+                ),
+                file
+            )
     for subclass in subclasses:
         with open(str(output_directory/f"{subclass[NAME]}Node.cs"), "w") as file:
             write_header(file)

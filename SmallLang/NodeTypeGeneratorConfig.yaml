@@ -38,6 +38,8 @@ Anchors:
   - &ArgListElement ArgListElement
   - &TypeCSV TypeCSV
   - &UnaryExpression UnaryExpression
+  - &Else Else
+  - &FactorialSymbol FactorialSymbol
 
 #region expected structure:
 
@@ -157,7 +159,7 @@ dynamicastnode subclasses:
       has additional data validation function: no
       data validation function: no
     
-    - name: &Else Else
+    - name: *Else
       children:
         - name: *Statement
           is optional: no
@@ -434,7 +436,7 @@ dynamicastnode subclasses:
       has additional data validation function: no
       data validation function: no
     
-    - name: &FactorialSymbol FactorialSymbol
+    - name: *FactorialSymbol
       children: []
       parent: *SmallLangNode
       has data: yes

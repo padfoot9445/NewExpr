@@ -68,3 +68,11 @@ def code_method(method_name: str, content: list[str], return_type: str, paramete
     return code_block(method_name, "", content, prefix=[return_type], affixes=[f"({", ".join(parameters)})"], modifiers=[access_modifier])
 def code_using_statements(namespaces: list[str]):
     return "\n".join(f"using {i};" for i in namespaces)
+
+def to_csharp(v: Any) -> str:
+    if isinstance(v, bool):
+        return str(v).lower()
+    elif v == None:
+        return "null"
+    else:
+        return str(v)

@@ -58,6 +58,7 @@ Anchors:
 #    annotation type: [Annotation Type Name]
 #//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
 dynamicastnode subclasses:
+  base class name: &SmalllangNode SmalllangNode
   classes:
     -
       name: *Function
@@ -74,12 +75,13 @@ dynamicastnode subclasses:
         -
           name: statement
           is optional: no
+      parent: *SmalllangNode
       has data: yes
       check data type: yes
       valid data types:
-        - identifier
+        - Identifier
       has additional data validation function: yes
       data validation function: |
         return true;
-      enum type: ImportantASTNodeType
-      annotation type: Attributes
+  enum type: ImportantASTNodeType
+  annotation type: Attributes

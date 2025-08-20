@@ -100,6 +100,8 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
                 type = f"{child[NAME]}Node?"
             else:
                 type = f"{child[NAME]}Node"
+            if child[IS_MULTIPLE]:
+                type = f"IEnumerable<{type}>"
             
             yield f"{type} {get_name(cast(str,child[NAME]), names)}"
     def get_name(name: str, names: dict[str, int]):

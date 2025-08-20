@@ -94,7 +94,7 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
             yield f"if(!{DATACHECKER_NAME}()) throw new Exception(\"Invalid data type submitted\");"
         
         for child_name in child_names:
-            yield f"this.{child_name} = {child_name}s"
+            yield f"this.{child_name} = {child_name}"
 
     children: list[childtype] = cast(list[childtype], subclass[CHILDREN])
     content = [i for i in get_children_properties(children)]

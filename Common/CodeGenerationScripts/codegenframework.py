@@ -43,10 +43,11 @@ def code_property(name: str, type: str, access_modifier: str | AccessModifiers =
         get_value(setter_access_modifier),
         "set",
         optional_str(setter_body, f"=> {setter_body}"),
+        ";",
         "}",
         optional_str(initializing_expression, "="),
         optional_str(initializing_expression, initializing_expression),
-        ";"
+        optional_str(initializing_expression, ";")
     ])
 def code_ctor(class_name: str, content: list[str], access_modifier: str | AccessModifiers = AccessModifiers.Empty, parameters: list[str] = [], delegated_ctor: Literal["this"] | Literal["base"] | None = None, delegated_ctor_arguments: list[str] = []) -> str:
     affixes = [f"({", ".join(parameters)})"]

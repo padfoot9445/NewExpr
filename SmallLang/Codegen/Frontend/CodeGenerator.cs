@@ -35,6 +35,10 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     {
         Debug.Assert(node.NodeType == Expected);
     }
+    internal void Verify<T>(SmallLangNode node) where T : SmallLangNode
+    {
+        Debug.Assert(node is T);
+    }
     internal void Exec(SmallLangNode node)
     {
         var CurrentChunk = Data.CurrentChunk;

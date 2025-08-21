@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Common.Dispatchers;
 using Common.Metadata;
+using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 using static SmallLang.IR.LinearIR.Opcode;
@@ -8,7 +10,7 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunc
 
 internal static class PtrNumParser
 {
-    public static void Parse(Node Self, CodeGenerator Driver)
+    public static void Parse(SmallLangNode Self, CodeGenerator Driver)
     {
         Driver.Emit
         (
@@ -46,13 +48,13 @@ internal static class PtrNumParser
         Chars = Chars.Prepend(TypeData.Longint.Value.Single()).ToList();
         return Chars;
     }
-    static Pointer<BackingNumberType> VisitLongInt(Node Self, CodeGenerator Driver)
+    static Pointer<BackingNumberType> VisitLongInt(SmallLangNode Self, CodeGenerator Driver)
     {
         var Chars = GetArrayOfBNTs(Self.Data!.Lexeme);
         var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
         return Ptr;
     }
-    static Pointer<BackingNumberType> VisitRational(Node Self, CodeGenerator Driver)
+    static Pointer<BackingNumberType> VisitRational(SmallLangNode Self, CodeGenerator Driver)
     {
         var parts = Self.Data!.Lexeme.Split('.');
         Debug.Assert(parts.Length == 2);
@@ -74,7 +76,7 @@ internal static class PtrNumParser
 
         return RationalPtr;
     }
-    static Pointer<BackingNumberType> VisitNumber(Node Self, CodeGenerator Driver)
+    static Pointer<BackingNumberType> VisitNumber(SmallLangNode Self, CodeGenerator Driver)
     {
         throw new NotImplementedException();
     }

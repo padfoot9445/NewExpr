@@ -25,7 +25,7 @@ BUILD = f"{HEADERCODE}BUILD{END}"
 YELLOW = '\033[93m'
 
 custom_code_generators: list[Callable[[], None]] = [
-    add_global_usings_to_cs_projects,
+    # add_global_usings_to_cs_projects,
     generate_emitting_functions
 ]
 
@@ -67,6 +67,8 @@ def time_command(command: list[str], path: Any, name: str):
 
 def make_dir(dst: Path):
     if os.path.isdir(dst): return
+    elif os.path.split(dst)[-1] in ["NUL", "NUL:"]: return
+
     if dst.is_file() or len(os.path.splitext(dst)[1]) > 0:
         dst = dst.parent.resolve()
     

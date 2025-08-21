@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Common.Tokens;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 
@@ -12,13 +13,14 @@ using static Opcode;
 
 internal static class DeclarationVisitor
 {
-    internal static void Visit(Node Self, CodeGenerator Driver)
+
+    internal static void Visit(SmallLangNode Self, CodeGenerator Driver)
     {
         Driver.SETCHUNK();
 
-        Node Type = Self.Children[0].NodeType == DeclarationModifiersCombined ? Self.Children[1] : Self.Children[0];
+        SmallLangNode Type = Self.Children[0].NodeType == DeclarationModifiersCombined ? Self.Children[1] : Self.Children[0];
         Debug.Assert(Type.NodeType == BaseType || Type.NodeType == GenericType);
-        Node? AssignmentPrime = Self.Children.Last().NodeType == ImportantASTNodeType.AssignmentPrime ? Self.Children.Last() : null;
+        SmallLangNode? AssignmentPrime = Self.Children.Last().NodeType == ImportantASTNodeType.AssignmentPrime ? Self.Children.Last() : null;
 
         //ENTERING CHUNK
         if (AssignmentPrime is not null)

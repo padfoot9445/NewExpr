@@ -1,4 +1,6 @@
 using Common.Tokens;
+using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 
@@ -7,7 +9,7 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using static Opcode;
 internal static class LoopCtrlVisitor
 {
-    public static void Visit(Node Self, CodeGenerator Driver)
+    public static void Visit(SmallLangNode Self, CodeGenerator Driver)
     {
         //[Data: Break | Continue; Label?]
 

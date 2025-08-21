@@ -3,6 +3,7 @@ using Common.Tokens;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
 
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
@@ -12,12 +13,12 @@ using static Opcode;
 
 internal static class PrimaryVisitor
 {
-    static void ParseIdentifier(Node self, CodeGenerator Driver)
+    static void ParseIdentifier(SmallLangNode self, CodeGenerator Driver)
     {
         Driver.Emit<int, int>(DeloadVar, Driver.Data.VariableSlots.KeyToPointerStartMap[self.Attributes.VariableName!], Driver.Data.VariableSlots.KeyToNumberOfCellsUsed[self.Attributes.VariableName!]);
     }
-    static void ParseValNum(Node self, CodeGenerator Driver) => ValNumParser.Parse(self, Driver);
-    internal static void Visit(Node Self, CodeGenerator Driver)
+    static void ParseValNum(SmallLangNode self, CodeGenerator Driver) => ValNumParser.Parse(self, Driver);
+    internal static void Visit(SmallLangNode Self, CodeGenerator Driver)
     {
         Driver.SETCHUNK();
         if (Self.NodeType == Identifier) { ParseIdentifier(Self, Driver); return; }
@@ -47,12 +48,12 @@ internal static class PrimaryVisitor
 
 
 
-        void ParsePtrNum(Node self, CodeGenerator Driver) => PtrNumParser.Parse(self, Driver);
-        void ParseBool(Node self, CodeGenerator Driver)
+        void ParsePtrNum(SmallLangNode self, CodeGenerator Driver) => PtrNumParser.Parse(self, Driver);
+        void ParseBool(SmallLangNode self, CodeGenerator Driver)
         {
             Driver.Emit<BackingNumberType>(Push, self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue)));
         }
-        void ParseString(Node self, CodeGenerator Driver)
+        void ParseString(SmallLangNode self, CodeGenerator Driver)
         {
             List<byte> Chars =
             [
@@ -64,7 +65,7 @@ internal static class PrimaryVisitor
             var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
             Driver.Emit(Push, Ptr);
         }
-        void ParseCollection(Node self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
+        void ParseCollection(SmallLangNode self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
 
     }
 }

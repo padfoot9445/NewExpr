@@ -4,17 +4,18 @@ using Common.LinearIR;
 using Common.Metadata;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 using NodeType = SmallLang.IR.AST.ImportantASTNodeType;
 namespace SmallLang.CodeGen.Frontend;
 
-public partial class CodeGenerator(Node RootNode)
+public partial class CodeGenerator(SmallLangNode RootNode)
 {
     internal const BackingNumberType TrueValue = BackingNumberType.MaxValue;
     internal const BackingNumberType FalseValue = BackingNumberType.MinValue;
     int CurrentChunkPtr => Data.Sections.CurrentChunkPtr;
-    internal void Cast(Node self, SmallLangType dstType)
+    internal void Cast(SmallLangNode self, SmallLangType dstType)
     {
         if (self.Attributes.TypeLiteralType! == dstType) Exec(self);
         throw new NotImplementedException();
@@ -39,13 +40,13 @@ public partial class CodeGenerator(Node RootNode)
         Exec(RootNode);
         return Data;
     }
-    internal void Verify(Node node, ImportantASTNodeType Expected)
+    internal void Verify(SmallLangNode node, ImportantASTNodeType Expected)
     {
         Debug.Assert(node.NodeType == Expected);
     }
-    internal void Exec(Node node) =>
+    internal void Exec(SmallLangNode node) =>
         DynamicDispatch(node)(node, this);
-    static Action<Node, CodeGenerator> DynamicDispatch(Node node) =>
+    static Action<SmallLangNode, CodeGenerator> DynamicDispatch(SmallLangNode node) =>
         node.Switch(
                 Accessor: x => x.NodeType,
                 Comparer: (x, y) => x == y,

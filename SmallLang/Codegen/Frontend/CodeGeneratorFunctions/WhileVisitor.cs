@@ -1,4 +1,5 @@
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 
@@ -7,11 +8,11 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using static Opcode;
 internal static class WhileVisitor
 {
-    public static void Visit(Node Self, CodeGenerator Driver)
+    public static void Visit(SmallLangNode Self, CodeGenerator Driver)
     {
         bool HasLabel = Self.Children[1].NodeType == ImportantASTNodeType.LoopLabel;
-        Node Statement = HasLabel ? Self.Children[2] : Self.Children[1];
-        Node? Else = Self.Children.Count == (HasLabel ? 4 : 3) ? Self.Children[^1] : null;
+        SmallLangNode Statement = HasLabel ? Self.Children[2] : Self.Children[1];
+        SmallLangNode? Else = Self.Children.Count == (HasLabel ? 4 : 3) ? Self.Children[^1] : null;
         //[expression, Label?, statement, else as Statement?]
         Driver.Verify(Self, ImportantASTNodeType.While);
         Driver.SETCHUNK();

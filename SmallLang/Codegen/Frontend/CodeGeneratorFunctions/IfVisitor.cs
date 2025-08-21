@@ -1,4 +1,5 @@
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
@@ -6,14 +7,14 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using static Opcode;
 internal static class IfVisitor
 {
-    public static void Visit(Node Self, CodeGenerator Driver)
+    public static void Visit(SmallLangNode Self, CodeGenerator Driver)
     {
         Driver.SETCHUNK();
         //[ExpressionStatementCombined+, Else as statement?]
         var ESC = Self.Children.Where(x => x.NodeType == ImportantASTNodeType.ExprStatementCombined);
         var Expressions = ESC.Select(x => x.Children[0]).ToArray();
         var Statements = ESC.Select(x => x.Children[1]).ToArray();
-        Node? Else = ESC.Count() < Self.Children.Count ? Self.Children[^1] : null;
+        SmallLangNode? Else = ESC.Count() < Self.Children.Count ? Self.Children[^1] : null;
         int Length = Self.Children.Count - (Else is null ? 0 : 1);
         //ENTERING CHUNK CHUNK0
         if (Else is null)

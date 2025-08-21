@@ -1,7 +1,7 @@
 files:
   - NodeTypeGeneratorConfig.yaml
   - TypeDataConfig.yaml
-
+  - GlobalUsingsConfig.yaml
 generators relative path: ../Common/CodeGenerationScripts
 
 configuration directory: ./Configurations

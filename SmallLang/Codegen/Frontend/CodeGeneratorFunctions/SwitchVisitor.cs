@@ -1,13 +1,15 @@
+using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static Opcode;
 internal static class SwitchVisitor
 {
-    public static void Visit(Node Self, CodeGenerator Driver)
+    public static void Visit(SmallLangNode Self, CodeGenerator Driver)
     {
         Driver.SETCHUNK();
-        Node Expression = Self.Children[0];
+        SmallLangNode Expression = Self.Children[0];
         var Expressions = Self.Children.Skip(1).Select(x => x.Children[0]).ToArray();
         var Statements = Self.Children.Skip(1).Select(x => x.Children[1]).ToArray();
         int Length = Self.Children.Count - 1;

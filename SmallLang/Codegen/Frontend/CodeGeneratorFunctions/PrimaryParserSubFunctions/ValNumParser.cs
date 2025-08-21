@@ -1,5 +1,7 @@
 using System.Numerics;
 using Common.Dispatchers;
+using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
 
@@ -7,7 +9,7 @@ using static SmallLang.IR.LinearIR.Opcode;
 
 internal static class ValNumParser
 {
-    static Action EmitCodeDelegateGenerator<T>(Func<string, T> parser, Node self, CodeGenerator Driver) where T : IBinaryInteger<T>, IMinMaxValue<T>
+    static Action EmitCodeDelegateGenerator<T>(Func<string, T> parser, SmallLangNode self, CodeGenerator Driver) where T : IBinaryInteger<T>, IMinMaxValue<T>
     {
 
         void EmitCode()
@@ -22,7 +24,7 @@ internal static class ValNumParser
     {
         return x => Converter(FloatParseFunction(x));
     }
-    internal static void Parse(Node self, CodeGenerator Driver)
+    internal static void Parse(SmallLangNode self, CodeGenerator Driver)
     {
         Action Emitter = self.Switch
             (

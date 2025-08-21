@@ -1,6 +1,7 @@
 using Common.Tokens;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 
@@ -11,7 +12,7 @@ using static Opcode;
 
 internal static class FactorialExpressionVisitor
 {
-    internal static void Visit(Node Self, CodeGenerator Driver)
+    internal static void Visit(SmallLangNode Self, CodeGenerator Driver)
     {
         Driver.SETCHUNK();
 

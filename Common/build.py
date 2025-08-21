@@ -5,7 +5,6 @@ import os
 import sys
 import yaml
 from time import time, sleep
-import glob
 from threading import Thread
 
 Command = tuple[list[str | Path], str]
@@ -71,9 +70,16 @@ def make_dir(dst: Path):
     print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}\033[4:5m{dst}{END}")
     
 
+def delete_files():
+    for dirpath, _, filenames in os.walk(working_directory):
+        for i in filenames:
+            if "generated" in [j.lower() for j in os.path.split(dirpath)] or i.split(".")[0].lower() == "generated":
+                os.remove(Path(dirpath)/i)
+
+            
 
 if __name__ == "__main__":
- 
+
     working_directory = Path(sys.argv[1] if len(sys.argv) >= 2 else os.getcwd()).resolve()
 
     #get generator-dst-directories to remove
@@ -148,10 +154,7 @@ if __name__ == "__main__":
     total_time = time()
 
     #delete old files
-    del_time = time()
-    for dst_dir in dst_directories:
-        for file in glob.glob(str(dst_dir/"*")):
-            os.remove(file)
+    delete_files()
 
     #run build steps
     success = True

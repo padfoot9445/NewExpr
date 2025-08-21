@@ -75,6 +75,7 @@ dynamicastnode subclasses:
   dst: "IR/AST/Generated"
   display name: Generate-ImportantASTNodeType
 
+  data: null
 
   base classes:
     - name: &SmallLangNode SmallLang

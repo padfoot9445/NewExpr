@@ -1,11 +1,8 @@
 from generatedynamicastnodesubclasses import write_header
 from codegenframework import *
-import yaml
-from sys import argv
-from nodetypegenerator import DATA
 from typing import cast, Any
+from initializer import *
 
-section_key = "TypeData"
 
 def get_SmallLangType_params(type_data: dict[str, Any], config: dict[str, Any]):
     name = to_csharp(type_data["name"])
@@ -22,12 +19,8 @@ def get_SmallLangType_params(type_data: dict[str, Any], config: dict[str, Any]):
     return f"BaseValue: {type_code}, Name: \"{name}\", IsRefType: {is_pointer}, Size: {size}, IsNum: {is_number}, NumberType: NumberType.{number_type}, IsCollection: {is_collection}, ValMaxSize: {max_size}"
 
 if __name__ == "__main__":
-    config_path = argv[1]
-    output_dir = argv[2]
-    section_key = argv[3]
-    with open(config_path) as file:
-        raw_config = yaml.load(file, yaml.Loader)[section_key]
-        config = raw_config[DATA]
+
+    config_path, output_dir, _, raw_config, config = initialize()
 
 
     with open(output_dir, "w") as file:

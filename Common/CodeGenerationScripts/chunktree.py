@@ -1,21 +1,13 @@
-from typing import Literal, cast, Any
-import yaml
-from sys import argv
+from typing import cast, Any
 from pathlib import Path
 from codegenframework import *
 from generatedynamicastnodesubclasses import write_header
-NAME: Literal["name"] = 'name'
-CHILDREN: Literal["children"] = "children"
-DATA: Literal["data"] = "data"
+from initializer import *
 
-def header():
-    yield "namespace SmallLang.IR.LinearIR.Generated;"
-def generate_classes(config_path: str | Path, output_directory: str | Path, section_key: str):
+
+def generate_classes(config_path: str | Path, output_directory: str | Path, section_key: str, raw_config: Any, config: Any):
     output_directory = Path(output_directory)
 
-    with open(config_path) as config_file:
-        raw_config: Any = yaml.load(config_file, Loader=yaml.Loader)[section_key]
-        config = raw_config[DATA]
     
 
     for ChunkType in config:
@@ -47,7 +39,6 @@ def generate_classes(config_path: str | Path, output_directory: str | Path, sect
                 file
             )
 if __name__ == "__main__":
-    config_path = argv[1]
-    output_dir = argv[2]
-    section_key = argv[3]
-    generate_classes(config_path, output_dir, section_key)
+    
+    config_path, output_dir, section_key, raw_config, config = initialize()
+    generate_classes(config_path, output_dir, section_key, raw_config, config)

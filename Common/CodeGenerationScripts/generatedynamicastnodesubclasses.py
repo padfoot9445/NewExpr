@@ -1,15 +1,13 @@
-import yaml
 from pathlib import Path
 from typing import Literal, cast
 from codegenframework import *
-from sys import argv
+from initializer import *
 
-CHILDREN: Literal["children"] = "children"
 HAS_DATA: Literal["has data"] = "has data"
 VALID_DATA_TYPES: Literal["valid data types"] = "valid data types"
 HAS_ADDITIONAL_DVF: Literal["has additional data validation function"] = "has additional data validation function"
 DATA_VALIDATION_FUNCTION: Literal["data validation function"] = "data validation function"
-NAME: Literal["name"] = "name"
+
 IS_OPTIONAL: Literal["is optional"] = "is optional"
 CHECK_DATA_TYPE: Literal["check data type"] = "check data type"
 PARENT: Literal["parent"] = "parent"
@@ -21,8 +19,6 @@ ANNOTATION_TYPE: Literal["annotation type"] = "annotation type"
 BASE_CLASS_NAME: Literal["base class name"] = "base class name"
 BASE_CLASSES: Literal["base classes"] = "base classes"
 
-USINGS: str = "usings"
-NAMESPACE: str = "namespace"
 childtype = dict[str, str | bool]
 classtype = \
 dict[ #dictionary representing an individual class
@@ -66,7 +62,7 @@ f"""expected structure:
         {ANNOTATION_TYPE}: [Annotation Type Name]
     """
 
-def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str, section_key: str) -> str:
+def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str:
 
     ADATA: Literal["AData"] = "AData"
     DVF_NAME: Literal["AdditionalDataValidationFunction"] = "AdditionalDataValidationFunction"
@@ -237,42 +233,35 @@ def base_class(base_class_name: str, config:Any, base_base_type: str):
                 parents = [f"{base_base_type}"]
             )
 
-def write_header(config: Any, dst: Any):
-    write_block(code_using_statements(config[USINGS]), dst)
-    write_block(f"namespace {config[NAMESPACE]};", dst)
 
-def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory: str | Path, section_key: str):
+def generate_dynamicastnode_subclasses(output_directory: Path, raw_config: Any):
     
-    output_directory = Path(output_directory)
 
-    with open(config_path) as config_file:
-        config: Any = yaml.load(config_file, Loader=yaml.Loader)[section_key]
-        subclasses: classestype = config[CLASSES]
+    subclasses: classestype = raw_config[CLASSES]
 
     assert isinstance(subclasses, list)
 
-    generic_base_type = f"DynamicASTNode<{config[ENUM_TYPE]}, {config[ANNOTATION_TYPE]}>"
-    for _base_class in config[BASE_CLASSES]:
+    generic_base_type = f"DynamicASTNode<{raw_config[ENUM_TYPE]}, {raw_config[ANNOTATION_TYPE]}>"
+    for _base_class in raw_config[BASE_CLASSES]:
         with open(str(output_directory/f"{_base_class[NAME]}Node.cs"), "w") as file:
-            write_header(config, file)
+            write_header(raw_config, file)
             write_block(
                 base_class(
                     _base_class[NAME] + "Node",
-                    config,
+                    raw_config,
                     (_base_class[PARENT] + "Node" if _base_class[PARENT] is not False else generic_base_type)
                 ),
                 file
             )
     for subclass in subclasses:
         with open(str(output_directory/f"{subclass[NAME]}Node.cs"), "w") as file:
-            write_header(config, file)
-            write_block(generate_dynamicastnode_subclass(subclass, config[ENUM_TYPE], section_key), file)
+            write_header(raw_config, file)
+            write_block(generate_dynamicastnode_subclass(subclass, raw_config[ENUM_TYPE]), file)
 
 
 if __name__ == "__main__":
-    config_path = argv[1]
-    output_dir = argv[2]
-    section_key = argv[3]
     
-    generate_dynamicastnode_subclasses(config_path, output_dir, section_key)
+    _, output_dir, _, raw_config, _ = initialize()
+    
+    generate_dynamicastnode_subclasses(output_dir, raw_config)
 

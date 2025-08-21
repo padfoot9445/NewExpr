@@ -14,7 +14,6 @@ public partial class CodeGenerator(SmallLangNode RootNode)
 {
     internal const BackingNumberType TrueValue = BackingNumberType.MaxValue;
     internal const BackingNumberType FalseValue = BackingNumberType.MinValue;
-    int CurrentChunkPtr => Data.Sections.CurrentChunkPtr;
     internal void Cast(SmallLangNode self, SmallLangType dstType)
     {
         if (self.Attributes.TypeLiteralType! == dstType) Exec(self);
@@ -22,14 +21,10 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     }
     internal void Emit(HighLevelOperation Op)
     {
-        Data.Sections.CurrentChunk.Add(Op);
+        Data.Emit(Op);
     }
-    internal void NewChunk() => Data.Sections.NewChunk();
-    int ParseBeginningChunk = 0;
-    internal void SETCHUNK() => ParseBeginningChunk = CurrentChunkPtr;
-    internal GenericNumberWrapper<int> RCHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(CurrentChunkPtr + ChunkRelOffset);
-
-    internal GenericNumberWrapper<int> ACHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(ParseBeginningChunk + ChunkRelOffset);
+    internal void NewChunk() => Data.NewChunk();
+    internal RelativeChunkPointer ACHUNK(int v) => new(v);
     internal Data Data { get; init; } = new();
     public Data Parse()
     {

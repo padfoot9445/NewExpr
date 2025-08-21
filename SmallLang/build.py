@@ -99,7 +99,7 @@ if __name__ == "__main__":
                 dst = working_directory/current_file_dict[step_name]["dst"]
                 display_name = current_file_dict[step_name]["display name"]
                 build_steps.append((
-                    [sys.executable, generator, file_path, dst, step_name, Path(__file__).parent.resolve()],
+                    [sys.executable, generator, file_path, dst, step_name, working_directory],
                     display_name
                 ))
 

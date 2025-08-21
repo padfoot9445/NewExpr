@@ -139,11 +139,13 @@ if __name__ == "__main__":
 
 
     #handle commmand line arguments
-    flags: list[tuple[str, Callable[[], None], bool]] = [ #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
+    flags: list[tuple[str, Callable[[], Any], bool]] = [ #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
         ("--no-build", lambda: mutate_command(dotnet_build_steps, 1), True),
         ("--whitespace", lambda: fmt_command[0].append("whitespace"), True),
-        ("--no-format", lambda: mutate_command(dotnet_build_steps, 2), True)
+        ("--no-format", lambda: mutate_command(dotnet_build_steps, 2), True),
+        ("--no-dotnet", lambda: [mutate_command(dotnet_build_steps, i) for i in range(3)], True)
     ]
+
 
     for flag, action, desired in flags:
         if (flag in sys.argv) == desired:

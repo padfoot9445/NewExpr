@@ -10,6 +10,9 @@ HighLevelOpcodes:
     record: HighLevelOperation
 
   data:
+    - name: NOp
+      arguments: []
+      comment: NOp
     - name: Jump
       arguments:
         - name: Chunk0

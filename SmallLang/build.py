@@ -173,7 +173,9 @@ if __name__ == "__main__":
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
             success = time_command(command, file_path, msg) and success
-            
+            if not success:
+                time_command(command, sys.stdout, msg)
+
 
     build_code = "\033[092m\033[1m" if success else f"\033[31m{BOLD}"
     color = (GREEN if success else RED) + BOLD

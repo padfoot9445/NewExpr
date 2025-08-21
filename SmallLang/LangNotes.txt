@@ -68,15 +68,14 @@ Strategy:
             assign a guid.
 
         ENTERING CHUNK CHUNK0
-            FOR //implicitly passes CHUNK1 CHUNK2 CHUNK3 CHUNK4 CHUNK5
+            Emit Initializing code (Compile Expression1)
+            LOOP CHUNK1 CHUNK2 CHUNK3 CHUNK4 CHUNK5
 
         CHUNK1
-            Emit Initializing code (Compile Expression1)
-        CHUNK2
             Emit Condition code (Compile Expression2)
-        CHUNK3
+        CHUNK2
             Emit PostLoop code (Compile Expression3)
-        CHUNK4
+        CHUNK3
             Compile loop body (Statement)
         CHUNK4
             Compile else

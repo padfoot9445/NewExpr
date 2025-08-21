@@ -23,7 +23,17 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     {
         Data.Emit(Op);
     }
-    internal void NewChunk() => Data.NewChunk();
+    internal void EnteringChunk(Action code)
+    {
+        code();
+    }
+    internal void NewChunk(int chunkID, Action code)
+    {
+        Debug.Assert(Data.CurrentChunk.Children.Count == (chunkID - 1))
+        Data.NewChunk();
+        code();
+        Data.Rewind();
+    }
     internal RelativeChunkPointer ACHUNK(int v) => new(v);
     internal Data Data { get; init; } = new();
     public Data Parse()

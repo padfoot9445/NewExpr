@@ -100,10 +100,9 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
     def get_name(name: str, names: dict[str, int]):
         if name not in names:
             names[name] = 0
-            return name
-        else:
-            names[name] += 1
-            return name + str(names[name])
+    
+        names[name] += 1
+        return name + str(names[name])
     def get_delegate_ctor_arguments(self: classtype, enum_type: str):
 
         names: dict[str, int] = {}

@@ -9,7 +9,8 @@ namespace SmallLang.IR.AST.ASTVisitors;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
-    Dictionary<VariableName, SmallLangType> VariableNameToType = Functions.Values.FunctionNameToFunctionID.Select(x => TypeData.Void).Zip(Functions.Values.FunctionNameToFunctionID.Keys).Select(x => (new VariableName(x.Second), x.First)).ToDictionary();
+    Dictionary<VariableName, SmallLangType> VariableNameToType = Functions.Values.RegisteredFunctions.Select(x => (new VariableName(x.Name), TypeData.Void)).ToDictionary();
+
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
         return Combine(node.NodeType switch
@@ -116,10 +117,10 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     }
     private bool FunctionCall(Node? parent, Node self)
     {
-        FunctionID<BackingNumberType> ID = Functions.Values.FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
-        SmallLangType RetType = Functions.Values.FunctionToRetType[ID];
+        FunctionID<BackingNumberType> ID = Functions.Values.GetSignature(self.Children[0].Data!.Lexeme).ID;
+        SmallLangType RetType = Functions.Values.GetSignature(ID).RetVal;
         var oldattr = self.Attributes;
-        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = Functions.Values.FunctionToFunctionArgs[ID], TypeOfExpression = RetType };
+        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = Functions.Values.GetSignature(ID).ArgTypes, TypeOfExpression = RetType };
         if (self.Children.Count == 2 && self.Children[^1].NodeType == ImportantASTNodeType.ArgList && self.Attributes.DeclArgumentTypes is not null && self.Attributes.DeclArgumentTypes is List<SmallLangType> NN)
         {
             var x = self.Children[^1].Children.Zip(NN).Where(x => x.First.Attributes.TypeOfExpression is not null).Where(x => x.First.Attributes.TypeOfExpression != x.Second).Select(x => new TypeErrorException(Expected: x.Second, Actual: x.First.Attributes.TypeOfExpression!, x.First.GetLine()));

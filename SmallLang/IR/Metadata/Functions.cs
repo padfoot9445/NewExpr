@@ -8,16 +8,16 @@ partial class Functions
     public static readonly Functions Values;
     public void RegisterFunction(FunctionSignature<BackingNumberType, SmallLangType> Signature)
     {
-        __functions.Add(Signature);
+        RegisteredFunctions.Add(Signature);
     }
-    private readonly List<FunctionSignature<BackingNumberType, SmallLangType>> __functions = new();
+    public List<FunctionSignature<BackingNumberType, SmallLangType>> RegisteredFunctions { get; } = new();
     public readonly List<FunctionSignature<BackingNumberType, SmallLangType>> Signatures = new();
     public FunctionSignature<BackingNumberType, SmallLangType> GetSignature(string Name)
     {
-        return __functions.Where(x => x.Name == Name).Single();
+        return RegisteredFunctions.Where(x => x.Name == Name).Single();
     }
     public FunctionSignature<BackingNumberType, SmallLangType> GetSignature(FunctionID<BackingNumberType> ID)
     {
-        return __functions.Where(x => x.ID == ID).Single();
+        return RegisteredFunctions.Where(x => x.ID == ID).Single();
     }
 }

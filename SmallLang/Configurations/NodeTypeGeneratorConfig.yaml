@@ -3,7 +3,7 @@ NodeTypeDefinitions:
   usings: []
   generator: nodetypegenerator.py
   dst: IR/AST/Generated/ImportantASTNodeType.cs
-  display name: "Node-Subclasses generation"
+  display name: "Generate-Node-Subclasses"
 
   name: ImportantASTNodeType
   data:
@@ -74,7 +74,7 @@ dynamicastnode subclasses:
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
   generator: generatedynamicastnodesubclasses.py
   dst: "IR/AST/Generated"
-  display name: ImportantASTNodeType generation
+  display name: Generate-ImportantASTNodeType
 
 
   base classes:
@@ -684,7 +684,7 @@ chunktree classes: #not subclasses of Chunks since Chunks implies all the chunk 
   usings: []
   generator: chunktree.py
   dst: "IR/LinearIR/Generated"
-  display name: Chunktrees generation
+  display name: Generate-Chunktrees
 
   data:
     - name: *Function

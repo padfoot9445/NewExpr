@@ -14,7 +14,6 @@ public static class ASTNodeTypeMapper
             case ASTNodeType.LoopCTRL: return ImportantASTNodeType.LoopCTRL;
             case ASTNodeType.For: return ImportantASTNodeType.For;
             case ASTNodeType.While: return ImportantASTNodeType.While;
-            case ASTNodeType.ValInLCTRL: return ImportantASTNodeType.ValInLCTRL;
             case ASTNodeType.LoopLabel: return ImportantASTNodeType.LoopLabel;
             case ASTNodeType.Return: return ImportantASTNodeType.Return;
             case ASTNodeType.BaseType: return ImportantASTNodeType.BaseType;

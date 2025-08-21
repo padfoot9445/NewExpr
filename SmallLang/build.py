@@ -1,7 +1,5 @@
 import subprocess
 from typing import Callable, Any
-from GlobalUsings import add_global_usings_to_cs_projects
-from Codegen.Frontend.emittingfunctions import generate_emitting_functions
 from pathlib import Path
 import os
 import sys
@@ -24,10 +22,6 @@ HEADERCODE = "\033[90m\033[1m"
 BUILD = f"{HEADERCODE}BUILD{END}"
 YELLOW = '\033[93m'
 
-custom_code_generators: list[Callable[[], None]] = [
-    # add_global_usings_to_cs_projects,
-    generate_emitting_functions
-]
 
 def custom_run(command: Any, path:Any, out: list[bool]):
     try:
@@ -141,10 +135,6 @@ if __name__ == "__main__":
     for i in build_steps:
         for j in range(len(i[0])):
             i[0][j] = str(i[0][j])
-
-    #run local generators
-    for code_generator in custom_code_generators:
-        code_generator()
 
 
     #set up log-file

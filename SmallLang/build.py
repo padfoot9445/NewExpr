@@ -16,9 +16,12 @@ working_directory = Path(os.path.dirname(__file__))
 TIME_ROUND: int = 2
 BOLD = "\033[1m"
 END = '\033[0m'
-SUCCEED = f"\033[92m\033[1msucceeded{END} in"
+GREEN = '\033[92m'
+SUCCEED = f"{GREEN}{BOLD}succeeded{END} in"
 FAIL = f"\033[31m{BOLD}failed{END} in"
-BUILD = f"\033[90m\033[1mBUILD{END}"
+HEADERCODE = "\033[90m\033[1m"
+BUILD = f"{HEADERCODE}BUILD{END}"
+YELLOW = '\033[93m'
 
 custom_code_generators: list[Callable[[], None]] = [
     add_global_usings_to_cs_projects,
@@ -61,7 +64,14 @@ def time_command(command: list[str], path: Any, name: str):
     assert not work_thread.is_alive()
     return out[0]
 
-
+def make_dir(dst: Path):
+    if dst.is_file():
+        dst = dst.parent.resolve()
+    
+    if os.path.isdir(dst): return
+    
+    os.mkdir(dst)
+    print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}Created{END} {YELLOW}\033[4:5m{dst}{END}")
     
 
 
@@ -79,21 +89,25 @@ if __name__ == "__main__":
         code_generation_scripts_directory = working_directory/Path(config["generators relative path"])
     
     for file_path in file_paths:
-        with open(configurations_path/file_path) as file:
+        file_path = configurations_path/file_path
+        with open(file_path) as file:
             current_file_dict: dict[str, Any] = yaml.load(file, yaml.Loader)
             for step_name in current_file_dict.keys():
-                generator = current_file_dict[step_name]["generator"]
-                dst = current_file_dict[step_name]["dst"]
+                generator = code_generation_scripts_directory/current_file_dict[step_name]["generator"]
+                dst = working_directory/current_file_dict[step_name]["dst"]
                 display_name = current_file_dict[step_name]["display name"]
                 build_steps.append((
-                    [sys.executable, code_generation_scripts_directory/generator, configurations_path/file_path, working_directory/dst],
+                    [sys.executable, generator, file_path, dst],
                     display_name
                 ))
 
+                #make dst if necessary
+                make_dir(dst)
+
                 #append dst to dst_directories to facilitate removal
                 
-                if Path.is_dir(working_directory/dst):
-                    dst_directories.append(working_directory/dst)
+                if Path.is_dir(dst):
+                    dst_directories.append(dst)
 
 
     fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format")

@@ -174,3 +174,18 @@ TypeData:
       - *list
       - *set
       - *dict
+
+
+Functions:
+  
+  namespace: SmallLang.IR.Metadata
+  usings: [Common.Metadata]
+  generator: functions.py
+  dst: IR/Metadata/Generated/Functions__StdLibFunctions.cs
+  display name: "Generate-Stdlib-Functions"
+
+  name: Functions
+
+  data:
+    - {name: input, ID: 1, returns: string, arguments: []}
+    - {name: SOut, ID: 2, returns: void, arguments: [string]}

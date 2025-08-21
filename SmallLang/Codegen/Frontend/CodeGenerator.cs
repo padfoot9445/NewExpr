@@ -60,10 +60,6 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     {
         var CurrentChunk = Data.CurrentChunk;
         DynamicDispatch(node)(node, this);
-        while (Data.CurrentChunk != CurrentChunk)
-        {
-            Data.Rewind();
-        }
     }
     static Action<SmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
     where T : SmallLangNode =>

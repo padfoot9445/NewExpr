@@ -17,8 +17,9 @@ TIME_ROUND: int = 2
 BOLD = "\033[1m"
 END = '\033[0m'
 GREEN = '\033[92m'
+RED = '\033[31m'
 SUCCEED = f"{GREEN}{BOLD}succeeded{END} in"
-FAIL = f"\033[31m{BOLD}failed{END} in"
+FAIL = f"{RED}{BOLD}failed{END} in"
 HEADERCODE = "\033[90m\033[1m"
 BUILD = f"{HEADERCODE}BUILD{END}"
 YELLOW = '\033[93m'
@@ -65,13 +66,14 @@ def time_command(command: list[str], path: Any, name: str):
     return out[0]
 
 def make_dir(dst: Path):
-    if dst.is_file():
+    if os.path.isdir(dst): return
+    if dst.is_file() or len(os.path.splitext(dst)[1]) > 0:
         dst = dst.parent.resolve()
     
     if os.path.isdir(dst): return
     
     os.mkdir(dst)
-    print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}Created{END} {YELLOW}\033[4:5m{dst}{END}")
+    print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}\033[4:5m{dst}{END}")
     
 
 
@@ -174,4 +176,5 @@ if __name__ == "__main__":
             
 
     build_code = "\033[092m\033[1m" if success else f"\033[31m{BOLD}"
-    print(f"{build_code}BUILD: Build {"succeeded" if success else "failed"} in {round(time() - total_time, TIME_ROUND)}s{END}")
+    color = (GREEN if success else RED) + BOLD
+    print(f"{BOLD}{color}INFO{END}:  {color}Build {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")

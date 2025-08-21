@@ -15,7 +15,7 @@ public record class Data
     private Stack<TreeChunk> ChunkStack { get; init; } = new();
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> VariableSlots = new();
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> StaticDataArea = new();
-    public Dictionary<LoopGUID, (GenericNumberWrapper<int> ContinueDSTChunk, GenericNumberWrapper<int> BreakDSTChunk)> LoopData = new();
+    public Dictionary<LoopGUID, int> LoopData = new();
 
     internal void NewChunk()
     {

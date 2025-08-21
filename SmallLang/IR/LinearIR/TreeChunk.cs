@@ -5,6 +5,7 @@ namespace SmallLang.IR.LinearIR;
 
 public record class TreeChunk(Chunk Self, List<TreeChunk> Children)
 {
+    public TreeChunk() : this(new Chunk(), []) { }
     public int NumberOfChildren { get; init; }
 
     public TreeChunk(Chunk Self, IEnumerable<TreeChunk> Children, int? NumberOfChildren = null) : this(Self, Children.ToList())

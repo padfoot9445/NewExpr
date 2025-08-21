@@ -6,8 +6,24 @@ namespace SmallLang.CodeGen.Frontend;
 
 public record class Data
 {
-    public Chunks Sections { get; init; } = new();
+    public Data()
+    {
+        CurrentChunk = Sections;
+    }
+    public TreeChunk Sections { get; init; } = new(new Chunk(), []);
+    public TreeChunk CurrentChunk { get; private set; }
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> VariableSlots = new();
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> StaticDataArea = new();
     public Dictionary<LoopGUID, (GenericNumberWrapper<int> ContinueDSTChunk, GenericNumberWrapper<int> BreakDSTChunk)> LoopData = new();
+
+    internal void NewChunk()
+    {
+        var chunk = new TreeChunk(new Chunk(), []);
+        CurrentChunk.Children.Add(chunk);
+        CurrentChunk = chunk;
+    }
+    internal void Emit(HighLevelOperation Op)
+    {
+        CurrentChunk.Self.Add(Op);
+    }
 }

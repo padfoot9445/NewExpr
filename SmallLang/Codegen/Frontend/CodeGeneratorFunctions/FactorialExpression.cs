@@ -8,8 +8,6 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static ImportantASTNodeType;
-using static Opcode;
-
 internal static class FactorialExpressionVisitor
 {
     internal static void Visit(SmallLangNode Self, CodeGenerator Driver)
@@ -18,7 +16,7 @@ internal static class FactorialExpressionVisitor
 
         //ENTERING CHUNK
         Driver.Exec(Self.Children[0]);
-        Driver.Emit<BackingNumberType, int>(Factorial, Self.Children[0].Attributes.TypeOfExpression!, Self.Children.Count - 1);
+        Driver.Emit(HighLevelOperation.Factorial<BackingNumberType, int>(Self.Children[0].Attributes.TypeOfExpression!, Self.Children.Count - 1));
 
     }
 }

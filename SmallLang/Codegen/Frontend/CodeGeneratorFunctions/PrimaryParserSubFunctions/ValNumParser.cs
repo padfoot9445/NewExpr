@@ -2,10 +2,11 @@ using System.Numerics;
 using Common.Dispatchers;
 using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
+using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
 
-using static SmallLang.IR.LinearIR.Opcode;
+
 
 internal static class ValNumParser
 {
@@ -14,7 +15,7 @@ internal static class ValNumParser
 
         void EmitCode()
         {
-            Driver.Emit<T>(Push, parser(self.Data!.Lexeme));
+            Driver.Emit(HighLevelOperation.Push<T>(parser(self.Data!.Lexeme)));
         }
         return EmitCode;
     }

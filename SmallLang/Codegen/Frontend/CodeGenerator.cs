@@ -20,13 +20,9 @@ public partial class CodeGenerator(SmallLangNode RootNode)
         if (self.Attributes.TypeLiteralType! == dstType) Exec(self);
         throw new NotImplementedException();
     }
-    internal void Emit(Operation<Opcode, BackingNumberType> Op)
+    internal void Emit(HighLevelOperation Op)
     {
         Data.Sections.CurrentChunk.Add(Op);
-    }
-    internal void Emit(Opcode op, params IOperationArgument<byte>[] args)
-    {
-        Emit(new Operation<Opcode, byte>((OpcodeWrapper)op, args));
     }
     internal void NewChunk() => Data.Sections.NewChunk();
     int ParseBeginningChunk = 0;

@@ -1,0 +1,86 @@
+HighLevelOpcodes:
+  namespace: SmallLang.IR.LinearIR
+  usings: [Common.LinearIR, System.Numerics]
+  generator: highlevelopcodes.py
+  dst: IR/LinearIR/Generated/
+  display name: "Generate-High-Level-Opcodes"
+
+  name:
+    enum: HighLevelOpcode
+    record: HighLevelOperation
+
+  data:
+    - name: Jump
+      arguments:
+        - name: Chunk0
+      comment: Jumps unconditionally to the chunk given by the chunk-id
+
+    - name: BranchZero
+      arguments:
+        - name: ChunkIf0
+        - name: ChunkIfNot0
+      comment: Jumps to ChunkIf0 if the value at the top of the stack is 0, else ChunkIfNot0
+
+    - name: Return
+      arguments: []
+      comment: Returns control to the calling chunk. Return values should be on the stack.
+
+    - name: Switch
+      arguments:
+        - name: Length
+        - name: StartingIndex
+        - name: TypeCode
+      comment: >
+        SWITCH Length StartIndex, select the correct instruction(s) based on the TypeCode.
+
+    - name: IfNoElse
+      arguments:
+        - name: StartingIndex
+        - name: Length
+      comment: >
+        For i in [1...Length]:
+          run CHUNKS[i * 2 - 1].
+          If (POP) is TRUE:
+            run CHUNKS[i * 2].
+            jump to CHUNKS[Length * 2 + 1].
+        Finally jump to CHUNKS[Length * 2 + 1].
+
+    - name: IfElse
+      arguments:
+        - name: StartingIndex
+        - name: Length
+      comment: >
+        For i in [1...Length]:
+          run CHUNKS[i * 2 - 1].
+          If (POP) is TRUE:
+            run CHUNKS[i * 2].
+            jump to CHUNKS[Length * 2 + 2].
+        Finally jump to CHUNKS[Length * 2 + 1].
+
+    - name: DeloadVar
+      arguments:
+        - name: SlotStartingIndex
+        - name: Width
+      comment: Pushes the variable onto the stack.
+
+    - name: Push
+      arguments:
+        - name: Value
+      comment: Pushes an inline constant number onto the stack.
+
+    - name: LoadVar
+      arguments:
+        - name: SlotStartingIndex
+        - name: Width
+      comment: >
+        Loads the stack values into the variable slot.
+        The deeper you are into the stack, the higher endian you are.
+
+    - name: Factorial
+      arguments:
+        - name: Type
+        - name: ExclamationCount
+      comment: Computes factorial. Supports multiple exclamation marks.
+
+
+  

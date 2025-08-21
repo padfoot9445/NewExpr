@@ -4,7 +4,6 @@ using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static Opcode;
 internal static class IfVisitor
 {
     public static void Visit(SmallLangNode Self, CodeGenerator Driver)
@@ -19,11 +18,11 @@ internal static class IfVisitor
         //ENTERING CHUNK CHUNK0
         if (Else is null)
         {
-            Driver.Emit<int, int>(IFNE, Driver.ACHUNK(0), Length);
+            Driver.Emit(HighLevelOperation.IfNoElse<int, int>(Driver.ACHUNK(0), Length));
         }
         else
         {
-            Driver.Emit<int, int>(IFELSE, Driver.ACHUNK(0), Length);
+            Driver.Emit(HighLevelOperation.IfElse<int, int>(Driver.ACHUNK(0), Length));
         }
 
         for (int i = 1; i <= Length; i++)

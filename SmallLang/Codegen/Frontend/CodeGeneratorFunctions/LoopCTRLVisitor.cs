@@ -6,7 +6,6 @@ using SmallLang.IR.Metadata;
 
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static Opcode;
 internal static class LoopCtrlVisitor
 {
     public static void Visit(SmallLangNode Self, CodeGenerator Driver)
@@ -19,11 +18,11 @@ internal static class LoopCtrlVisitor
         {
             if (IsBreak)
             {
-                Driver.Emit(JMP, Driver.RCHUNK(2));
+                Driver.Emit(HighLevelOperation.Jump(Driver.RCHUNK(2)));
             }
             else
             {
-                Driver.Emit(JMP, Driver.RCHUNK(-1));
+                Driver.Emit(HighLevelOperation.Jump(Driver.RCHUNK(-1)));
             }
         }
         else
@@ -31,11 +30,11 @@ internal static class LoopCtrlVisitor
             (var Break, var Cont) = Driver.Data.LoopData[(LoopGUID)Self.Attributes.GUIDOfLoopLabel!];
             if (IsBreak)
             {
-                Driver.Emit(JMP, Break);
+                Driver.Emit(HighLevelOperation.Jump(Break));
             }
             else
             {
-                Driver.Emit(JMP, Cont);
+                Driver.Emit(HighLevelOperation.Jump(Cont));
             }
         }
     }

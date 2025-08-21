@@ -3,7 +3,6 @@ using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static Opcode;
 internal static class ReturnVisitor
 {
     public static void Visit(SmallLangNode Self, CodeGenerator Driver)
@@ -12,6 +11,6 @@ internal static class ReturnVisitor
 
         //CHUNK ENTERING
         Driver.Exec(Self.Children[0]);
-        Driver.Emit(RET);
+        Driver.Emit(HighLevelOperation.Return());
     }
 }

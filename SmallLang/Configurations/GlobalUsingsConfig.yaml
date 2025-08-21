@@ -8,6 +8,6 @@ GlobalUsingsConfig:
   data:
     aliases:
       BackingNumberType: byte
-      OpcodeBackingType: uint
+      HighLevelOpcodeBackingType: uint
     usings: {}
 

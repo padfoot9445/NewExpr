@@ -9,13 +9,11 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static ImportantASTNodeType;
-using static Opcode;
-
 internal static class PrimaryVisitor
 {
     static void ParseIdentifier(SmallLangNode self, CodeGenerator Driver)
     {
-        Driver.Emit<int, int>(DeloadVar, Driver.Data.VariableSlots.KeyToPointerStartMap[self.Attributes.VariableName!], Driver.Data.VariableSlots.KeyToNumberOfCellsUsed[self.Attributes.VariableName!]);
+        Driver.Emit(HighLevelOperation.DeloadVar<int, int>(Driver.Data.VariableSlots.KeyToPointerStartMap[self.Attributes.VariableName!], Driver.Data.VariableSlots.KeyToNumberOfCellsUsed[self.Attributes.VariableName!]));
     }
     static void ParseValNum(SmallLangNode self, CodeGenerator Driver) => ValNumParser.Parse(self, Driver);
     internal static void Visit(SmallLangNode Self, CodeGenerator Driver)
@@ -51,7 +49,7 @@ internal static class PrimaryVisitor
         void ParsePtrNum(SmallLangNode self, CodeGenerator Driver) => PtrNumParser.Parse(self, Driver);
         void ParseBool(SmallLangNode self, CodeGenerator Driver)
         {
-            Driver.Emit<BackingNumberType>(Push, self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue)));
+            Driver.Emit(HighLevelOperation.Push<BackingNumberType>(self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue))));
         }
         void ParseString(SmallLangNode self, CodeGenerator Driver)
         {
@@ -63,7 +61,7 @@ internal static class PrimaryVisitor
             ];
 
             var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
-            Driver.Emit(Push, Ptr);
+            Driver.Emit(HighLevelOperation.Push(Ptr));
         }
         void ParseCollection(SmallLangNode self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
 

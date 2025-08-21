@@ -3,8 +3,6 @@ using Common.LinearIR;
 using SmallLang.LinearIR;
 
 namespace SmallLang.CodeGen.Frontend;
-
-using static Opcode;
 using Op = Operation<Opcode, BackingNumberType>;
 class OpcodeCodeEmitter
 {

@@ -9,8 +9,6 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using static ImportantASTNodeType;
-using static Opcode;
-
 internal static class DeclarationVisitor
 {
 
@@ -28,7 +26,7 @@ internal static class DeclarationVisitor
             //this should be the first time this identifier is used
             Driver.Cast(AssignmentPrime.Children[0], Type.Attributes.TypeLiteralType!);
             var ptr = Driver.Data.VariableSlots.Allocate((int)Type.Attributes.TypeLiteralType!.Size);
-            Driver.Emit<int, uint>(LoadVar, ptr, Type.Attributes.TypeLiteralType.Size);
+            Driver.Emit(HighLevelOperation.LoadVar<int, uint>(ptr, Type.Attributes.TypeLiteralType.Size));
         }
     }
 }

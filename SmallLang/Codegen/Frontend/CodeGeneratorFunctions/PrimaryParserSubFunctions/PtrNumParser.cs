@@ -5,7 +5,6 @@ using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-using static SmallLang.IR.LinearIR.Opcode;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
 
 internal static class PtrNumParser
@@ -14,7 +13,7 @@ internal static class PtrNumParser
     {
         Driver.Emit
         (
-            Push,
+            HighLevelOperation.Push(
             Self.Switch
             (
                 x => x.Attributes.TypeOfExpression!,
@@ -25,7 +24,7 @@ internal static class PtrNumParser
 
             )
                 (Self, Driver)
-        );
+        ));
     }
     static List<BackingNumberType> GetArrayOfBNTs(string number)
     {

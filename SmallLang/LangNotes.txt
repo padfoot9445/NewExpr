@@ -83,7 +83,7 @@ Strategy:
         CHUNK5
             NEXT
 
-        Assign to dictionary: guid: (CHUNK1) //this works for both break and continue, since the break/continue instruction (specialized for For or While loops) will take over control of the looping
+        Assign to dictionary: guid: (CHUNK0) //this works for both break and continue, since the break/continue instruction (specialized for For or While loops) will take over control of the looping. Chunk0 because we do have to be able to access all the loop-blocks from this ID
     Else: [Statement] //DOES NOT EXIST //TODO: While, If, For need custom else handlers as follows
         ENTERING CHUNK
             Compile Statement1

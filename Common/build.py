@@ -29,14 +29,13 @@ def custom_run(command: Any, path:Any, out: list[bool]):
     else:
         out[0] = True
 
-def time_command(command: list[str], path: Any, name: str):
-    
+def time_thread(name: str, work_function: Callable[..., Any], *args: Any, **kwargs: Any):
     splitname = name.split(" ")
     name = f"\033[1m{splitname[0]}{END}{(" " + " ".join(splitname[1:])) if len(splitname) > 1 else ""}"
     
     out = [True]
 
-    work_thread = Thread(target=custom_run, args=[command, path, out])
+    work_thread = Thread(target=work_function, args=[*list(args), out], kwargs=kwargs)
     work_thread.start()
 
     start_time = time()
@@ -57,6 +56,10 @@ def time_command(command: list[str], path: Any, name: str):
     assert not work_thread.is_alive()
     return out[0]
 
+def time_command(command: list[str], stdout_destination: Any, msg: str):
+    return time_thread(msg,
+        custom_run, command, stdout_destination)
+
 def make_dir(dst: Path):
     if os.path.isdir(dst): return
     elif os.path.split(dst)[-1] in ["NUL", "NUL:"]: return
@@ -70,12 +73,15 @@ def make_dir(dst: Path):
     print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}\033[4:5m{dst}{END}")
     
 
-def delete_files():
-    for dirpath, _, filenames in os.walk(working_directory):
-        for i in filenames:
-            if "generated" in [j.lower() for j in os.path.split(dirpath)] or i.split(".")[0].lower() == "generated":
-                os.remove(Path(dirpath)/i)
-
+def delete_files(out: list[bool]):
+    try:
+        for dirpath, _, filenames in os.walk(working_directory):
+            for i in filenames:
+                if "generated" in [j.lower() for j in os.path.split(dirpath)] or i.split(".")[0].lower() == "generated":
+                    os.remove(Path(dirpath)/i)
+    except Exception as e:
+        out[0] = False
+        print(f"{RED}{BOLD}INFO{END}:  {RED}{BOLD}{e}{END}")
             
 
 if __name__ == "__main__":
@@ -153,8 +159,11 @@ if __name__ == "__main__":
 
     total_time = time()
 
+
     #delete old files
-    delete_files()
+    delete_out = [True]
+    time_thread("Delete-Generated-Files", delete_files)
+
 
     #run build steps
     success = True

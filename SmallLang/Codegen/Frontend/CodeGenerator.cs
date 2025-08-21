@@ -35,8 +35,15 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     {
         Debug.Assert(node.NodeType == Expected);
     }
-    internal void Exec(SmallLangNode node) =>
+    internal void Exec(SmallLangNode node)
+    {
+        var CurrentChunk = Data.CurrentChunk;
         DynamicDispatch(node)(node, this);
+        while (Data.CurrentChunk != CurrentChunk)
+        {
+            Data.Rewind();
+        }
+    }
     static Action<SmallLangNode, CodeGenerator> DynamicDispatch(SmallLangNode node) =>
         node.Switch(
                 Accessor: x => x.NodeType,

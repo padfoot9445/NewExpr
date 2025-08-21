@@ -88,7 +88,7 @@ def delete_files(out: list[bool]):
 
 if __name__ == "__main__":
 
-    working_directory = Path(sys.argv[1] if len(sys.argv) >= 2 else os.getcwd()).resolve()
+    working_directory = Path(sys.argv[1] if len(sys.argv) >= 2 and not sys.argv[1].startswith("-") else os.getcwd()).resolve()
 
     #get generator-dst-directories to remove
     dst_directories: list[Path] = []

@@ -1,41 +1,23 @@
+using Common.Dispatchers;
 using Common.Tokens;
 using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-
+using OpCode = SmallLang.IR.LinearIR.HighLevelOperation;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 internal static class LoopCtrlVisitor
 {
-    public static void Visit(SmallLangNode Self, CodeGenerator Driver)
+    public static void Visit(LoopCTRLNode Self, CodeGenerator Driver)
     {
-        //[Data: Break | Continue; Label?]
 
-        //ENTERINGCHUNK
-        bool IsBreak = Self.Data!.TT == TokenType.Break;
-        if (Self.Children.Count == 0)
-        {
-            if (IsBreak)
-            {
-                Driver.Emit(HighLevelOperation.Jump(Driver.RCHUNK(2)));
-            }
-            else
-            {
-                Driver.Emit(HighLevelOperation.Jump(Driver.RCHUNK(-1)));
-            }
-        }
-        else
-        {
-            (var Break, var Cont) = Driver.Data.LoopData[(LoopGUID)Self.Attributes.GUIDOfLoopLabel!];
-            if (IsBreak)
-            {
-                Driver.Emit(HighLevelOperation.Jump(Break));
-            }
-            else
-            {
-                Driver.Emit(HighLevelOperation.Jump(Cont));
-            }
-        }
+        (var v1, var v2, var v3, var v4, var v5) = Driver.Data.LoopData[(LoopGUID)Self.Attributes.GUIDOfLoopLabel!];
+        Self.Data.Switch(
+            Accessor: x => x.TT,
+            Comparer: (x, y) => x == y,
+            (TokenType.Break, () => Driver.Emit(OpCode.Break(v1, v2, v3, v4, v5))),
+            (TokenType.Continue, () => Driver.Emit(OpCode.Continue(v1, v2, v3, v4, v5)))
+        )();
     }
 }

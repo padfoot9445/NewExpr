@@ -98,6 +98,23 @@ HighLevelOpcodes:
         - name: Else
         - name: Next
       comment: Continue takes over control of the loop as provided.
+    - name: Loop
+      arguments:
+        - name: Condition
+        - name: Epilogue
+        - name: Main
+        - name: Else
+        - name: Next
+      comment: >
+        runs the loop. 
+          while(Condition results in top of stack being true)
+            run Main
+            run Epilogue
+          
+          if loop terminated naturally:
+            run Else
+          
+          run Next
     
 
 

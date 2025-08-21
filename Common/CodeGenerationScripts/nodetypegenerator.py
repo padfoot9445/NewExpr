@@ -5,7 +5,6 @@ from codegenframework import *
 from chunktree import DATA
 from typing import Callable
 
-SECTION_KEY: str = "NodeTypeDefinitions"
 NAME: str = "name"
 
 print("test1")
@@ -13,8 +12,9 @@ if __name__ == "__main__":
     print("test2")
     config_path = sys.argv[1]
     dst_path = sys.argv[2]
+    section_key: str = sys.argv[3]
     with open(config_path) as file:
-        config = yaml.load(file, yaml.Loader)[SECTION_KEY]
+        config = yaml.load(file, yaml.Loader)[section_key]
         name = config[NAME]
         data: list[dict[str, str]] = config[DATA]
     with open(dst_path, "w") as file:

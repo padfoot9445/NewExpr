@@ -5,7 +5,7 @@ from sys import argv
 from nodetypegenerator import DATA
 from typing import cast, Any
 
-SECTION_KEY = "TypeData"
+section_key = "TypeData"
 
 def get_SmallLangType_params(type_data: dict[str, Any], config: dict[str, Any]):
     name = to_csharp(type_data["name"])
@@ -24,8 +24,9 @@ def get_SmallLangType_params(type_data: dict[str, Any], config: dict[str, Any]):
 if __name__ == "__main__":
     config_path = argv[1]
     output_dir = argv[2]
+    section_key = argv[3]
     with open(config_path) as file:
-        raw_config = yaml.load(file, yaml.Loader)[SECTION_KEY]
+        raw_config = yaml.load(file, yaml.Loader)[section_key]
         config = raw_config[DATA]
 
 

@@ -4,18 +4,17 @@ from sys import argv
 from pathlib import Path
 from codegenframework import *
 from generatedynamicastnodesubclasses import write_header
-SECTION_KEY: Literal["chunktree classes"] = "chunktree classes"
 NAME: Literal["name"] = 'name'
 CHILDREN: Literal["children"] = "children"
 DATA: Literal["data"] = "data"
 
 def header():
     yield "namespace SmallLang.IR.LinearIR.Generated;"
-def generate_classes(config_path: str | Path, output_directory: str | Path):
+def generate_classes(config_path: str | Path, output_directory: str | Path, section_key: str):
     output_directory = Path(output_directory)
 
     with open(config_path) as config_file:
-        raw_config: Any = yaml.load(config_file, Loader=yaml.Loader)[SECTION_KEY]
+        raw_config: Any = yaml.load(config_file, Loader=yaml.Loader)[section_key]
         config = raw_config[DATA]
     
 
@@ -50,4 +49,5 @@ def generate_classes(config_path: str | Path, output_directory: str | Path):
 if __name__ == "__main__":
     config_path = argv[1]
     output_dir = argv[2]
-    generate_classes(config_path, output_dir)
+    section_key = argv[3]
+    generate_classes(config_path, output_dir, section_key)

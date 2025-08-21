@@ -4,7 +4,6 @@ from typing import Literal, cast
 from codegenframework import *
 from sys import argv
 
-HEADER_NAME: Literal["dynamicastnode subclasses"] = "dynamicastnode subclasses"
 CHILDREN: Literal["children"] = "children"
 HAS_DATA: Literal["has data"] = "has data"
 VALID_DATA_TYPES: Literal["valid data types"] = "valid data types"
@@ -42,7 +41,7 @@ list[ #list containing all the classes
 
 f"""expected structure:
 
-    {HEADER_NAME}:
+    [section_key]:
         {BASE_CLASSES}:
             -
                 {NAME}: [baseclassname]
@@ -67,7 +66,7 @@ f"""expected structure:
         {ANNOTATION_TYPE}: [Annotation Type Name]
     """
 
-def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str:
+def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str, section_key: str) -> str:
 
     ADATA: Literal["AData"] = "AData"
     DVF_NAME: Literal["AdditionalDataValidationFunction"] = "AdditionalDataValidationFunction"
@@ -242,12 +241,12 @@ def write_header(config: Any, dst: Any):
     write_block(code_using_statements(config[USINGS]), dst)
     write_block(f"namespace {config[NAMESPACE]};", dst)
 
-def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory: str | Path):
+def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory: str | Path, section_key: str):
     
     output_directory = Path(output_directory)
 
     with open(config_path) as config_file:
-        config: Any = yaml.load(config_file, Loader=yaml.Loader)[HEADER_NAME]
+        config: Any = yaml.load(config_file, Loader=yaml.Loader)[section_key]
         subclasses: classestype = config[CLASSES]
 
     assert isinstance(subclasses, list)
@@ -267,13 +266,13 @@ def generate_dynamicastnode_subclasses(config_path: str | Path, output_directory
     for subclass in subclasses:
         with open(str(output_directory/f"{subclass[NAME]}Node.cs"), "w") as file:
             write_header(config, file)
-            write_block(generate_dynamicastnode_subclass(subclass, config[ENUM_TYPE]), file)
+            write_block(generate_dynamicastnode_subclass(subclass, config[ENUM_TYPE], section_key), file)
 
 
 if __name__ == "__main__":
     config_path = argv[1]
     output_dir = argv[2]
+    section_key = argv[3]
     
-    
-    generate_dynamicastnode_subclasses(config_path, output_dir)
+    generate_dynamicastnode_subclasses(config_path, output_dir, section_key)
 

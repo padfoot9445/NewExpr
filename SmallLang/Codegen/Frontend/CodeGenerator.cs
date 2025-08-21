@@ -48,24 +48,32 @@ public partial class CodeGenerator(SmallLangNode RootNode)
             Data.Rewind();
         }
     }
+    static Action<SmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
+    where T : SmallLangNode =>
+        (x, y) =>
+        {
+            Verify<T>(x);
+            visitor((T)x, y);
+        };
+
     static Action<SmallLangNode, CodeGenerator> DynamicDispatch(SmallLangNode node) =>
         node.Switch(
                 Accessor: x => x.NodeType,
                 Comparer: (x, y) => x == y,
 
 
-                (NodeType.Section, SectionVisitor.Visit),
-                (NodeType.Identifier, PrimaryVisitor.Visit),
-                (NodeType.Function, FunctionVisitor.Visit),
-                (NodeType.For, ForVisitor.Visit),
-                (NodeType.While, WhileVisitor.Visit),
-                (NodeType.Return, ReturnVisitor.Visit),
-                (NodeType.LoopCTRL, LoopCtrlVisitor.Visit),
-                (NodeType.Switch, SwitchVisitor.Visit),
-                (NodeType.If, IfVisitor.Visit),
-                (NodeType.Primary, PrimaryVisitor.Visit),
-                (NodeType.Declaration, DeclarationVisitor.Visit),
-                (NodeType.FactorialExpression, FactorialExpressionVisitor.Visit)
+                (NodeType.Section, VisitFunctionWrapper<SmallLangNode>(SectionVisitor.Visit)),
+                (NodeType.Identifier, VisitFunctionWrapper<SmallLangNode>(PrimaryVisitor.Visit)),
+                (NodeType.Function, VisitFunctionWrapper<SmallLangNode>(FunctionVisitor.Visit)),
+                (NodeType.For, VisitFunctionWrapper<SmallLangNode>(ForVisitor.Visit)),
+                (NodeType.While, VisitFunctionWrapper<SmallLangNode>(WhileVisitor.Visit)),
+                (NodeType.Return, VisitFunctionWrapper<SmallLangNode>(ReturnVisitor.Visit)),
+                (NodeType.LoopCTRL, VisitFunctionWrapper<LoopCTRLNode>(LoopCtrlVisitor.Visit)),
+                (NodeType.Switch, VisitFunctionWrapper<SmallLangNode>(SwitchVisitor.Visit)),
+                (NodeType.If, VisitFunctionWrapper<SmallLangNode>(IfVisitor.Visit)),
+                (NodeType.Primary, VisitFunctionWrapper<SmallLangNode>(PrimaryVisitor.Visit)),
+                (NodeType.Declaration, VisitFunctionWrapper<SmallLangNode>(DeclarationVisitor.Visit)),
+                (NodeType.FactorialExpression, VisitFunctionWrapper<SmallLangNode>(FactorialExpressionVisitor.Visit))
 
             );
     internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)

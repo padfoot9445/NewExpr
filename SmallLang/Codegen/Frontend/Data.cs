@@ -8,10 +8,11 @@ public record class Data
 {
     public Data()
     {
-        CurrentChunk = Sections;
+        ChunkStack.Push(Sections);
     }
     public TreeChunk Sections { get; init; } = new(new Chunk(), []);
-    public TreeChunk CurrentChunk { get; private set; }
+    public TreeChunk CurrentChunk => ChunkStack.Peek();
+    private Stack<TreeChunk> ChunkStack { get; init; } = new();
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> VariableSlots = new();
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> StaticDataArea = new();
     public Dictionary<LoopGUID, (GenericNumberWrapper<int> ContinueDSTChunk, GenericNumberWrapper<int> BreakDSTChunk)> LoopData = new();
@@ -20,7 +21,11 @@ public record class Data
     {
         var chunk = new TreeChunk(new Chunk(), []);
         CurrentChunk.Children.Add(chunk);
-        CurrentChunk = chunk;
+        ChunkStack.Push(chunk);
+    }
+    internal void Rewind()
+    {
+        ChunkStack.Pop();
     }
     internal void Emit(HighLevelOperation Op)
     {

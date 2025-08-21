@@ -1,5 +1,5 @@
 import subprocess
-from typing import Callable, Any
+from typing import Callable, Any, cast
 from pathlib import Path
 import os
 import sys
@@ -7,7 +7,7 @@ import yaml
 from time import time, sleep
 from threading import Thread
 
-Command = tuple[list[str | Path], str]
+Command = tuple[list[str | Path], str, bool] #(Command, Name, Execute?)
 
 TIME_ROUND: int = 2
 BOLD = "\033[1m"
@@ -20,6 +20,8 @@ HEADERCODE = "\033[90m\033[1m"
 BUILD = f"{HEADERCODE}BUILD{END}"
 YELLOW = '\033[93m'
 
+def mutate_command(src: list[Command], srcindex: int, val: list[str | Path] | str | bool = False, mutindex: int=2):
+    src[srcindex] = cast(Command, tuple(v if mutindex != i else val for i, v in enumerate(src[srcindex])))
 
 def custom_run(command: Any, path:Any, out: list[bool]):
     try:
@@ -110,7 +112,8 @@ if __name__ == "__main__":
                 display_name = current_file_dict[step_name]["display name"]
                 build_steps.append((
                     [sys.executable, generator, file_path, dst, step_name, working_directory],
-                    display_name
+                    display_name,
+                    True
                 ))
 
                 #make dst if necessary
@@ -122,22 +125,24 @@ if __name__ == "__main__":
                     dst_directories.append(dst)
 
 
-    fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format")
-    restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore")
-    build_command: Command = (["dotnet", "build", "--no-restore"], "Dotnet-Build")
+    fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format", True)
+    restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore", True)
+    build_command: Command = (["dotnet", "build", "--no-restore"], "Dotnet-Build", True)
 
 
-    dotnet_build_steps: list[Command] = []
+    dotnet_build_steps: list[Command] = [
+        restore_command,
+        build_command,
+        fmt_command
+    ]
 
-    #add unconditional additional build steps
-    dotnet_build_steps.append(restore_command)
 
 
     #handle commmand line arguments
     flags: list[tuple[str, Callable[[], None], bool]] = [ #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
-        ("--no-build", lambda: dotnet_build_steps.append(build_command), False),
+        ("--no-build", lambda: mutate_command(dotnet_build_steps, 1), True),
         ("--whitespace", lambda: fmt_command[0].append("whitespace"), True),
-        ("--no-format", lambda: dotnet_build_steps.append(fmt_command), False)
+        ("--no-format", lambda: mutate_command(dotnet_build_steps, 2), True)
     ]
 
     for flag, action, desired in flags:
@@ -159,6 +164,11 @@ if __name__ == "__main__":
 
     total_time = time()
 
+    total_steps = len(dotnet_build_steps) + len(build_steps) + 1
+    steps_taken = total_steps
+    ignored = 0
+
+    skip: Callable[[str], None] = lambda name: print(f"{HEADERCODE}INFO{END}:  {BOLD}{name} {YELLOW}ignored{END} in (0.0s)")
 
     #delete old files
     delete_out = [True]
@@ -167,14 +177,21 @@ if __name__ == "__main__":
 
     #run build steps
     success = True
-
+    
     #run non-dotnet steps
-    for command, msg in build_steps:
+    for command, msg, execute in build_steps:
+        if not execute:
+            skip(msg); ignored += 1; continue
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
             success = time_command(command, file_path, msg) and success
+            if not success:
+                steps_taken -= 1
 
-    for command, msg in dotnet_build_steps:
+    for command, msg, execute in dotnet_build_steps:
+        if not execute:
+            skip(msg); ignored += 1; continue
+
         if not success: break
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
@@ -185,4 +202,5 @@ if __name__ == "__main__":
 
     build_code = "\033[092m\033[1m" if success else f"\033[31m{BOLD}"
     color = (GREEN if success else RED) + BOLD
-    print(f"{BOLD}{color}INFO{END}:  {color}Build {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")
+    
+    print(f"{BOLD}{color}INFO{END}:  {color}{steps_taken - ignored}/{total_steps} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")

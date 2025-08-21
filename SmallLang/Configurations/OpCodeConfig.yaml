@@ -81,6 +81,24 @@ HighLevelOpcodes:
         - name: Type
         - name: ExclamationCount
       comment: Computes factorial. Supports multiple exclamation marks.
+    
+    - name: Break
+      arguments:
+        - name: Condition
+        - name: Epilogue
+        - name: Main
+        - name: Else
+        - name: Next
+      comment: Break jumps to Next
+    - name: Continue
+      arguments:
+        - name: Condition
+        - name: Epilogue
+        - name: Main
+        - name: Else
+        - name: Next
+      comment: Continue takes over control of the loop as provided.
+    
 
 
   

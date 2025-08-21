@@ -31,11 +31,11 @@ public partial class CodeGenerator(SmallLangNode RootNode)
         Exec(RootNode);
         return Data;
     }
-    internal void Verify(SmallLangNode node, ImportantASTNodeType Expected)
+    static internal void Verify(SmallLangNode node, ImportantASTNodeType Expected)
     {
         Debug.Assert(node.NodeType == Expected);
     }
-    internal void Verify<T>(SmallLangNode node) where T : SmallLangNode
+    static internal void Verify<T>(SmallLangNode node) where T : SmallLangNode
     {
         Debug.Assert(node is T);
     }

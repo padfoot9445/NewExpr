@@ -9,7 +9,6 @@ import glob
 from threading import Thread
 
 Command = tuple[list[str | Path], str]
-working_directory = Path(os.path.dirname(__file__))
 
 TIME_ROUND: int = 2
 BOLD = "\033[1m"
@@ -74,6 +73,9 @@ def make_dir(dst: Path):
 
 
 if __name__ == "__main__":
+ 
+    working_directory = Path(sys.argv[1] if len(sys.argv) >= 2 else os.getcwd()).resolve()
+
     #get generator-dst-directories to remove
     dst_directories: list[Path] = []
 

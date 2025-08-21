@@ -29,7 +29,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     }
     internal void NewChunk(int chunkID, Action code)
     {
-        Debug.Assert(Data.CurrentChunk.Children.Count == (chunkID - 1))
+        Debug.Assert(Data.CurrentChunk.Children.Count == (chunkID - 1));
         Data.NewChunk();
         code();
         Data.Rewind();

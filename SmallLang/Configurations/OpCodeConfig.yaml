@@ -120,6 +120,11 @@ HighLevelOpcodes:
             run Else
           
           run Next
+    - name: LoadFromStack
+      arguments:
+        - name: DestinationRegister
+        - name: Width
+      comment: Loads a value from the stack into the registers beginning at DestinationRegister
     
 
 

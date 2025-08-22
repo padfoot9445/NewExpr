@@ -104,6 +104,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
 
       - name: *ReTypeOriginal
         children:
@@ -122,6 +123,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *Identifier
         children: []
@@ -132,6 +134,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *Section
         children:
@@ -145,6 +148,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *Function
         children:
@@ -167,6 +171,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *LoopCTRL
         children:
@@ -182,6 +187,7 @@ dynamicastnode subclasses:
         - Continue
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *Else
         children:
@@ -195,6 +201,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *For
         children:
@@ -228,6 +235,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *While
         children:
@@ -253,6 +261,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *LoopLabel
         children: []
@@ -263,6 +272,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *Return
         children:
@@ -276,6 +286,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *BaseType
         children: []
@@ -286,6 +297,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *GenericType
         children:
@@ -300,6 +312,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
               
       - name: *If
         children:
@@ -317,6 +330,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *Switch
         children:
@@ -334,6 +348,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *ExprStatementCombined
         children:
@@ -351,6 +366,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *TypeAndIdentifierCSV
         children:
@@ -364,6 +380,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *TypeAndIdentifierCSVElement
         children:
@@ -382,6 +399,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *AliasExpr
         children:
@@ -396,6 +414,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *Declaration
         children:
@@ -418,6 +437,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *DeclarationModifiersCombined
         children:
@@ -431,6 +451,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       
       
@@ -447,6 +468,7 @@ dynamicastnode subclasses:
         - "Immut"
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *FunctionArgDeclModifiers
         children: []
@@ -461,6 +483,7 @@ dynamicastnode subclasses:
         - "Copy"
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *FunctionArgDeclModifiersCombined
         children:
@@ -474,6 +497,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *AssignmentPrime
         children:
@@ -488,6 +512,7 @@ dynamicastnode subclasses:
         - "Equals"
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *FactorialSymbol
         children: []
@@ -498,6 +523,7 @@ dynamicastnode subclasses:
         - Factorial
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
 
       - name: *FactorialExpression
@@ -516,6 +542,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *BinaryExpression
         children:
@@ -551,6 +578,7 @@ dynamicastnode subclasses:
         - BitwiseAnd
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *ComparisionExpression
         children:
@@ -568,6 +596,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *OperatorExpressionPair
         children:
@@ -587,6 +616,7 @@ dynamicastnode subclasses:
         - LessThanOrEqualTo
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *Primary
         children: []
@@ -601,6 +631,7 @@ dynamicastnode subclasses:
         - FalseLiteral
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *FunctionIdentifier
         children: []
@@ -611,6 +642,7 @@ dynamicastnode subclasses:
         - Identifier
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *CopyExpr
         children:
@@ -624,6 +656,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *NewExpr
         children:
@@ -641,6 +674,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *Index
         children:
@@ -658,6 +692,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *FunctionCall
         children:
@@ -675,6 +710,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *ArgList
         children:
@@ -688,6 +724,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *ArgListElement
         children:
@@ -705,6 +742,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *TypeCSV
         children:
@@ -718,6 +756,7 @@ dynamicastnode subclasses:
         valid data types: []
         has additional data validation function: no
         data validation function: no
+        attributes: []
       
       - name: *UnaryExpression
         children:
@@ -734,6 +773,7 @@ dynamicastnode subclasses:
         - "LogicalNot"
         has additional data validation function: no
         data validation function: no
+        attributes: []
     
 
 chunktree classes: #not subclasses of Chunks since Chunks implies all the chunk pointers are resolved

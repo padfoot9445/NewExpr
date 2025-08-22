@@ -43,27 +43,26 @@ internal static class PrimaryVisitor
         )
         (Self, Driver);
         }
+    }
 
 
-
-        void ParsePtrNum(SmallLangNode self, CodeGenerator Driver) => PtrNumParser.Parse(self, Driver);
-        void ParseBool(SmallLangNode self, CodeGenerator Driver)
-        {
-            Driver.Emit(HighLevelOperation.Push<BackingNumberType>(self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue))));
-        }
-        void ParseString(SmallLangNode self, CodeGenerator Driver)
-        {
-            List<byte> Chars =
-            [
-                TypeData.String.Value.Single(),
+    private static void ParsePtrNum(SmallLangNode self, CodeGenerator Driver) => PtrNumParser.Parse(self, Driver);
+    private static void ParseBool(SmallLangNode self, CodeGenerator Driver)
+    {
+        Driver.Emit(HighLevelOperation.Push<BackingNumberType>(self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue))));
+    }
+    private static void ParseString(SmallLangNode self, CodeGenerator Driver)
+    {
+        List<byte> Chars =
+        [
+            TypeData.String.Value.Single(),
                 .. ((GenericNumberWrapper<int>)self.Data!.Lexeme.Length).Value,
                 .. self.Data!.Lexeme.Select(x => (byte)x)
-            ];
+        ];
 
-            var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
-            Driver.Emit(HighLevelOperation.Push(Ptr));
-        }
-        void ParseCollection(SmallLangNode self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
-
+        var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
+        Driver.Emit(HighLevelOperation.Push(Ptr));
     }
+    private static void ParseCollection(SmallLangNode self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
+
 }

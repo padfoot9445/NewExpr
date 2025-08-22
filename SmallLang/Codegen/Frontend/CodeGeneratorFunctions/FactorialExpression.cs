@@ -23,7 +23,7 @@ internal static class FactorialExpressionVisitor
 
             Driver.Exec(Self.Expression1);
             Driver.Emit(HighLevelOperation.LoadFromStack(register, Width));
-            Driver.Emit(HighLevelOperation.Factorial<int, int, byte, int>(register, register2, Self.Attributes.TypeOfExpression, Self.FactorialSymbol1.Count()));
+            Driver.Emit(HighLevelOperation.Factorial<int, int, byte, int>(register, register2, Self.Attributes.TypeOfExpression, Self.FactorialSymbols1.Count()));
             Driver.Next();
         });
 

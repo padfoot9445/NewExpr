@@ -9,9 +9,9 @@ internal static class SwitchVisitor
     public static void Visit(SwitchNode Self, CodeGenerator Driver)
     {
 
-        var Expressions = Self.ExprStatementCombined1.Select(x => x.Expression1).ToList();
-        var Statements = Self.ExprStatementCombined1.Select(x => x.Statement1).ToList();
-        var Length = Self.ExprStatementCombined1.Count();
+        var Expressions = Self.ExprStatementCombineds1.Select(x => x.Expression1).ToList();
+        var Statements = Self.ExprStatementCombineds1.Select(x => x.Statement1).ToList();
+        var Length = Self.ExprStatementCombineds1.Count();
         var ExpressionType = Self.Expression1.Attributes.TypeOfExpression!;
         List<int> Registers = [Driver.GetRegisters((int)ExpressionType.Size).First(), .. Expressions.Select(_ => Driver.GetRegisters((int)ExpressionType.Size).First())];
 

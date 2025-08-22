@@ -48,6 +48,9 @@ HighLevelOpcodes:
         - name: ConditionStoringRegister
         - name: ConditionTypeWidth
       comment: >
+        StartingBlockID is the ID of the first condition.
+        ConditionStoringRegister is the register which will be used to store the boolean result of each comparison.
+        NumberOfCases is the number of conditions in the if-elseif-else chain.
         For i in [1...Length]:
           run CHUNKS[i * 2 - 1].
           If (POP) is TRUE:

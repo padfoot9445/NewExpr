@@ -1,6 +1,6 @@
 using Common.Dispatchers;
 using Common.Tokens;
-using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
+using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFunctions;
 
 using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
@@ -11,11 +11,11 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using static ImportantASTNodeType;
 internal static class PrimaryVisitor
 {
-    internal static void ParseIdentifier(IdentifierNode self, CodeGenerator Driver)
+    internal static void VisitIdentifier(IdentifierNode self, CodeGenerator Driver)
     {
         Driver.Emit(HighLevelOperation.PushFromRegister(Driver.Data.GetVariableStartRegister(self.Attributes.VariableName!), Driver.Data.GetVariableWidth(self.Attributes.VariableName!)));
     }
-    static void ParseValNum(SmallLangNode self, CodeGenerator Driver) => ValNumParser.Parse(self, Driver);
+    static void VisitValNum(SmallLangNode self, CodeGenerator Driver) => ValNumVisitor.Visit(self, Driver);
     internal static void Visit(PrimaryNode Self, CodeGenerator Driver)
     {
         Driver.EnteringChunk(() =>
@@ -24,21 +24,21 @@ internal static class PrimaryVisitor
             Self.Switch(
             x => x.Attributes.TypeOfExpression!,
             (x, y) => x == y,
-            (TypeData.String, ParseString),
-            (TypeData.Char, ParseValNum),
-            (TypeData.Float, ParseValNum),
-            (TypeData.Int, ParseValNum),
-            (TypeData.Double, ParseValNum),
-            (TypeData.Byte, ParseValNum),
-            (TypeData.Long, ParseValNum),
-            (TypeData.Number, ParsePtrNum),
-            (TypeData.Longint, ParsePtrNum),
-            (TypeData.Rational, ParsePtrNum),
-            (TypeData.Bool, ParseBool),
-            (TypeData.Array, ParseCollection),
-            (TypeData.List, ParseCollection),
-            (TypeData.Set, ParseCollection),
-            (TypeData.Dict, ParseCollection)
+            (TypeData.String, VisitString),
+            (TypeData.Char, VisitValNum),
+            (TypeData.Float, VisitValNum),
+            (TypeData.Int, VisitValNum),
+            (TypeData.Double, VisitValNum),
+            (TypeData.Byte, VisitValNum),
+            (TypeData.Long, VisitValNum),
+            (TypeData.Number, VisitPtrNum),
+            (TypeData.Longint, VisitPtrNum),
+            (TypeData.Rational, VisitPtrNum),
+            (TypeData.Bool, VisitBool),
+            (TypeData.Array, VisitCollection),
+            (TypeData.List, VisitCollection),
+            (TypeData.Set, VisitCollection),
+            (TypeData.Dict, VisitCollection)
         )
         (Self, Driver);
 
@@ -47,12 +47,12 @@ internal static class PrimaryVisitor
     }
 
 
-    private static void ParsePtrNum(SmallLangNode self, CodeGenerator Driver) => PtrNumParser.Parse(self, Driver);
-    private static void ParseBool(SmallLangNode self, CodeGenerator Driver)
+    private static void VisitPtrNum(SmallLangNode self, CodeGenerator Driver) => PtrNumVisitor.Visit(self, Driver);
+    private static void VisitBool(SmallLangNode self, CodeGenerator Driver)
     {
         Driver.Emit(HighLevelOperation.Push<BackingNumberType>(self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue))));
     }
-    private static void ParseString(SmallLangNode self, CodeGenerator Driver)
+    private static void VisitString(SmallLangNode self, CodeGenerator Driver)
     {
         List<byte> Chars =
         [
@@ -64,6 +64,6 @@ internal static class PrimaryVisitor
         var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
         Driver.Emit(HighLevelOperation.Push(Ptr));
     }
-    private static void ParseCollection(SmallLangNode self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
+    private static void VisitCollection(SmallLangNode self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
 
 }

@@ -88,7 +88,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
                 (NodeType.If, VisitFunctionWrapper<SmallLangNode>(IfVisitor.Visit)),
                 (NodeType.Primary, VisitFunctionWrapper<SmallLangNode>(PrimaryVisitor.Visit)),
                 (NodeType.Declaration, VisitFunctionWrapper<DeclarationNode>(DeclarationVisitor.Visit)),
-                (NodeType.FactorialExpression, VisitFunctionWrapper<SmallLangNode>(FactorialExpressionVisitor.Visit))
+                (NodeType.FactorialExpression, VisitFunctionWrapper<FactorialExpressionNode>(FactorialExpressionVisitor.Visit))
 
             );
     internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)

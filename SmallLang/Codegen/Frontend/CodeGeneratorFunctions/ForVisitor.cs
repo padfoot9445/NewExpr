@@ -54,6 +54,10 @@ internal static class ForVisitor
 
         Driver.Next(5);
 
+        StoreUuid(Self, Driver);
+    }
+    public static void StoreUuid(SmallLangNode Self, CodeGenerator Driver)
+    {
         Driver.Data.LoopData[(LoopGUID)Self.Attributes.LoopGUID!] = (Driver.GetChild(1).Uuid, Driver.GetChild(2).Uuid, Driver.GetChild(3).Uuid, Driver.GetChild(4).Uuid, Driver.GetChild(5).Uuid);
     }
 }

@@ -13,7 +13,7 @@ internal static class PrimaryVisitor
 {
     static void ParseIdentifier(SmallLangNode self, CodeGenerator Driver)
     {
-        Driver.Emit(HighLevelOperation.DeloadVar<int, int>(Driver.Data.VariableSlots.KeyToPointerStartMap[self.Attributes.VariableName!], Driver.Data.VariableSlots.KeyToNumberOfCellsUsed[self.Attributes.VariableName!]));
+        Driver.Emit(HighLevelOperation.DeloadVar<int, int>(Driver.Data.GetVariableStartRegister(self.Attributes.VariableName!), Driver.Data.GetVariableWidth(self.Attributes.VariableName!)));
     }
     static void ParseValNum(SmallLangNode self, CodeGenerator Driver) => ValNumParser.Parse(self, Driver);
     internal static void Visit(SmallLangNode Self, CodeGenerator Driver)

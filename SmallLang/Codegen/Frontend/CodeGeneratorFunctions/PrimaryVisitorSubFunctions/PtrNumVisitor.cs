@@ -5,11 +5,11 @@ using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFunctions;
 
-internal static class PtrNumParser
+internal static class PtrNumVisitor
 {
-    public static void Parse(SmallLangNode Self, CodeGenerator Driver)
+    public static void Visit(SmallLangNode Self, CodeGenerator Driver)
     {
         Driver.Emit
         (

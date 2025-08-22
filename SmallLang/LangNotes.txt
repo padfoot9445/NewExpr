@@ -94,14 +94,16 @@ Strategy:
             assign a guid
 
         ENTERING CHUNK CHUNK0
-            WHILE //implicitly passes CHUNK1,CHUNK2, CHUNK3, CHUNK4
+            LOOP CHUNK1, CHUNK2, CHUNK3, CHUNK4, CHUNK5
         make new chunk CHUNK1
             Compile Expression1
         make new chunk CHUNK2
+            NOP
+        make new chunk CHUNK3
             Compile statement
-        make new chunk Chunk3
+        make new chunk Chunk4
             Compile else if else is not null
-        make new chunk CHUNK4
+        make new chunk CHUNK5
             NEXT
 
     ValInLCTRL:[Identifier]

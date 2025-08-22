@@ -15,7 +15,6 @@ internal static class PrimaryVisitor
     {
         Driver.Emit(HighLevelOperation.PushFromRegister(Driver.Data.GetVariableStartRegister(self.Attributes.VariableName!), Driver.Data.GetVariableWidth(self.Attributes.VariableName!)));
     }
-    static void VisitValNum(SmallLangNode self, CodeGenerator Driver) => ValNumVisitor.Visit(self, Driver);
     internal static void Visit(PrimaryNode Self, CodeGenerator Driver)
     {
         Driver.EnteringChunk(() =>
@@ -25,15 +24,15 @@ internal static class PrimaryVisitor
             x => x.Attributes.TypeOfExpression!,
             (x, y) => x == y,
             (TypeData.String, VisitString),
-            (TypeData.Char, VisitValNum),
-            (TypeData.Float, VisitValNum),
-            (TypeData.Int, VisitValNum),
-            (TypeData.Double, VisitValNum),
-            (TypeData.Byte, VisitValNum),
-            (TypeData.Long, VisitValNum),
-            (TypeData.Number, VisitPtrNum),
-            (TypeData.Longint, VisitPtrNum),
-            (TypeData.Rational, VisitPtrNum),
+            (TypeData.Char, ValNumVisitor.Visit),
+            (TypeData.Float, ValNumVisitor.Visit),
+            (TypeData.Int, ValNumVisitor.Visit),
+            (TypeData.Double, ValNumVisitor.Visit),
+            (TypeData.Byte, ValNumVisitor.Visit),
+            (TypeData.Long, ValNumVisitor.Visit),
+            (TypeData.Number, PtrNumVisitor.Visit),
+            (TypeData.Longint, PtrNumVisitor.Visit),
+            (TypeData.Rational, PtrNumVisitor.Visit),
             (TypeData.Bool, VisitBool),
             (TypeData.Array, VisitCollection),
             (TypeData.List, VisitCollection),
@@ -46,8 +45,6 @@ internal static class PrimaryVisitor
         });
     }
 
-
-    private static void VisitPtrNum(SmallLangNode self, CodeGenerator Driver) => PtrNumVisitor.Visit(self, Driver);
     private static void VisitBool(SmallLangNode self, CodeGenerator Driver)
     {
         Driver.Emit(HighLevelOperation.Push<BackingNumberType>(self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue))));

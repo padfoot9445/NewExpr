@@ -73,7 +73,7 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
         for child in children:
             raw_name = cast(str, child[NAME])
             type =  raw_name + "Node"
-            name = get_name(raw_name, names)
+            name = get_name(raw_name, names, child)
     
             is_optional = cast(bool, child[IS_OPTIONAL])
             type = (type + ("?" if is_optional else ""))
@@ -96,24 +96,24 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
             if child[IS_MULTIPLE]:
                 type = f"IEnumerable<{type}>"
             
-            yield f"{type} {get_name(cast(str,child[NAME]), names)}"
-    def get_name(name: str, names: dict[str, int]):
+            yield f"{type} {get_name(cast(str,child[NAME]), names, child)}"
+    def get_name(name: str, names: dict[str, int], child: childtype):
         if name not in names:
             names[name] = 0
     
         names[name] += 1
-        return name + str(names[name])
+        return f"{name}{"s" if child[IS_MULTIPLE] else ""}{names[name]}"
     def get_delegate_ctor_arguments(self: classtype, enum_type: str):
 
         names: dict[str, int] = {}
 
         yield (ADATA if self[HAS_DATA] else "null") # data
         yield f"GetList([{", ".join(
-            f"{".." if child[IS_MULTIPLE] else ""}{get_name(cast(str, child[NAME]), names)}"
+            f"{".." if child[IS_MULTIPLE] else ""}{get_name(cast(str, child[NAME]), names, child)}"
             for child in cast(list[childtype], self[CHILDREN]))}])" #children list
         yield f"{enum_type}.{self[NAME]}" #node type enum
 
-    def get_ctor_content(child_names: list[str], has_data: bool, has_dvf: bool, check_data_type: bool):
+    def get_ctor_content(child_names: list[str], has_data: bool, has_dvf: bool, check_data_type: bool, children: list[childtype]):
         names: dict[str, int] = {}
         if has_data:
             yield f"Data = {ADATA};"
@@ -124,8 +124,8 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
         if check_data_type:
             yield f"if(!{DATACHECKER_NAME}()) throw new Exception(\"Invalid data type submitted\");"
         
-        for child_name in child_names:
-            new_name = get_name(child_name, names)
+        for child_name, child in zip(child_names, children):
+            new_name = get_name(child_name, names,child)
             yield f"this.{new_name} = {new_name};"
 
     children: list[childtype] = cast(list[childtype], subclass[CHILDREN])
@@ -185,7 +185,8 @@ def generate_dynamicastnode_subclass(subclass: classtype, enum_type: str) -> str
                             child_names =[cast(str, i[NAME]) for i in cast(list[childtype], subclass[CHILDREN])],
                             has_data = has_data,
                             has_dvf = has_dvf,
-                            check_data_type = check_data_type
+                            check_data_type = check_data_type,
+                            children= cast(list[childtype], subclass[CHILDREN])
                         )),
                         parameters=list(get_parameters(subclass)),
                         access_modifier=AccessModifiers.Public,

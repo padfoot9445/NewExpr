@@ -30,11 +30,13 @@ HighLevelOpcodes:
 
     - name: Switch
       arguments:
+        - name: Expression1Register
         - name: Length
         - name: StartingIndex
         - name: TypeCode
       comment: >
         SWITCH Length StartIndex, select the correct instruction(s) based on the TypeCode.
+        Stores all the computed expressions in contiguous registers, and the expression being switched on goes in Expression1Register
 
     - name: IfNoElse
       arguments:

@@ -81,7 +81,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
 
                 (NodeType.Section, VisitFunctionWrapper<SectionNode>(SectionVisitor.Visit)),
                 (NodeType.Identifier, VisitFunctionWrapper<SmallLangNode>(PrimaryVisitor.Visit)),
-                (NodeType.Function, VisitFunctionWrapper<SmallLangNode>(FunctionVisitor.Visit)),
+                (NodeType.Function, VisitFunctionWrapper<FunctionNode>(FunctionVisitor.Visit)),
                 (NodeType.For, VisitFunctionWrapper<ForNode>(ForVisitor.Visit)),
                 (NodeType.While, VisitFunctionWrapper<WhileNode>(WhileVisitor.Visit)),
                 (NodeType.Return, VisitFunctionWrapper<SmallLangNode>(ReturnVisitor.Visit)),

@@ -62,24 +62,12 @@ HighLevelOpcodes:
             jump to CHUNKS[Length * 2 + 2].
         Finally jump to CHUNKS[Length * 2 + 1].
 
-    - name: DeloadVar
-      arguments:
-        - name: SlotStartingIndex
-        - name: Width
-      comment: Pushes the variable onto the stack.
 
     - name: Push
       arguments:
         - name: Value
       comment: Pushes an inline constant number onto the stack.
 
-    - name: LoadVar
-      arguments:
-        - name: SlotStartingIndex
-        - name: Width
-      comment: >
-        Loads the stack values into the variable slot.
-        The deeper you are into the stack, the higher endian you are.
 
     - name: Factorial
       arguments:

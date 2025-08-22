@@ -18,7 +18,7 @@ internal static class PrimaryVisitor
     static void ParseValNum(SmallLangNode self, CodeGenerator Driver) => ValNumParser.Parse(self, Driver);
     internal static void Visit(SmallLangNode Self, CodeGenerator Driver)
     {
-        Driver.SETCHUNK();
+
         if (Self.NodeType == Identifier) { ParseIdentifier(Self, Driver); return; }
         else
         {

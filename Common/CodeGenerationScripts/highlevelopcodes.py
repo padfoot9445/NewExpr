@@ -1,6 +1,5 @@
 from pathlib import Path
 from codegenframework import *
-from generatedynamicastnodesubclasses import write_header
 from initializer import *
 from typing import Callable
 

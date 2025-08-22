@@ -11,17 +11,16 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using static ImportantASTNodeType;
 internal static class PrimaryVisitor
 {
-    static void ParseIdentifier(SmallLangNode self, CodeGenerator Driver)
+    internal static void ParseIdentifier(IdentifierNode self, CodeGenerator Driver)
     {
         Driver.Emit(HighLevelOperation.PushFromRegister(Driver.Data.GetVariableStartRegister(self.Attributes.VariableName!), Driver.Data.GetVariableWidth(self.Attributes.VariableName!)));
     }
     static void ParseValNum(SmallLangNode self, CodeGenerator Driver) => ValNumParser.Parse(self, Driver);
-    internal static void Visit(SmallLangNode Self, CodeGenerator Driver)
+    internal static void Visit(PrimaryNode Self, CodeGenerator Driver)
     {
-
-        if (Self.NodeType == Identifier) { ParseIdentifier(Self, Driver); return; }
-        else
+        Driver.EnteringChunk(() =>
         {
+
             Self.Switch(
             x => x.Attributes.TypeOfExpression!,
             (x, y) => x == y,
@@ -42,7 +41,9 @@ internal static class PrimaryVisitor
             (TypeData.Dict, ParseCollection)
         )
         (Self, Driver);
-        }
+
+            Driver.Next();
+        });
     }
 
 

@@ -80,7 +80,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
 
 
                 (NodeType.Section, VisitFunctionWrapper<SectionNode>(SectionVisitor.Visit)),
-                (NodeType.Identifier, VisitFunctionWrapper<SmallLangNode>(PrimaryVisitor.Visit)),
+                (NodeType.Identifier, VisitFunctionWrapper<IdentifierNode>(PrimaryVisitor.ParseIdentifier)),
                 (NodeType.Function, VisitFunctionWrapper<FunctionNode>(FunctionVisitor.Visit)),
                 (NodeType.For, VisitFunctionWrapper<ForNode>(ForVisitor.Visit)),
                 (NodeType.While, VisitFunctionWrapper<WhileNode>(WhileVisitor.Visit)),
@@ -88,7 +88,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
                 (NodeType.LoopCTRL, VisitFunctionWrapper<LoopCTRLNode>(LoopCtrlVisitor.Visit)),
                 (NodeType.Switch, VisitFunctionWrapper<SwitchNode>(SwitchVisitor.Visit)),
                 (NodeType.If, VisitFunctionWrapper<IfNode>(IfVisitor.Visit)),
-                (NodeType.Primary, VisitFunctionWrapper<SmallLangNode>(PrimaryVisitor.Visit)),
+                (NodeType.Primary, VisitFunctionWrapper<PrimaryNode>(PrimaryVisitor.Visit)),
                 (NodeType.Declaration, VisitFunctionWrapper<DeclarationNode>(DeclarationVisitor.Visit)),
                 (NodeType.FactorialExpression, VisitFunctionWrapper<FactorialExpressionNode>(FactorialExpressionVisitor.Visit))
 

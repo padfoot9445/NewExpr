@@ -41,7 +41,10 @@ internal static class WhileVisitor
             }
         });
 
-        Driver.Next(5);
+        Driver.NewChunk(5, () =>
+        {
+            Driver.Next();
+        });
 
         ForVisitor.StoreUuid(Self, Driver);
     }

@@ -36,7 +36,10 @@ internal static class SwitchVisitor
             });
         }
 
-        Driver.Next(Length * 2 + 1);
+        Driver.NewChunk(Length * 2 + 1, () =>
+        {
+            Driver.Next();
+        });
 
 
     }

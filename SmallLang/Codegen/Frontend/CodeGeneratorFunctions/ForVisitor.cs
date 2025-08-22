@@ -52,7 +52,10 @@ internal static class ForVisitor
             }
         });
 
-        Driver.Next(5);
+        Driver.NewChunk(5, () =>
+        {
+            Driver.Next();
+        });
 
         StoreUuid(Self, Driver);
     }

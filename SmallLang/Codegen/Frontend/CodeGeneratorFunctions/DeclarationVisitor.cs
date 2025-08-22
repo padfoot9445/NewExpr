@@ -24,8 +24,9 @@ internal static class DeclarationVisitor
                 Driver.Cast(Self.AssignmentPrime1, Self.Type1.Attributes.TypeLiteralType);
                 Driver.Emit(HighLevelOperation.LoadFromStack(slot, Self.Type1.Attributes.TypeLiteralType!.Size));
             }
+
+            Driver.Next();
         });
-        Driver.Next(0);
 
     }
 }

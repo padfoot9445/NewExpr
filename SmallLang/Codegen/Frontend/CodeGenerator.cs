@@ -30,16 +30,18 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     internal void NewChunk(int chunkID, Action code)
     {
         Debug.Assert(Data.CurrentChunk.Children.Count == (chunkID - 1));
+        IsNextFlag = false;
         Data.NewChunk();
         code();
-        Data.Rewind();
+        if (!IsNextFlag)
+        {
+            Data.Rewind();
+        }
     }
-
-    internal void Next(int chunkID)
+    private bool IsNextFlag { get; set; }
+    internal void Next()
     {
-        Debug.Assert((chunkID - Data.CurrentChunk.Children.Count) <= 1);
-        if (chunkID == Data.CurrentChunk.Children.Count) return;
-        else Data.NewChunk();
+        IsNextFlag = true;
     }
     internal RelativeChunkPointer ACHUNK(int v) => new(v);
     internal Data Data { get; init; } = new();

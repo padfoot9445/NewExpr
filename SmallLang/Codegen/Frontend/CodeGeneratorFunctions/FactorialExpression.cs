@@ -24,9 +24,8 @@ internal static class FactorialExpressionVisitor
             Driver.Exec(Self.Expression1);
             Driver.Emit(HighLevelOperation.LoadFromStack(register, Width));
             Driver.Emit(HighLevelOperation.Factorial<int, int, byte, int>(register, register2, Self.Attributes.TypeOfExpression, Self.FactorialSymbol1.Count()));
-
+            Driver.Next();
         });
 
-        Driver.Next(0);
     }
 }

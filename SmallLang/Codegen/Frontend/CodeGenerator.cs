@@ -79,7 +79,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
                 Comparer: (x, y) => x == y,
 
 
-                (NodeType.Section, VisitFunctionWrapper<SmallLangNode>(SectionVisitor.Visit)),
+                (NodeType.Section, VisitFunctionWrapper<SectionNode>(SectionVisitor.Visit)),
                 (NodeType.Identifier, VisitFunctionWrapper<SmallLangNode>(PrimaryVisitor.Visit)),
                 (NodeType.Function, VisitFunctionWrapper<SmallLangNode>(FunctionVisitor.Visit)),
                 (NodeType.For, VisitFunctionWrapper<ForNode>(ForVisitor.Visit)),

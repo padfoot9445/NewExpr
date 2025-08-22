@@ -5,12 +5,16 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 internal static class SectionVisitor
 {
-    public static void Visit(SmallLangNode Self, CodeGenerator Driver)
+    public static void Visit(SectionNode Self, CodeGenerator Driver)
     {
-        Driver.Verify(Self, ImportantASTNodeType.Section);
-        foreach (var child in Self.Children)
+        Driver.EnteringChunk(() =>
         {
-            Driver.Exec(child);
-        }
+
+            foreach (var child in Self.Statements1)
+            {
+                Driver.Exec(child);
+            }
+            Driver.Next();
+        });
     }
 }

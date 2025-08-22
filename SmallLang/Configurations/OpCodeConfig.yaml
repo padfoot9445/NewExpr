@@ -115,7 +115,11 @@ HighLevelOpcodes:
         - name: DestinationRegister
         - name: Width
       comment: Loads a value from the stack into the registers beginning at DestinationRegister
-    
+    - name: PushFromRegister
+      arguments:
+        - name: SourceRegister
+        - name: Width
+      comment: Pushes a value onto the stack from the registers beginning at SourceRegister
 
 
   

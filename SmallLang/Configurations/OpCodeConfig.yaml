@@ -38,22 +38,15 @@ HighLevelOpcodes:
         SWITCH Length StartIndex, select the correct instruction(s) based on the TypeCode.
         Stores all the computed expressions in contiguous registers, and the expression being switched on goes in Expression1Register
 
-    - name: IfNoElse
-      arguments:
-        - name: StartingIndex
-        - name: Length
-      comment: >
-        For i in [1...Length]:
-          run CHUNKS[i * 2 - 1].
-          If (POP) is TRUE:
-            run CHUNKS[i * 2].
-            jump to CHUNKS[Length * 2 + 1].
-        Finally jump to CHUNKS[Length * 2 + 1].
 
     - name: IfElse
       arguments:
-        - name: StartingIndex
-        - name: Length
+        - name: StartingBlockID
+        - name: NumberOfCases
+        - name: ElseBlock
+        - name: NextBlock
+        - name: ConditionStoringRegister
+        - name: ConditionTypeWidth
       comment: >
         For i in [1...Length]:
           run CHUNKS[i * 2 - 1].

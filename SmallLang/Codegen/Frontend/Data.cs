@@ -33,7 +33,7 @@ public record class Data
 
     internal int GetVariableStartRegister(VariableName Variable) => throw new NotImplementedException();
     internal int GetVariableWidth(VariableName Variable) => throw new NotImplementedException();
-
+    internal int AllocateRegisters(VariableName Variable, int width) => throw new NotImplementedException();
     private int NextRegister = 1;
     public int GetRegister() => NextRegister++;
 }

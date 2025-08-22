@@ -25,8 +25,10 @@ HighLevelOpcodes:
       comment: Jumps to ChunkIf0 if the value at the top of the stack is 0, else ChunkIfNot0
 
     - name: Return
-      arguments: []
-      comment: Returns control to the calling chunk. Return values should be on the stack.
+      arguments: 
+        - name: BeginningRegister
+        - name: Width
+      comment: Returns control to the calling chunk. Return values begin at provided register.
 
     - name: Switch
       arguments:

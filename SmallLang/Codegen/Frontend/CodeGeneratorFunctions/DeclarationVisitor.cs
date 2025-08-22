@@ -12,21 +12,20 @@ using static ImportantASTNodeType;
 internal static class DeclarationVisitor
 {
 
-    internal static void Visit(SmallLangNode Self, CodeGenerator Driver)
+    internal static void Visit(DeclarationNode Self, CodeGenerator Driver)
     {
-        Driver.SETCHUNK();
 
-        SmallLangNode Type = Self.Children[0].NodeType == DeclarationModifiersCombined ? Self.Children[1] : Self.Children[0];
-        Debug.Assert(Type.NodeType == BaseType || Type.NodeType == GenericType);
-        SmallLangNode? AssignmentPrime = Self.Children.Last().NodeType == ImportantASTNodeType.AssignmentPrime ? Self.Children.Last() : null;
-
-        //ENTERING CHUNK
-        if (AssignmentPrime is not null)
+        Driver.EnteringChunk(() =>
         {
-            //this should be the first time this identifier is used
-            Driver.Cast(AssignmentPrime.Children[0], Type.Attributes.TypeLiteralType!);
-            var ptr = Driver.Data.VariableSlots.Allocate((int)Type.Attributes.TypeLiteralType!.Size);
-            Driver.Emit(HighLevelOperation.LoadVar<int, uint>(ptr, Type.Attributes.TypeLiteralType.Size));
-        }
+            var slot = Driver.Data.AllocateRegisters(Self.Attributes.VariableName!, (int)Self.Type1.Attributes.TypeLiteralType!.Size);
+
+            if (Self.AssignmentPrime1 is not null)
+            {
+                Driver.Cast(Self.AssignmentPrime1, Self.Type1.Attributes.TypeLiteralType);
+                Driver.Emit(HighLevelOperation.LoadFromStack(slot, Self.Type1.Attributes.TypeLiteralType!.Size));
+            }
+        });
+        Driver.Next(0);
+
     }
 }

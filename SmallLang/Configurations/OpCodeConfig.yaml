@@ -71,6 +71,8 @@ HighLevelOpcodes:
 
     - name: Factorial
       arguments:
+        - name: SrcRegisterStart
+        - name: DstRegisterStart
         - name: Type
         - name: ExclamationCount
       comment: Computes factorial. Supports multiple exclamation marks.

@@ -80,15 +80,16 @@ dynamicastnode subclasses:
   annotation type: Attributes
 
   data:
-    base classes:
-      - name: &SmallLangNode SmallLang
-        parent: no
-      - name: &Statement Statement
-        parent: *SmallLangNode
-      - name: &Expression Expression
-        parent: *SmallLangNode
+    interfaces:
+      - name: &Statement IStatement
+        parents:
+        - &ISmallLangNode ISmallLangNode
+      - name: &Expression IExpression
+        parents:
+        - *ISmallLangNode
       - name: &Type Type
-        parent: *SmallLangNode
+        parents:
+        - *ISmallLangNode
         
     classes:
       - name: *ReTypingAlias
@@ -97,7 +98,9 @@ dynamicastnode subclasses:
             name: Type
             is optional: no
             is multiple: no
-        parent: *Expression
+        parents:
+        - &SmallLangNode SmallLangNode
+        - *Expression
         has data: yes
         check data type: yes
         valid data types:
@@ -116,7 +119,9 @@ dynamicastnode subclasses:
             name: Identifier
             is optional: no
             is multiple: no
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: yes
         check data type: yes
         valid data types:
@@ -127,7 +132,9 @@ dynamicastnode subclasses:
       
       - name: *Identifier
         children: []
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: yes
         check data type: yes
         valid data types:
@@ -142,7 +149,9 @@ dynamicastnode subclasses:
             name: Statement
             is optional: no
             is multiple: yes
-        parent: *Statement
+        parents:
+        - *SmallLangNode
+        - *Statement
         has data: no
         check data type: no
         valid data types: []
@@ -164,7 +173,9 @@ dynamicastnode subclasses:
             name: Statement
             is optional: no
             is multiple: no
-        parent: *Statement
+        parents:
+        - *SmallLangNode
+        - *Statement
         has data: yes
         check data type: yes
         valid data types:
@@ -179,7 +190,8 @@ dynamicastnode subclasses:
             name: Identifier
             is optional: yes
             is multiple: no
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: yes
         check data type: yes
         valid data types:
@@ -195,7 +207,9 @@ dynamicastnode subclasses:
             name: Statement
             is optional: no
             is multiple: no
-        parent: *Statement
+        parents:
+        - *SmallLangNode
+        - *Statement
         has data: no
         check data type: no
         valid data types: []
@@ -229,7 +243,9 @@ dynamicastnode subclasses:
             name: Else
             is optional: yes
             is multiple: no
-        parent: *Statement
+        parents:
+        - *SmallLangNode
+        - *Statement
         has data: no
         check data type: no
         valid data types: []
@@ -255,7 +271,9 @@ dynamicastnode subclasses:
             name: Else
             is optional: yes
             is multiple: no
-        parent: *Statement
+        parents:
+        - *SmallLangNode
+        - *Statement
         has data: no
         check data type: no
         valid data types: []
@@ -265,7 +283,8 @@ dynamicastnode subclasses:
       
       - name: *LoopLabel
         children: []
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: yes
         check data type: yes
         valid data types:
@@ -280,7 +299,9 @@ dynamicastnode subclasses:
             name: Expression
             is optional: no
             is multiple: no
-        parent: *Statement
+        parents:
+        - *SmallLangNode
+        - *Statement
         has data: no
         check data type: no
         valid data types: []
@@ -290,7 +311,9 @@ dynamicastnode subclasses:
       
       - name: *BaseType
         children: []
-        parent: *Type
+        parents:
+        - *SmallLangNode
+        - *Type
         has data: yes
         check data type: yes
         valid data types:
@@ -305,7 +328,9 @@ dynamicastnode subclasses:
             name: Type
             is optional: no
             is multiple: yes
-        parent: *Type
+        parents:
+        - *SmallLangNode
+        - *Type
         has data: yes
         check data type: yes
         valid data types:
@@ -324,7 +349,9 @@ dynamicastnode subclasses:
             name: Else
             is optional: yes
             is multiple: no
-        parent: *Statement
+        parents:
+        - *SmallLangNode
+        - *Statement
         has data: no
         check data type: no
         valid data types: []
@@ -342,7 +369,9 @@ dynamicastnode subclasses:
             name: ExprStatementCombined
             is optional: no
             is multiple: yes
-        parent: *Statement
+        parents:
+        - *SmallLangNode
+        - *Statement
         has data: no
         check data type: no
         valid data types: []
@@ -360,7 +389,8 @@ dynamicastnode subclasses:
             name: Statement
             is optional: no
             is multiple: no
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: no
         check data type: no
         valid data types: []
@@ -374,7 +404,8 @@ dynamicastnode subclasses:
             name: TypeAndIdentifierCSVElement
             is optional: no
             is multiple: yes
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: no
         check data type: no
         valid data types: []
@@ -392,7 +423,8 @@ dynamicastnode subclasses:
             name: Type
             is optional: no
             is multiple: no
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: yes
         check data type: yes
         valid data types:
@@ -407,7 +439,9 @@ dynamicastnode subclasses:
             name: Identifier
             is optional: no
             is multiple: no
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: yes
         check data type: yes
         valid data types:
@@ -430,7 +464,9 @@ dynamicastnode subclasses:
             name: AssignmentPrime
             is optional: yes
             is multiple: no
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: yes
         check data type: yes
         valid data types:
@@ -445,7 +481,8 @@ dynamicastnode subclasses:
             name: DeclarationModifier
             is optional: no
             is multiple: yes
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: no
         check data type: no
         valid data types: []
@@ -458,7 +495,8 @@ dynamicastnode subclasses:
       
       - name: *DeclarationModifier
         children: []
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: yes
         check data type: yes
         valid data types:
@@ -472,7 +510,8 @@ dynamicastnode subclasses:
       
       - name: *FunctionArgDeclModifiers
         children: []
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: yes
         check data type: yes
         valid data types:
@@ -491,7 +530,8 @@ dynamicastnode subclasses:
             name: FunctionArgDeclModifiers
             is optional: no
             is multiple: yes
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: no
         check data type: no
         valid data types: []
@@ -505,7 +545,8 @@ dynamicastnode subclasses:
             name: Expression
             is optional: no
             is multiple: no
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: yes
         check data type: yes
         valid data types:
@@ -516,7 +557,8 @@ dynamicastnode subclasses:
       
       - name: *FactorialSymbol
         children: []
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: yes
         check data type: yes
         valid data types:
@@ -536,7 +578,9 @@ dynamicastnode subclasses:
             name: FactorialSymbol
             is optional: no
             is multiple: yes
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: no
         check data type: no
         valid data types: []
@@ -554,7 +598,9 @@ dynamicastnode subclasses:
             name: Expression
             is optional: no
             is multiple: no
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: yes
         check data type: yes
         valid data types:
@@ -590,7 +636,9 @@ dynamicastnode subclasses:
             name: OperatorExpressionPair
             is optional: no
             is multiple: yes
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: no
         check data type: no
         valid data types: []
@@ -604,7 +652,8 @@ dynamicastnode subclasses:
             name: Expression
             is optional: no
             is multiple: no
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: yes
         check data type: yes
         valid data types:
@@ -620,7 +669,9 @@ dynamicastnode subclasses:
       
       - name: *Primary
         children: []
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: yes
         check data type: yes
         valid data types:
@@ -635,7 +686,9 @@ dynamicastnode subclasses:
       
       - name: *FunctionIdentifier
         children: []
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: yes
         check data type: yes
         valid data types:
@@ -650,7 +703,9 @@ dynamicastnode subclasses:
             name: Expression
             is optional: no
             is multiple: no
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: no
         check data type: no
         valid data types: []
@@ -668,7 +723,9 @@ dynamicastnode subclasses:
             name: ArgList
             is optional: yes
             is multiple: no
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: no
         check data type: no
         valid data types: []
@@ -686,7 +743,9 @@ dynamicastnode subclasses:
             name: Expression
             is optional: no
             is multiple: no
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: no
         check data type: no
         valid data types: []
@@ -704,7 +763,9 @@ dynamicastnode subclasses:
             name: ArgList
             is optional: yes
             is multiple: no
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: no
         check data type: no
         valid data types: []
@@ -718,7 +779,8 @@ dynamicastnode subclasses:
             name: ArgListElement
             is optional: no
             is multiple: yes
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: no
         check data type: no
         valid data types: []
@@ -736,7 +798,8 @@ dynamicastnode subclasses:
             name: Identifier
             is optional: yes
             is multiple: no
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: no
         check data type: no
         valid data types: []
@@ -750,7 +813,8 @@ dynamicastnode subclasses:
             name: Type
             is optional: no
             is multiple: yes
-        parent: *SmallLangNode
+        parents:
+        - *SmallLangNode
         has data: no
         check data type: no
         valid data types: []
@@ -764,7 +828,9 @@ dynamicastnode subclasses:
             name: Expression
             is optional: no
             is multiple: no
-        parent: *Expression
+        parents:
+        - *SmallLangNode
+        - *Expression
         has data: yes
         check data type: yes
         valid data types:

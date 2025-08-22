@@ -68,7 +68,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
             Verify<T>(x);
             visitor((T)x, y);
         };
-
+    internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
     static Action<SmallLangNode, CodeGenerator> DynamicDispatch(SmallLangNode node) =>
         node.Switch(
                 Accessor: x => x.NodeType,

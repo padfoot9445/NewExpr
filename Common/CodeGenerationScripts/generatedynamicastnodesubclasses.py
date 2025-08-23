@@ -1,6 +1,5 @@
 from initializer import *
 from codegenframework import *
-from initializer import NAME
 from typing import Callable
 
 
@@ -11,24 +10,6 @@ if __name__ == "__main__":
 
 
 
-    #write interfaces
-    for interface in config["interfaces"]:
-        name = interface[NAME] + suffix
-        parents = interface["parents"]
-        with open(output_directory/f"{name}.cs", "w") as file:
-            write_header(raw_config, file)
-            write_block(
-                code_block(
-                    name=name,
-                    keyword="interface",
-                    content=[
-
-                    ],
-                    affixes=[":", ", ".join(i + suffix for i in parents)],
-                    modifiers=[AccessModifiers.Public]
-                ),
-                file
-            )
     
     get_interface_name: Callable[[str], str] = lambda x: f"IHasAttribute{x}"
 

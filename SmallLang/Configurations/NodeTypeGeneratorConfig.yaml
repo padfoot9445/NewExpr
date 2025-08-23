@@ -78,24 +78,35 @@ dynamicastnode subclasses:
   
   enum type: ImportantASTNodeType
   annotation type: Attributes
-  node-type suffix: &NodeTypeSuffix Node
+  &node-type-suffix node-type suffix: &NodeTypeSuffix Node
 
   data:
-    interfaces:
-      - name: &Statement IStatement
-        parents:
-        - &ISmallLangNode ISmallLang
-      - name: &Expression IExpression
-        parents:
-        - *ISmallLangNode
-      - name: &Type Type
-        parents:
-        - *ISmallLangNode
     
     attributes:
       - name: &TypeOfExpression TypeOfExpression
         type: SmallLangType
     attribute groups: []
+
+
+marker interfaces:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: marker_interface_generator.py
+  dst: "IR/AST/Generated/MarkerInterfaces"
+  display name: Generate-AST-Node-Marker-Interfaces
+
+  *node-type-suffix : *NodeTypeSuffix
+
+  data:
+    - name: &Statement IStatement
+      parents:
+      - &ISmallLangNode ISmallLang
+    - name: &Expression IExpression
+      parents:
+      - *ISmallLangNode
+    - name: &Type Type
+      parents:
+      - *ISmallLangNode
 
 classes:
   namespace: SmallLang.IR.AST.Generated
@@ -106,7 +117,7 @@ classes:
 
   
   node-type suffix: *NodeTypeSuffix
-  
+
   data:
       - name: *ReTypingAlias
         children:

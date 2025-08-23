@@ -68,20 +68,16 @@ NodeTypeDefinitions:
 #    annotation type: [Annotation Type Name]
 #//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
 #endregion
-dynamicastnode subclasses:
+attribute group interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
-  generator: generatedynamicastnodesubclasses.py
-  dst: "IR/AST/Generated"
-  display name: Generate-ImportantASTNodeType
+  generator: attribute_group_generator.py
+  dst: "IR/AST/Generated/AttributeGroups"
+  display name: Generate-Attribute-Group-Interfaces
 
-  
-  enum type: ImportantASTNodeType
-  annotation type: Attributes
   &node-type-suffix node-type suffix: &NodeTypeSuffix Node
 
   data:
-    
     attribute groups: []
 
 

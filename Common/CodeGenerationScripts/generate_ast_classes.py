@@ -4,6 +4,7 @@ from attribute_interface_generator import get_attribute_property, get_interface_
 
 from collections import Counter, defaultdict
 from collections.abc import Iterator, Callable
+from typing import cast
 
 
 names_used: defaultdict[str, defaultdict[str, int]] = defaultdict(lambda : defaultdict(int))
@@ -26,7 +27,17 @@ if __name__ == "__main__":
     #write subnodes
     for subnode in config:
         name = subnode[NAME] + suffix
-        attributes = subnode["attributes"]
+        attributes = cast(list[dict[str, str]], subnode["attributes"])
+        attribute_names = set(i["name"] for i in attributes)
+        parents = subnode["parents"]
+
+
+        for parent in parents:
+            for attribute in raw_config["marker interface attributes"][parent]:
+                if attribute["name"] in attribute_names:
+                    continue
+                else:
+                    attributes.append(attribute)
 
         data = ("IToken", "Data") if subnode["has data"] else None
         children = [
@@ -94,6 +105,6 @@ if __name__ == "__main__":
                         "partial" if subnode["has additional data validation function"] else "",
                         "record"
                     ],
-                    parents=[f"{i}{suffix}" for i in subnode["parents"]] + [get_interface_name_from_attribute(attribute) for attribute in attributes]
+                    parents=[f"{i}{suffix}" for i in parents] + [get_interface_name_from_attribute(attribute) for attribute in attributes]
                 )
                 , file)

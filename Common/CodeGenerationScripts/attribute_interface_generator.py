@@ -21,7 +21,7 @@ if __name__ == "__main__":
                     name=interface_name,
                     keyword="interface",
                     content=[
-                        f"public {attribute_type}? {attribute_name} {{ get; }}"
+                        get_attribute_property(attribute)
                     ],
                     prefix=["public"]
                 ),

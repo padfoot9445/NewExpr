@@ -1,5 +1,5 @@
 NodeTypeDefinitions:
-  ignore: yes
+  ignore: no
   namespace: SmallLang.IR.AST
   usings: []
   generator: nodetypegenerator.py
@@ -64,6 +64,18 @@ attributes:
     - &TypeLiteralType
       name: TypeLiteralType
       type: SmallLangType
+    - &VariableName
+      name: VariableName
+      type: VariableName
+    - &LoopGUID
+      name: LoopGUID
+      type: LoopGUID
+    - &GUIDOfTargetLoop
+      name: GUIDOfTargetLoop
+      type: LoopGUID
+    - &ExpectedReturnType
+      name: ExpectedReturnType
+      type: SmallLangType
 
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
@@ -79,12 +91,19 @@ marker interfaces:
     - name: &Statement IStatement
       parents:
       - &ISmallLangNode ISmallLang
+      attributes: &StatementAttrs []
     - name: &Expression IExpression
       parents:
       - *ISmallLangNode
-    - name: &Type Type
+      attributes: &ExpressionAttrs [*TypeOfExpression]
+    - name: &Type IType
       parents:
       - *ISmallLangNode
+      attributes: &TypeAttrs [*TypeLiteralType]
+    - name: &Loop ILoop
+      parents:
+        - *Statement
+      attributes: &LoopAttrs [*LoopGUID]
 
 
 attribute group interfaces:
@@ -112,8 +131,15 @@ classes:
   dst: "IR/AST/Generated/ASTClasses"
   display name: Generate-AST-Classes
 
-  
   *node-type-suffix : *NodeTypeSuffix
+
+  marker interface attributes:
+    &SmallLangNode SmallLang: []
+    *Statement : *StatementAttrs
+    *Expression : *ExpressionAttrs
+    *Type : *TypeAttrs
+    *Loop : *LoopAttrs
+  
 
   data:
       - name: *ReTypingAlias
@@ -123,7 +149,7 @@ classes:
             is optional: no
             is multiple: no
         parents:
-        - &SmallLangNode SmallLang
+        - *SmallLangNode
         - *Expression
         has data: yes
         check data type: yes
@@ -165,12 +191,14 @@ classes:
         - Identifier
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: 
+          - *VariableName
+          - *TypeOfExpression
       
       - name: *Section
         children:
           - type: *Statement
-            name: Statement
+            name: Statements
             is optional: no
             is multiple: yes
         parents:
@@ -223,7 +251,7 @@ classes:
         - Continue
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*GUIDOfTargetLoop]
       
       - name: *Else
         children:
@@ -244,15 +272,15 @@ classes:
       - name: *For
         children:
           - type: *Expression
-            name: Expression
+            name: InitializingExpression
             is optional: no
             is multiple: no
           - type: *Expression
-            name: Expression
+            name: ConditionExpression
             is optional: no
             is multiple: no
           - type: *Expression
-            name: Expression
+            name: PostLoopExpression
             is optional: no
             is multiple: no
           - type: *LoopLabel
@@ -260,7 +288,7 @@ classes:
             is optional: yes
             is multiple: no
           - type: *Statement
-            name: Statement
+            name: LoopBody
             is optional: no
             is multiple: no
           - type: *Else
@@ -269,7 +297,7 @@ classes:
             is multiple: no
         parents:
         - *SmallLangNode
-        - *Statement
+        - *Loop
         has data: no
         check data type: no
         valid data types: []
@@ -297,7 +325,7 @@ classes:
             is multiple: no
         parents:
         - *SmallLangNode
-        - *Statement
+        - *Loop
         has data: no
         check data type: no
         valid data types: []
@@ -331,7 +359,7 @@ classes:
         valid data types: []
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*ExpectedReturnType]
       
       - name: *BaseType
         children: []
@@ -344,12 +372,13 @@ classes:
         - Identifier
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes:
+          - *TypeLiteralType
       
       - name: *GenericType
         children:
           - type: *Type
-            name: Type
+            name: Types
             is optional: no
             is multiple: yes
         parents:
@@ -361,12 +390,12 @@ classes:
         - Identifier
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*TypeLiteralType]
               
       - name: *If
         children:
           - type: *ExprStatementCombined
-            name: ExprStatementCombined
+            name: ExprStatementCombineds
             is optional: no
             is multiple: yes
           - type: *Else
@@ -390,7 +419,7 @@ classes:
             is optional: no
             is multiple: no
           - type: *ExprStatementCombined
-            name: ExprStatementCombined
+            name: ExprStatementCombineds
             is optional: no
             is multiple: yes
         parents:
@@ -425,7 +454,7 @@ classes:
       - name: *TypeAndIdentifierCSV
         children:
           - type: *TypeAndIdentifierCSVElement
-            name: TypeAndIdentifierCSVElement
+            name: TypeAndIdentifierCSVElements
             is optional: no
             is multiple: yes
         parents:
@@ -497,12 +526,14 @@ classes:
         - Identifier
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: 
+          - *VariableName
+          - *TypeOfExpression
       
       - name: *DeclarationModifiersCombined
         children:
           - type: *DeclarationModifier
-            name: DeclarationModifier
+            name: DeclarationModifiers
             is optional: no
             is multiple: yes
         parents:
@@ -551,7 +582,7 @@ classes:
       - name: *FunctionArgDeclModifiersCombined
         children:
           - type: *FunctionArgDeclModifiers
-            name: FunctionArgDeclModifiers
+            name: FunctionArgDeclModifierss
             is optional: no
             is multiple: yes
         parents:
@@ -577,7 +608,7 @@ classes:
         - "Equals"
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*TypeOfExpression]
       
       - name: *FactorialSymbol
         children: []
@@ -599,7 +630,7 @@ classes:
             is optional: no
             is multiple: no
           - type: *FactorialSymbol
-            name: FactorialSymbol
+            name: FactorialSymbols
             is optional: no
             is multiple: yes
         parents:
@@ -657,7 +688,7 @@ classes:
             is optional: no
             is multiple: no
           - type: *OperatorExpressionPair
-            name: OperatorExpressionPair
+            name: OperatorExpressionPairs
             is optional: no
             is multiple: yes
         parents:
@@ -801,7 +832,7 @@ classes:
       - name: *ArgList
         children:
           - type: *ArgListElement
-            name: ArgListElement
+            name: ArgListElements
             is optional: no
             is multiple: yes
         parents:
@@ -835,7 +866,7 @@ classes:
       - name: *TypeCSV
         children:
           - type: *Type
-            name: Type
+            name: Types
             is optional: no
             is multiple: yes
         parents:

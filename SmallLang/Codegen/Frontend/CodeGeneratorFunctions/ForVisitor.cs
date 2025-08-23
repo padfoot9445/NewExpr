@@ -14,7 +14,7 @@ internal static class ForVisitor
         //entering chunk
         Driver.EnteringChunk(() =>
         {
-            Driver.Exec(Self.Expression1); //Compile initializing expression
+            Driver.Exec(Self.InitializingExpression); //Compile initializing expression
             Driver.Emit(HighLevelOperation.Loop
             (
                 Condition: 1,
@@ -27,28 +27,28 @@ internal static class ForVisitor
 
         Driver.NewChunk(1, () =>
         {
-            Driver.Cast(Self.Expression2, TypeData.Bool); //Compile condition expression
+            Driver.Cast(Self.ConditionExpression, TypeData.Bool); //Compile condition expression
         });
 
         Driver.NewChunk(2, () =>
         {
-            Driver.Exec(Self.Expression3); //Compile postloop expression
+            Driver.Exec(Self.PostLoopExpression); //Compile postloop expression
         });
 
         Driver.NewChunk(3, () =>
         {
-            Driver.Exec(Self.Statement1);
+            Driver.Exec(Self.LoopBody);
         });
 
         Driver.NewChunk(4, () =>
         {
-            if (Self.Else1 is null)
+            if (Self.Else is null)
             {
                 Driver.Emit(HighLevelOperation.NOp());
             }
             else
             {
-                Driver.Exec(Self.Else1);
+                Driver.Exec(Self.Else);
             }
         });
 
@@ -59,8 +59,8 @@ internal static class ForVisitor
 
         StoreUuid(Self, Driver);
     }
-    public static void StoreUuid(SmallLangNode Self, CodeGenerator Driver)
+    public static void StoreUuid(ILoopNode Self, CodeGenerator Driver)
     {
-        Driver.Data.LoopData[(LoopGUID)Self.Attributes.LoopGUID!] = (Driver.GetChild(1).Uuid, Driver.GetChild(2).Uuid, Driver.GetChild(3).Uuid, Driver.GetChild(4).Uuid, Driver.GetChild(5).Uuid);
+        Driver.Data.LoopData[(LoopGUID)Self.LoopGUID!] = (Driver.GetChild(1).Uuid, Driver.GetChild(2).Uuid, Driver.GetChild(3).Uuid, Driver.GetChild(4).Uuid, Driver.GetChild(5).Uuid);
     }
 }

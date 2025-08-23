@@ -14,7 +14,7 @@ internal static class LoopCtrlVisitor
         Driver.EnteringChunk(() =>
         {
 
-            (var v1, var v2, var v3, var v4, var v5) = Driver.Data.LoopData[(LoopGUID)Self.Attributes.GUIDOfLoopLabel!];
+            (var v1, var v2, var v3, var v4, var v5) = Driver.Data.LoopData[(LoopGUID)Self.GUIDOfTargetLoop!];
             Self.Data.Switch(
                 Accessor: x => x.TT,
                 Comparer: (x, y) => x == y,

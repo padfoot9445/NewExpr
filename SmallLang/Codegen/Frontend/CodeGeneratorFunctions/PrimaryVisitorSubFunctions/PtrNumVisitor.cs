@@ -9,14 +9,14 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFun
 
 internal static class PtrNumVisitor
 {
-    public static void Visit(SmallLangNode Self, CodeGenerator Driver)
+    public static void Visit(PrimaryNode Self, CodeGenerator Driver)
     {
         Driver.Emit
         (
             HighLevelOperation.Push(
             Self.Switch
             (
-                x => x.Attributes.TypeOfExpression!,
+                x => x.TypeOfExpression!,
                 Comparer: (x, y) => x == y,
                 (TypeData.Longint, VisitLongInt),
                 (TypeData.Rational, VisitRational),
@@ -47,13 +47,14 @@ internal static class PtrNumVisitor
         Chars = Chars.Prepend(TypeData.Longint.Value.Single()).ToList();
         return Chars;
     }
-    static Pointer<BackingNumberType> VisitLongInt(SmallLangNode Self, CodeGenerator Driver)
+    static Pointer<BackingNumberType> VisitLongInt(PrimaryNode Self, CodeGenerator Driver)
     {
         var Chars = GetArrayOfBNTs(Self.Data!.Lexeme);
         var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
         return Ptr;
     }
-    static Pointer<BackingNumberType> VisitRational(SmallLangNode Self, CodeGenerator Driver)
+
+    static Pointer<BackingNumberType> VisitRational(PrimaryNode Self, CodeGenerator Driver)
     {
         var parts = Self.Data!.Lexeme.Split('.');
         Debug.Assert(parts.Length == 2);
@@ -75,7 +76,7 @@ internal static class PtrNumVisitor
 
         return RationalPtr;
     }
-    static Pointer<BackingNumberType> VisitNumber(SmallLangNode Self, CodeGenerator Driver)
+    static Pointer<BackingNumberType> VisitNumber(PrimaryNode Self, CodeGenerator Driver)
     {
         throw new NotImplementedException();
     }

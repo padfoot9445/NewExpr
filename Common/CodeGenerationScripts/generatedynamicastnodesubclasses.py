@@ -75,7 +75,7 @@ if __name__ == "__main__":
                                 for _, child_name in ctor_children
                             ] + [
                                 f"if (!DataChecker(){"|| !DataValidationFunction()" if subnode["has additional data validation function"] else ""}) throw new Exception(\"Invalid data type submitted\");",
-                                f"Children = [{", ".join(child_name for _, child_name in children)}];"
+                                f"Children = [{", ".join(child_name if not child_type.startswith("List<") else f"..{child_name}" for child_type, child_name in children)}];"
                             ],
                             parameters= [
                                 f"{child_type} {child_name}"

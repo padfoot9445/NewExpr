@@ -91,7 +91,11 @@ dynamicastnode subclasses:
       - name: &Type Type
         parents:
         - *ISmallLangNode
-        
+    
+    attributes:
+      - name: &TypeOfExpression TypeOfExpression
+        type: SmallLangType
+    attribute groups: []
     classes:
       - name: *ReTypingAlias
         children:

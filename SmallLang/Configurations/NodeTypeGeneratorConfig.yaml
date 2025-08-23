@@ -68,35 +68,62 @@ NodeTypeDefinitions:
 #    annotation type: [Annotation Type Name]
 #//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
 #endregion
-dynamicastnode subclasses:
+attribute group interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
-  generator: generatedynamicastnodesubclasses.py
-  dst: "IR/AST/Generated"
-  display name: Generate-ImportantASTNodeType
+  generator: attribute_group_generator.py
+  dst: "IR/AST/Generated/AttributeGroups"
+  display name: Generate-Attribute-Group-Interfaces
 
-  
-  enum type: ImportantASTNodeType
-  annotation type: Attributes
-  node-type suffix: Node
+  &node-type-suffix node-type suffix: &NodeTypeSuffix Node
 
   data:
-    interfaces:
-      - name: &Statement IStatement
-        parents:
-        - &ISmallLangNode ISmallLang
-      - name: &Expression IExpression
-        parents:
-        - *ISmallLangNode
-      - name: &Type Type
-        parents:
-        - *ISmallLangNode
-    
-    attributes:
-      - name: &TypeOfExpression TypeOfExpression
-        type: SmallLangType
     attribute groups: []
-    classes:
+
+
+attributes:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: attribute_interface_generator.py
+  dst: "IR/AST/Generated/AttributeInterfaces"
+  display name: Generate-Attribute-Interfaces
+
+  data:
+    - name: &TypeOfExpression TypeOfExpression
+      type: SmallLangType
+
+
+marker interfaces:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: marker_interface_generator.py
+  dst: "IR/AST/Generated/MarkerInterfaces"
+  display name: Generate-AST-Node-Marker-Interfaces
+
+  *node-type-suffix : *NodeTypeSuffix
+
+  data:
+    - name: &Statement IStatement
+      parents:
+      - &ISmallLangNode ISmallLang
+    - name: &Expression IExpression
+      parents:
+      - *ISmallLangNode
+    - name: &Type Type
+      parents:
+      - *ISmallLangNode
+
+classes:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: generate_ast_classes.py
+  dst: "IR/AST/Generated/ASTClasses"
+  display name: Generate-AST-Classes
+
+  
+  node-type suffix: *NodeTypeSuffix
+
+  data:
       - name: *ReTypingAlias
         children:
           - type: *Type

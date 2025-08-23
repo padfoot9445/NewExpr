@@ -1,9 +1,11 @@
 from initializer import *
 from codegenframework import *
-from collections import Counter, defaultdict
-from initializer import NAME
-from typing import Any, Iterator, Callable
 
+from collections import Counter, defaultdict
+from collections.abc import Iterator, Callable
+
+
+names_used: defaultdict[str, defaultdict[str, int]] = defaultdict(lambda : defaultdict(int))
 def number_name(x: str, subnode: Any) -> str:
     names = Counter(i[NAME] for i in subnode["children"])
     if names[x] == 1: return x
@@ -11,18 +13,17 @@ def number_name(x: str, subnode: Any) -> str:
         names_used[subnode[NAME]][x] += 1
         return f"{x}{names_used[subnode[NAME]][x]}"
 
+
 def get_children(children: list[dict[str, str | bool]], suffix: str) -> Iterator[tuple[Any,...]]: #type, name, is_optional, is_multiple
     for child in children:
         yield f"{child["type"]}{suffix}", child[NAME], child["is optional"], child["is multiple"]
+
 if __name__ == "__main__":
     _, output_directory, _, raw_config, config = initialize()
     suffix = raw_config["node-type suffix"]
 
-    names_used: defaultdict[str, defaultdict[str, int]] = defaultdict(lambda : defaultdict(int))
-
-
     #write subnodes
-    for subnode in config["classes"]:
+    for subnode in config:
         name = subnode[NAME] + suffix
 
         data = ("IToken", "Data") if subnode["has data"] else None
@@ -92,59 +93,3 @@ if __name__ == "__main__":
                     parents=[f"{i}{suffix}" for i in subnode["parents"]]
                 )
                 , file)
-
-    #write interfaces
-    for interface in config["interfaces"]:
-        name = interface[NAME] + suffix
-        parents = interface["parents"]
-        with open(output_directory/f"{name}.cs", "w") as file:
-            write_header(raw_config, file)
-            write_block(
-                code_block(
-                    name=name,
-                    keyword="interface",
-                    content=[
-
-                    ],
-                    affixes=[":", ", ".join(i + suffix for i in parents)],
-                    modifiers=[AccessModifiers.Public]
-                ),
-                file
-            )
-    
-    get_interface_name: Callable[[str], str] = lambda x: f"IHasAttribute{x}"
-
-    #write interfaces for attributes
-    for attribute in config["attributes"]:
-        attribute_name = attribute["name"]
-        attribute_type = attribute["type"]
-        interface_name = get_interface_name(attribute_name)
-
-        with open(output_directory/f"{interface_name}.cs", "w") as file:
-            write_header(raw_config, file)
-            write_block(
-                code_block(
-                    name=interface_name,
-                    keyword="interface",
-                    content=[
-                        f"public {attribute_type}? {attribute_name} {{ get; }}"
-                    ],
-                    prefix=["public"]
-                ),
-                file
-            )
-    
-    #write interfaces for attribute groups
-    for attribute_group in config["attribute groups"]:
-        name = f"IHasAttributes_{"_".join(attribute for attribute in attribute_group)}"
-        with open(output_directory/f"{name}.cs", "w") as file:
-            write_header(raw_config, file)
-            write_block(
-                code_block(
-                    name=name,
-                    keyword="interface",
-                    content=[],
-                    affixes=[":", ", ".join(f"{get_interface_name(attribute)}" for attribute in attribute_group)]
-                ),
-                file
-            )

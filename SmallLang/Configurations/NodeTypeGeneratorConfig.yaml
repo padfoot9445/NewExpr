@@ -1,9 +1,10 @@
 NodeTypeDefinitions:
+  ignore: yes
   namespace: SmallLang.IR.AST
   usings: []
   generator: nodetypegenerator.py
   dst: IR/AST/Generated/ImportantASTNodeType.cs
-  display name: "Generate-Node-Subclasses"
+  display name: "Generate-AST-NodeType-Enum"
 
   name: ImportantASTNodeType
   data:

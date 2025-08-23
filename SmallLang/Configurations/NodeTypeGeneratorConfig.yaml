@@ -74,13 +74,13 @@ marker interfaces:
   
 
   data:
-    - name: &Statement IStatement
+    - name: &Statement IStatementNode
       parents:
       - &ISmallLangNode ISmallLangNode
-    - name: &Expression IExpression
+    - name: &Expression IExpressionNode
       parents:
       - *ISmallLangNode
-    - name: &Type Type
+    - name: &Type ITypeNode
       parents:
       - *ISmallLangNode
 

@@ -69,21 +69,7 @@ NodeTypeDefinitions:
 #    annotation type: [Annotation Type Name]
 #//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
 #endregion
-attribute group interfaces:
-  namespace: SmallLang.IR.AST.Generated
-  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
-  generator: attribute_group_generator.py
-  dst: "IR/AST/Generated/AttributeGroups"
-  display name: Generate-Attribute-Group-Interfaces
 
-  &node-type-suffix node-type suffix: &NodeTypeSuffix Node
-
-  data:
-    attribute groups:
-      -
-        - *TypeOfExpression
-        - *ISmallLangNode
-      
 
 
 attributes:
@@ -99,7 +85,21 @@ attributes:
     - name: &TypeLiteralType TypeLiteralType
       type: SmallLangType
 
+attribute group interfaces:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: attribute_group_generator.py
+  dst: "IR/AST/Generated/AttributeGroups"
+  display name: Generate-Attribute-Group-Interfaces
 
+  &node-type-suffix node-type suffix: &NodeTypeSuffix Node
+
+  data:
+    attribute groups:
+      -
+        - *TypeOfExpression
+        - *ISmallLangNode
+      
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]

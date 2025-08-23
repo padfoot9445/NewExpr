@@ -359,7 +359,7 @@ classes:
         valid data types: []
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*ExpectedReturnType]
       
       - name: *BaseType
         children: []

@@ -8,7 +8,7 @@ using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static ImportantASTNodeType;
+
 internal static class PrimaryVisitor
 {
     internal static void VisitIdentifier(IdentifierNode self, CodeGenerator Driver)

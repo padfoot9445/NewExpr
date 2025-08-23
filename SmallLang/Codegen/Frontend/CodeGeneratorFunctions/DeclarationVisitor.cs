@@ -8,7 +8,7 @@ using SmallLang.IR.Metadata;
 
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static ImportantASTNodeType;
+
 internal static class DeclarationVisitor
 {
 

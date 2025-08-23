@@ -7,7 +7,6 @@ using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-using NodeType = SmallLang.IR.AST.ImportantASTNodeType;
 namespace SmallLang.CodeGen.Frontend;
 
 public partial class CodeGenerator(SmallLangNode RootNode)

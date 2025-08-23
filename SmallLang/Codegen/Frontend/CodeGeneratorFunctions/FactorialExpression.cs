@@ -7,7 +7,7 @@ using SmallLang.IR.Metadata;
 
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static ImportantASTNodeType;
+
 internal static class FactorialExpressionVisitor
 {
     internal static void Visit(FactorialExpressionNode Self, CodeGenerator Driver)

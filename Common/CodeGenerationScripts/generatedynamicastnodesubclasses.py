@@ -111,3 +111,23 @@ if __name__ == "__main__":
                 ),
                 file
             )
+    
+    #write interfaces for attributes
+    for attribute in config["attributes"]:
+        attribute_name = attribute["name"]
+        attribute_type = attribute["type"]
+        interface_name = f"IHasAttribute{attribute_name}"
+
+        with open(output_directory/f"{interface_name}.cs", "w") as file:
+            write_header(raw_config, file)
+            write_block(
+                code_block(
+                    name=interface_name,
+                    keyword="interface",
+                    content=[
+                        f"public {attribute_type}? {attribute_name} {{ get; }}"
+                    ],
+                    prefix=["public"]
+                ),
+                file
+            )

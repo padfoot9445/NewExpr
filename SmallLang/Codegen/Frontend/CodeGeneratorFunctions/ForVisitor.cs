@@ -14,7 +14,7 @@ internal static class ForVisitor
         //entering chunk
         Driver.EnteringChunk(() =>
         {
-            Driver.Exec(Self.Expression); //Compile initializing expression
+            Driver.Exec(Self.InitializingExpression); //Compile initializing expression
             Driver.Emit(HighLevelOperation.Loop
             (
                 Condition: 1,
@@ -27,17 +27,17 @@ internal static class ForVisitor
 
         Driver.NewChunk(1, () =>
         {
-            Driver.Cast(Self.Expression2, TypeData.Bool); //Compile condition expression
+            Driver.Cast(Self.ConditionExpression, TypeData.Bool); //Compile condition expression
         });
 
         Driver.NewChunk(2, () =>
         {
-            Driver.Exec(Self.Expression3); //Compile postloop expression
+            Driver.Exec(Self.PostLoopExpression); //Compile postloop expression
         });
 
         Driver.NewChunk(3, () =>
         {
-            Driver.Exec(Self.Statement);
+            Driver.Exec(Self.LoopBody);
         });
 
         Driver.NewChunk(4, () =>

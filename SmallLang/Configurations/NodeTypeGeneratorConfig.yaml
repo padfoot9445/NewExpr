@@ -259,15 +259,15 @@ classes:
       - name: *For
         children:
           - type: *Expression
-            name: Expression
+            name: InitializingExpression
             is optional: no
             is multiple: no
           - type: *Expression
-            name: Expression
+            name: ConditionExpression
             is optional: no
             is multiple: no
           - type: *Expression
-            name: Expression
+            name: PostLoopExpression
             is optional: no
             is multiple: no
           - type: *LoopLabel
@@ -275,7 +275,7 @@ classes:
             is optional: yes
             is multiple: no
           - type: *Statement
-            name: Statement
+            name: LoopBody
             is optional: no
             is multiple: no
           - type: *Else

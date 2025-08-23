@@ -85,21 +85,6 @@ attributes:
     - name: &TypeLiteralType TypeLiteralType
       type: SmallLangType
 
-attribute group interfaces:
-  namespace: SmallLang.IR.AST.Generated
-  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
-  generator: attribute_group_generator.py
-  dst: "IR/AST/Generated/AttributeGroups"
-  display name: Generate-Attribute-Group-Interfaces
-
-  &node-type-suffix node-type suffix: &NodeTypeSuffix Node
-
-  data:
-    attribute groups:
-      -
-        - *TypeOfExpression
-        - *ISmallLangNode
-      
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
@@ -107,7 +92,8 @@ marker interfaces:
   dst: "IR/AST/Generated/MarkerInterfaces"
   display name: Generate-AST-Node-Marker-Interfaces
 
-  *node-type-suffix : *NodeTypeSuffix
+  &node-type-suffix node-type suffix: &NodeTypeSuffix Node
+  
 
   data:
     - name: &Statement IStatement
@@ -119,6 +105,23 @@ marker interfaces:
     - name: &Type Type
       parents:
       - *ISmallLangNode
+
+
+attribute group interfaces:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: attribute_group_generator.py
+  dst: "IR/AST/Generated/AttributeGroups"
+  display name: Generate-Attribute-Group-Interfaces
+  
+  *node-type-suffix : *NodeTypeSuffix
+
+  data:
+    attribute groups:
+      -
+        - *TypeOfExpression
+        - *ISmallLangNode
+      
 
 classes:
   namespace: SmallLang.IR.AST.Generated

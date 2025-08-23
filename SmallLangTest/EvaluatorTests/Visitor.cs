@@ -15,7 +15,7 @@ class Visitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
     {
         Debug.Assert(node.Data!.TT == TokenType.Number);
         double Value = double.Parse(node.Data!.Lexeme);
-        double? RootVal = parent is not null ? parent.Attributes.RootValue : Value;
+        double? RootVal = parent is not null ? parent.RootValue : Value;
         var oldAttr = node.Attributes;
         node.Attributes = node.Attributes with { RootValue = RootVal, Value = Value, IsLiteral = true };
         return oldAttr.Equals(node.Attributes) is false;
@@ -27,20 +27,20 @@ class Visitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
         switch (node.Data!.TT)
         {
             case TokenType.Addition:
-                if (node.Children[0].Attributes.Value is not null && node.Children[1].Attributes.Value is not null)
+                if (node.Children[0].Value is not null && node.Children[1].Value is not null)
                 {
-                    Value = node.Children[0].Attributes.Value + node.Children[1].Attributes.Value;
+                    Value = node.Children[0].Value + node.Children[1].Value;
                 }
                 break;
             case TokenType.Multiplication:
-                if (node.Children[0].Attributes.Value is not null && node.Children[1].Attributes.Value is not null)
+                if (node.Children[0].Value is not null && node.Children[1].Value is not null)
                 {
-                    Value = node.Children[0].Attributes.Value * node.Children[1].Attributes.Value;
+                    Value = node.Children[0].Value * node.Children[1].Value;
                 }
                 break;
             default: throw new Exception();
         }
-        double? RootVal = parent is not null ? parent.Attributes.RootValue : Value;
+        double? RootVal = parent is not null ? parent.RootValue : Value;
         var oldAttr = node.Attributes;
         node.Attributes = node.Attributes with { RootValue = RootVal, Value = Value, IsLiteral = false };
         return oldAttr.Equals(node.Attributes) is false;

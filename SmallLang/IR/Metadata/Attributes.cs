@@ -14,7 +14,8 @@ public record class Attributes(
     Scope? VariablesInScope = null,
     LoopGUID? LoopGUID = null,
     LoopGUID? GUIDOfLoopLabel = null,
-    SmallLangType? GreatestCommonType = null
+    SmallLangType? GreatestCommonType = null,
+    SmallLangType? ExpectedReturnType = null
 ) : IMetadata
 {
     public Attributes() : this(DeclArgumentTypes: null) { }

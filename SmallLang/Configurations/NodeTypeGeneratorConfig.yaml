@@ -1,9 +1,10 @@
 NodeTypeDefinitions:
+  ignore: no
   namespace: SmallLang.IR.AST
   usings: []
   generator: nodetypegenerator.py
   dst: IR/AST/Generated/ImportantASTNodeType.cs
-  display name: "Generate-Node-Subclasses"
+  display name: "Generate-AST-NodeType-Enum"
 
   name: ImportantASTNodeType
   data:
@@ -32,7 +33,7 @@ NodeTypeDefinitions:
     - &FunctionArgDeclModifiersCombined FunctionArgDeclModifiersCombined: "data: null, children: [FunctionArgDeclModifiers+]"
     - &AssignmentPrime AssignmentPrime: "data: \"=\", children: [Expression]"
     - &FactorialExpression FactorialExpression: "data: null, children: [Expression, !+]"
-    - &BinaryExpression BinaryExpression: "data: \"implies\" | \"or\" | \"xor\" | \"and\" | \"==\" | \"!=\" | \">\" | \">=\" | \"<\" | \"<=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"**\" | \"|\" | \"^\" | \"&\", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser"
+    - &BinaryExpression BinaryExpression: "data: \"implies\" | \"or\" | \"xor\" | \"and\" | \"==\" | \"!=\" | \">\" | \">=\" | \"<\" | \"<=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"*\" | \"|\" | \"^\" | \"&\", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser"
     - &ComparisionExpression ComparisionExpression: "data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via "
     - &OperatorExpressionPair OperatorExpressionPair: "data: cmpOperator, children: [Expression]"
     - &Primary Primary: "data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr"
@@ -47,637 +48,855 @@ NodeTypeDefinitions:
     - &UnaryExpression UnaryExpression: ""
     - &Else Else: ""
     - &FactorialSymbol FactorialSymbol: ""
-#region expected structure:
 
-#dynamicastnode subclasses:
-#    classes:
-#        -
-#            name: [class name]
-#            children:
-#                -
-#                    name: [child name]
-#                    is optional: [yes | no]
-#            has data: [yes | no]
-#            check data type: [yes | no]
-#            valid data types:
-#                - [data type]
-#            has additional data validation function: [yes | no]
-#            data validation function: |
-#                [valid c# BODY (everything between the curly brackets). Should probably just be a return [Expression]]
-#    enum type: [Enum Type Name]
-#    annotation type: [Annotation Type Name]
-#//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
-#endregion
-dynamicastnode subclasses:
+
+attributes:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
-  generator: generatedynamicastnodesubclasses.py
-  dst: "IR/AST/Generated"
-  display name: Generate-ImportantASTNodeType
+  generator: attribute_interface_generator.py
+  dst: "IR/AST/Generated/AttributeInterfaces"
+  display name: Generate-Attribute-Interfaces
 
-  data: null
+  data:
+    - &TypeOfExpression
+      name: TypeOfExpression
+      type: SmallLangType
+    - &TypeLiteralType
+      name: TypeLiteralType
+      type: SmallLangType
+    - &VariableName
+      name: VariableName
+      type: VariableName
+    - &LoopGUID
+      name: LoopGUID
+      type: LoopGUID
+    - &GUIDOfTargetLoop
+      name: GUIDOfTargetLoop
+      type: LoopGUID
+    - &ExpectedReturnType
+      name: ExpectedReturnType
+      type: SmallLangType
 
-  base classes:
-    - name: &SmallLangNode SmallLang
-      parent: no
-    - name: &Statement Statement
-      parent: *SmallLangNode
-    - name: &Expression Expression
-      parent: *SmallLangNode
-    - name: &Type Type
-      parent: *SmallLangNode
-  classes:
-    - name: *ReTypingAlias
-      children:
-        - name: *Type
-          is optional: no
-          is multiple: no
-      parent: *Expression
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
+marker interfaces:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: marker_interface_generator.py
+  dst: "IR/AST/Generated/MarkerInterfaces"
+  display name: Generate-AST-Node-Marker-Interfaces
 
-    - name: *ReTypeOriginal
-      children:
-        - name: *Type
-          is optional: no
-          is multiple: no
-        - name: *Identifier
-          is optional: no
-          is multiple: no
-      parent: *Expression
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *Identifier
-      children: []
-      parent: *Expression
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *Section
-      children:
-        - name: *Statement
-          is optional: no
-          is multiple: yes
-      parent: *Statement
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *Function
-      children:
-        - name: *Type
-          is optional: no
-          is multiple: no
-        - name: *TypeAndIdentifierCSV
-          is optional: yes
-          is multiple: no
-        - name: *Statement
-          is optional: no
-          is multiple: no
-      parent: *Statement
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *LoopCTRL
-      children:
-        - name: *Identifier
-          is optional: yes
-          is multiple: no
-      parent: *SmallLangNode
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Break
-      - Continue
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *Else
-      children:
-        - name: *Statement
-          is optional: no
-          is multiple: no
-      parent: *Statement
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *For
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *LoopLabel
-          is optional: yes
-          is multiple: no
-        - name: *Statement
-          is optional: no
-          is multiple: no
-        - name: *Else
-          is optional: yes
-          is multiple: no
-      parent: *Statement
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *While
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *LoopLabel
-          is optional: yes
-          is multiple: no
-        - name: *Statement
-          is optional: no
-          is multiple: no
-        - name: *Else
-          is optional: yes
-          is multiple: no
-      parent: *Statement
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *LoopLabel
-      children: []
-      parent: *SmallLangNode
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *Return
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-      parent: *Statement
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *BaseType
-      children: []
-      parent: *Type
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *GenericType
-      children:
-        - name: *Type
-          is optional: no
-          is multiple: yes
-      parent: *Type
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-            
-    - name: *If
-      children:
-        - name: *ExprStatementCombined
-          is optional: no
-          is multiple: yes
-        - name: *Else
-          is optional: yes
-          is multiple: no
-      parent: *Statement
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *Switch
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *ExprStatementCombined
-          is optional: no
-          is multiple: yes
-      parent: *Statement
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *ExprStatementCombined
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *Statement
-          is optional: no
-          is multiple: no
-      parent: *SmallLangNode
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *TypeAndIdentifierCSV
-      children:
-        - name: *TypeAndIdentifierCSVElement
-          is optional: no
-          is multiple: yes
-      parent: *SmallLangNode
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *TypeAndIdentifierCSVElement
-      children:
-        - name: *FunctionArgDeclModifiersCombined
-          is optional: no
-          is multiple: no
-        - name: *Type
-          is optional: no
-          is multiple: no
-      parent: *SmallLangNode
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *AliasExpr
-      children:
-        - name: *Identifier
-          is optional: no
-          is multiple: no
-      parent: *Expression
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *Declaration
-      children:
-        - name: *Type
-          is optional: no
-          is multiple: no
-        - name: *DeclarationModifiersCombined
-          is optional: yes
-          is multiple: no
-        - name: *AssignmentPrime
-          is optional: yes
-          is multiple: no
-      parent: *Expression
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *DeclarationModifiersCombined
-      children:
-        - name: *DeclarationModifier
-          is optional: no
-          is multiple: yes
-      parent: *SmallLangNode
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    
-    
-    
-    - name: *DeclarationModifier
-      children: []
-      parent: *SmallLangNode
-      has data: yes
-      check data type: yes
-      valid data types:
-      - "Ref"
-      - "Readonly"
-      - "Frozen"
-      - "Immut"
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *FunctionArgDeclModifiers
-      children: []
-      parent: *SmallLangNode
-      has data: yes
-      check data type: yes
-      valid data types:
-      - "Ref"
-      - "Readonly"
-      - "Frozen"
-      - "Immut"
-      - "Copy"
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *FunctionArgDeclModifiersCombined
-      children:
-        - name: *FunctionArgDeclModifiers
-          is optional: no
-          is multiple: yes
-      parent: *SmallLangNode
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *AssignmentPrime
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-      parent: *SmallLangNode
-      has data: yes
-      check data type: yes
-      valid data types:
-      - "Equals"
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *FactorialSymbol
-      children: []
-      parent: *SmallLangNode
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Factorial
-      has additional data validation function: no
-      data validation function: no
-    
+  &node-type-suffix node-type suffix: &NodeTypeSuffix Node
+  
 
-    - name: *FactorialExpression
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *FactorialSymbol
-          is optional: no
-          is multiple: yes
-      parent: *Expression
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *BinaryExpression
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *Expression
-          is optional: no
-          is multiple: no
-      parent: *Expression
-      has data: yes
-      check data type: yes
-      valid data types:
-      - "LogicalImplies"
-      - "LogicalOr"
-      - "LogicalXor"
-      - "LogicalAnd"
-      # - "=="
-      # - "!="
-      # - ">"
-      # - ">="
-      # - "<"
-      # - "<="
-      - Addition
-      - Subtraction
-      - Multiplication
-      - Division
-      - Exponentiation
-      - BitwiseOr
-      - BitwiseXor
-      - BitwiseAnd
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *ComparisionExpression
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *OperatorExpressionPair
-          is optional: no
-          is multiple: yes
-      parent: *Expression
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *OperatorExpressionPair
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-      parent: *SmallLangNode
-      has data: yes
-      check data type: yes
-      valid data types:
-      - EqualTo
-      - NotEqualTo
-      - GreaterThan
-      - GreaterThanOrEqualTo
-      - LessThan
-      - LessThanOrEqualTo
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *Primary
-      children: []
-      parent: *Expression
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      - Number
-      - String
-      - TrueLiteral
-      - FalseLiteral
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *FunctionIdentifier
-      children: []
-      parent: *Expression
-      has data: yes
-      check data type: yes
-      valid data types:
-      - Identifier
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *CopyExpr
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-      parent: *Expression
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *NewExpr
-      children:
-        - name: *Type
-          is optional: no
-          is multiple: no
-        - name: *ArgList
-          is optional: yes
-          is multiple: no
-      parent: *Expression
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *Index
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *Expression
-          is optional: no
-          is multiple: no
-      parent: *Expression
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *FunctionCall
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *ArgList
-          is optional: yes
-          is multiple: no
-      parent: *Expression
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *ArgList
-      children:
-        - name: *ArgListElement
-          is optional: no
-          is multiple: yes
-      parent: *SmallLangNode
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *ArgListElement
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-        - name: *Identifier
-          is optional: yes
-          is multiple: no
-      parent: *SmallLangNode
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *TypeCSV
-      children:
-        - name: *Type
-          is optional: no
-          is multiple: yes
-      parent: *SmallLangNode
-      has data: no
-      check data type: no
-      valid data types: []
-      has additional data validation function: no
-      data validation function: no
-    
-    - name: *UnaryExpression
-      children:
-        - name: *Expression
-          is optional: no
-          is multiple: no
-      parent: *Expression
-      has data: yes
-      check data type: yes
-      valid data types:
-      - BitwiseNegation
-      - Subtraction
-      - "LogicalNot"
-      has additional data validation function: no
-      data validation function: no
-    
+  data:
+    - name: &Statement IStatement
+      parents:
+      - &ISmallLangNode ISmallLang
+      attributes: &StatementAttrs []
+    - name: &Expression IExpression
+      parents:
+      - *ISmallLangNode
+      attributes: &ExpressionAttrs [*TypeOfExpression]
+    - name: &Type IType
+      parents:
+      - *ISmallLangNode
+      attributes: &TypeAttrs [*TypeLiteralType]
+    - name: &Loop ILoop
+      parents:
+        - *Statement
+      attributes: &LoopAttrs [*LoopGUID]
 
-  enum type: ImportantASTNodeType
-  annotation type: Attributes
+
+attribute group interfaces:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: attribute_group_generator.py
+  dst: "IR/AST/Generated/AttributeGroups"
+  display name: Generate-Attribute-Group-Interfaces
+  ignore: yes
+  
+  *node-type-suffix : *NodeTypeSuffix
+
+  data:
+      -
+        attributes:
+          - *TypeOfExpression
+        marker interfaces:
+          - *ISmallLangNode
+      
+
+classes:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: generate_ast_classes.py
+  dst: "IR/AST/Generated/ASTClasses"
+  display name: Generate-AST-Classes
+
+  *node-type-suffix : *NodeTypeSuffix
+
+  marker interface attributes:
+    &SmallLangNode SmallLang: []
+    *Statement : *StatementAttrs
+    *Expression : *ExpressionAttrs
+    *Type : *TypeAttrs
+    *Loop : *LoopAttrs
+  
+
+  data:
+      - name: *ReTypingAlias
+        children:
+          - type: *Type
+            name: Type
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+
+      - name: *ReTypeOriginal
+        children:
+          - type: *Type
+            name: Type
+            is optional: no
+            is multiple: no
+          - type: *Identifier
+            name: Identifier
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *Identifier
+        children: []
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: 
+          - *VariableName
+          - *TypeOfExpression
+      
+      - name: *Section
+        children:
+          - type: *Statement
+            name: Statements
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        - *Statement
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *Function
+        children:
+          - type: *Type
+            name: Type
+            is optional: no
+            is multiple: no
+          - type: *TypeAndIdentifierCSV
+            name: TypeAndIdentifierCSV
+            is optional: yes
+            is multiple: no
+          - type: *Statement
+            name: Statement
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Statement
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *LoopCTRL
+        children:
+          - type: *Identifier
+            name: Identifier
+            is optional: yes
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Break
+        - Continue
+        has additional data validation function: no
+        data validation function: no
+        attributes: [*GUIDOfTargetLoop]
+      
+      - name: *Else
+        children:
+          - type: *Statement
+            name: Statement
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Statement
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *For
+        children:
+          - type: *Expression
+            name: InitializingExpression
+            is optional: no
+            is multiple: no
+          - type: *Expression
+            name: ConditionExpression
+            is optional: no
+            is multiple: no
+          - type: *Expression
+            name: PostLoopExpression
+            is optional: no
+            is multiple: no
+          - type: *LoopLabel
+            name: LoopLabel
+            is optional: yes
+            is multiple: no
+          - type: *Statement
+            name: LoopBody
+            is optional: no
+            is multiple: no
+          - type: *Else
+            name: Else
+            is optional: yes
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Loop
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *While
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+          - type: *LoopLabel
+            name: LoopLabel
+            is optional: yes
+            is multiple: no
+          - type: *Statement
+            name: Statement
+            is optional: no
+            is multiple: no
+          - type: *Else
+            name: Else
+            is optional: yes
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Loop
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *LoopLabel
+        children: []
+        parents:
+        - *SmallLangNode
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *Return
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Statement
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: [*ExpectedReturnType]
+      
+      - name: *BaseType
+        children: []
+        parents:
+        - *SmallLangNode
+        - *Type
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes:
+          - *TypeLiteralType
+      
+      - name: *GenericType
+        children:
+          - type: *Type
+            name: Types
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        - *Type
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: [*TypeLiteralType]
+              
+      - name: *If
+        children:
+          - type: *ExprStatementCombined
+            name: ExprStatementCombineds
+            is optional: no
+            is multiple: yes
+          - type: *Else
+            name: Else
+            is optional: yes
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Statement
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *Switch
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+          - type: *ExprStatementCombined
+            name: ExprStatementCombineds
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        - *Statement
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *ExprStatementCombined
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+          - type: *Statement
+            name: Statement
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *TypeAndIdentifierCSV
+        children:
+          - type: *TypeAndIdentifierCSVElement
+            name: TypeAndIdentifierCSVElements
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *TypeAndIdentifierCSVElement
+        children:
+          - type: *FunctionArgDeclModifiersCombined
+            name: FunctionArgDeclModifiersCombined
+            is optional: no
+            is multiple: no
+          - type: *Type
+            name: Type
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *AliasExpr
+        children:
+          - type: *Identifier
+            name: Identifier
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *Declaration
+        children:
+          - type: *Type
+            name: Type
+            is optional: no
+            is multiple: no
+          - type: *DeclarationModifiersCombined
+            name: DeclarationModifiersCombined
+            is optional: yes
+            is multiple: no
+          - type: *AssignmentPrime
+            name: AssignmentPrime
+            is optional: yes
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: 
+          - *VariableName
+          - *TypeOfExpression
+      
+      - name: *DeclarationModifiersCombined
+        children:
+          - type: *DeclarationModifier
+            name: DeclarationModifiers
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      
+      
+      
+      - name: *DeclarationModifier
+        children: []
+        parents:
+        - *SmallLangNode
+        has data: yes
+        check data type: yes
+        valid data types:
+        - "Ref"
+        - "Readonly"
+        - "Frozen"
+        - "Immut"
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *FunctionArgDeclModifiers
+        children: []
+        parents:
+        - *SmallLangNode
+        has data: yes
+        check data type: yes
+        valid data types:
+        - "Ref"
+        - "Readonly"
+        - "Frozen"
+        - "Immut"
+        - "Copy"
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *FunctionArgDeclModifiersCombined
+        children:
+          - type: *FunctionArgDeclModifiers
+            name: FunctionArgDeclModifierss
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *AssignmentPrime
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        has data: yes
+        check data type: yes
+        valid data types:
+        - "Equals"
+        has additional data validation function: no
+        data validation function: no
+        attributes: [*TypeOfExpression]
+      
+      - name: *FactorialSymbol
+        children: []
+        parents:
+        - *SmallLangNode
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Factorial
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+
+      - name: *FactorialExpression
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+          - type: *FactorialSymbol
+            name: FactorialSymbols
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *BinaryExpression
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: yes
+        check data type: yes
+        valid data types:
+        - "LogicalImplies"
+        - "LogicalOr"
+        - "LogicalXor"
+        - "LogicalAnd"
+        # - "=="
+        # - "!="
+        # - ">"
+        # - ">="
+        # - "<"
+        # - "<="
+        - Addition
+        - Subtraction
+        - Multiplication
+        - Division
+        - Exponentiation
+        - BitwiseOr
+        - BitwiseXor
+        - BitwiseAnd
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *ComparisionExpression
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+          - type: *OperatorExpressionPair
+            name: OperatorExpressionPairs
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *OperatorExpressionPair
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        has data: yes
+        check data type: yes
+        valid data types:
+        - EqualTo
+        - NotEqualTo
+        - GreaterThan
+        - GreaterThanOrEqualTo
+        - LessThan
+        - LessThanOrEqualTo
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *Primary
+        children: []
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        - Number
+        - String
+        - TrueLiteral
+        - FalseLiteral
+        has additional data validation function: no
+        data validation function: no
+        attributes: 
+          - *TypeOfExpression
+      
+      - name: *FunctionIdentifier
+        children: []
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: yes
+        check data type: yes
+        valid data types:
+        - Identifier
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *CopyExpr
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *NewExpr
+        children:
+          - type: *Type
+            name: Type
+            is optional: no
+            is multiple: no
+          - type: *ArgList
+            name: ArgList
+            is optional: yes
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *Index
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *FunctionCall
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+          - type: *ArgList
+            name: ArgList
+            is optional: yes
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *ArgList
+        children:
+          - type: *ArgListElement
+            name: ArgListElements
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *ArgListElement
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+          - type: *Identifier
+            name: Identifier
+            is optional: yes
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *TypeCSV
+        children:
+          - type: *Type
+            name: Types
+            is optional: no
+            is multiple: yes
+        parents:
+        - *SmallLangNode
+        has data: no
+        check data type: no
+        valid data types: []
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+      
+      - name: *UnaryExpression
+        children:
+          - type: *Expression
+            name: Expression
+            is optional: no
+            is multiple: no
+        parents:
+        - *SmallLangNode
+        - *Expression
+        has data: yes
+        check data type: yes
+        valid data types:
+        - BitwiseNegation
+        - Subtraction
+        - "LogicalNot"
+        has additional data validation function: no
+        data validation function: no
+        attributes: []
+    
 
 chunktree classes: #not subclasses of Chunks since Chunks implies all the chunk pointers are resolved
   ignore: yes

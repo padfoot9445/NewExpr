@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Common.Tokens;
-using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
+using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFunctions;
 using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
@@ -8,25 +8,25 @@ using SmallLang.IR.Metadata;
 
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static ImportantASTNodeType;
+
 internal static class DeclarationVisitor
 {
 
-    internal static void Visit(SmallLangNode Self, CodeGenerator Driver)
+    internal static void Visit(DeclarationNode Self, CodeGenerator Driver)
     {
-        Driver.SETCHUNK();
 
-        SmallLangNode Type = Self.Children[0].NodeType == DeclarationModifiersCombined ? Self.Children[1] : Self.Children[0];
-        Debug.Assert(Type.NodeType == BaseType || Type.NodeType == GenericType);
-        SmallLangNode? AssignmentPrime = Self.Children.Last().NodeType == ImportantASTNodeType.AssignmentPrime ? Self.Children.Last() : null;
-
-        //ENTERING CHUNK
-        if (AssignmentPrime is not null)
+        Driver.EnteringChunk(() =>
         {
-            //this should be the first time this identifier is used
-            Driver.Cast(AssignmentPrime.Children[0], Type.Attributes.TypeLiteralType!);
-            var ptr = Driver.Data.VariableSlots.Allocate((int)Type.Attributes.TypeLiteralType!.Size);
-            Driver.Emit(HighLevelOperation.LoadVar<int, uint>(ptr, Type.Attributes.TypeLiteralType.Size));
-        }
+            var slot = Driver.Data.AllocateRegisters(Self.VariableName!, (int)Self.Type.TypeLiteralType!.Size);
+
+            if (Self.AssignmentPrime is not null)
+            {
+                Driver.Cast(Self.AssignmentPrime, Self.Type.TypeLiteralType);
+                Driver.Emit(HighLevelOperation.LoadFromStack(slot, Self.Type.TypeLiteralType!.Size));
+            }
+
+            Driver.Next();
+        });
+
     }
 }

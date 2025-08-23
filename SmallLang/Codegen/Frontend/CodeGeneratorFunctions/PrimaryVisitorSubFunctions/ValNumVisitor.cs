@@ -4,13 +4,13 @@ using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFunctions;
 
 
 
-internal static class ValNumParser
+internal static class ValNumVisitor
 {
-    static Action EmitCodeDelegateGenerator<T>(Func<string, T> parser, SmallLangNode self, CodeGenerator Driver) where T : IBinaryInteger<T>, IMinMaxValue<T>
+    static Action EmitCodeDelegateGenerator<T>(Func<string, T> parser, PrimaryNode self, CodeGenerator Driver) where T : IBinaryInteger<T>, IMinMaxValue<T>
     {
 
         void EmitCode()
@@ -25,11 +25,11 @@ internal static class ValNumParser
     {
         return x => Converter(FloatParseFunction(x));
     }
-    internal static void Parse(SmallLangNode self, CodeGenerator Driver)
+    internal static void Visit(PrimaryNode self, CodeGenerator Driver)
     {
         Action Emitter = self.Switch
             (
-                Accessor: x => x.Attributes.TypeOfExpression!,
+                Accessor: x => x.TypeOfExpression!,
                 Comparer: (x, y) => x == y,
                 (TypeData.Char, EmitCodeDelegateGenerator(char.Parse, self, Driver)),
                 (TypeData.Float, EmitCodeDelegateGenerator(GetIntParseFunctionFromFloatParseFunction(float.Parse, BitConverter.SingleToUInt32Bits), self, Driver)),

@@ -37,12 +37,21 @@ if __name__ == "__main__":
         #all the facotry methods
         method_content: list[str] = []
         method_params: list[str] = []
+        other_params: list[str] = []
+        other_content: list[str] = []
+        other_call_params: list[str] = []
         generics = 0
         for argument in op_args:
             generics += 1
             type = f"T{generics}"
             method_params.append(
                 f"NumberWrapper<{type}, BackingNumberType> {argument["name"]}"
+            )
+            other_params.append(
+                f"{type} {argument["name"]}"
+            )
+            other_call_params.append(
+                f"(NumberWrapper<{type}, BackingNumberType>){argument["name"]}"
             )
 
         method_content.append(
@@ -51,23 +60,41 @@ if __name__ == "__main__":
             ");"
         )
 
+        other_content.append(
+            f"return {op_name}({", ".join(other_call_params)});"
+        )
         generics_string = f"<{", ".join(f"T{i}" for i in range(1, generics + 1))}>" if generics > 0 else ""
         
         get_where: Callable[[int], str] = lambda x: f"where T{x} : IBinaryInteger<T{x}>, IMinMaxValue<T{x}>"
+
+
+        get_affixes: Callable[[list[str]], list[str]] = lambda x: [
+                    generics_string,
+                    f"({", ".join(x)})"
+                ] + [
+                    get_where(i) for i in range(1, generics + 1)
+                ]
+        modifiers: list[str | AccessModifiers] = ["public", "static"]
+
         record_content.append(
             code_block(
                 name=op_name,
                 keyword=record_name,
                 content=method_content,
-                affixes= [
-                    generics_string,
-                    f"({", ".join(method_params)})"
-                ] + [
-                    get_where(i) for i in range(1, generics + 1)
-                ],
-                modifiers=["public", "static"]
+                affixes=get_affixes(method_params),
+                modifiers=modifiers
             )
         )
+        if len(other_params) > 0:
+            record_content.append(
+                code_block(
+                    name=op_name,
+                    keyword=record_name,
+                    content=other_content,
+                    affixes=get_affixes(other_params),
+                    modifiers=modifiers
+                )
+            )
 
 
     #write enum

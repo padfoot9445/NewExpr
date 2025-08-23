@@ -82,10 +82,19 @@ dynamicastnode subclasses:
 
   data:
     
-    attributes:
-      - name: &TypeOfExpression TypeOfExpression
-        type: SmallLangType
     attribute groups: []
+
+
+attributes:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: attribute_interface_generator.py
+  dst: "IR/AST/Generated/AttributeInterfaces"
+  display name: Generate-Attribute-Interfaces
+
+  data:
+    - name: &TypeOfExpression TypeOfExpression
+      type: SmallLangType
 
 
 marker interfaces:

@@ -91,6 +91,7 @@ attribute group interfaces:
   generator: attribute_group_generator.py
   dst: "IR/AST/Generated/AttributeGroups"
   display name: Generate-Attribute-Group-Interfaces
+  ignore: yes
   
   *node-type-suffix : *NodeTypeSuffix
 

@@ -13,7 +13,8 @@ public partial class CodeGenerator(SmallLangNode RootNode)
 {
     internal const BackingNumberType TrueValue = BackingNumberType.MaxValue;
     internal const BackingNumberType FalseValue = BackingNumberType.MinValue;
-    internal void Cast(IHasAttributes_TypeOfExpression_ISmallLangNode self, SmallLangType dstType)
+    internal void Cast<T>(T self, SmallLangType dstType)
+    where T : IHasAttributeTypeOfExpression, ISmallLangNode
     {
         if (self.TypeOfExpression! == dstType) Exec(self);
         throw new NotImplementedException();

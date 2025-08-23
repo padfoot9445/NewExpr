@@ -112,11 +112,13 @@ if __name__ == "__main__":
                 file
             )
     
+    get_interface_name: Callable[[str], str] = lambda x: f"IHasAttribute{x}"
+
     #write interfaces for attributes
     for attribute in config["attributes"]:
         attribute_name = attribute["name"]
         attribute_type = attribute["type"]
-        interface_name = f"IHasAttribute{attribute_name}"
+        interface_name = get_interface_name(attribute_name)
 
         with open(output_directory/f"{interface_name}.cs", "w") as file:
             write_header(raw_config, file)
@@ -142,7 +144,7 @@ if __name__ == "__main__":
                     name=name,
                     keyword="interface",
                     content=[],
-                    affixes=[":", ", ".join(f"IHasAttribute{attribute}" for attribute in attribute_group)]
+                    affixes=[":", ", ".join(f"{get_interface_name(attribute)}" for attribute in attribute_group)]
                 ),
                 file
             )

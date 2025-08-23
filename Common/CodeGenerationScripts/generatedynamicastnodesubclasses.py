@@ -51,7 +51,7 @@ if __name__ == "__main__":
                 access_modifier=AccessModifiers.Private
             )
         ] + [
-            "protected override IEnumerable<SmallLangNode?> Children { get; set; }"
+            "protected override IEnumerable<ISmallLangNode?> Children { get; set; }"
         ]
 
         

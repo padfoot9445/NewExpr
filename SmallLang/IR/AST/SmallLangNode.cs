@@ -2,10 +2,10 @@ using System.Collections;
 
 namespace SmallLang.IR.AST;
 
-public abstract record class SmallLangNode : IEnumerable<SmallLangNode>, ISmallLangNode
+public abstract record class SmallLangNode : IEnumerable<ISmallLangNode>, ISmallLangNode
 {
-    protected abstract IEnumerable<SmallLangNode?> Children { get; set; }
-    public IEnumerator<SmallLangNode> GetEnumerator()
+    protected abstract IEnumerable<ISmallLangNode?> Children { get; set; }
+    public IEnumerator<ISmallLangNode> GetEnumerator()
     {
         return Children.Where(x => x is not null).GetEnumerator()!;
     }

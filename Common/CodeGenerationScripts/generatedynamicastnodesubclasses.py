@@ -79,7 +79,8 @@ if __name__ == "__main__":
                             parameters= [
                                 f"{child_type} {child_name}"
                                 for child_type, child_name in ctor_children
-                            ]
+                            ],
+                            access_modifier=AccessModifiers.Public
                         )
                     ],
                     modifiers=[

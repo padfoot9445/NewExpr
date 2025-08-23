@@ -194,7 +194,9 @@ if __name__ == "__main__":
         if not execute:
             skip(msg); ignored += 1; continue
 
-        if not success: break
+        if not success:
+            steps_taken -= 1
+            break
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
             success = time_command(command, file_path, msg) and success
@@ -204,5 +206,7 @@ if __name__ == "__main__":
 
     build_code = "\033[092m\033[1m" if success else f"\033[31m{BOLD}"
     color = (GREEN if success else RED) + BOLD
-    
-    print(f"{BOLD}{color}INFO{END}:  {color}{steps_taken - ignored}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")
+    if success:
+        print(f"{BOLD}{color}INFO{END}:  {color}{steps_taken - ignored}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")
+    else:
+        print(f"{BOLD}{color}INFO{END}:  {color}{total_steps - steps_taken}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")

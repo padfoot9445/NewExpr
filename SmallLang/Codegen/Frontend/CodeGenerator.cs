@@ -50,17 +50,17 @@ public partial class CodeGenerator(SmallLangNode RootNode)
         Exec(RootNode);
         return Data;
     }
-    static internal void Verify<T>(SmallLangNode node) where T : SmallLangNode
+    static internal void Verify<T>(ISmallLangNode node) where T : ISmallLangNode
     {
         Debug.Assert(node is T);
     }
-    internal void Exec(SmallLangNode node)
+    internal void Exec(ISmallLangNode node)
     {
         var CurrentChunk = Data.CurrentChunk;
         DynamicDispatch(node)(node, this);
     }
-    static Action<SmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
-    where T : SmallLangNode =>
+    static Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
+    where T : ISmallLangNode =>
         (x, y) =>
         {
             Verify<T>(x);
@@ -69,7 +69,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     internal int[] GetRegisters(int Width = 1) => Enumerable.Range(0, Width).Select(_ => Data.GetRegister()).ToArray();
     internal int[] GetRegisters(IHasAttributeTypeOfExpression Node) => GetRegisters((int)Node.TypeOfExpression!.Size);
     internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
-    static Action<SmallLangNode, CodeGenerator> DynamicDispatch(SmallLangNode node) =>
+    static Action<ISmallLangNode, CodeGenerator> DynamicDispatch(ISmallLangNode node) =>
         node.Dispatch(
                 Accessor: x => x,
 

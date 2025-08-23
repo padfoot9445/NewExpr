@@ -71,7 +71,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
             visitor((T)x, y);
         };
     internal int[] GetRegisters(int Width = 1) => Enumerable.Range(0, Width).Select(_ => Data.GetRegister()).ToArray();
-    internal int[] GetRegisters(SmallLangNode Node) => GetRegisters((int)Node.Attributes.TypeOfExpression!.Size);
+    internal int[] GetRegisters(IHasAttributeTypeOfExpression Node) => GetRegisters((int)Node.TypeOfExpression!.Size);
     internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
     static Action<SmallLangNode, CodeGenerator> DynamicDispatch(SmallLangNode node) =>
         node.Dispatch(

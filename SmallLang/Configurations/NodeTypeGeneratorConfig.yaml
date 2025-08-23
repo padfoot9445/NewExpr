@@ -67,6 +67,9 @@ attributes:
     - &VariableName
       name: VariableName
       type: VariableName
+    - &LoopGUID
+      name: LoopGUID
+      type: LoopGUID
 
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated

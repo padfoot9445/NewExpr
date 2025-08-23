@@ -96,8 +96,10 @@ attribute group interfaces:
 
   data:
       -
-        - *TypeOfExpression
-        - *ISmallLangNode
+        attributes:
+          - *TypeOfExpression
+        marker interfaces:
+          - *ISmallLangNode
       
 
 classes:

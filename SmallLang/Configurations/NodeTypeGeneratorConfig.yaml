@@ -87,7 +87,7 @@ marker interfaces:
       parents:
       - *ISmallLangNode
       attributes: &ExpressionAttrs [*TypeOfExpression]
-    - name: &Type Type
+    - name: &Type IType
       parents:
       - *ISmallLangNode
       attributes: &TypeAttrs [*TypeLiteralType]

@@ -82,12 +82,15 @@ marker interfaces:
     - name: &Statement IStatement
       parents:
       - &ISmallLangNode ISmallLang
+      attributes: []
     - name: &Expression IExpression
       parents:
       - *ISmallLangNode
+      attributes: [*TypeOfExpression]
     - name: &Type Type
       parents:
       - *ISmallLangNode
+      attributes: [*TypeLiteralType]
 
 
 attribute group interfaces:

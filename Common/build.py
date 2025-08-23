@@ -6,6 +6,7 @@ import sys
 import yaml
 from time import time, sleep
 from threading import Thread
+import shutil
 
 Command = tuple[list[str | Path], str, bool] #(Command, Name, Execute?)
 
@@ -75,12 +76,14 @@ def make_dir(dst: Path):
     print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}\033[4:5m{dst}{END}")
     
 
-def delete_files(out: list[bool]):
+def delete_files(clean: bool, out: list[bool]):
     try:
         for dirpath, _, filenames in os.walk(working_directory):
             for i in filenames:
                 if "generated" in [j.lower() for j in dirpath.split(os.sep)] or i.split(".")[0].lower() == "generated":
                     os.remove(Path(dirpath)/i)
+            if clean and os.path.split(dirpath)[-1].lower() == "generated":
+                shutil.rmtree(Path(dirpath).resolve())
     except Exception as e:
         out[0] = False
         print(f"{RED}{BOLD}INFO{END}:  {RED}{BOLD}{e}{END}")
@@ -90,11 +93,7 @@ if __name__ == "__main__":
 
     working_directory = Path(sys.argv[1] if len(sys.argv) >= 2 and not sys.argv[1].startswith("-") else os.getcwd()).resolve()
 
-    #get generator-dst-directories to remove
-    dst_directories: list[Path] = []
 
-    #get build steps:
-    build_steps: list[Command] = []
 
     with open(working_directory/"config.yaml") as file_path:
         config = yaml.load(file_path, yaml.Loader)
@@ -102,6 +101,44 @@ if __name__ == "__main__":
         file_paths = config["files"]
         code_generation_scripts_directory = working_directory/Path(config["generators relative path"])
     
+
+    fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format", True)
+    restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore", True)
+    build_command: Command = (["dotnet", "build", "--no-restore"], "Dotnet-Build", True)
+
+
+    dotnet_build_steps: list[Command] = [
+        restore_command,
+        build_command,
+        fmt_command
+    ]
+
+    do_clean_flag = False
+    def do_clean():
+        global do_clean_flag
+        do_clean_flag = True
+    
+    #handle commmand line arguments
+    flags: list[tuple[str, Callable[[], Any], bool]] = [ #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
+        ("--no-build", lambda: mutate_command(dotnet_build_steps, 1), True),
+        ("--whitespace", lambda: fmt_command[0].append("whitespace"), True),
+        ("--no-format", lambda: mutate_command(dotnet_build_steps, 2), True),
+        ("--no-dotnet", lambda: [mutate_command(dotnet_build_steps, i) for i in range(3)], True),
+        ("--clean", do_clean, True)
+    ]
+
+    for flag, action, desired in flags:
+        if (flag in sys.argv) == desired:
+            action()
+
+
+    #delete old files
+    delete_out = [True]
+    time_thread("Delete-Generated-Files", delete_files, do_clean_flag)
+
+
+    #get build steps:
+    build_steps: list[Command] = []
     for file_path in file_paths:
         file_path = configurations_path/file_path
         with open(file_path) as file:
@@ -118,38 +155,9 @@ if __name__ == "__main__":
 
                 #make dst if necessary
                 make_dir(dst)
+                with open("tmp.tmp", "w") as f:
+                    print(f"making dir {dst}", file=f)
 
-                #append dst to dst_directories to facilitate removal
-                
-                if Path.is_dir(dst):
-                    dst_directories.append(dst)
-
-
-    fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format", True)
-    restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore", True)
-    build_command: Command = (["dotnet", "build", "--no-restore"], "Dotnet-Build", True)
-
-
-    dotnet_build_steps: list[Command] = [
-        restore_command,
-        build_command,
-        fmt_command
-    ]
-
-
-
-    #handle commmand line arguments
-    flags: list[tuple[str, Callable[[], Any], bool]] = [ #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
-        ("--no-build", lambda: mutate_command(dotnet_build_steps, 1), True),
-        ("--whitespace", lambda: fmt_command[0].append("whitespace"), True),
-        ("--no-format", lambda: mutate_command(dotnet_build_steps, 2), True),
-        ("--no-dotnet", lambda: [mutate_command(dotnet_build_steps, i) for i in range(3)], True)
-    ]
-
-
-    for flag, action, desired in flags:
-        if (flag in sys.argv) == desired:
-            action()
 
 
     #make build_steps string only
@@ -172,11 +180,7 @@ if __name__ == "__main__":
 
     skip: Callable[[str], None] = lambda name: print(f"{HEADERCODE}INFO{END}:  {BOLD}{name} {YELLOW}ignored{END} in (0.0s)")
 
-    #delete old files
-    delete_out = [True]
-    time_thread("Delete-Generated-Files", delete_files)
-
-
+    
     #run build steps
     success = True
     

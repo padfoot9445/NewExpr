@@ -12,7 +12,7 @@ internal static class SwitchVisitor
         var Expressions = Self.ExprStatementCombineds.Select(x => x.Expression1).ToList();
         var Statements = Self.ExprStatementCombineds.Select(x => x.Statement1).ToList();
         var Length = Self.ExprStatementCombineds.Count();
-        var ExpressionType = Self.Expression.Attributes.TypeOfExpression!;
+        var ExpressionType = Self.Expression.TypeOfExpression!;
         List<int> Registers = [Driver.GetRegisters((int)ExpressionType.Size).First(), .. Expressions.Select(_ => Driver.GetRegisters((int)ExpressionType.Size).First())];
 
         Driver.EnteringChunk(() =>

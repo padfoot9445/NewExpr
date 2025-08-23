@@ -14,10 +14,10 @@ internal static class ReturnVisitor
     {
         Driver.EnteringChunk(() =>
         {
-            Driver.Cast(Self, Self.Attributes.ExpectedReturnType!);
+            Driver.Cast(Self, Self.ExpectedReturnType!);
             var reg = Driver.GetRegisters(1).Single();
-            Driver.Emit(HighLevelOperation.LoadFromStack(reg, Self.Attributes.ExpectedReturnType!.Size));
-            Driver.Emit(HighLevelOperation.Return(reg, Self.Attributes.ExpectedReturnType!.Size));
+            Driver.Emit(HighLevelOperation.LoadFromStack(reg, Self.ExpectedReturnType!.Size));
+            Driver.Emit(HighLevelOperation.Return(reg, Self.ExpectedReturnType!.Size));
 
             Driver.Next();
         });

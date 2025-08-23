@@ -48,28 +48,6 @@ NodeTypeDefinitions:
     - &UnaryExpression UnaryExpression: ""
     - &Else Else: ""
     - &FactorialSymbol FactorialSymbol: ""
-#region expected structure:
-
-#dynamicastnode subclasses:
-#    classes:
-#        -
-#            name: [class name]
-#            children:
-#                -
-#                    name: [child name]
-#                    is optional: [yes | no]
-#            has data: [yes | no]
-#            check data type: [yes | no]
-#            valid data types:
-#                - [data type]
-#            has additional data validation function: [yes | no]
-#            data validation function: |
-#                [valid c# BODY (everything between the curly brackets). Should probably just be a return [Expression]]
-#    enum type: [Enum Type Name]
-#    annotation type: [Annotation Type Name]
-#//data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
-#endregion
-
 
 
 attributes:

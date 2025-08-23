@@ -1,5 +1,6 @@
 from initializer import *
 from codegenframework import *
+from attribute_interface_generator import get_attribute_property, get_interface_name_from_attribute
 
 from collections import Counter, defaultdict
 from collections.abc import Iterator, Callable
@@ -25,6 +26,7 @@ if __name__ == "__main__":
     #write subnodes
     for subnode in config:
         name = subnode[NAME] + suffix
+        attributes = subnode["attributes"]
 
         data = ("IToken", "Data") if subnode["has data"] else None
         children = [
@@ -54,6 +56,8 @@ if __name__ == "__main__":
             )
         ] + [
             "protected override IEnumerable<ISmallLangNode?> Children { get; set; }"
+        ] + [
+            get_attribute_property(attribute) for attribute in attributes
         ]
 
         
@@ -90,6 +94,6 @@ if __name__ == "__main__":
                         "partial" if subnode["has additional data validation function"] else "",
                         "record"
                     ],
-                    parents=[f"{i}{suffix}" for i in subnode["parents"]]
+                    parents=[f"{i}{suffix}" for i in subnode["parents"]] + [get_interface_name_from_attribute(attribute) for attribute in attributes]
                 )
                 , file)

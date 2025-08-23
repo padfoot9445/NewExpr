@@ -58,9 +58,11 @@ attributes:
   display name: Generate-Attribute-Interfaces
 
   data:
-    - name: &TypeOfExpression TypeOfExpression
+    - &TypeOfExpression
+      name: TypeOfExpression
       type: SmallLangType
-    - name: &TypeLiteralType TypeLiteralType
+    - &TypeLiteralType
+      name: TypeLiteralType
       type: SmallLangType
 
 marker interfaces:
@@ -704,7 +706,8 @@ classes:
         - FalseLiteral
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: 
+          - *TypeOfExpression
       
       - name: *FunctionIdentifier
         children: []

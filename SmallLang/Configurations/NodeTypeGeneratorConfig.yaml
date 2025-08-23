@@ -145,7 +145,7 @@ dynamicastnode subclasses:
       
       - name: *Section
         children:
-          - type: Statement
+          - type: *Statement
             name: Statement
             is optional: no
             is multiple: yes
@@ -169,7 +169,7 @@ dynamicastnode subclasses:
             name: TypeAndIdentifierCSV
             is optional: yes
             is multiple: no
-          - type: Statement
+          - type: *Statement
             name: Statement
             is optional: no
             is multiple: no
@@ -203,7 +203,7 @@ dynamicastnode subclasses:
       
       - name: *Else
         children:
-          - type: Statement
+          - type: *Statement
             name: Statement
             is optional: no
             is multiple: no
@@ -235,7 +235,7 @@ dynamicastnode subclasses:
             name: LoopLabel
             is optional: yes
             is multiple: no
-          - type: Statement
+          - type: *Statement
             name: Statement
             is optional: no
             is multiple: no
@@ -263,7 +263,7 @@ dynamicastnode subclasses:
             name: LoopLabel
             is optional: yes
             is multiple: no
-          - type: Statement
+          - type: *Statement
             name: Statement
             is optional: no
             is multiple: no
@@ -385,7 +385,7 @@ dynamicastnode subclasses:
             name: Expression
             is optional: no
             is multiple: no
-          - type: Statement
+          - type: *Statement
             name: Statement
             is optional: no
             is multiple: no

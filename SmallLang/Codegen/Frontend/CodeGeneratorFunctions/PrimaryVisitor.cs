@@ -13,7 +13,7 @@ internal static class PrimaryVisitor
 {
     internal static void VisitIdentifier(IdentifierNode self, CodeGenerator Driver)
     {
-        Driver.Emit(HighLevelOperation.PushFromRegister(Driver.Data.GetVariableStartRegister(self.Attributes.VariableName!), Driver.Data.GetVariableWidth(self.Attributes.VariableName!)));
+        Driver.Emit(HighLevelOperation.PushFromRegister(Driver.Data.GetVariableStartRegister(self.VariableName!), Driver.Data.GetVariableWidth(self.VariableName!)));
     }
     internal static void Visit(PrimaryNode Self, CodeGenerator Driver)
     {
@@ -21,7 +21,7 @@ internal static class PrimaryVisitor
         {
 
             Self.Switch(
-            x => x.Attributes.TypeOfExpression!,
+            x => x.TypeOfExpression!,
             (x, y) => x == y,
             (TypeData.String, VisitString),
             (TypeData.Char, ValNumVisitor.Visit),
@@ -45,11 +45,11 @@ internal static class PrimaryVisitor
         });
     }
 
-    private static void VisitBool(SmallLangNode self, CodeGenerator Driver)
+    private static void VisitBool(PrimaryNode self, CodeGenerator Driver)
     {
         Driver.Emit(HighLevelOperation.Push<BackingNumberType>(self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue))));
     }
-    private static void VisitString(SmallLangNode self, CodeGenerator Driver)
+    private static void VisitString(PrimaryNode self, CodeGenerator Driver)
     {
         List<byte> Chars =
         [
@@ -61,6 +61,6 @@ internal static class PrimaryVisitor
         var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
         Driver.Emit(HighLevelOperation.Push(Ptr));
     }
-    private static void VisitCollection(SmallLangNode self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
+    private static void VisitCollection(PrimaryNode self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
 
 }

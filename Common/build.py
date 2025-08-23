@@ -102,6 +102,38 @@ if __name__ == "__main__":
         file_paths = config["files"]
         code_generation_scripts_directory = working_directory/Path(config["generators relative path"])
     
+
+    fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format", True)
+    restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore", True)
+    build_command: Command = (["dotnet", "build", "--no-restore"], "Dotnet-Build", True)
+
+
+    dotnet_build_steps: list[Command] = [
+        restore_command,
+        build_command,
+        fmt_command
+    ]
+
+    #handle commmand line arguments
+    flags: list[tuple[str, Callable[[], Any], bool]] = [ #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
+        ("--no-build", lambda: mutate_command(dotnet_build_steps, 1), True),
+        ("--whitespace", lambda: fmt_command[0].append("whitespace"), True),
+        ("--no-format", lambda: mutate_command(dotnet_build_steps, 2), True),
+        ("--no-dotnet", lambda: [mutate_command(dotnet_build_steps, i) for i in range(3)], True),
+    ]
+
+    for flag, action, desired in flags:
+        if (flag in sys.argv) == desired:
+            action()
+
+
+    #delete old files
+    delete_out = [True]
+    time_thread("Delete-Generated-Files", delete_files)
+
+
+    #get build steps:
+    build_steps: list[Command] = []
     for file_path in file_paths:
         file_path = configurations_path/file_path
         with open(file_path) as file:
@@ -118,38 +150,9 @@ if __name__ == "__main__":
 
                 #make dst if necessary
                 make_dir(dst)
+                with open("tmp.tmp", "w") as f:
+                    print(f"making dir {dst}", file=f)
 
-                #append dst to dst_directories to facilitate removal
-                
-                if Path.is_dir(dst):
-                    dst_directories.append(dst)
-
-
-    fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format", True)
-    restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore", True)
-    build_command: Command = (["dotnet", "build", "--no-restore"], "Dotnet-Build", True)
-
-
-    dotnet_build_steps: list[Command] = [
-        restore_command,
-        build_command,
-        fmt_command
-    ]
-
-
-
-    #handle commmand line arguments
-    flags: list[tuple[str, Callable[[], Any], bool]] = [ #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
-        ("--no-build", lambda: mutate_command(dotnet_build_steps, 1), True),
-        ("--whitespace", lambda: fmt_command[0].append("whitespace"), True),
-        ("--no-format", lambda: mutate_command(dotnet_build_steps, 2), True),
-        ("--no-dotnet", lambda: [mutate_command(dotnet_build_steps, i) for i in range(3)], True)
-    ]
-
-
-    for flag, action, desired in flags:
-        if (flag in sys.argv) == desired:
-            action()
 
 
     #make build_steps string only

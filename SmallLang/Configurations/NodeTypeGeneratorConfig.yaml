@@ -79,7 +79,11 @@ attribute group interfaces:
   &node-type-suffix node-type suffix: &NodeTypeSuffix Node
 
   data:
-    attribute groups: []
+    attribute groups:
+      -
+        - *TypeOfExpression
+        - *ISmallLangNode
+      
 
 
 attributes:

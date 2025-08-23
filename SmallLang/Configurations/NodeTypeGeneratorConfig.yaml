@@ -70,6 +70,9 @@ attributes:
     - &LoopGUID
       name: LoopGUID
       type: LoopGUID
+    - &GUIDOfTargetLoop
+      name: GUIDOfTargetLoop
+      type: LoopGUID
 
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
@@ -245,7 +248,7 @@ classes:
         - Continue
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*GUIDOfTargetLoop]
       
       - name: *Else
         children:

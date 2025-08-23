@@ -79,7 +79,7 @@ def delete_files(out: list[bool]):
     try:
         for dirpath, _, filenames in os.walk(working_directory):
             for i in filenames:
-                if "generated" in [j.lower() for j in os.path.split(dirpath)] or i.split(".")[0].lower() == "generated":
+                if "generated" in [j.lower() for j in dirpath.split(os.sep)] or i.split(".")[0].lower() == "generated":
                     os.remove(Path(dirpath)/i)
     except Exception as e:
         out[0] = False

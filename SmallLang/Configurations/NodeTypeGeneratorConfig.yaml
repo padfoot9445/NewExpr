@@ -352,7 +352,8 @@ classes:
         - Identifier
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes:
+          - *TypeLiteralType
       
       - name: *GenericType
         children:
@@ -369,7 +370,7 @@ classes:
         - Identifier
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*TypeLiteralType]
               
       - name: *If
         children:
@@ -505,7 +506,9 @@ classes:
         - Identifier
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: 
+          - *VariableName
+          - *TypeOfExpression
       
       - name: *DeclarationModifiersCombined
         children:

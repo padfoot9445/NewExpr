@@ -1,3 +1,4 @@
+#if false
 using Common.AST;
 using Common.Evaluator;
 using Common.Metadata;
@@ -11,8 +12,10 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
 {
     Dictionary<VariableName, SmallLangType> VariableNameToType = Functions.Values.RegisteredFunctions.Select(x => (new VariableName(x.Name), TypeData.Void)).ToDictionary();
 
+
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
+
         return Combine(node.NodeType switch
         {
             ImportantASTNodeType.FunctionCall => FunctionCall,
@@ -154,3 +157,4 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
         return Changed(oldattr, self.Attributes);
     }
 }
+#endif

@@ -192,7 +192,7 @@ classes:
       - name: *Section
         children:
           - type: *Statement
-            name: Statement
+            name: Statements
             is optional: no
             is multiple: yes
         parents:
@@ -372,7 +372,7 @@ classes:
       - name: *GenericType
         children:
           - type: *Type
-            name: Type
+            name: Types
             is optional: no
             is multiple: yes
         parents:
@@ -389,7 +389,7 @@ classes:
       - name: *If
         children:
           - type: *ExprStatementCombined
-            name: ExprStatementCombined
+            name: ExprStatementCombineds
             is optional: no
             is multiple: yes
           - type: *Else
@@ -413,7 +413,7 @@ classes:
             is optional: no
             is multiple: no
           - type: *ExprStatementCombined
-            name: ExprStatementCombined
+            name: ExprStatementCombineds
             is optional: no
             is multiple: yes
         parents:
@@ -448,7 +448,7 @@ classes:
       - name: *TypeAndIdentifierCSV
         children:
           - type: *TypeAndIdentifierCSVElement
-            name: TypeAndIdentifierCSVElement
+            name: TypeAndIdentifierCSVElements
             is optional: no
             is multiple: yes
         parents:
@@ -527,7 +527,7 @@ classes:
       - name: *DeclarationModifiersCombined
         children:
           - type: *DeclarationModifier
-            name: DeclarationModifier
+            name: DeclarationModifiers
             is optional: no
             is multiple: yes
         parents:
@@ -576,7 +576,7 @@ classes:
       - name: *FunctionArgDeclModifiersCombined
         children:
           - type: *FunctionArgDeclModifiers
-            name: FunctionArgDeclModifiers
+            name: FunctionArgDeclModifierss
             is optional: no
             is multiple: yes
         parents:
@@ -624,7 +624,7 @@ classes:
             is optional: no
             is multiple: no
           - type: *FactorialSymbol
-            name: FactorialSymbol
+            name: FactorialSymbols
             is optional: no
             is multiple: yes
         parents:
@@ -682,7 +682,7 @@ classes:
             is optional: no
             is multiple: no
           - type: *OperatorExpressionPair
-            name: OperatorExpressionPair
+            name: OperatorExpressionPairs
             is optional: no
             is multiple: yes
         parents:
@@ -826,7 +826,7 @@ classes:
       - name: *ArgList
         children:
           - type: *ArgListElement
-            name: ArgListElement
+            name: ArgListElements
             is optional: no
             is multiple: yes
         parents:
@@ -860,7 +860,7 @@ classes:
       - name: *TypeCSV
         children:
           - type: *Type
-            name: Type
+            name: Types
             is optional: no
             is multiple: yes
         parents:

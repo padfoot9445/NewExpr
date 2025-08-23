@@ -11,8 +11,8 @@ internal static class IfVisitor
 
         //[ExpressionStatementCombined+, Else as statement?]
         var ESC = Self.ExprStatementCombineds.ToArray();
-        var Expressions = ESC.Select(x => x.Expression1).ToArray();
-        var Statements = ESC.Select(x => x.Statement1).ToArray();
+        var Expressions = ESC.Select(x => x.Expression).ToArray();
+        var Statements = ESC.Select(x => x.Statement).ToArray();
         int CondReg = Driver.GetRegisters((int)TypeData.Bool.Size).First();
 
         Driver.EnteringChunk(() =>

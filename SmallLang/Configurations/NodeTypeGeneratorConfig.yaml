@@ -109,7 +109,7 @@ classes:
   display name: Generate-AST-Classes
 
   
-  node-type suffix: *NodeTypeSuffix
+  *node-type-suffix : *NodeTypeSuffix
 
   data:
       - name: *ReTypingAlias

@@ -150,7 +150,7 @@ if __name__ == "__main__":
                 build_steps.append((
                     [sys.executable, generator, file_path, dst, step_name, working_directory],
                     display_name,
-                    (not "ignore" in current_file_dict[step_name].keys())
+                    (not current_file_dict[step_name].get("ignore", False))
                 ))
 
                 #make dst if necessary

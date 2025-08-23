@@ -92,6 +92,8 @@ attributes:
   data:
     - name: &TypeOfExpression TypeOfExpression
       type: SmallLangType
+    - name: &TypeLiteralType TypeLiteralType
+      type: SmallLangType
 
 
 marker interfaces:

@@ -95,7 +95,6 @@ attribute group interfaces:
   *node-type-suffix : *NodeTypeSuffix
 
   data:
-    attribute groups:
       -
         - *TypeOfExpression
         - *ISmallLangNode

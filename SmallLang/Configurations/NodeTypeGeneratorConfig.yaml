@@ -64,6 +64,9 @@ attributes:
     - &TypeLiteralType
       name: TypeLiteralType
       type: SmallLangType
+    - &VariableName
+      name: VariableName
+      type: VariableName
 
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated

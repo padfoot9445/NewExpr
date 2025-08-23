@@ -82,15 +82,15 @@ marker interfaces:
     - name: &Statement IStatement
       parents:
       - &ISmallLangNode ISmallLang
-      attributes: []
+      attributes: &StatementAttrs []
     - name: &Expression IExpression
       parents:
       - *ISmallLangNode
-      attributes: [*TypeOfExpression]
+      attributes: &ExpressionAttrs [*TypeOfExpression]
     - name: &Type Type
       parents:
       - *ISmallLangNode
-      attributes: [*TypeLiteralType]
+      attributes: &TypeAttrs [*TypeLiteralType]
 
 
 attribute group interfaces:
@@ -118,8 +118,15 @@ classes:
   dst: "IR/AST/Generated/ASTClasses"
   display name: Generate-AST-Classes
 
-  
   *node-type-suffix : *NodeTypeSuffix
+
+  marker interface attributes:
+    &SmallLangNode SmallLang: []
+    *Statement : *StatementAttrs
+    *Expression : *ExpressionAttrs
+    *Type : *TypeAttrs
+  
+  
 
   data:
       - name: *ReTypingAlias
@@ -129,7 +136,7 @@ classes:
             is optional: no
             is multiple: no
         parents:
-        - &SmallLangNode SmallLang
+        - *SmallLangNode
         - *Expression
         has data: yes
         check data type: yes

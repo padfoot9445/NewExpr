@@ -588,7 +588,7 @@ classes:
         - "Equals"
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*TypeOfExpression]
       
       - name: *FactorialSymbol
         children: []

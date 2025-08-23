@@ -78,7 +78,7 @@ dynamicastnode subclasses:
   
   enum type: ImportantASTNodeType
   annotation type: Attributes
-  node-type suffix: Node
+  node-type suffix: &NodeTypeSuffix Node
 
   data:
     interfaces:
@@ -96,7 +96,18 @@ dynamicastnode subclasses:
       - name: &TypeOfExpression TypeOfExpression
         type: SmallLangType
     attribute groups: []
-    classes:
+
+classes:
+  namespace: SmallLang.IR.AST.Generated
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  generator: generate_ast_classes.py
+  dst: "IR/AST/Generated/ASTClasses"
+  display name: Generate-AST-Classes
+
+  
+  node-type suffix: *NodeTypeSuffix
+  
+  data:
       - name: *ReTypingAlias
         children:
           - type: *Type

@@ -9,15 +9,15 @@ internal static class SwitchVisitor
     public static void Visit(SwitchNode Self, CodeGenerator Driver)
     {
 
-        var Expressions = Self.ExprStatementCombineds1.Select(x => x.Expression1).ToList();
-        var Statements = Self.ExprStatementCombineds1.Select(x => x.Statement1).ToList();
-        var Length = Self.ExprStatementCombineds1.Count();
-        var ExpressionType = Self.Expression1.Attributes.TypeOfExpression!;
+        var Expressions = Self.ExprStatementCombineds.Select(x => x.Expression1).ToList();
+        var Statements = Self.ExprStatementCombineds.Select(x => x.Statement1).ToList();
+        var Length = Self.ExprStatementCombineds.Count();
+        var ExpressionType = Self.Expression.Attributes.TypeOfExpression!;
         List<int> Registers = [Driver.GetRegisters((int)ExpressionType.Size).First(), .. Expressions.Select(_ => Driver.GetRegisters((int)ExpressionType.Size).First())];
 
         Driver.EnteringChunk(() =>
         {
-            Driver.Exec(Self.Expression1);
+            Driver.Exec(Self.Expression);
             Driver.Emit(HighLevelOperation.LoadFromStack(Registers[0], ExpressionType.Size));
             Driver.Emit(HighLevelOperation.Switch<int, int, int, byte>(Registers[0], Length, 1, ExpressionType));
         });

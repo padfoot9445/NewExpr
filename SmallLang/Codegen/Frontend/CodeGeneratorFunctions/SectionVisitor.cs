@@ -10,7 +10,7 @@ internal static class SectionVisitor
         Driver.EnteringChunk(() =>
         {
 
-            foreach (var child in Self.Statements1)
+            foreach (var child in Self.Statements)
             {
                 Driver.Exec(child);
             }

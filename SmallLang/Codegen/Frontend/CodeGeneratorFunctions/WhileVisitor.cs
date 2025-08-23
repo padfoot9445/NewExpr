@@ -16,7 +16,7 @@ internal static class WhileVisitor
 
         Driver.NewChunk(1, () =>
         {
-            Driver.Cast(Self.Expression1, TypeData.Bool);
+            Driver.Cast(Self.Expression, TypeData.Bool);
         });
 
         Driver.NewChunk(2, () =>
@@ -26,18 +26,18 @@ internal static class WhileVisitor
 
         Driver.NewChunk(3, () =>
         {
-            Driver.Exec(Self.Statement1);
+            Driver.Exec(Self.Statement);
         });
 
         Driver.NewChunk(4, () =>
         {
-            if (Self.Else1 is null)
+            if (Self.Else is null)
             {
                 Driver.Emit(HighLevelOperation.NOp());
             }
             else
             {
-                Driver.Exec(Self.Else1);
+                Driver.Exec(Self.Else);
             }
         });
 

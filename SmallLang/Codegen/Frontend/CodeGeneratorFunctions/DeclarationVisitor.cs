@@ -17,12 +17,12 @@ internal static class DeclarationVisitor
 
         Driver.EnteringChunk(() =>
         {
-            var slot = Driver.Data.AllocateRegisters(Self.Attributes.VariableName!, (int)Self.Type1.Attributes.TypeLiteralType!.Size);
+            var slot = Driver.Data.AllocateRegisters(Self.Attributes.VariableName!, (int)Self.Type.Attributes.TypeLiteralType!.Size);
 
-            if (Self.AssignmentPrime1 is not null)
+            if (Self.AssignmentPrime is not null)
             {
-                Driver.Cast(Self.AssignmentPrime1, Self.Type1.Attributes.TypeLiteralType);
-                Driver.Emit(HighLevelOperation.LoadFromStack(slot, Self.Type1.Attributes.TypeLiteralType!.Size));
+                Driver.Cast(Self.AssignmentPrime, Self.Type.Attributes.TypeLiteralType);
+                Driver.Emit(HighLevelOperation.LoadFromStack(slot, Self.Type.Attributes.TypeLiteralType!.Size));
             }
 
             Driver.Next();

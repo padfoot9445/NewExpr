@@ -21,9 +21,9 @@ internal static class FactorialExpressionVisitor
             var register2 = Driver.GetRegisters(Self).First();
             int Width = (int)Self.Attributes.TypeOfExpression!.Size;
 
-            Driver.Exec(Self.Expression1);
+            Driver.Exec(Self.Expression);
             Driver.Emit(HighLevelOperation.LoadFromStack(register, Width));
-            Driver.Emit(HighLevelOperation.Factorial<int, int, byte, int>(register, register2, Self.Attributes.TypeOfExpression, Self.FactorialSymbols1.Count()));
+            Driver.Emit(HighLevelOperation.Factorial<int, int, byte, int>(register, register2, Self.Attributes.TypeOfExpression, Self.FactorialSymbols.Count()));
             Driver.Next();
         });
 

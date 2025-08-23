@@ -73,6 +73,9 @@ attributes:
     - &GUIDOfTargetLoop
       name: GUIDOfTargetLoop
       type: LoopGUID
+    - &ExpectedReturnType
+      name: ExpectedReturnType
+      type: SmallLangType
 
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated

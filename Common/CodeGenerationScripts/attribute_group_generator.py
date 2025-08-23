@@ -18,7 +18,8 @@ if __name__ == "__main__":
                     name=name,
                     keyword="interface",
                     content=[],
-                    affixes=[":", both_joined]
+                    affixes=[":", both_joined],
+                    modifiers=[AccessModifiers.Public]
                 ),
                 file
             )

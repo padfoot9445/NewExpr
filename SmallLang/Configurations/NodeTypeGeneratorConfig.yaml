@@ -32,7 +32,7 @@ NodeTypeDefinitions:
     - &FunctionArgDeclModifiersCombined FunctionArgDeclModifiersCombined: "data: null, children: [FunctionArgDeclModifiers+]"
     - &AssignmentPrime AssignmentPrime: "data: \"=\", children: [Expression]"
     - &FactorialExpression FactorialExpression: "data: null, children: [Expression, !+]"
-    - &BinaryExpression BinaryExpression: "data: \"implies\" | \"or\" | \"xor\" | \"and\" | \"==\" | \"!=\" | \">\" | \">=\" | \"<\" | \"<=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"**\" | \"|\" | \"^\" | \"&\", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser"
+    - &BinaryExpression BinaryExpression: "data: \"implies\" | \"or\" | \"xor\" | \"and\" | \"==\" | \"!=\" | \">\" | \">=\" | \"<\" | \"<=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"*\" | \"|\" | \"^\" | \"&\", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser"
     - &ComparisionExpression ComparisionExpression: "data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via "
     - &OperatorExpressionPair OperatorExpressionPair: "data: cmpOperator, children: [Expression]"
     - &Primary Primary: "data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr"
@@ -78,12 +78,13 @@ dynamicastnode subclasses:
   
   enum type: ImportantASTNodeType
   annotation type: Attributes
+  node-type suffix: Node
 
   data:
     interfaces:
       - name: &Statement IStatement
         parents:
-        - &ISmallLangNode ISmallLangNode
+        - &ISmallLangNode ISmallLang
       - name: &Expression IExpression
         parents:
         - *ISmallLangNode
@@ -94,12 +95,12 @@ dynamicastnode subclasses:
     classes:
       - name: *ReTypingAlias
         children:
-          - type: Type
+          - type: *Type
             name: Type
             is optional: no
             is multiple: no
         parents:
-        - &SmallLangNode SmallLangNode
+        - &SmallLangNode SmallLang
         - *Expression
         has data: yes
         check data type: yes
@@ -111,11 +112,11 @@ dynamicastnode subclasses:
 
       - name: *ReTypeOriginal
         children:
-          - type: Type
+          - type: *Type
             name: Type
             is optional: no
             is multiple: no
-          - type: Identifier
+          - type: *Identifier
             name: Identifier
             is optional: no
             is multiple: no
@@ -161,11 +162,11 @@ dynamicastnode subclasses:
       
       - name: *Function
         children:
-          - type: Type
+          - type: *Type
             name: Type
             is optional: no
             is multiple: no
-          - type: TypeAndIdentifierCSV
+          - type: *TypeAndIdentifierCSV
             name: TypeAndIdentifierCSV
             is optional: yes
             is multiple: no
@@ -186,7 +187,7 @@ dynamicastnode subclasses:
       
       - name: *LoopCTRL
         children:
-          - type: Identifier
+          - type: *Identifier
             name: Identifier
             is optional: yes
             is multiple: no
@@ -219,19 +220,19 @@ dynamicastnode subclasses:
       
       - name: *For
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: LoopLabel
+          - type: *LoopLabel
             name: LoopLabel
             is optional: yes
             is multiple: no
@@ -239,7 +240,7 @@ dynamicastnode subclasses:
             name: Statement
             is optional: no
             is multiple: no
-          - type: Else
+          - type: *Else
             name: Else
             is optional: yes
             is multiple: no
@@ -255,11 +256,11 @@ dynamicastnode subclasses:
       
       - name: *While
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: LoopLabel
+          - type: *LoopLabel
             name: LoopLabel
             is optional: yes
             is multiple: no
@@ -267,7 +268,7 @@ dynamicastnode subclasses:
             name: Statement
             is optional: no
             is multiple: no
-          - type: Else
+          - type: *Else
             name: Else
             is optional: yes
             is multiple: no
@@ -295,7 +296,7 @@ dynamicastnode subclasses:
       
       - name: *Return
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
@@ -324,7 +325,7 @@ dynamicastnode subclasses:
       
       - name: *GenericType
         children:
-          - type: Type
+          - type: *Type
             name: Type
             is optional: no
             is multiple: yes
@@ -341,11 +342,11 @@ dynamicastnode subclasses:
               
       - name: *If
         children:
-          - type: ExprStatementCombined
+          - type: *ExprStatementCombined
             name: ExprStatementCombined
             is optional: no
             is multiple: yes
-          - type: Else
+          - type: *Else
             name: Else
             is optional: yes
             is multiple: no
@@ -361,11 +362,11 @@ dynamicastnode subclasses:
       
       - name: *Switch
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: ExprStatementCombined
+          - type: *ExprStatementCombined
             name: ExprStatementCombined
             is optional: no
             is multiple: yes
@@ -381,7 +382,7 @@ dynamicastnode subclasses:
       
       - name: *ExprStatementCombined
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
@@ -400,7 +401,7 @@ dynamicastnode subclasses:
       
       - name: *TypeAndIdentifierCSV
         children:
-          - type: TypeAndIdentifierCSVElement
+          - type: *TypeAndIdentifierCSVElement
             name: TypeAndIdentifierCSVElement
             is optional: no
             is multiple: yes
@@ -415,11 +416,11 @@ dynamicastnode subclasses:
       
       - name: *TypeAndIdentifierCSVElement
         children:
-          - type: FunctionArgDeclModifiersCombined
+          - type: *FunctionArgDeclModifiersCombined
             name: FunctionArgDeclModifiersCombined
             is optional: no
             is multiple: no
-          - type: Type
+          - type: *Type
             name: Type
             is optional: no
             is multiple: no
@@ -435,7 +436,7 @@ dynamicastnode subclasses:
       
       - name: *AliasExpr
         children:
-          - type: Identifier
+          - type: *Identifier
             name: Identifier
             is optional: no
             is multiple: no
@@ -452,15 +453,15 @@ dynamicastnode subclasses:
       
       - name: *Declaration
         children:
-          - type: Type
+          - type: *Type
             name: Type
             is optional: no
             is multiple: no
-          - type: DeclarationModifiersCombined
+          - type: *DeclarationModifiersCombined
             name: DeclarationModifiersCombined
             is optional: yes
             is multiple: no
-          - type: AssignmentPrime
+          - type: *AssignmentPrime
             name: AssignmentPrime
             is optional: yes
             is multiple: no
@@ -477,7 +478,7 @@ dynamicastnode subclasses:
       
       - name: *DeclarationModifiersCombined
         children:
-          - type: DeclarationModifier
+          - type: *DeclarationModifier
             name: DeclarationModifier
             is optional: no
             is multiple: yes
@@ -526,7 +527,7 @@ dynamicastnode subclasses:
       
       - name: *FunctionArgDeclModifiersCombined
         children:
-          - type: FunctionArgDeclModifiers
+          - type: *FunctionArgDeclModifiers
             name: FunctionArgDeclModifiers
             is optional: no
             is multiple: yes
@@ -541,7 +542,7 @@ dynamicastnode subclasses:
       
       - name: *AssignmentPrime
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
@@ -570,11 +571,11 @@ dynamicastnode subclasses:
 
       - name: *FactorialExpression
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: FactorialSymbol
+          - type: *FactorialSymbol
             name: FactorialSymbol
             is optional: no
             is multiple: yes
@@ -590,11 +591,11 @@ dynamicastnode subclasses:
       
       - name: *BinaryExpression
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
@@ -628,11 +629,11 @@ dynamicastnode subclasses:
       
       - name: *ComparisionExpression
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: OperatorExpressionPair
+          - type: *OperatorExpressionPair
             name: OperatorExpressionPair
             is optional: no
             is multiple: yes
@@ -648,7 +649,7 @@ dynamicastnode subclasses:
       
       - name: *OperatorExpressionPair
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
@@ -699,7 +700,7 @@ dynamicastnode subclasses:
       
       - name: *CopyExpr
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
@@ -715,11 +716,11 @@ dynamicastnode subclasses:
       
       - name: *NewExpr
         children:
-          - type: Type
+          - type: *Type
             name: Type
             is optional: no
             is multiple: no
-          - type: ArgList
+          - type: *ArgList
             name: ArgList
             is optional: yes
             is multiple: no
@@ -735,11 +736,11 @@ dynamicastnode subclasses:
       
       - name: *Index
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
@@ -755,11 +756,11 @@ dynamicastnode subclasses:
       
       - name: *FunctionCall
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: ArgList
+          - type: *ArgList
             name: ArgList
             is optional: yes
             is multiple: no
@@ -775,7 +776,7 @@ dynamicastnode subclasses:
       
       - name: *ArgList
         children:
-          - type: ArgListElement
+          - type: *ArgListElement
             name: ArgListElement
             is optional: no
             is multiple: yes
@@ -790,11 +791,11 @@ dynamicastnode subclasses:
       
       - name: *ArgListElement
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no
-          - type: Identifier
+          - type: *Identifier
             name: Identifier
             is optional: yes
             is multiple: no
@@ -809,7 +810,7 @@ dynamicastnode subclasses:
       
       - name: *TypeCSV
         children:
-          - type: Type
+          - type: *Type
             name: Type
             is optional: no
             is multiple: yes
@@ -824,7 +825,7 @@ dynamicastnode subclasses:
       
       - name: *UnaryExpression
         children:
-          - type: Expression
+          - type: *Expression
             name: Expression
             is optional: no
             is multiple: no

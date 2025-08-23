@@ -11,25 +11,26 @@ def number_name(x: str, subnode: Any) -> str:
         names_used[subnode[NAME]][x] += 1
         return f"{x}{names_used[subnode[NAME]][x]}"
 
-def get_children(children: list[dict[str, str | bool]]) -> Iterator[tuple[Any,...]]: #type, name, is_optional, is_multiple
+def get_children(children: list[dict[str, str | bool]], suffix: str) -> Iterator[tuple[Any,...]]: #type, name, is_optional, is_multiple
     for child in children:
-        yield child["type"], child[NAME], child["is optional"], child["is multiple"]
+        yield f"{child["type"]}{suffix}", child[NAME], child["is optional"], child["is multiple"]
 if __name__ == "__main__":
     _, output_directory, _, raw_config, config = initialize()
+    suffix = raw_config["node-type suffix"]
 
     names_used: defaultdict[str, defaultdict[str, int]] = defaultdict(lambda : defaultdict(int))
 
 
     #write subnodes
     for subnode in config["classes"]:
-        name = subnode[NAME] + "Node"
+        name = subnode[NAME] + suffix
 
         data = ("IToken", "Data") if subnode["has data"] else None
         children = [
             (f"{"List<" if is_multiple else ""}{type}{"?" if is_optional else ""}{">" if is_multiple else ""}", 
             f"{number_name(name, subnode)}")
             
-            for type, name, is_optional, is_multiple in get_children(subnode["children"])
+            for type, name, is_optional, is_multiple in get_children(subnode["children"], suffix)
         ]
 
         ctor_children = children if data is None else [data] + children
@@ -88,13 +89,13 @@ if __name__ == "__main__":
                         "partial" if subnode["has additional data validation function"] else "",
                         "record"
                     ],
-                    parents=subnode["parents"]
+                    parents=[f"{i}{suffix}" for i in subnode["parents"]]
                 )
                 , file)
 
     #write interfaces
     for interface in config["interfaces"]:
-        name = interface[NAME]
+        name = interface[NAME] + suffix
         parents = interface["parents"]
         with open(output_directory/f"{name}.cs", "w") as file:
             write_header(raw_config, file)
@@ -105,7 +106,7 @@ if __name__ == "__main__":
                     content=[
 
                     ],
-                    affixes=[":", ", ".join(i for i in parents)],
+                    affixes=[":", ", ".join(i + suffix for i in parents)],
                     modifiers=[AccessModifiers.Public]
                 ),
                 file

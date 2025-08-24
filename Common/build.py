@@ -76,7 +76,7 @@ def make_dir(dst: Path):
     print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}\033[4:5m{dst}{END}")
     
 
-def delete_files(out: list[bool], clean: bool):
+def delete_files(out: list[bool], clean: bool, working_directory: Path):
     try:
         for dirpath, _, filenames in os.walk(working_directory):
             for i in filenames:
@@ -89,7 +89,7 @@ def delete_files(out: list[bool], clean: bool):
         print(f"{RED}{BOLD}INFO{END}:  {RED}{BOLD}{e}{END}")
             
 
-if __name__ == "__main__":
+def main():
 
     working_directory = Path(sys.argv[1] if len(sys.argv) >= 2 and not sys.argv[1].startswith("-") else os.getcwd()).resolve()
     config_path = Path(sys.argv[2] if len(sys.argv) >= 3 and not sys.argv[2].startswith("-") else working_directory/"config.yaml").resolve()
@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     #delete old files
     delete_out = [True]
-    time_thread("Delete-Generated-Files", delete_files, do_clean_flag)
+    time_thread("Delete-Generated-Files", delete_files, do_clean_flag, working_directory)
 
 
     #get build steps:
@@ -214,3 +214,6 @@ if __name__ == "__main__":
         print(f"{BOLD}{color}INFO{END}:  {color}{steps_taken - ignored}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")
     else:
         print(f"{BOLD}{color}INFO{END}:  {color}{total_steps - steps_taken}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")
+
+if __name__ == "__main__":
+    main()

@@ -1,3 +1,4 @@
+#if false
 using Common.AST;
 using Common.Evaluator;
 using Common.Metadata;
@@ -9,9 +10,12 @@ namespace SmallLang.IR.AST.ASTVisitors;
 using Node = DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attributes>
 {
-    Dictionary<VariableName, SmallLangType> VariableNameToType = Functions.Values.FunctionNameToFunctionID.Select(x => TypeData.Data.VoidTypeCode).Zip(Functions.Values.FunctionNameToFunctionID.Keys).Select(x => (new VariableName(x.Second), x.First)).ToDictionary();
+    Dictionary<VariableName, SmallLangType> VariableNameToType = Functions.Values.RegisteredFunctions.Select(x => (new VariableName(x.Name), TypeData.Void)).ToDictionary();
+
+
     public Func<Node?, Node, bool> Dispatch(Node node)
     {
+
         return Combine(node.NodeType switch
         {
             ImportantASTNodeType.FunctionCall => FunctionCall,
@@ -34,13 +38,13 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     bool Identity(Node? parent, Node self)
     {
         var oldattr = self.Attributes;
-        if (self.Attributes.VariablesInScope is null)
+        if (Self.VariablesInScope is null)
         {
             self.Attributes = self.Attributes with { VariablesInScope = new() };
             return true;
         }
         if (parent is not Node nnp) return false;
-        self.Attributes = self.Attributes with { VariablesInScope = ((Scope)nnp.Attributes.VariablesInScope!).ScopeUnion((Scope)self.Attributes.VariablesInScope!) };
+        self.Attributes = self.Attributes with { VariablesInScope = ((Scope)nnp.VariablesInScope!).ScopeUnion((Scope)Self.VariablesInScope!) };
         return Changed(oldattr, self.Attributes);
     }
     Func<Node?, Node, bool> Combine(Func<Node?, Node, bool> inner)
@@ -58,7 +62,7 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     private bool AssignmentPrime(Node? parent, Node self)
     {
         var oldattr = self.Attributes;
-        self.Attributes = self.Attributes with { TypeOfExpression = self.Children[0].Attributes.TypeOfExpression };
+        self.Attributes = self.Attributes with { TypeOfExpression = self.Children[0].TypeOfExpression };
         return Changed(oldattr, self.Attributes);
     }
     bool NewExpr(Node? parent, Node self)
@@ -66,38 +70,38 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
         if (self.Children.Count == 1) return false;
         var args = self.Children[1];
         var types = self.Children[0].Children[0].Children;
-        if (types.Any(x => x.Attributes.TypeLiteralType is null)) return false;
-        var TTypes = types.Select(x => x.Attributes.TypeLiteralType!).ToArray();
-        var j = args.Children.Where(x => x.Attributes.TypeOfExpression is not null).Select((x, i) => (Node: x, IsValid: x.Attributes.TypeOfExpression!.ImplicitCast(TTypes[i % TTypes.Length]), Expected: TTypes[i % TTypes.Length])).Where(x => x.IsValid is false).Select(x => (x.Node, x.Expected)).Select(x => new TypeErrorException(x.Expected, x.Node.Attributes.TypeOfExpression!, x.Node.GetLine()));
+        if (types.Any(x => x.TypeLiteralType is null)) return false;
+        var TTypes = types.Select(x => x.TypeLiteralType!).ToArray();
+        var j = args.Children.Where(x => x.TypeOfExpression is not null).Select((x, i) => (Node: x, IsValid: x.TypeOfExpression!.ImplicitCast(TTypes[i % TTypes.Length]), Expected: TTypes[i % TTypes.Length])).Where(x => x.IsValid is false).Select(x => (x.Node, x.Expected)).Select(x => new TypeErrorException(x.Expected, x.Node.TypeOfExpression!, x.Node.GetLine()));
         if (!j.Any()) return false;
         throw j.First();
     }
     private bool ArgListElement(Node? parent, Node self)
     {
         var oldattr = self.Attributes;
-        self.Attributes = self.Attributes with { TypeOfExpression = self.Children[0].Attributes.TypeOfExpression };
+        self.Attributes = self.Attributes with { TypeOfExpression = self.Children[0].TypeOfExpression };
         return Changed(oldattr, self.Attributes);
     }
     private bool Declaration(Node? parent, Node self)
     {
         var oldattr = self.Attributes;
-        self.Attributes = self.Attributes with { VariableName = new(self.Data!.Lexeme), TypeOfExpression = self.Children[0].Attributes.TypeLiteralType };
-        bool Changed2 = !(((Scope)parent!.Attributes.VariablesInScope!).Contains(self.Attributes.VariableName));
+        self.Attributes = self.Attributes with { VariableName = new(self.Data!.Lexeme), TypeOfExpression = self.Children[0].TypeLiteralType };
+        bool Changed2 = !(((Scope)parent!.VariablesInScope!).Contains(Self.VariableName));
         if (Changed2)
         {
-            parent!.Attributes = parent.Attributes with { VariablesInScope = ((Scope)parent.Attributes.VariablesInScope).Append(self.Attributes.VariableName) };
+            parent!.Attributes = parent.Attributes with { VariablesInScope = ((Scope)parent.VariablesInScope).Append(Self.VariableName) };
         }
         bool Changed3 = false;
-        if (!VariableNameToType.ContainsKey(self.Attributes.VariableName) || VariableNameToType[self.Attributes.VariableName] != self.Attributes.TypeOfExpression!)
+        if (!VariableNameToType.ContainsKey(Self.VariableName) || VariableNameToType[Self.VariableName] != Self.TypeOfExpression!)
         {
-            VariableNameToType[self.Attributes.VariableName] = self.Attributes.TypeOfExpression!;
+            VariableNameToType[Self.VariableName] = Self.TypeOfExpression!;
             Changed3 = true;
         }
         if (self.Children[^1].NodeType == ImportantASTNodeType.AssignmentPrime
         &&
-        self.Children[0].Attributes.TypeLiteralType is not null && self.Children[0].Attributes.TypeLiteralType is SmallLangType type
+        self.Children[0].TypeLiteralType is not null && self.Children[0].TypeLiteralType is SmallLangType type
         &&
-        self.Children[^1].Attributes.TypeOfExpression is not null && self.Children[^1].Attributes.TypeOfExpression is SmallLangType srctype
+        self.Children[^1].TypeOfExpression is not null && self.Children[^1].TypeOfExpression is SmallLangType srctype
         &&
         !srctype.CanDeclareTo(type)
         )
@@ -110,19 +114,19 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
     {
         var oldattr = self.Attributes;
         var typename = self.Data!.Lexeme;
-        var Typecode = TypeData.Data.GetTypeFromTypeName[typename];
+        var Typecode = TypeData.GetType(typename);
         self.Attributes = self.Attributes with { TypeLiteralType = Typecode };
         return Changed(oldattr, self.Attributes);
     }
     private bool FunctionCall(Node? parent, Node self)
     {
-        FunctionID<BackingNumberType> ID = Functions.Values.FunctionNameToFunctionID[self.Children[0].Data!.Lexeme];
-        SmallLangType RetType = Functions.Values.FunctionToRetType[ID];
+        FunctionID<BackingNumberType> ID = Functions.Values.GetSignature(self.Children[0].Data!.Lexeme).ID;
+        SmallLangType RetType = Functions.Values.GetSignature(ID).RetVal;
         var oldattr = self.Attributes;
-        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = Functions.Values.FunctionToFunctionArgs[ID], TypeOfExpression = RetType };
-        if (self.Children.Count == 2 && self.Children[^1].NodeType == ImportantASTNodeType.ArgList && self.Attributes.DeclArgumentTypes is not null && self.Attributes.DeclArgumentTypes is List<SmallLangType> NN)
+        self.Attributes = self.Attributes with { FunctionID = ID, DeclArgumentTypes = Functions.Values.GetSignature(ID).ArgTypes, TypeOfExpression = RetType };
+        if (self.Children.Count == 2 && self.Children[^1].NodeType == ImportantASTNodeType.ArgList && Self.DeclArgumentTypes is not null && Self.DeclArgumentTypes is List<SmallLangType> NN)
         {
-            var x = self.Children[^1].Children.Zip(NN).Where(x => x.First.Attributes.TypeOfExpression is not null).Where(x => x.First.Attributes.TypeOfExpression != x.Second).Select(x => new TypeErrorException(Expected: x.Second, Actual: x.First.Attributes.TypeOfExpression!, x.First.GetLine()));
+            var x = self.Children[^1].Children.Zip(NN).Where(x => x.First.TypeOfExpression is not null).Where(x => x.First.TypeOfExpression != x.Second).Select(x => new TypeErrorException(Expected: x.Second, Actual: x.First.TypeOfExpression!, x.First.GetLine()));
             //TODO: Log all of x
             if (x.Any())
             {
@@ -140,11 +144,11 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
 
         self.Data!.TT switch
         {
-            TokenType.String => self.Data.Literal.Length > 3 ? TypeData.Data.StringTypeCode : TypeData.Data.CharTypeCode,
-            TokenType.TrueLiteral => TypeData.Data.BooleanTypeCode,
-            TokenType.FalseLiteral => TypeData.Data.BooleanTypeCode,
-            TokenType.Number => self.Data.Literal.Contains('.') ? TypeData.Data.FloatTypeCode : TypeData.Data.IntTypeCode,
-            TokenType.Identifier => self.Attributes.VariableName is null ? null : VariableNameToType[self.Attributes.VariableName],
+            TokenType.String => self.Data.Literal.Length > 3 ? TypeData.String : TypeData.Char,
+            TokenType.TrueLiteral => TypeData.Bool,
+            TokenType.FalseLiteral => TypeData.Bool,
+            TokenType.Number => self.Data.Literal.Contains('.') ? TypeData.Float : TypeData.Int,
+            TokenType.Identifier => Self.VariableName is null ? null : VariableNameToType[Self.VariableName],
             _ => throw new Exception($"Unknown primary type {self.Data.TT}"),
         },
             VariableName = new(self.Data.Lexeme),
@@ -153,3 +157,4 @@ public class AttributeVisitor : IDynamicASTVisitor<ImportantASTNodeType, Attribu
         return Changed(oldattr, self.Attributes);
     }
 }
+#endif

@@ -11,7 +11,18 @@ namespace SmallLang.Parser;
 
 public partial class SmallLangParser
 {
-
+    TOut WrapFunction<TOut, TIn>(Func<TIn, TOut> Wrapped, TIn Input, string Name)
+    {
+        try
+        {
+            return Wrapped(Input);
+        }
+        catch
+        {
+            Console.WriteLine($"Exception in NodeHandler {Name}");
+            throw;
+        }
+    }
     T TryCast<T>(NodeType Node) where T : class, NodeType
     {
         if (Node is T) return (T)Node;

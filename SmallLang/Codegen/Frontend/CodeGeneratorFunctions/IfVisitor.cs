@@ -1,60 +1,63 @@
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static Opcode;
 internal static class IfVisitor
 {
-    public static void Visit(Node Self, CodeGenerator Driver)
+    public static void Visit(IfNode Self, CodeGenerator Driver)
     {
-        Driver.SETCHUNK();
+
         //[ExpressionStatementCombined+, Else as statement?]
-        var ESC = Self.Children.Where(x => x.NodeType == ImportantASTNodeType.ExprStatementCombined);
-        var Expressions = ESC.Select(x => x.Children[0]).ToArray();
-        var Statements = ESC.Select(x => x.Children[1]).ToArray();
-        Node? Else = ESC.Count() < Self.Children.Count ? Self.Children[^1] : null;
-        int Length = Self.Children.Count - (Else is null ? 0 : 1);
-        //ENTERING CHUNK CHUNK0
-        if (Else is null)
+        var ESC = Self.ExprStatementCombineds.ToArray();
+        var Expressions = ESC.Select(x => x.Expression).ToArray();
+        var Statements = ESC.Select(x => x.Section).ToArray();
+        int CondReg = Driver.GetRegisters((int)TypeData.Bool.Size).First();
+
+        Driver.EnteringChunk(() =>
         {
-            Driver.Emit<int, int>(IFNE, Driver.ACHUNK(0), Length);
-        }
-        else
+            Driver.Emit(HighLevelOperation.IfElse
+            (
+                StartingBlockID: 1,
+                NumberOfCases: ESC.Length,
+                ElseBlock: ESC.Length * 2 + 1,
+                NextBlock: ESC.Length * 2 + 2,
+                ConditionStoringRegister: CondReg,
+                ConditionTypeWidth: TypeData.Bool.Size
+            ));
+        });
+
+        for (int i = 1; i <= ESC.Length; i++)
         {
-            Driver.Emit<int, int>(IFELSE, Driver.ACHUNK(0), Length);
+            Driver.NewChunk(i * 2 - 1, () =>
+            {
+                Driver.Cast(Expressions[i], TypeData.Bool);
+                Driver.Emit(HighLevelOperation.LoadFromStack(CondReg, TypeData.Bool.Size));
+            });
+
+            Driver.NewChunk(i * 2 - 1, () =>
+            {
+                Driver.Exec(Statements[i]);
+            });
         }
 
-        for (int i = 1; i <= Length; i++)
+        Driver.NewChunk(ESC.Length * 2 + 1, () =>
         {
+            if (Self.Else is null)
+            {
+                Driver.Emit(HighLevelOperation.NOp());
+            }
+            else
+            {
+                Driver.Exec(Self.Else);
+            }
+        });
 
-            //CHUNK [i * 2 - 1]
-            Driver.NewChunk();
-            Driver.Cast(Expressions[i], TypeData.Data.BooleanTypeCode);
-
-
-            //CHUNK [i * 2]
-            Driver.NewChunk();
-            Driver.Exec(Statements[i]);
-        }
-        if (Else is null)
+        Driver.NewChunk(ESC.Length * 2 + 2, () =>
         {
-
-            //CHUNK [i * 2 + 1]
-            Driver.NewChunk();
-            //Next
-        }
-        else
-        {
-
-            //CHUNK [i * 2 + 1]
-            Driver.NewChunk();
-            Driver.Exec(Else);
-
-            //CHUNK [i * 2 + 2]
-            Driver.NewChunk();
-            //next
-        }
+            Driver.Next();
+        });
     }
 
 }

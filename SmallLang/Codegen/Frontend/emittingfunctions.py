@@ -5,7 +5,7 @@ from typing import Callable
 def generate_emitting_functions(amount_of_generics: int = 5) -> None:
     module_path = Path(os.path.dirname(__file__))
 
-    emitting_functions_file_path = Path(module_path / "CodeGenerator__emittingfunctions.cs")
+    emitting_functions_file_path = Path(module_path / "generated.CodeGenerator__emittingfunctions.cs")
 
     with open(emitting_functions_file_path, "w") as emitting_functions_file:
         output = (

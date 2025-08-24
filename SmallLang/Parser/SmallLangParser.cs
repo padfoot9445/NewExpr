@@ -102,12 +102,12 @@ public partial class SmallLangParser
 
     [Production($"{nameof(NTSwitchBody)}: {nameof(NTExpression)} Colon [d] {nameof(NTStatement)}")]
     public NodeType NTSwitchBody(NodeType AExpr, NodeType AStatement) => new ExprSectionCombinedNode(TryCast<ComparisonExpressionNode>(AExpr), TryCast<SectionNode>(AStatement));
-    [Production($"{nameof(NTFunction)}: {nameof(NTType)} Identifier OpenParen [d] {nameof(NTTypeAndIdentifierCSV)}? CloseParen [d] {nameof(NTStatement)}")]
-    public NodeType NTFunction(NodeType AType, LyToken Ident, ValueOption<NodeType> TICSV, NodeType Statement) => new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType), TryCast<TypeAndIdentifierCSVNode>(TICSV), TryCast<SectionNode>(Statement));
-    [Production($"{nameof(NTTypeAndIdentifierCSV)}: {nameof(NTTypeAndIdentifierCSVElement)} (Comma [d] {nameof(NTTypeAndIdentifierCSV)})*")]
-    public NodeType NTTypeAndIdentifierCSV(NodeType Element, List<Group<TokenType, NodeType>> Prime) => new TypeAndIdentifierCSVNode([TryCast<TypeAndIdentifierCSVElementNode>(Element), .. Prime.Select(x => TryCast<TypeAndIdentifierCSVElementNode>(x.Items.First().Value))]);
-    [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: {nameof(NTFunctionArgDeclModifiersCombined)} {nameof(NTType)} Identifier")]
-    public NodeType NTTypeAndIdentifierCSVElement(NodeType Modifiers, NodeType AType, LyToken Ident) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers), TryCast<ITypeNode>(AType));
+    [Production($"{nameof(NTFunction)}: {nameof(NTType)} Identifier OpenParen [d] {nameof(NTTypeAndIdentifierCSV)} CloseParen [d] {nameof(NTStatement)}")]
+    public NodeType NTFunction(NodeType AType, LyToken Ident, NodeType TICSV, NodeType Statement) => new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType), TryCast<TypeAndIdentifierCSVNode>(TICSV), TryCast<SectionNode>(Statement));
+    [Production($"{nameof(NTTypeAndIdentifierCSV)}: {nameof(NTTypeAndIdentifierCSVElement)}*")]
+    public NodeType NTTypeAndIdentifierCSV(List<NodeType> Prime) => new TypeAndIdentifierCSVNode(Prime.Select(TryCast<TypeAndIdentifierCSVElementNode>).ToList());
+    [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: Comma? {nameof(NTFunctionArgDeclModifiersCombined)} {nameof(NTType)} Identifier")]
+    public NodeType NTTypeAndIdentifierCSVElement(LyToken _, NodeType Modifiers, NodeType AType, LyToken Ident) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers), TryCast<ITypeNode>(AType));
     [Production($"{nameof(NTBlock)}: OpenCurly [d] {nameof(NTSection)} CloseCurly [d]")]
     public NodeType NTBlock(NodeType ASection) => ASection;
     [Production($"{nameof(NTExpression)}: {nameof(NTAliasExpr)}")]

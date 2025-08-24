@@ -83,19 +83,19 @@ public partial class SmallLangParser
     public NodeType NTLoopLabel(LyToken ident) => new LoopLabelNode(FromToken(ident));
     [Production($"{nameof(NTForLoop)}: For [d] OpenParen [d] {nameof(NTExpression)} Semicolon [d] {nameof(NTExpression)} Semicolon [d] {nameof(NTExpression)} CloseParen [d] {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
     public NodeType NTForLoop(NodeType Init, NodeType Condition, NodeType Step, ValueOption<NodeType> LoopLabel, NodeType Statement, ValueOption<NodeType> Else) => new ForNode(
-        TryCast<IExpressionNode>(Init),
-        TryCast<IExpressionNode>(Condition),
-        TryCast<IExpressionNode>(Step),
-        TryCast<LoopLabelNode>(LoopLabel),
+        TryCast<IExpressionNode>(Init, nameof(NTForLoop)),
+        TryCast<IExpressionNode>(Condition, nameof(NTForLoop)),
+        TryCast<IExpressionNode>(Step, nameof(NTForLoop)),
+        TryCast<LoopLabelNode>(LoopLabel, nameof(NTForLoop)),
         ToSection<IStatementNode>(Statement, nameof(NTForLoop)),
-        TryCast<ElseNode>(Else)
+        TryCast<ElseNode>(Else, nameof(NTForLoop))
     );
     [Production($"{nameof(NTWhileLoop)}: While [d] OpenParen [d] {nameof(NTExpression)} CloseParen [d] {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
     public NodeType NTWhileLoop(NodeType Condition, ValueOption<NodeType> LoopLabel, NodeType Statement, ValueOption<NodeType> Else) => new WhileNode(
-        TryCast<IExpressionNode>(Condition),
-        TryCast<LoopLabelNode>(LoopLabel),
+        TryCast<IExpressionNode>(Condition, nameof(NTWhileLoop)),
+        TryCast<LoopLabelNode>(LoopLabel, nameof(NTWhileLoop)),
         ToSection<IStatementNode>(Statement, nameof(NTWhileLoop)),
-        TryCast<ElseNode>(Else)
+        TryCast<ElseNode>(Else, nameof(NTWhileLoop))
     );
     [Production($"{nameof(NTCond)}: [{nameof(NTSwitch)} | {nameof(NTIf)}]")]
     public NodeType NTCond(NodeType C) => C;
@@ -127,6 +127,7 @@ public partial class SmallLangParser
         TryCast<ComparisonExpressionNode>(AExpression), ASwitchBody.Select(TryCast<ExprSectionCombinedNode>).ToList());
 
     [Production($"{nameof(NTSwitchBody)}: {nameof(NTExpression)} Colon [d] {nameof(NTStatement)}")]
+    public NodeType NTSwitchBody(NodeType AExpr, NodeType AStatement) => new ExprSectionCombinedNode(TryCast<ComparisonExpressionNode>(AExpr, nameof(NTSwitchBody)),
     ToSection<IStatementNode>(AStatement, nameof(NTSwitchBody)));
     [Production($"{nameof(NTFunction)}: {nameof(NTType)} Identifier OpenParen [d] {nameof(NTTypeAndIdentifierCSV)} CloseParen [d] {nameof(NTStatement)}")]
     public NodeType NTFunction(NodeType AType, LyToken Ident, NodeType TICSV, NodeType Statement) => new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType, nameof(NTFunction)), TryCast<TypeAndIdentifierCSVNode>(TICSV, nameof(NTFunction)), ToSection<IStatementNode>(Statement, nameof(NTFunction)));

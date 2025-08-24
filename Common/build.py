@@ -133,7 +133,6 @@ def main():
 
 
     #delete old files
-    delete_out = [True]
     time_thread("Delete-Generated-Files", delete_files, do_clean_flag, working_directory)
 
 
@@ -208,7 +207,6 @@ def main():
                 time_command(command, sys.stdout, msg)
 
 
-    build_code = "\033[092m\033[1m" if success else f"\033[31m{BOLD}"
     color = (GREEN if success else RED) + BOLD
     if success:
         print(f"{BOLD}{color}INFO{END}:  {color}{steps_taken - ignored}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")

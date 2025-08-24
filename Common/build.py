@@ -24,7 +24,7 @@ YELLOW = '\033[93m'
 def mutate_command(src: list[Command], srcindex: int, val: list[str | Path] | str | bool = False, mutindex: int=2):
     src[srcindex] = cast(Command, tuple(v if mutindex != i else val for i, v in enumerate(src[srcindex])))
 
-def custom_run(command: Any, path:Any, out: list[bool]):
+def custom_run(out: list[bool], command: Any, path:Any):
     try:
         subprocess.run(command, check=True, stdout=path)
     except subprocess.CalledProcessError:
@@ -38,7 +38,7 @@ def time_thread(name: str, work_function: Callable[..., Any], *args: Any, **kwar
     
     out = [True]
 
-    work_thread = Thread(target=work_function, args=[*list(args), out], kwargs=kwargs)
+    work_thread = Thread(target=work_function, args=[out, *list(args)], kwargs=kwargs)
     work_thread.start()
 
     start_time = time()
@@ -76,7 +76,7 @@ def make_dir(dst: Path):
     print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}\033[4:5m{dst}{END}")
     
 
-def delete_files(clean: bool, out: list[bool]):
+def delete_files(out: list[bool], clean: bool):
     try:
         for dirpath, _, filenames in os.walk(working_directory):
             for i in filenames:

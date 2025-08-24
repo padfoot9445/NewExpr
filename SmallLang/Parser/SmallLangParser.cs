@@ -47,6 +47,13 @@ public partial class SmallLangParser
         return null;
     }
 
+    SectionNode ToSection<T>(NodeType Node, string HandlerName) where T : class, IStatementNode
+    {
+        if (Node is SectionNode sectionNode) return sectionNode;
+        else if (Node is T Statement) return new([Statement]);
+        else throw new Exception($"Tried to cast Node to Section in {HandlerName}. Expected : {typeof(T)} or SectionNode but got {Node.GetType()}");
+    }
+
     IToken FromToken(LyToken t) => t.IsEmpty ? throw new Exception($"Token {t} was empty") : IToken.NewToken(t.TokenID, t.Value, t.Position.Index, null, t.Position.Line);
     IToken? TryFromToken(LyToken t) => t.IsEmpty ? null : FromToken(t);
     [Production($"{nameof(NTSection)}: {nameof(NTStatement)}*")]

@@ -124,10 +124,10 @@ public partial class SmallLangParser
     public NodeType NTElse(NodeType AStatement) => new ElseNode(TryCast<IStatementNode>(AStatement, nameof(NTElse))); //passthrough
     [Production($"{nameof(NTSwitch)}: Switch [d] OpenParen [d] {nameof(NTExpression)} CloseParen [d] OpenCurly [d] {nameof(NTSwitchBody)}* CloseCurly [d]")]
     public NodeType NTSwitch(NodeType AExpression, List<NodeType> ASwitchBody) => new SwitchNode(
-        TryCast<ComparisonExpressionNode>(AExpression), ASwitchBody.Select(TryCast<ExprSectionCombinedNode>).ToList());
+        TryCast<IExpressionNode>(AExpression), ASwitchBody.Select(TryCast<ExprSectionCombinedNode>).ToList());
 
     [Production($"{nameof(NTSwitchBody)}: {nameof(NTExpression)} Colon [d] {nameof(NTStatement)}")]
-    public NodeType NTSwitchBody(NodeType AExpr, NodeType AStatement) => new ExprSectionCombinedNode(TryCast<ComparisonExpressionNode>(AExpr, nameof(NTSwitchBody)),
+    public NodeType NTSwitchBody(NodeType AExpr, NodeType AStatement) => new ExprSectionCombinedNode(TryCast<IExpressionNode>(AExpr, nameof(NTSwitchBody)),
     ToSection<IStatementNode>(AStatement, nameof(NTSwitchBody)));
     [Production($"{nameof(NTFunction)}: {nameof(NTType)} Identifier OpenParen [d] {nameof(NTTypeAndIdentifierCSV)} CloseParen [d] {nameof(NTStatement)}")]
     public NodeType NTFunction(NodeType AType, LyToken Ident, NodeType TICSV, NodeType Statement) => new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType, nameof(NTFunction)), TryCast<TypeAndIdentifierCSVNode>(TICSV, nameof(NTFunction)), ToSection<IStatementNode>(Statement, nameof(NTFunction)));

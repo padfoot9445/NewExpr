@@ -1,55 +1,66 @@
 using Common.Dispatchers;
-using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryParserSubFunctions;
+using Common.Tokens;
+using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFunctions;
 
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static ImportantASTNodeType;
-using static Opcode;
 
-internal static partial class PrimaryVisitor
+internal static class PrimaryVisitor
 {
-    static void ParseIdentifier(Node self, CodeGenerator Driver)
+    internal static void VisitIdentifier(IdentifierNode self, CodeGenerator Driver)
     {
-        Driver.Emit<int, int>(DeloadVar, Driver.Data.VariableSlots.KeyToPointerStartMap[self.Attributes.VariableName!], Driver.Data.VariableSlots.KeyToNumberOfCellsUsed[self.Attributes.VariableName!]);
+        Driver.Emit(HighLevelOperation.PushFromRegister(Driver.Data.GetVariableStartRegister(self.VariableName!), Driver.Data.GetVariableWidth(self.VariableName!)));
     }
-    static void ParseValNum(Node self, CodeGenerator Driver) => ValNumParser.Parse(self, Driver);
-    internal static void Visit(Node Self, CodeGenerator Driver)
+    internal static void Visit(PrimaryNode Self, CodeGenerator Driver)
     {
-        Driver.SETCHUNK();
-        if (Self.NodeType == Identifier) { ParseIdentifier(Self, Driver); return; }
-        else
+        Driver.EnteringChunk(() =>
         {
+
             Self.Switch(
-            x => x.Attributes.TypeOfExpression!,
+            x => x.TypeOfExpression!,
             (x, y) => x == y,
-            (TypeData.Data.StringTypeCode, ParseString),
-            (TypeData.Data.CharTypeCode, ParseValNum),
-            (TypeData.Data.FloatTypeCode, ParseValNum),
-            (TypeData.Data.IntTypeCode, ParseValNum),
-            (TypeData.Data.DoubleTypeCode, ParseValNum),
-            (TypeData.Data.ByteTypeCode, ParseValNum),
-            (TypeData.Data.LongTypeCode, ParseValNum),
-            (TypeData.Data.NumberTypeCode, ParsePtrNum),
-            (TypeData.Data.LongintTypeCode, ParsePtrNum),
-            (TypeData.Data.RationalTypeCode, ParsePtrNum),
-            (TypeData.Data.BooleanTypeCode, ParseBool),
-            (TypeData.Data.ArrayTypeCode, ParseCollection),
-            (TypeData.Data.ListTypeCode, ParseCollection),
-            (TypeData.Data.SetTypeCode, ParseCollection),
-            (TypeData.Data.DictTypeCode, ParseCollection)
+            (TypeData.String, VisitString),
+            (TypeData.Char, ValNumVisitor.Visit),
+            (TypeData.Float, ValNumVisitor.Visit),
+            (TypeData.Int, ValNumVisitor.Visit),
+            (TypeData.Double, ValNumVisitor.Visit),
+            (TypeData.Byte, ValNumVisitor.Visit),
+            (TypeData.Long, ValNumVisitor.Visit),
+            (TypeData.Number, PtrNumVisitor.Visit),
+            (TypeData.Longint, PtrNumVisitor.Visit),
+            (TypeData.Rational, PtrNumVisitor.Visit),
+            (TypeData.Bool, VisitBool),
+            (TypeData.Array, VisitCollection),
+            (TypeData.List, VisitCollection),
+            (TypeData.Set, VisitCollection),
+            (TypeData.Dict, VisitCollection)
         )
         (Self, Driver);
-        }
 
-
-
-        void ParsePtrNum(Node self, CodeGenerator Driver) => throw new NotImplementedException();
-        void ParseBool(Node self, CodeGenerator Driver) => throw new NotImplementedException();
-        void ParseString(Node self, CodeGenerator Driver) => throw new NotImplementedException();
-        void ParseCollection(Node self, CodeGenerator Driver) => throw new NotImplementedException();
-
+            Driver.Next();
+        });
     }
+
+    private static void VisitBool(PrimaryNode self, CodeGenerator Driver)
+    {
+        Driver.Emit(HighLevelOperation.Push<BackingNumberType>(self.Switch(x => x.Data!.TT, (x, y) => x == y, (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue))));
+    }
+    private static void VisitString(PrimaryNode self, CodeGenerator Driver)
+    {
+        List<byte> Chars =
+        [
+            TypeData.String.Value.Single(),
+                .. ((GenericNumberWrapper<int>)self.Data!.Lexeme.Length).Value,
+                .. self.Data!.Lexeme.Select(x => (byte)x)
+        ];
+
+        var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
+        Driver.Emit(HighLevelOperation.Push(Ptr));
+    }
+    private static void VisitCollection(PrimaryNode self, CodeGenerator Driver) => throw new NotSupportedException("Shouldn't have Collection Primaries");
+
 }

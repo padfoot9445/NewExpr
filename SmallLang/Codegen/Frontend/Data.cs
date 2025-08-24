@@ -6,8 +6,34 @@ namespace SmallLang.CodeGen.Frontend;
 
 public record class Data
 {
-    public Chunks Sections { get; init; } = new();
-    public StaticallyAllocatedDataArea<VariableName, BackingNumberType> VariableSlots = new();
+    public Data()
+    {
+        ChunkStack.Push(Sections);
+    }
+    public TreeChunk Sections { get; init; } = new(new Chunk(), []);
+    public TreeChunk CurrentChunk => ChunkStack.Peek();
+    private Stack<TreeChunk> ChunkStack { get; init; } = new();
     public StaticallyAllocatedDataArea<VariableName, BackingNumberType> StaticDataArea = new();
-    public Dictionary<LoopGUID, (GenericNumberWrapper<int> ContinueDSTChunk, GenericNumberWrapper<int> BreakDSTChunk)> LoopData = new();
+    public Dictionary<LoopGUID, (int, int, int, int, int)> LoopData = new();
+
+    internal void NewChunk()
+    {
+        var chunk = new TreeChunk(new Chunk(), []);
+        CurrentChunk.Children.Add(chunk);
+        ChunkStack.Push(chunk);
+    }
+    internal void Rewind()
+    {
+        ChunkStack.Pop();
+    }
+    internal void Emit(HighLevelOperation Op)
+    {
+        CurrentChunk.Self.Add(Op);
+    }
+
+    internal int GetVariableStartRegister(VariableName Variable) => throw new NotImplementedException();
+    internal int GetVariableWidth(VariableName Variable) => throw new NotImplementedException();
+    internal int AllocateRegisters(VariableName Variable, int width) => throw new NotImplementedException();
+    private int NextRegister = 1;
+    public int GetRegister() => NextRegister++;
 }

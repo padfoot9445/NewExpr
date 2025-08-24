@@ -1,0 +1,8 @@
+files: []
+generators relative path: ./Common/CodeGenerationScripts
+
+configuration directory: ./Configurations
+
+child projects:
+  - SmallLang/SmallLang.yaml
+  - SmallLangTest/SmallLangTest.yaml

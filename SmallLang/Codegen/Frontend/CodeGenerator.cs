@@ -1,76 +1,81 @@
 using System.Diagnostics;
+using System.Numerics;
 using Common.Dispatchers;
 using Common.LinearIR;
 using Common.Metadata;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-using NodeType = SmallLang.IR.AST.ImportantASTNodeType;
 namespace SmallLang.CodeGen.Frontend;
 
-public partial class CodeGenerator(Node RootNode)
+public partial class CodeGenerator(SmallLangNode RootNode)
 {
-    private const byte TrueValue = 0xFF;
-    private const byte FalseValue = 0;
-    int CurrentChunkPtr => Data.Sections.CurrentChunkPtr;
-    internal void Cast(Node self, SmallLangType dstType)
+    internal const BackingNumberType TrueValue = BackingNumberType.MaxValue;
+    internal const BackingNumberType FalseValue = BackingNumberType.MinValue;
+    internal void Cast<T>(T self, SmallLangType dstType)
+    where T : IHasAttributeTypeOfExpression, ISmallLangNode
     {
-        if (self.Attributes.TypeLiteralType! == dstType) Exec(self);
+        if (self.TypeOfExpression! == dstType) Exec(self);
         throw new NotImplementedException();
     }
-    internal void Emit(Operation<Opcode, BackingNumberType> Op)
-    {
-        Data.Sections.CurrentChunk.Add(Op);
-    }
-    internal void Emit(Opcode op, params IOperationArgument<byte>[] args)
-    {
-        Emit(new Operation<Opcode, byte>((OpcodeWrapper)op, args));
-    }
-    internal void NewChunk() => Data.Sections.NewChunk();
-    int ParseBeginningChunk = 0;
-    internal void SETCHUNK() => ParseBeginningChunk = CurrentChunkPtr;
-    internal GenericNumberWrapper<int> RCHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(CurrentChunkPtr + ChunkRelOffset);
 
-    internal GenericNumberWrapper<int> ACHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(ParseBeginningChunk + ChunkRelOffset);
     internal Data Data { get; init; } = new();
     public Data Parse()
     {
         Exec(RootNode);
         return Data;
     }
-    internal void Verify(Node node, ImportantASTNodeType Expected)
+    static internal void Verify<T>(ISmallLangNode node) where T : ISmallLangNode
     {
-        Debug.Assert(node.NodeType == Expected);
+        Debug.Assert(node is T);
     }
-    internal void Exec(Node node) =>
+    internal void Exec(ISmallLangNode node)
+    {
+        var CurrentChunk = Data.CurrentChunk;
         DynamicDispatch(node)(node, this);
-    static Action<Node, CodeGenerator> DynamicDispatch(Node node) =>
-        node.Switch(
-                Accessor: x => x.NodeType,
-                Comparer: (x, y) => x == y,
+    }
 
+    internal int[] GetRegisters(int Width = 1) => Enumerable.Range(0, Width).Select(_ => Data.GetRegister()).ToArray();
+    internal int[] GetRegisters<T>(T Width) where T : INumber<T>
+    {
+        return GetRegisters(int.CreateTruncating(Width));
+    }
+    internal int[] GetRegisters(SmallLangType Type) => GetRegisters(Type.Size);
+    internal int[] GetRegisters(IHasAttributeTypeOfExpression Node) => GetRegisters((int)Node.TypeOfExpression!.Size);
+    internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
 
-                (NodeType.Section, SectionVisitor.Visit),
-                (NodeType.Identifier, PrimaryVisitor.Visit),
-                (NodeType.Function, FunctionVisitor.Visit),
-                (NodeType.For, ForVisitor.Visit),
-                (NodeType.While, WhileVisitor.Visit),
-                (NodeType.Return, ReturnVisitor.Visit),
-                (NodeType.LoopCTRL, LoopCtrlVisitor.Visit),
-                (NodeType.Switch, SwitchVisitor.Visit),
-                (NodeType.If, IfVisitor.Visit),
-                (NodeType.Primary, PrimaryVisitor.Visit)
+    (Func<ISmallLangNode, bool>, Action<ISmallLangNode, CodeGenerator>) GetCase<T>(Action<T, CodeGenerator> Visitor)
+    where T : ISmallLangNode
+    {
+        return (x => x is T, VisitFunctionWrapper(Visitor));
+    }
 
+    Action<ISmallLangNode, CodeGenerator> DynamicDispatch(ISmallLangNode node) =>
+        node.Dispatch(
+                Accessor: x => x,
+
+                GetCase<SectionNode>(SectionVisitor.Visit),
+                GetCase<IdentifierNode>(PrimaryVisitor.VisitIdentifier),
+                GetCase<FunctionNode>(FunctionVisitor.Visit),
+                GetCase<ForNode>(ForVisitor.Visit),
+                GetCase<WhileNode>(WhileVisitor.Visit),
+                GetCase<ReturnNode>(ReturnVisitor.Visit),
+                GetCase<LoopCTRLNode>(LoopCtrlVisitor.Visit),
+                GetCase<SwitchNode>(SwitchVisitor.Visit),
+                GetCase<IfNode>(IfVisitor.Visit),
+                GetCase<PrimaryNode>(PrimaryVisitor.Visit),
+                GetCase<DeclarationNode>(DeclarationVisitor.Visit),
+                GetCase<FactorialExpressionNode>(FactorialExpressionVisitor.Visit),
+                GetCase<ElseNode>(ElseVisitor.Visit),
+                GetCase<BinaryExpressionNode>(BinaryExpressionVisitor.Visit),
+                GetCase<ComparisonExpressionNode>(ComparisonExpressionVisitor.Visit),
+                GetCase<CopyExprNode>(CopyExpressionVisitor.Visit),
+                GetCase<IndexNode>(IndexVisitor.Visit),
+                GetCase<FunctionCallNode>(FunctionCallVisitor.Visit),
+                GetCase<UnaryExpressionNode>(UnaryExpressionVisitor.Visit),
+                GetCase<NewExprNode>(NewExpressionVisitor.Visit)
 
             );
-    internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)
-    {
-        var ptr = Data.StaticDataArea.Allocate(Area.Count());
-        foreach (var i in Area)
-        {
-            Data.StaticDataArea.Store.Add(i);
-        }
-        return ptr;
-    }
 }

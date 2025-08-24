@@ -1,0 +1,272 @@
+HighLevelOpcodes:
+  namespace: SmallLang.IR.LinearIR
+  usings: [Common.LinearIR, System.Numerics]
+  generator: highlevelopcodes.py
+  dst: IR/LinearIR/Generated/
+  display name: "Generate-High-Level-Opcodes"
+
+  name:
+    enum: HighLevelOpcode
+    record: HighLevelOperation
+
+  data:
+    - name: NOp
+      arguments: []
+      comment: NOp
+    - name: Jump
+      arguments:
+        - name: Chunk0
+      comment: Jumps unconditionally to the chunk given by the chunk-id
+
+    - name: BranchZero
+      arguments:
+        - name: ChunkIf0
+        - name: ChunkIfNot0
+      comment: Jumps to ChunkIf0 if the value at the top of the stack is 0, else ChunkIfNot0
+
+    - name: Return
+      arguments: 
+        - name: BeginningRegister
+        - name: Width
+      comment: Returns control to the calling chunk. Return values begin at provided register.
+
+    - name: Switch
+      arguments:
+        - name: Expression1Register
+        - name: Length
+        - name: StartingIndex
+        - name: TypeCode
+      comment: >
+        SWITCH Length StartIndex, select the correct instruction(s) based on the TypeCode.
+        Stores all the computed expressions in contiguous registers, and the expression being switched on goes in Expression1Register
+
+
+    - name: IfElse
+      arguments:
+        - name: StartingBlockID
+        - name: NumberOfCases
+        - name: ElseBlock
+        - name: NextBlock
+        - name: ConditionStoringRegister
+        - name: ConditionTypeWidth
+      comment: >
+        StartingBlockID is the ID of the first condition.
+        ConditionStoringRegister is the register which will be used to store the boolean result of each comparison.
+        NumberOfCases is the number of conditions in the if-elseif-else chain.
+        For i in [1...Length]:
+          run CHUNKS[i * 2 - 1].
+          If (POP) is TRUE:
+            run CHUNKS[i * 2].
+            jump to CHUNKS[Length * 2 + 2].
+        Finally jump to CHUNKS[Length * 2 + 1].
+
+
+    - name: Push
+      arguments:
+        - name: Value
+      comment: Pushes an inline constant number onto the stack.
+
+
+    - name: Factorial
+      arguments:
+        - name: SrcRegisterStart
+        - name: DstRegisterStart
+        - name: Type
+        - name: ExclamationCount
+      comment: Computes factorial. Supports multiple exclamation marks.
+    
+    - name: Break
+      arguments:
+        - name: Condition
+        - name: Epilogue
+        - name: Main
+        - name: Else
+        - name: Next
+      comment: Break jumps to Next
+    - name: Continue
+      arguments:
+        - name: Condition
+        - name: Epilogue
+        - name: Main
+        - name: Else
+        - name: Next
+      comment: Continue takes over control of the loop as provided.
+    - name: Loop
+      arguments:
+        - name: Condition
+        - name: Epilogue
+        - name: Main
+        - name: Else
+        - name: Next
+      comment: >
+        runs the loop. 
+          while(Condition results in top of stack being true)
+            run Main
+            run Epilogue
+          
+          if loop terminated naturally:
+            run Else
+          
+          run Next
+    - name: LoadFromStack
+      arguments:
+        - name: DestinationRegister
+        - name: Width
+      comment: Loads a value from the stack into the registers beginning at DestinationRegister
+    - name: PushFromRegister
+      arguments:
+        - name: SourceRegister
+        - name: Width
+      comment: Pushes a value onto the stack from the registers beginning at SourceRegister
+    - name: MoveRegister
+      arguments:
+        - name: SourceRegisterBeginning
+        - name: DestinationRegisterBeginning
+        - name: Width
+      comment: Moves a value of width Width from the registers beginning SourceRegisterBeginning to the registers beginning DestinationRegisterBeginning
+    - name: CheckVectorLikeBound
+      arguments:
+        - name: VectorLikePointer
+        - name: AttemptedIndexValue
+      comment: takes a register containing a pointer to a vectorlike, and four registers beginning AttemptedIndexValue which contain the value with which we are attempting to index the vectorlike. Throws a runtime exception if the bounds check fails.
+    - name: IndexVectorLike
+      arguments:
+        - name: VectorLikePointer
+        - name: Index
+        - name: DstRegister
+      comment:
+        Returns a pointer to the indexed slot of the vectorlike
+    - name: StoreToMemory
+      arguments:
+        - name: SrcRegisterStart
+        - name: DstPtrStart
+        - name: Width
+      comment:
+        Loads the value from SrcRegister of width Width to the memory segment beginning DstPtrStart
+    - name: LoadFromMemory
+      arguments:
+        - name: SrcPointerStart
+        - name: DstRegisterStart
+        - name: Width
+      comment:
+        Loads the value contained at the pointer stored in r@SrcPointerStart into r@DstRegisterStart
+    - name: LoadHashMap
+      arguments:
+        - name: KeyRegisterStart
+        - name: MapPointerStart
+        - name: ValueRegisterStart
+        - name: KeyType
+        - name: ValueType
+      comment:
+        Loads the value in ValueRegisterStart into the Map pointed to by MapPointerStart at the key KeyRegisterStart
+    - name: QueryHashMap
+      arguments:
+        - name: KeyRegisterStart
+        - name: MapPointerStart
+        - name: DstRegisterStart
+        - name: KeyType
+        - name: ValueType
+      comment:
+        Loads the appropriate value in the hashmap to the registers beginning DstRegisterStart
+
+    - name: LogicalImplies
+      arguments: &BinOpArguments
+        - name: SrcRegister1
+        - name: SrcRegister2
+        - name: DstRegister1
+        - name: GCType
+      comment: &BinOpComment SrcRegister1 Op SrcRegister2 -> DstRegister1. GCType is the Greatest Common Type (GCType), and is also the type of the binop expression
+    - name: LogicalOr
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: LogicalXor
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: LogicalAnd
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Addition
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Subtraction
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Multiplication
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Division
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Exponentiation
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseOr
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseXor
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseAnd
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseLeftShift
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseRightShift
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: EqualTo
+      arguments: &ComparisonOperatorArguments
+        - name: SrcRegister1
+        - name: SrcRegister2
+        - name: DstRegister1
+        - name: GCType
+      comment: &ComparisonOperatorComments Compares between two objects of type Type in r@SrcRegister1 and r@SrcRegister2, and places the result of that comparison in r@DstRegister
+    - name: NotEqualTo
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
+    - name: GreaterThan
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
+    - name: GreaterThanOrEqualTo
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
+    - name: LessThan
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
+    - name: LessThanOrEqualTo
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
+    - name: BitwiseNegation
+      arguments: &UnaryExpressionArguments
+        - name: SrcRegister
+        - name: DstRegister
+        - name: Type
+      comment: &UnaryExpressionComment Applies the operation on SrcRegister and puts the result in DstRegister.
+    - name: UnarySubtraction
+      arguments: *UnaryExpressionArguments
+      comment: *UnaryExpressionComment
+    - name: LogicalNot
+      arguments: *UnaryExpressionArguments
+      comment: *UnaryExpressionComment
+
+    - name: BatchAnd
+      arguments:
+        - name: ChunkBegin
+        - name: NumberOfExpressions
+        - name: DstRegister
+      comment:
+        BatchAnd does stuff
+    - name: CopyStruct
+      arguments:
+        - name: SrcRegister
+        - name: DstRegister
+        - name: PointerWidth
+      comment:
+        Copies the struct *SrcRegister to a new memory location and stores the result in *DstRegister
+
+    - name: Call
+      arguments:
+        - name: FunctionID
+      comment:
+        Calls the function FunctionID. Arguments on stack, return on stack.

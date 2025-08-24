@@ -1,15 +1,25 @@
+using Common.Tokens;
+using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
+using SmallLang.IR.Metadata;
+
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static Opcode;
+
+
 internal static class ReturnVisitor
 {
-    public static void Visit(Node Self, CodeGenerator Driver)
+    internal static void Visit(ReturnNode Self, CodeGenerator Driver)
     {
-        //[Expression]
+        Driver.EnteringChunk(() =>
+        {
+            Driver.Cast(Self.Expression, Self.ExpectedReturnType!);
+            var reg = Driver.GetRegisters(1).Single();
+            Driver.Emit(HighLevelOperation.LoadFromStack(reg, Self.ExpectedReturnType!.Size));
+            Driver.Emit(HighLevelOperation.Return(reg, Self.ExpectedReturnType!.Size));
 
-        //CHUNK ENTERING
-        Driver.Exec(Self.Children[0]);
-        Driver.Emit(RET);
+            Driver.Next();
+        });
     }
 }

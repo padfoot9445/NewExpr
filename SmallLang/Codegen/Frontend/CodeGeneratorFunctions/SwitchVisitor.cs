@@ -1,42 +1,46 @@
+using Common.LinearIR;
+using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static Opcode;
 internal static class SwitchVisitor
 {
-    public static void Visit(Node Self, CodeGenerator Driver)
+    public static void Visit(SwitchNode Self, CodeGenerator Driver)
     {
-        Driver.SETCHUNK();
-        Node Expression = Self.Children[0];
-        var Expressions = Self.Children.Skip(1).Select(x => x.Children[0]).ToArray();
-        var Statements = Self.Children.Skip(1).Select(x => x.Children[1]).ToArray();
-        int Length = Self.Children.Count - 1;
 
-        //ENTERING CHUNK CHUNK0
-        Driver.Exec(Expression);
-        Driver.Emit(JMP, Driver.ACHUNK(Length * 2 + 1));
+        var Expressions = Self.ExprStatementCombineds.Select(x => x.Expression).ToList();
+        var Statements = Self.ExprStatementCombineds.Select(x => x.Section).ToList();
+        var Length = Self.ExprStatementCombineds.Count();
+        var ExpressionType = Self.Expression.TypeOfExpression!;
+        List<int> Registers = [Driver.GetRegisters((int)ExpressionType.Size).First(), .. Expressions.Select(_ => Driver.GetRegisters((int)ExpressionType.Size).First())];
+
+        Driver.EnteringChunk(() =>
+        {
+            Driver.Exec(Self.Expression);
+            Driver.Emit(HighLevelOperation.LoadFromStack(Registers[0], ExpressionType.Size));
+            Driver.Emit(HighLevelOperation.Switch<int, int, int, byte>(Registers[0], Length, 1, ExpressionType));
+        });
 
         for (int i = 1; i <= Length; i++)
         {
+            Driver.NewChunk(i * 2 - 1, () =>
+            {
+                Driver.Cast(Expressions[i - 1], ExpressionType);
+                Driver.Emit(HighLevelOperation.LoadFromStack(Registers[i], ExpressionType.Size));
+            });
 
-            //CHUNK [i * 2 - 1]
-            Driver.NewChunk();
-            Driver.Cast(Expressions[i - 1], Expression.Attributes.TypeLiteralType!);
-
-
-            //CHUNK [i * 2]
-            Driver.NewChunk();
-            Driver.Exec(Statements[i - 1]);
+            Driver.NewChunk(i * 2, () =>
+            {
+                Driver.Exec(Statements[i - 1]);
+            });
         }
 
+        Driver.NewChunk(Length * 2 + 1, () =>
+        {
+            Driver.Next();
+        });
 
-        //CHUNK [LENGTH * 2 + 1]
-        Driver.NewChunk();
-        Driver.Emit<int, int, BackingNumberType>(SWITCH, Length, Driver.ACHUNK(0), Expression.Attributes.TypeOfExpression!);
 
-
-        //CHUNK [LENGTH * 2 + 2]
-        Driver.NewChunk();
-        //NEXT
     }
 }

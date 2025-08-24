@@ -264,4 +264,32 @@ public class ParserTest
         Parse(i);
         Assert.DoesNotThrow(() => Parse(i));
     }
+
+
+    [TestCase("1;", TokenType.Number)]
+    [TestCase("\"abc\";", TokenType.String)]
+    [TestCase("\"a\";", TokenType.String)]
+    [TestCase("1.1;", TokenType.Number)]
+    public void Test__Primary__Returns_Correct(string Primary, TokenType Expected)
+    {
+        var res = Parse(Primary);
+        Assert.That(res.Statements.First(), Is.InstanceOf<PrimaryNode>());
+        Assert.That(((PrimaryNode)res.Statements[0]).Data.TT, Is.EqualTo(Expected));
+    }
+
+    [Test]
+    public void Test__Index__Returns_Correct()
+    {
+        var res = Parse("(1 + 1)[x];").Statements.First() as IndexNode;
+        Assert.That(res, Is.Not.Null);
+        Assert.That(res.Expression1, Is.InstanceOf<BinaryExpressionNode>());
+        Assert.That(res.Expression2, Is.InstanceOf<IdentifierNode>());
+    }
+
+    [Test]
+    public void Test__FunctionCall__Returns_Correct()
+    {
+        var res = Parse("foo();").Statements.First() as FunctionCallNode;
+        Assert.That(res, Is.Not.Null);
+    }
 }

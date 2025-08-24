@@ -87,14 +87,14 @@ public partial class SmallLangParser
         TryCast<IExpressionNode>(Condition),
         TryCast<IExpressionNode>(Step),
         TryCast<LoopLabelNode>(LoopLabel),
-        TryCast<SectionNode>(Statement),
+        ToSection<IStatementNode>(Statement, nameof(NTForLoop)),
         TryCast<ElseNode>(Else)
     );
     [Production($"{nameof(NTWhileLoop)}: While [d] OpenParen [d] {nameof(NTExpression)} CloseParen [d] {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
     public NodeType NTWhileLoop(NodeType Condition, ValueOption<NodeType> LoopLabel, NodeType Statement, ValueOption<NodeType> Else) => new WhileNode(
         TryCast<IExpressionNode>(Condition),
         TryCast<LoopLabelNode>(LoopLabel),
-        TryCast<SectionNode>(Statement),
+        ToSection<IStatementNode>(Statement, nameof(NTWhileLoop)),
         TryCast<ElseNode>(Else)
     );
     [Production($"{nameof(NTCond)}: [{nameof(NTSwitch)} | {nameof(NTIf)}]")]
@@ -127,9 +127,9 @@ public partial class SmallLangParser
         TryCast<ComparisonExpressionNode>(AExpression), ASwitchBody.Select(TryCast<ExprSectionCombinedNode>).ToList());
 
     [Production($"{nameof(NTSwitchBody)}: {nameof(NTExpression)} Colon [d] {nameof(NTStatement)}")]
-    public NodeType NTSwitchBody(NodeType AExpr, NodeType AStatement) => new ExprSectionCombinedNode(TryCast<ComparisonExpressionNode>(AExpr), TryCast<SectionNode>(AStatement));
+    ToSection<IStatementNode>(AStatement, nameof(NTSwitchBody)));
     [Production($"{nameof(NTFunction)}: {nameof(NTType)} Identifier OpenParen [d] {nameof(NTTypeAndIdentifierCSV)} CloseParen [d] {nameof(NTStatement)}")]
-    public NodeType NTFunction(NodeType AType, LyToken Ident, NodeType TICSV, NodeType Statement) => new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType), TryCast<TypeAndIdentifierCSVNode>(TICSV), TryCast<SectionNode>(Statement));
+    public NodeType NTFunction(NodeType AType, LyToken Ident, NodeType TICSV, NodeType Statement) => new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType, nameof(NTFunction)), TryCast<TypeAndIdentifierCSVNode>(TICSV, nameof(NTFunction)), ToSection<IStatementNode>(Statement, nameof(NTFunction)));
     [Production($"{nameof(NTTypeAndIdentifierCSV)}: {nameof(NTTypeAndIdentifierCSVElement)}*")]
     public NodeType NTTypeAndIdentifierCSV(List<NodeType> Prime) => new TypeAndIdentifierCSVNode(Prime.Select(TryCast<TypeAndIdentifierCSVElementNode>).ToList());
     [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: Comma? {nameof(NTFunctionArgDeclModifiersCombined)} {nameof(NTType)} Identifier")]

@@ -92,10 +92,10 @@ def delete_files(clean: bool, out: list[bool]):
 if __name__ == "__main__":
 
     working_directory = Path(sys.argv[1] if len(sys.argv) >= 2 and not sys.argv[1].startswith("-") else os.getcwd()).resolve()
+    config_path = Path(sys.argv[2] if len(sys.argv) >= 3 and not sys.argv[2].startswith("-") else working_directory/"config.yaml").resolve()
 
 
-
-    with open(working_directory/"config.yaml") as file_path:
+    with open(config_path) as file_path:
         config = yaml.load(file_path, yaml.Loader)
         configurations_path = working_directory/config["configuration directory"]
         file_paths = config["files"]

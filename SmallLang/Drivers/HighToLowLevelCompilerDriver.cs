@@ -9,9 +9,7 @@ public class HighToLowLevelCompilerDriver
     {
         GetCodeGenerator ??= (x) => new CodeGenerator(x);
         var Ast = new Parser.Parser(Code).Parse<SectionNode>();
-        // var Generator = GetCodeGenerator(Ast);
-        // Generator.Dispatch(Ast)(null, Ast);
-        // return (Generator.Instructions.ToArray(), Generator.StaticData.ToArray());
-        throw new NotImplementedException();
+        var CodeGenerator = GetCodeGenerator(Ast);
+        return CodeGenerator.Parse();
     }
 }

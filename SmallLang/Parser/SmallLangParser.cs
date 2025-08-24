@@ -182,10 +182,10 @@ public partial class SmallLangParser
     }
     [Production($"{nameof(NTNewExpr)}: New [d] {nameof(NTType)} OpenParen [d] {nameof(NTArgList)}? CloseParen [d]")]
     public NodeType NTNewExpr(NodeType AType, ValueOption<NodeType> AArgList) => new NewExprNode(TryCast<ITypeNode>(AType), TryCast<ArgListNode>(AArgList));
-    [Production($"{nameof(NTArgList)}: {nameof(NTArgListElement)} {nameof(NTArgListPrime)}*")]
-    public NodeType NTArgList(NodeType Element, List<NodeType> Elements) => new ArgListNode([TryCast<ArgListElementNode>(Element), .. Elements.Select(TryCast<ArgListElementNode>)]);
-    [Production($"{nameof(NTArgListElement)}: {nameof(NTArgumentLabel)}? {nameof(NTExpression)}")]
-    public NodeType NTArgListElement(ValueOption<NodeType> Label, NodeType Expr) => new ArgListElementNode(TryCast<IExpressionNode>(Expr), TryCast<IdentifierNode>(Label));
+    [Production($"{nameof(NTArgList)}: {nameof(NTArgListElement)}*")]
+    public NodeType NTArgList(List<NodeType> Elements) => new ArgListNode([.. Elements.Select(TryCast<ArgListElementNode>)]);
+    [Production($"{nameof(NTArgListElement)}: Comma? {nameof(NTArgumentLabel)}? {nameof(NTExpression)}")]
+    public NodeType NTArgListElement(LyToken _, ValueOption<NodeType> Label, NodeType Expr) => new ArgListElementNode(TryCast<IExpressionNode>(Expr), TryCast<IdentifierNode>(Label));
     [Production($"{nameof(NTArgListPrime)}: Comma [d] {nameof(NTArgListElement)}")]
     public NodeType NTArgListPrime(NodeType Element) => Element;
     [Production($"{nameof(NTArgumentLabel)}: Identifier Colon [d]")]

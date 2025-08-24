@@ -60,7 +60,7 @@ if __name__ == "__main__":
                     f"if(Data.TT == TokenType.{valid_tt}) return true;"
                     for valid_tt in subnode["valid data types"]
                 ] + [
-                    "return false;"
+                    "return false;" if subnode["has data"] and subnode["check data type"] else "return true;"
                 ],
                 return_type="bool",
                 access_modifier=AccessModifiers.Private
@@ -90,7 +90,7 @@ if __name__ == "__main__":
                                 get_assignment(child_name)
                                 for _, child_name in ctor_children
                             ] + [
-                                f"if (!DataChecker(){"|| !DataValidationFunction()" if subnode["has additional data validation function"] else ""}) throw new Exception(\"Invalid data type submitted\");",
+                                f"if (!DataChecker(){"|| !DataValidationFunction()" if subnode["has additional data validation function"] else ""}) throw new Exception($\"{name}: Invalid data type submitted. {"Was {Data}. " if subnode["has data"] else ""}\");",
                                 f"Children = [{", ".join(child_name if not child_type.startswith("List<") else f"..{child_name}" for child_type, child_name in children)}];"
                             ],
                             parameters= [

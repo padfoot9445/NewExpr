@@ -1,20 +1,17 @@
+using SmallLang.CodeGen.Frontend;
+using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 namespace SmallLang.Drivers;
-#if false
+
 public class HighToLowLevelCompilerDriver
 {
-    public static (Operation<Opcode, BackingNumberType>[], uint[]) Compile(string Code, Func<CodeGenVisitor>? GetCodeGenVisitor = null)
+    public static Data Compile(string Code, Func<SmallLangNode, CodeGenerator>? GetCodeGenerator = null)
     {
+        GetCodeGenerator ??= (x) => new CodeGenerator(x);
+        var Ast = new Parser.Parser(Code).Parse<SectionNode>();
+        // var Generator = GetCodeGenerator(Ast);
+        // Generator.Dispatch(Ast)(null, Ast);
+        // return (Generator.Instructions.ToArray(), Generator.StaticData.ToArray());
         throw new NotImplementedException();
-        GetCodeGenVisitor ??= () => new CodeGenVisitor();
-        var Ast = new Parser.Parser(Code).Parse();
-        var Evaluator = new DynamicASTEvaluator();
-        var AttributeAnalyser = new AttributeVisitor();
-        var Optimiser = new PostProcessingVisitor();
-        Evaluator.Evaluate(Ast, AttributeAnalyser);
-        Evaluator.Evaluate(Ast, Optimiser);
-        var Generator = GetCodeGenVisitor();
-        Generator.Dispatch(Ast)(null, Ast);
-        return (Generator.Instructions.ToArray(), Generator.StaticData.ToArray());
     }
 }
-#endif

@@ -4,64 +4,88 @@ using Common.LinearIR;
 using Common.Metadata;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
-using NodeType = SmallLang.IR.AST.ImportantASTNodeType;
 namespace SmallLang.CodeGen.Frontend;
 
-public partial class CodeGenerator(Node RootNode)
+public partial class CodeGenerator(SmallLangNode RootNode)
 {
-    private const byte TrueValue = 0xFF;
-    private const byte FalseValue = 0;
-    int CurrentChunkPtr => Data.Sections.CurrentChunkPtr;
-    internal void Cast(Node self, SmallLangType dstType)
+    internal const BackingNumberType TrueValue = BackingNumberType.MaxValue;
+    internal const BackingNumberType FalseValue = BackingNumberType.MinValue;
+    internal void Cast<T>(T self, SmallLangType dstType)
+    where T : IHasAttributeTypeOfExpression, ISmallLangNode
     {
-        if (self.Attributes.TypeLiteralType! == dstType) Exec(self);
+        if (self.TypeOfExpression! == dstType) Exec(self);
         throw new NotImplementedException();
     }
-    internal void Emit(Operation<Opcode, BackingNumberType> Op)
+    internal void Emit(HighLevelOperation Op)
     {
-        Data.Sections.CurrentChunk.Add(Op);
+        Data.Emit(Op);
     }
-    internal void Emit(Opcode op, params IOperationArgument<byte>[] args)
+    internal void EnteringChunk(Action code)
     {
-        Emit(new Operation<Opcode, byte>((OpcodeWrapper)op, args));
+        code();
     }
-    internal void NewChunk() => Data.Sections.NewChunk();
-    int ParseBeginningChunk = 0;
-    internal void SETCHUNK() => ParseBeginningChunk = CurrentChunkPtr;
-    internal GenericNumberWrapper<int> RCHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(CurrentChunkPtr + ChunkRelOffset);
-
-    internal GenericNumberWrapper<int> ACHUNK(int ChunkRelOffset) => new GenericNumberWrapper<int>(ParseBeginningChunk + ChunkRelOffset);
+    internal void NewChunk(int chunkID, Action code)
+    {
+        Debug.Assert(Data.CurrentChunk.Children.Count == (chunkID - 1));
+        IsNextFlag = false;
+        Data.NewChunk();
+        code();
+        if (!IsNextFlag)
+        {
+            Data.Rewind();
+        }
+    }
+    private bool IsNextFlag { get; set; }
+    internal void Next()
+    {
+        IsNextFlag = true;
+    }
+    internal RelativeChunkPointer ACHUNK(int v) => new(v);
     internal Data Data { get; init; } = new();
     public Data Parse()
     {
         Exec(RootNode);
         return Data;
     }
-    internal void Verify(Node node, ImportantASTNodeType Expected)
+    static internal void Verify<T>(ISmallLangNode node) where T : ISmallLangNode
     {
-        Debug.Assert(node.NodeType == Expected);
+        Debug.Assert(node is T);
     }
-    internal void Exec(Node node) =>
+    internal void Exec(ISmallLangNode node)
+    {
+        var CurrentChunk = Data.CurrentChunk;
         DynamicDispatch(node)(node, this);
-    static Action<Node, CodeGenerator> DynamicDispatch(Node node) =>
-        node.Switch(
-                Accessor: x => x.NodeType,
-                Comparer: (x, y) => x == y,
+    }
+    static Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
+    where T : ISmallLangNode =>
+        (x, y) =>
+        {
+            Verify<T>(x);
+            visitor((T)x, y);
+        };
+    internal int[] GetRegisters(int Width = 1) => Enumerable.Range(0, Width).Select(_ => Data.GetRegister()).ToArray();
+    internal int[] GetRegisters(IHasAttributeTypeOfExpression Node) => GetRegisters((int)Node.TypeOfExpression!.Size);
+    internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
+    static Action<ISmallLangNode, CodeGenerator> DynamicDispatch(ISmallLangNode node) =>
+        node.Dispatch(
+                Accessor: x => x,
 
-
-                (NodeType.Section, SectionVisitor.Visit),
-                (NodeType.Identifier, PrimaryVisitor.Visit),
-                (NodeType.Function, FunctionVisitor.Visit),
-                (NodeType.For, ForVisitor.Visit),
-                (NodeType.While, WhileVisitor.Visit),
-                (NodeType.Return, ReturnVisitor.Visit),
-                (NodeType.LoopCTRL, LoopCtrlVisitor.Visit),
-                (NodeType.Switch, SwitchVisitor.Visit),
-                (NodeType.If, IfVisitor.Visit),
-                (NodeType.Primary, PrimaryVisitor.Visit)
-
+                (x => x is SectionNode, VisitFunctionWrapper<SectionNode>(SectionVisitor.Visit)),
+                (x => x is IdentifierNode, VisitFunctionWrapper<IdentifierNode>(PrimaryVisitor.VisitIdentifier)),
+                (x => x is FunctionNode, VisitFunctionWrapper<FunctionNode>(FunctionVisitor.Visit)),
+                (x => x is ForNode, VisitFunctionWrapper<ForNode>(ForVisitor.Visit)),
+                (x => x is WhileNode, VisitFunctionWrapper<WhileNode>(WhileVisitor.Visit)),
+                (x => x is ReturnNode, VisitFunctionWrapper<ReturnNode>(ReturnVisitor.Visit)),
+                (x => x is LoopCTRLNode, VisitFunctionWrapper<LoopCTRLNode>(LoopCtrlVisitor.Visit)),
+                (x => x is SwitchNode, VisitFunctionWrapper<SwitchNode>(SwitchVisitor.Visit)),
+                (x => x is IfNode, VisitFunctionWrapper<IfNode>(IfVisitor.Visit)),
+                (x => x is PrimaryNode, VisitFunctionWrapper<PrimaryNode>(PrimaryVisitor.Visit)),
+                (x => x is DeclarationNode, VisitFunctionWrapper<DeclarationNode>(DeclarationVisitor.Visit)),
+                (x => x is FactorialExpressionNode, VisitFunctionWrapper<FactorialExpressionNode>(FactorialExpressionVisitor.Visit)),
+                (x => x is ElseNode, VisitFunctionWrapper<ElseNode>(ElseVisitor.Visit))
 
             );
     internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)

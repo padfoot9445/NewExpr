@@ -1,8 +1,10 @@
 using System.Reflection;
 using Common.Tokens;
 using SmallLang;
+using SmallLang.Parser.Lexing;
 
 namespace SmallLangTest;
+
 [TestFixture]
 public class LexerTest
 {

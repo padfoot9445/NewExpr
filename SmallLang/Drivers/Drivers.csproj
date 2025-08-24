@@ -3,6 +3,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
     <ProjectReference Include="..\IR\IR.csproj" />
+    <ProjectReference Include="..\Codegen\Codegen.csproj" />
+    <ProjectReference Include="..\Parser\Parser.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

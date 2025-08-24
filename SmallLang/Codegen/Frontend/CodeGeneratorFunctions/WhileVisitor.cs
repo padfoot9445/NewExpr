@@ -1,43 +1,51 @@
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
 
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using static Opcode;
 internal static class WhileVisitor
 {
-    public static void Visit(Node Self, CodeGenerator Driver)
+    public static void Visit(WhileNode Self, CodeGenerator Driver)
     {
-        bool HasLabel = Self.Children[1].NodeType == ImportantASTNodeType.LoopLabel;
-        Node Statement = HasLabel ? Self.Children[2] : Self.Children[1];
-        Node? Else = Self.Children.Count == (HasLabel ? 4 : 3) ? Self.Children[^1] : null;
-        //[expression, Label?, statement, else as Statement?]
-        Driver.Verify(Self, ImportantASTNodeType.While);
-        Driver.SETCHUNK();
-        //entering chunk
-        Driver.Emit(JMP, Driver.ACHUNK(1));
-
-        //CHUNK1
-        Driver.NewChunk();
-        Driver.Exec(Self.Children[0]);//Compile conditional expression. This puts a 0 on the stack if false and a non-zero (probably 1 or 0xFF) onto the stack if true.
-        Driver.Emit(BRZ, Driver.ACHUNK(2), Driver.ACHUNK(3));
-
-        //CHUNK2
-        Driver.NewChunk();
-        Driver.Exec(Statement);
-        Driver.Emit(JMP, Driver.ACHUNK(1));
-
-        //CHUNK3
-        Driver.NewChunk();
-        if (Else is not null)
+        Driver.EnteringChunk(() =>
         {
-            Driver.Exec(Else);
-        }
-        Driver.Emit(JMP, Driver.ACHUNK(4));
+            Driver.Emit(HighLevelOperation.Loop(1, 2, 3, 4, 5));
+        });
 
-        //CHUNK4
-        Driver.NewChunk();
-        Driver.Data.LoopData[(LoopGUID)Self.Attributes.LoopGUID!] = (Driver.ACHUNK(2), Driver.ACHUNK(3));
+        Driver.NewChunk(1, () =>
+        {
+            Driver.Cast(Self.ConditionExpression, TypeData.Bool);
+        });
+
+        Driver.NewChunk(2, () =>
+        {
+            Driver.Emit(HighLevelOperation.NOp());
+        });
+
+        Driver.NewChunk(3, () =>
+        {
+            Driver.Exec(Self.LoopBody);
+        });
+
+        Driver.NewChunk(4, () =>
+        {
+            if (Self.Else is null)
+            {
+                Driver.Emit(HighLevelOperation.NOp());
+            }
+            else
+            {
+                Driver.Exec(Self.Else);
+            }
+        });
+
+        Driver.NewChunk(5, () =>
+        {
+            Driver.Next();
+        });
+
+        ForVisitor.StoreUuid(Self, Driver);
     }
 }

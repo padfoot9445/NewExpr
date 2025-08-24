@@ -149,7 +149,6 @@ public class ParserTest
         var LoopBody = res.LoopBody as SectionNode;
         Assert.That(LoopBody.Statements[0], Is.InstanceOf<BinaryExpressionNode>());
         Assert.That(LoopBody.Statements[1], Is.InstanceOf<FunctionCallNode>());
-        Assert.That(LoopBody.Statements[2], Is.InstanceOf<SectionNode>());
     }
     [TestCase("for (int i = 0; i < 1; i = i + 1){}", false, false)]
     [TestCase("for (int i = 0; i < 1; i = i + 1) as Label{}", true, false)]

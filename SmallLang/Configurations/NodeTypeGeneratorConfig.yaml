@@ -22,7 +22,7 @@ NodeTypeDefinitions:
     - &GenericType GenericType: "data: generic type, children: [] // maybe children:[typecsv]?"
     - &If If: "data: null, children: [ExprStatementCombined+, OptionalElse as Statement] where OptionalElse is not EMPTY| [ExprStatementCombined+]"
     - &Switch Switch: "data: null, children: [Expression, ExprStatementCombined*]"
-    - &ExprStatementCombined ExprStatementCombined: "data: null, children: [Expression, Statement]"
+    - &ExprStatementCombined ExprSectionCombined: "data: null, children: [Expression, Section]"
     - &TypeAndIdentifierCSV TypeAndIdentifierCSV: "data: null, children: [TypeAndIdentifierCSVElement+]"
     - &TypeAndIdentifierCSVElement TypeAndIdentifierCSVElement: "data: Identifier, children: [FunctionArgDeclModifiersCombined, Type]"
     - &AliasExpr AliasExpr: "data: IDENTIFIER, children: [Identifier]"
@@ -34,7 +34,7 @@ NodeTypeDefinitions:
     - &AssignmentPrime AssignmentPrime: "data: \"=\", children: [Expression]"
     - &FactorialExpression FactorialExpression: "data: null, children: [Expression, !+]"
     - &BinaryExpression BinaryExpression: "data: \"implies\" | \"or\" | \"xor\" | \"and\" | \"==\" | \"!=\" | \">\" | \">=\" | \"<\" | \"<=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"*\" | \"|\" | \"^\" | \"&\", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser"
-    - &ComparisionExpression ComparisionExpression: "data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via "
+    - &ComparisonExpression ComparisonExpression: "data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via "
     - &OperatorExpressionPair OperatorExpressionPair: "data: cmpOperator, children: [Expression]"
     - &Primary Primary: "data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr"
     - &FunctionIdentifier FunctionIdentifier: "data: IDENTIFIER, children: []"
@@ -95,6 +95,7 @@ marker interfaces:
     - name: &Expression IExpression
       parents:
       - *ISmallLangNode
+      - *Statement
       attributes: &ExpressionAttrs [*TypeOfExpression]
     - name: &Type IType
       parents:
@@ -148,6 +149,10 @@ classes:
             name: Type
             is optional: no
             is multiple: no
+          - type: *Identifier
+            name: Identifier2
+            is optional: no
+            is multiple: no
         parents:
         - *SmallLangNode
         - *Expression
@@ -163,10 +168,6 @@ classes:
         children:
           - type: *Type
             name: Type
-            is optional: no
-            is multiple: no
-          - type: *Identifier
-            name: Identifier
             is optional: no
             is multiple: no
         parents:
@@ -221,8 +222,8 @@ classes:
             name: TypeAndIdentifierCSV
             is optional: yes
             is multiple: no
-          - type: *Statement
-            name: Statement
+          - type: *Section
+            name: FunctionBody
             is optional: no
             is multiple: no
         parents:
@@ -244,6 +245,7 @@ classes:
             is multiple: no
         parents:
         - *SmallLangNode
+        - *Statement
         has data: yes
         check data type: yes
         valid data types:
@@ -287,7 +289,7 @@ classes:
             name: LoopLabel
             is optional: yes
             is multiple: no
-          - type: *Statement
+          - type: *Section
             name: LoopBody
             is optional: no
             is multiple: no
@@ -308,15 +310,15 @@ classes:
       - name: *While
         children:
           - type: *Expression
-            name: Expression
+            name: ConditionExpression
             is optional: no
             is multiple: no
           - type: *LoopLabel
             name: LoopLabel
             is optional: yes
             is multiple: no
-          - type: *Statement
-            name: Statement
+          - type: *Section
+            name: LoopBody
             is optional: no
             is multiple: no
           - type: *Else
@@ -369,7 +371,18 @@ classes:
         has data: yes
         check data type: yes
         valid data types:
-        - Identifier
+        - TypeFloat
+        - TypeInt
+        - TypeDouble
+        - TypeNumber
+        - TypeLong
+        - TypeLongInt
+        - TypeByte
+        - TypeShort
+        - TypeRational
+        - TypeString
+        - TypeChar
+        - TypeVoid
         has additional data validation function: no
         data validation function: no
         attributes:
@@ -387,7 +400,10 @@ classes:
         has data: yes
         check data type: yes
         valid data types:
-        - Identifier
+        - TypeArray
+        - TypeList
+        - TypeSet
+        - TypeDict
         has additional data validation function: no
         data validation function: no
         attributes: [*TypeLiteralType]
@@ -438,8 +454,8 @@ classes:
             name: Expression
             is optional: no
             is multiple: no
-          - type: *Statement
-            name: Statement
+          - type: *Section
+            name: Section
             is optional: no
             is multiple: no
         parents:
@@ -511,7 +527,7 @@ classes:
             is multiple: no
           - type: *DeclarationModifiersCombined
             name: DeclarationModifiersCombined
-            is optional: yes
+            is optional: no
             is multiple: no
           - type: *AssignmentPrime
             name: AssignmentPrime
@@ -646,11 +662,11 @@ classes:
       - name: *BinaryExpression
         children:
           - type: *Expression
-            name: Expression
+            name: Left
             is optional: no
             is multiple: no
           - type: *Expression
-            name: Expression
+            name: Right
             is optional: no
             is multiple: no
         parents:
@@ -677,11 +693,15 @@ classes:
         - BitwiseOr
         - BitwiseXor
         - BitwiseAnd
+        - Equals
+        - BitwiseLeftShift
+        - BitwiseRightShift
+        - BitwiseNegation
         has additional data validation function: no
         data validation function: no
         attributes: []
       
-      - name: *ComparisionExpression
+      - name: *ComparisonExpression
         children:
           - type: *Expression
             name: Expression

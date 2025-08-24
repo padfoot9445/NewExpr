@@ -16,7 +16,7 @@ internal static class WhileVisitor
 
         Driver.NewChunk(1, () =>
         {
-            Driver.Cast(Self.Expression, TypeData.Bool);
+            Driver.Cast(Self.ConditionExpression, TypeData.Bool);
         });
 
         Driver.NewChunk(2, () =>
@@ -26,7 +26,7 @@ internal static class WhileVisitor
 
         Driver.NewChunk(3, () =>
         {
-            Driver.Exec(Self.Statement);
+            Driver.Exec(Self.LoopBody);
         });
 
         Driver.NewChunk(4, () =>

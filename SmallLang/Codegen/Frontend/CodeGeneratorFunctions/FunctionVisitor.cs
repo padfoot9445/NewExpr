@@ -14,7 +14,7 @@ internal static class FunctionVisitor
 
         Driver.NewChunk(1, () =>
         {
-            Driver.Exec(Self.Statement);
+            Driver.Exec(Self.FunctionBody);
         });
 
         Driver.NewChunk(2, () =>

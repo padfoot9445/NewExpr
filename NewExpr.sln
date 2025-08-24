@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IR", "SmallLang\IR\IR.cspro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "SmallLang\Parser\Parser.csproj", "{3E34B82B-4FB1-4C27-9432-3A6452761D3C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallLangTest", "SmallLangTest\SmallLangTest.csproj", "{E6F17E43-092F-4748-9AE7-FFCD09026001}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

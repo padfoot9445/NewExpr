@@ -114,7 +114,7 @@ public partial class SmallLangParser
 
 
     [Production($"{nameof(NTElse)}: Else [d] {nameof(NTStatement)}")]
-    public NodeType NTElse(NodeType AStatement) => AStatement; //passthrough
+    public NodeType NTElse(NodeType AStatement) => new ElseNode(TryCast<IStatementNode>(AStatement, nameof(NTElse))); //passthrough
     [Production($"{nameof(NTSwitch)}: Switch [d] OpenParen [d] {nameof(NTExpression)} CloseParen [d] OpenCurly [d] {nameof(NTSwitchBody)}* CloseCurly [d]")]
     public NodeType NTSwitch(NodeType AExpression, List<NodeType> ASwitchBody) => new SwitchNode(
         TryCast<ComparisonExpressionNode>(AExpression), ASwitchBody.Select(TryCast<ExprSectionCombinedNode>).ToList());

@@ -4,6 +4,7 @@ public struct Scope()
 {
     Scope(HashSet<VariableName> Names) : this() { VariablesInScope = Names; }
     private HashSet<VariableName> VariablesInScope = [];
+    public (int, int) GetLocationOfVariable(VariableName Name) => throw new NotImplementedException();
     public bool Contains(VariableName variableName) => VariablesInScope.Contains(variableName);
     public Scope ScopeUnion(Scope other)
     {

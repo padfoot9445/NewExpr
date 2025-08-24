@@ -66,23 +66,23 @@ Strategy:
     For: [expression, expression, expression, Label?, statement, else as Statement?]
         In static analyser
             assign a guid.
-        ENTERING CHUNK
-            Emit initializing code
-            JMP CHUNK0
-        make new chunk CHUNK0
-            Emit code which evaluates the condition and puts it on the stack
-            BRCH ChunkIndex +1, ChunkIndex +2
-            //BRANCH TO CHUNK1 IF TRUE ELSE CHUNK2, BRCH1
-        make new chunk CHUNK1
-            Compile Statement
-            compile expr3
-            JMP CHUNK0
-        make new chunk CHUNK2
-            compile else //then natural termination from BRCH1 branches to else //if there is no else just make this an empty chunk
-            JMP CHUNK3
-        make new chunk CHUNK 3
+
+        ENTERING CHUNK CHUNK0
+            Emit Initializing code (Compile Expression1)
+            LOOP CHUNK1 CHUNK2 CHUNK3 CHUNK4 CHUNK5
+
+        CHUNK1
+            Emit Condition code (Compile Expression2)
+        CHUNK2
+            Emit PostLoop code (Compile Expression3)
+        CHUNK3
+            Compile loop body (Statement)
+        CHUNK4
+            Compile else
+        CHUNK5
             NEXT
-        Assign to dictionary: guid: (CHUNK1 index, CHUNK3 index) //continue, break
+
+        Assign to dictionary: guid: (CHUNK0) //this works for both break and continue, since the break/continue instruction (specialized for For or While loops) will take over control of the looping. Chunk0 because we do have to be able to access all the loop-blocks from this ID
     Else: [Statement] //DOES NOT EXIST //TODO: While, If, For need custom else handlers as follows
         ENTERING CHUNK
             Compile Statement1
@@ -92,19 +92,20 @@ Strategy:
     While: [Expression, Label?, statement, else? (statement2)]
         In static analyser:
             assign a guid
-        ENTERING CHUNK
-            JMP CHUNK1
+
+        ENTERING CHUNK CHUNK0
+            LOOP CHUNK1, CHUNK2, CHUNK3, CHUNK4, CHUNK5
         make new chunk CHUNK1
             Compile Expression1
-            BRCH Chunk2 Chunk3
         make new chunk CHUNK2
-            Compile statement
-            JMP CHUNK1
-        make new chunk Chunk3
-            Compile else if else is not null
-            JMP CHUNK4
+            NOP
         make new chunk CHUNK3
+            Compile statement
+        make new chunk Chunk4
+            Compile else if else is not null
+        make new chunk CHUNK5
             NEXT
+
     ValInLCTRL:[Identifier]
         used in static analyzer. These identifiers have to be unique within parsed section
     LoopLabel: [Identifier]
@@ -113,19 +114,17 @@ Strategy:
         ENTERING CHUNK
             Compile Expression
             RET
+
+    
     LoopCTRL: [Break | Continue, Label?]
         ENTERING CHUNK //CHUNK1
-            If Label is null:
-                If Break:
-                    JMP (CurrentChunkIndex + 2)
-                Else: //Continue
-                    JMP (CurrentChunkIndex - 1)
+            If Label is null: get label from static analyser
+            dst loop type <- get from static analyser
+            CHUNK[LOOP]<- Data.Dictionary[Attributes.Label's Loop uuid]
+            If Break:
+                BREAKFOR if loop type is "for" else BREAKWHILE CHUNK[LOOP]
             Else:
-                CHUNK[BREAK], CHUNK[CONT] <- Data.Dictionary[Attributes.Label's Loop uuid]
-                If Break:
-                    JMP CHUNK[BREAK]
-                Else:
-                    JMP CHUNK[CONT]
+                CONTINUEWHILE if loop type is "while" else CONTINUEFOR CHUNK[LOOP]
     BaseType, GenericType: [Type,...]
         Static analyser
             Assign Typecode of Type
@@ -254,7 +253,7 @@ NULL:
             NEXT
     BinaryExpression: [Operator; Expression1, Expression2]
         ENTERING CHUNK
-            if Operator != "==":
+            if Operator != "=":
                 Assert in static analyser that the types and operation are valid
                 Find type of arguments Type
                 Cast Expression1 -> Type

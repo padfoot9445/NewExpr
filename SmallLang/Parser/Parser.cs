@@ -7,8 +7,8 @@ using System.Text;
 using Common.Tokens;
 using sly.buildresult;
 using sly.parser.generator;
-using LYParser = sly.parser.Parser<Common.Tokens.TokenType, Common.AST.DynamicASTNode<ASTNodeType, Attributes>>;
-using NodeType = Common.AST.DynamicASTNode<ASTNodeType, Attributes>;
+using LYParser = sly.parser.Parser<Common.Tokens.TokenType, ISmallLangNode>;
+using NodeType = ISmallLangNode;
 using OutNodeType = Common.AST.DynamicASTNode<ImportantASTNodeType, Attributes>;
 public class Parser
 {
@@ -38,12 +38,12 @@ public class Parser
             throw new Exception(string.Join('\n', parserResult.Errors.Select(x => x.Message)));
         }
     }
-    public OutNodeType Parse()
+    public T Parse<T>()
     {
         var r = LyParser.Parse(input);
         if (!r.IsError && r.Result != null && r.Result is NodeType)
         {
-            return Map(r.Result);
+            return (T)r.Result;
         }
         else
         {
@@ -56,8 +56,9 @@ public class Parser
             throw new Exception(sb.ToString());
         }
     }
-    static OutNodeType Map(NodeType node)
+    static T Map<T>(NodeType node)
     {
-        return new OutNodeType(node.Data, node.Children.Select(Map).ToList(), node.NodeType.ToImportant());
+        throw new NotImplementedException();
+        // return new OutNodeType(node.Data, node.Children.Select(Map).ToList(), node.NodeType.ToImportant());
     }
 }

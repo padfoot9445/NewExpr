@@ -1,0 +1,13 @@
+GlobalUsingsConfig:
+  namespace: ""
+  usings: ""
+  generator: GlobalUsings.py
+  dst: "NUL:"
+  display name: "Generate-Global-Usings"
+
+  data:
+    aliases:
+      BackingNumberType: byte
+      HighLevelOpcodeBackingType: uint
+    usings: {}
+

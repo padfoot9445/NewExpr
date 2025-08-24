@@ -1,15 +1,20 @@
 using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 internal static class SectionVisitor
 {
-    public static void Visit(Node Self, CodeGenerator Driver)
+    public static void Visit(SectionNode Self, CodeGenerator Driver)
     {
-        Driver.Verify(Self, ImportantASTNodeType.Section);
-        foreach (var child in Self.Children)
+        Driver.EnteringChunk(() =>
         {
-            Driver.Exec(child);
-        }
+
+            foreach (var child in Self.Statements)
+            {
+                Driver.Exec(child);
+            }
+            Driver.Next();
+        });
     }
 }

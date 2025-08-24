@@ -85,18 +85,18 @@ public class ParserTest
 
             var res = (ComparisonExpressionNode)_res;
 
-            Assert.That(res.OperatorExpressionPairs, Has.Count.EqualTo(7));
+            Assert.That(res.OperatorExpressionPairs, Has.Count.EqualTo(6));
 
-            Assert.That(res.OperatorExpressionPairs[0], Is.InstanceOf<PrimaryNode>());
-            Assert.That(res.OperatorExpressionPairs[0].Data!.Lexeme, Is.EqualTo("1"));
-            Assert.That(res.OperatorExpressionPairs[0].Data!.TT, Is.EqualTo(TokenType.Number));
+            Assert.That(res.Expression, Is.InstanceOf<PrimaryNode>());
+            Assert.That(((PrimaryNode)res.Expression).Data!.Lexeme, Is.EqualTo("1"));
+            Assert.That(((PrimaryNode)res.Expression).Data!.TT, Is.EqualTo(TokenType.Number));
 
-            AssertOpExprPair<IdentifierNode>(res.OperatorExpressionPairs[1], "==", TokenType.EqualTo);
-            AssertOpExprPair<DeclarationNode>(res.OperatorExpressionPairs[2], "!=", TokenType.NotEqualTo);
-            AssertOpExprPair<FunctionCallNode>(res.OperatorExpressionPairs[3], "<", TokenType.LessThan);
-            AssertOpExprPair<BinaryExpressionNode>(res.OperatorExpressionPairs[4], "<=", TokenType.LessThanOrEqualTo);
-            AssertOpExprPair<IndexNode>(res.OperatorExpressionPairs[5], ">=", TokenType.GreaterThanOrEqualTo);
-            AssertOpExprPair<IdentifierNode>(res.OperatorExpressionPairs[6], ">", TokenType.GreaterThan);
+            AssertOpExprPair<IdentifierNode>(res.OperatorExpressionPairs[0], "==", TokenType.EqualTo);
+            AssertOpExprPair<DeclarationNode>(res.OperatorExpressionPairs[1], "!=", TokenType.NotEqualTo);
+            AssertOpExprPair<FunctionCallNode>(res.OperatorExpressionPairs[2], "<", TokenType.LessThan);
+            AssertOpExprPair<BinaryExpressionNode>(res.OperatorExpressionPairs[3], "<=", TokenType.LessThanOrEqualTo);
+            AssertOpExprPair<IndexNode>(res.OperatorExpressionPairs[4], ">=", TokenType.GreaterThanOrEqualTo);
+            AssertOpExprPair<IdentifierNode>(res.OperatorExpressionPairs[5], ">", TokenType.GreaterThan);
         });
     }
     [Test]

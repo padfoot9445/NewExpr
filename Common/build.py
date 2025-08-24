@@ -2,14 +2,13 @@ import subprocess
 from typing import Callable, Any, cast
 from pathlib import Path
 import os
-import sys
 import yaml
 from time import time, sleep
 from threading import Thread
 import shutil
+import sys
 
 Command = tuple[list[str | Path], str, bool] #(Command, Name, Execute?)
-
 TIME_ROUND: int = 2
 BOLD = "\033[1m"
 END = '\033[0m'
@@ -89,10 +88,9 @@ def delete_files(out: list[bool], clean: bool, working_directory: Path):
         print(f"{RED}{BOLD}INFO{END}:  {RED}{BOLD}{e}{END}")
             
 
-def main():
-
-    working_directory = Path(sys.argv[1] if len(sys.argv) >= 2 and not sys.argv[1].startswith("-") else os.getcwd()).resolve()
-    config_path = Path(sys.argv[2] if len(sys.argv) >= 3 and not sys.argv[2].startswith("-") else working_directory/"config.yaml").resolve()
+def main(_argv: list[str]):
+    working_directory = Path(_argv[1] if len(_argv) >= 2 and not _argv[1].startswith("-") else os.getcwd()).resolve()
+    config_path = Path(_argv[2] if len(_argv) >= 3 and not _argv[2].startswith("-") else working_directory/"config.yaml").resolve()
 
 
     with open(config_path) as file_path:
@@ -128,7 +126,7 @@ def main():
     ]
 
     for flag, action, desired in flags:
-        if (flag in sys.argv) == desired:
+        if (flag in _argv) == desired:
             action()
 
 
@@ -214,4 +212,4 @@ def main():
         print(f"{BOLD}{color}INFO{END}:  {color}{total_steps - steps_taken}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)

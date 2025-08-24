@@ -104,7 +104,7 @@ public partial class SmallLangParser
     {
         var ElseNode = TryCast<ElseNode>(ElseExpr);
 
-        var ThisCombined = new ExprSectionCombinedNode(TryCast<IExpressionNode>(Cond), TryCast<SectionNode>(StatementExpr));
+        var ThisCombined = new ExprSectionCombinedNode(TryCast<IExpressionNode>(Cond), ToSection<IStatementNode>(StatementExpr, nameof(NTIf)));
         List<ExprSectionCombinedNode> rc = [ThisCombined];
         if (ElseNode is not null)
         {

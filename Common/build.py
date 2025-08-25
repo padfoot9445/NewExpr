@@ -1,5 +1,5 @@
 import subprocess
-from typing import Callable, Any, cast, TextIO
+from typing import Callable, Any, cast, TextIO, Literal
 from pathlib import Path
 import os
 import yaml
@@ -10,8 +10,11 @@ import sys
 
 Command = tuple[list[str | Path], str, bool] #(Command, Name, Execute?)
 TIME_ROUND: int = 2
+DEFAULT_YAML_NAME: Literal["config.yaml"] = "config.yaml"
+
 BOLD = "\033[1m"
 END = '\033[0m'
+PURPLE = '\033[35m'
 GREEN = '\033[92m'
 RED = '\033[31m'
 SUCCEED = f"{GREEN}{BOLD}succeeded{END} in"
@@ -171,22 +174,25 @@ def extract(argv: list[str]) -> tuple[Path, Path, list[str]]:
         _config_path = argv[2]
     
     working_directory = Path(_working_directory if _working_directory is not None else os.getcwd()).resolve()
-    config_path = Path(_config_path if _config_path is not None else working_directory/"config.yaml").resolve()
+    config_path = Path(_config_path if _config_path is not None else working_directory/DEFAULT_YAML_NAME).resolve()
     
     return working_directory, config_path, argv[argv_beginning:]
     
-def write_message(success: bool, steps_taken: int, total_steps: int, steps_ignored: int, faliures: int, total_time: float):
-    
-    color = (GREEN if success else RED) + BOLD
-    if success:
-        print(f"{BOLD}{HEADERCODE}INFO{END}:  {color}{steps_taken - steps_ignored}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
-    else:
-        print(f"{BOLD}{HEADERCODE}INFO{END}:  {color}{faliures}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
+def write_message(success: bool, steps_taken: int, total_steps: int, steps_ignored: int, faliures: int, total_time: float, name: str):
+        
+    print(f"{HEADERCODE}BUILD{END}: {PURPLE}{BOLD}{name}{END} {BOLD}{f"{GREEN}succeeded" if success else f"{RED}failed"}{END} in {round(total_time, TIME_ROUND)}s {BOLD}({steps_taken} /{total_steps - steps_ignored} + {steps_ignored}){END}")
 
 def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO, is_root: bool = True) -> tuple[bool, int, int, int, int, float]:
-    aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time = main_output = main(working_directory, configuration_path, "", log_file)
+
+    configuration_path = configuration_path.resolve()
+    name = configuration_path.parts[-1]
+    if name == DEFAULT_YAML_NAME:
+        name = configuration_path.parts[-2]
+    name = os.path.splitext(name)[0]
+
+    aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time = main_output = main(working_directory, configuration_path, name, log_file)
     if not is_root:
-        write_message(*main_output) #if it is root, we defer this writing to recursive_main since we special case timing the deletion, build, etc
+        write_message(*main_output, name) #if it is root, we defer this writing to recursive_main since we special case timing the deletion, build, etc
 
     with open(configuration_path) as file:
         config: dict[str, list[str]] = yaml.load(file, yaml.Loader)

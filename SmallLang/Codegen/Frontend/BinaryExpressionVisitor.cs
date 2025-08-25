@@ -43,6 +43,38 @@ internal static class BinaryExpressionVisitor
 
         Driver.Exec(Left.Expression1);
         Driver.Emit(HighLevelOperation.LoadFromStack(Pointer, Left.Expression1.TypeOfExpression!.Size));
+        if (Left.Expression1.TypeOfExpression == TypeData.Array || Left.Expression1.TypeOfExpression == TypeData.List) //TODO: Generalize this to SmallLangType.IsVectorLike
+        {
+
+            var Indexer = Driver.GetRegisters((int)TypeData.Int.Size).First();
+            var ItemPtr = Driver.GetRegisters((int)Left.TypeOfExpression!.Size).First();
+
+            Debug.Assert(Left.TypeOfExpression == RightType);
+
+            //Push the indexer value as an int onto the stack
+            Driver.Cast(Left.Expression2, TypeData.Int);
+
+            //indexer -> r@Indexer
+            Driver.Emit(HighLevelOperation.LoadFromStack(Indexer, (int)TypeData.Int.Size));
+
+            //Get the pointer to the memory location storing the relevant value
+            //Ptr -> r@ItemPtr
+            Driver.Emit(HighLevelOperation.IndexVectorLike(Pointer, Indexer, ItemPtr));
+
+            Driver.Emit(HighLevelOperation.StoreToMemory(VariableBeginning, ItemPtr, RightType.Size));
+        }
+        else if (Left.Expression1.TypeOfExpression == TypeData.Dict)
+        {
+            var KeyType = Left.Expression2.ExpectedTypeOfExpression; //the expected Type of Expression of a in x[a]. This is correct, as validated in analyser.
+
+            var Indexer = Driver.GetRegisters((int)KeyType!.Size).First();
+
+            Driver.Cast(Left.Expression2, KeyType);
+            Driver.Emit(HighLevelOperation.LoadFromStack(Indexer, KeyType.Size));
+
+            Driver.Emit(HighLevelOperation.LoadHashMap<int, int, int, byte, byte>(Indexer, Pointer, VariableBeginning, Left.Expression2.ExpectedTypeOfExpression!, RightType));
+        }
+    }
     }
     internal static void Visit(BinaryExpressionNode Self, CodeGenerator Driver)
     {

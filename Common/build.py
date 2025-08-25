@@ -180,7 +180,7 @@ def extract(argv: list[str]) -> tuple[Path, Path, list[str]]:
     
 def write_message(success: bool, steps_taken: int, total_steps: int, steps_ignored: int, faliures: int, total_time: float, name: str):
         
-    print(f"{HEADERCODE}BUILD{END}: {PURPLE}{BOLD}{name}{END} {BOLD}{f"{GREEN}succeeded" if success else f"{RED}failed"}{END} in {round(total_time, TIME_ROUND)}s {BOLD}({steps_taken} /{total_steps - steps_ignored} + {steps_ignored}){END}")
+    print(f"{HEADERCODE}BUILD{END}: {PURPLE}{BOLD}{name}{END} {BOLD}{f"{GREEN}succeeded" if success else f"{RED}failed"}{END} in {round(total_time, TIME_ROUND)}s {BOLD}({steps_taken}/{total_steps - steps_ignored} + {steps_ignored}){END}")
 
 def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO, is_root: bool = True) -> tuple[bool, int, int, int, int, float]:
 

@@ -688,7 +688,7 @@ classes:
         - BitwiseNegation
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*GreatestCommonType]
       
       - name: *ComparisonExpression
         children:

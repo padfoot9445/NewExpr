@@ -82,6 +82,9 @@ attributes:
     - &NestedTypeOfExpression
       name: NestedTypeOfExpression
       type: List<SmallLangType>
+    - &ExpectedTypeOfExpression
+      name: ExpectedTypeOfExpression
+      type: SmallLangType
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]

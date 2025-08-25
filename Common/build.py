@@ -228,5 +228,19 @@ def extract(argv: list[str]) -> tuple[Path, Path, list[str]]:
     return working_directory, config_path, argv[argv_beginning:]
     
 
+def recursive_main(working_directory: Path, configuration_path: Path, flags: list[str]):
+
+    main(working_directory, configuration_path, flags)
+
+    with open(configuration_path) as file:
+        config: dict[str, list[str]] = yaml.load(file, yaml.Loader)
+            
+    for child_config_path in config.get("child projects", []):
+
+        subdirectory, _ = os.path.split(child_config_path)
+        recursive_main(working_directory/subdirectory, Path(child_config_path), flags)
+
 if __name__ == "__main__":
-    main(*extract(sys.argv))
+    working_directory, configuration_path, flags = extract(sys.argv)
+
+    recursive_main(working_directory, configuration_path, flags)

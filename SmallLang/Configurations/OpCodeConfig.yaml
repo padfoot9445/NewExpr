@@ -136,5 +136,12 @@ HighLevelOpcodes:
         - name: DstRegister
       comment:
         Returns a pointer to the indexed slot of the vectorlike
+    - name: StoreToMemory
+      arguments:
+        - name: SrcRegisterStart
+        - name: DstPtrStart
+        - name: Width
+      comment:
+        Loads the value from SrcRegister of width Width to the memory segment beginning DstPtrStart
 
   

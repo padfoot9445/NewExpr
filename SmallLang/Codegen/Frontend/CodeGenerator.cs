@@ -54,6 +54,22 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     {
         Debug.Assert(node is T);
     }
+    static internal void CastNode<T>(ISmallLangNode node, out T OutNode) where T : ISmallLangNode
+    {
+        Verify<T>(node);
+        OutNode = (T)node;
+    }
+
+    static internal bool TryCastNode<T>(ISmallLangNode node, out T? OutNode) where T : ISmallLangNode
+    {
+        if (node is T)
+        {
+            CastNode<T>(node, out OutNode);
+            return true;
+        }
+        OutNode = default;
+        return false;
+    }
     internal void Exec(ISmallLangNode node)
     {
         var CurrentChunk = Data.CurrentChunk;

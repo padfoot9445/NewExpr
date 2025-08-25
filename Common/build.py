@@ -1,5 +1,5 @@
 import subprocess
-from typing import Callable, Any, cast
+from typing import Callable, Any, cast, TextIO
 from pathlib import Path
 import os
 import yaml
@@ -23,7 +23,7 @@ YELLOW = '\033[93m'
 def mutate_command(src: list[Command], srcindex: int, val: list[str | Path] | str | bool = False, mutindex: int=2):
     src[srcindex] = cast(Command, tuple(v if mutindex != i else val for i, v in enumerate(src[srcindex])))
 
-def custom_run(out: list[bool], command: Any, path:Any):
+def custom_run(out: list[bool], command: list[str], path:TextIO):
     try:
         subprocess.run(command, check=True, stdout=path)
     except subprocess.CalledProcessError:
@@ -58,7 +58,7 @@ def time_thread(name: str, work_function: Callable[..., Any], *args: Any, **kwar
     assert not work_thread.is_alive()
     return out[0]
 
-def time_command(command: list[str], stdout_destination: Any, msg: str):
+def time_command(command: list[str], stdout_destination: TextIO, msg: str):
     return time_thread(msg,
         custom_run, command, stdout_destination)
 

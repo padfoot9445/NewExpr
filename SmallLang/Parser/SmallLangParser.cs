@@ -23,6 +23,8 @@ public partial class SmallLangParser
             throw;
         }
     }
+    Func<NodeType, T> TryCast<T>(string NameOfCastingMethod) where T : class, NodeType
+    => x => TryCast<T>(x, NameOfCastingMethod);
     T TryCast<T>(NodeType node, string NameOfCastingMethod) where T : class, NodeType
     {
         return WrapFunction(TryCast<T>, node, NameOfCastingMethod);

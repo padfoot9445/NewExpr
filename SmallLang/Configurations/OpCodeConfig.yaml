@@ -143,5 +143,12 @@ HighLevelOpcodes:
         - name: Width
       comment:
         Loads the value from SrcRegister of width Width to the memory segment beginning DstPtrStart
+    - name: LoadHashMap
+      arguments:
+        - name: KeyRegisterStart
+        - name: MapPointerStart
+        - name: ValueRegisterStart
+      comment:
+        Loads the value in ValueRegisterStart into the Map pointed to by MapPointerStart at the key KeyRegisterStart
 
   

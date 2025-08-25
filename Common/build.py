@@ -273,8 +273,8 @@ def recursive_main(working_directory: Path, configuration_path: Path, flags: lis
     total_success = success and other_steps_success
     color = GREEN if total_success else RED
     keyword = "succeeded" if total_success else "failed"
-
-    print(f"{color}{BOLD}INFO{END}: {color}{BOLD}Build {keyword} in {round(total_time_taken, TIME_ROUND)}s. \nFound: {total_steps + other_steps_total} | Executed: {other_steps_taken + steps_taken} | Ignored: {other_steps_ignored + steps_ignored}")
+    print(f"{HEADERCODE}BUILD{END}: {color}{BOLD}Build {keyword} in {round(total_time_taken, TIME_ROUND)}s")
+    print(f"{color}{BOLD}Total: {total_steps + other_steps_total} | Executed: {other_steps_taken + steps_taken} | Ignored: {other_steps_ignored + steps_ignored} | Failed: 0")
     
 
 

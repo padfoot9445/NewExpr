@@ -1,0 +1,367 @@
+Pointer must be of fixed, not dynamic size, and also we simply load it into the first bits of RAM. A partition-pointer may be provided.
+must remember to typecheck in attribute evaluator
+must remember to handle closures, although currently we might well just not support
+optimise registers later. 
+
+!Obselete Make sure that the option to specify which register to load to is only used when we know for a fact there's enough space at that register-hole
+
+allow everything to be implicit casted to bool I reckon
+TODO: add semicolon and nothing else as a valid statement
+
+Schema:
+    - Everything in an expression goes on the stack 
+    - Variable Names are assigned by the static analyser
+    - Hence, Name-To-Location Mapping is global. There will be a VariablePtr section or similar (accomodates value-types too; there can not be any dynamically allocated value types though)
+    - Each Section outputs a Chunk. Chunks are treated as functions of Action<>; no arguments and no ret-types. Hence, blocks do not have a value.
+    - Chunks are obviously seperately bonded and stuff yk
+    - Hence, functions
+
+    On dynamically allocated alternate data-areas, i.e. RAM, it's [Typecode] [Data]; On the static data area I suppose it can just be [Data]
+
+Store data as BYTES not UINTs, and just use multiple instructions for different widths ig
+Strategy:
+
+    Data:
+        List<Chunk> Sections { get; init; } = [ new Chunk() ]
+        Chunk CurrentChunk => Sections[^1];
+        Hashset<uint> UsedVariableSlots { get; } = new();
+        Dictionary<VariableName, uint> NameToVariableSlotDict = new();
+        Rom = new();
+    VariableOptimisation -- not supported for now ig
+        For every Chunk: //this works if for every path from root chunk to leaf chunk there is no conditional; i.e. each chunk ends at the branch.
+            Identify External Variables (used but not declared in that section)
+            Identify Internal Variables (declared in that section)
+            Build Map {Old Location on VariableSlots -> New Location on VariableSlots}
+            For every PUSHVAR or POPVAR, map old -> new
+            For every External Variable:
+                Insert code at the beginning of the block to move from the old location to the new location.
+            For every child-chunk:
+                For all variables apply the map.
+        List<uint>
+
+
+
+    Section:
+        //we assume that chunks of data are made for us
+        Compile child statements
+        //The only time we can switch sections is if there is a branch, since we're not doing varops at this level yet.
+        //If there's just a random section sitting somewhere we dgaf, compile as if it's the same section ig
+    ReTypingAlias: [Identifier1 as Type Identifier2]
+        Maybe handle in tree optimiser? =>
+            Type identifier = Identifier2
+    ReTypeOriginal: [Identifier as Type]
+        //Since this is for In-Expression use only (no lasting effect), we can simply handle this in the static analyser and then discard ReTypeOriginal even before codegen, possibly at the tree-optimiser
+    Identifier:
+        ENTERING CHUNK
+            Primary
+            NEXT
+    Function: [Type Identifier (TypeAndIdentifierCSV) Statement]
+        ENTERING CHUNK //should not have a jump CHUNK1
+        Make new chunk of Data CHUNK1
+            compile statement
+            Store Function in dict in analyser
+            //intentionally no JMP CHUNK2
+        Make new chunk of Data CHUNK2
+            NEXT
+    For: [expression, expression, expression, Label?, statement, else as Statement?]
+        In static analyser
+            assign a guid.
+
+        ENTERING CHUNK CHUNK0
+            Emit Initializing code (Compile Expression1)
+            LOOP CHUNK1 CHUNK2 CHUNK3 CHUNK4 CHUNK5
+
+        CHUNK1
+            Emit Condition code (Compile Expression2)
+        CHUNK2
+            Emit PostLoop code (Compile Expression3)
+        CHUNK3
+            Compile loop body (Statement)
+        CHUNK4
+            Compile else
+        CHUNK5
+            NEXT
+
+        Assign to dictionary: guid: (CHUNK0) //this works for both break and continue, since the break/continue instruction (specialized for For or While loops) will take over control of the looping. Chunk0 because we do have to be able to access all the loop-blocks from this ID
+    Else: [Statement] //DOES NOT EXIST //TODO: While, If, For need custom else handlers as follows
+        ENTERING CHUNK
+            Compile Statement1
+            JMP CHUNK1
+        make new chunk CHUNK1
+            NEXT
+    While: [Expression, Label?, statement, else? (statement2)]
+        In static analyser:
+            assign a guid
+
+        ENTERING CHUNK CHUNK0
+            LOOP CHUNK1, CHUNK2, CHUNK3, CHUNK4, CHUNK5
+        make new chunk CHUNK1
+            Compile Expression1
+        make new chunk CHUNK2
+            NOP
+        make new chunk CHUNK3
+            Compile statement
+        make new chunk Chunk4
+            Compile else if else is not null
+        make new chunk CHUNK5
+            NEXT
+
+    ValInLCTRL:[Identifier]
+        used in static analyzer. These identifiers have to be unique within parsed section
+    LoopLabel: [Identifier]
+        Used in static analyser. Add it to known labels, and for any analyser-subsections add to a dictionary of label: loop guid. the label has to be scope-unique.
+    Return: [Expression]
+        ENTERING CHUNK
+            Compile Expression
+            RET
+
+    
+    LoopCTRL: [Break | Continue, Label?]
+        ENTERING CHUNK //CHUNK1
+            If Label is null: get label from static analyser
+            dst loop type <- get from static analyser
+            CHUNK[LOOP]<- Data.Dictionary[Attributes.Label's Loop uuid]
+            If Break:
+                BREAKFOR if loop type is "for" else BREAKWHILE CHUNK[LOOP]
+            Else:
+                CONTINUEWHILE if loop type is "while" else CONTINUEFOR CHUNK[LOOP]
+    BaseType, GenericType: [Type,...]
+        Static analyser
+            Assign Typecode of Type
+    Switch: [Expression1, (Expression, Statement)+]
+        let Expressions <- ARGS[1].Select(x => x.Expression)
+        let Statements <- ARGS[1].Select(x => x.Statement)
+        LENGTH <- Case List's Length
+        ENTERING CHUNK CHUNK0
+            Compile Expression1
+            JMP CHUNK[LENGTH * 2 + 1]
+        for i in range(LENGTH): //this is probably [1...LENGTH] actually
+            make new chunk CHUNK[i * 2 - 1]
+                Compile Expressions[i - 1] cast to the same type as Expression1
+            make new chunk CHUNK[i * 2]
+                Compile Statements[i - 1]
+        make new chunk CHUNK[LENGTH * 2 + 1]
+            SWITCH LENGTH CHUNK0.Index TypeofExpression1
+            //switch instruction: SWITCH Length StartIndex TypeofExpression
+            if the expression we're switching on is a pointer-number-type we call the equality function else we subtract. Cast all expressions in the body to be the same type as the expression we're switchig on.
+
+            TODO: In static analyser make sure the cast as mentioned above is valid.
+                For i in [1...Length]:
+                    run CHUNKS[StartIndex + i * 2 - 1]
+                    if Top of Stack == 2nd value on stack : {bottom}[3rd value, 2nd value, 1st value (aka top of stack)]{top}
+                        run CHUNKS[StartIndex + i * 2]
+                        run CHUNKS[StartIndex + Length * 2 + 2]
+        make new chunk CHUNK[Length * 2 + 2]
+            NEXT
+            
+    BaseType:
+    GenericType:
+        static analyser
+    If: [(Expression, Statement)+, Else?]
+        ESLENGTH <- ARGS[0].Length
+        let Expressions <- ARGS[0].Select(x => x.Expression)
+        let Expressions <- Args[0].Select(x => x.Statement)
+        ENTERING CHUNK CHUNK0
+            if else is null:
+                IFNN CHUNK0.Index ESLENGTH
+            else:
+                IFELSE CHUNK0.Index ESLENGTH
+        for i in [1...LENGTH]:
+            make new chunk CHUNK[i * 2 - 1]
+                Compile Expressions[i] cast to boolean
+            make new chunk CHUNK[i * 2]
+                Compile Statements[i]
+        if Else is null:
+            make new chunk CHUNK[i * 2 + 1]
+                NEXT
+        else:
+            make new chunk CHUNK[i * 2 + 1]
+                Compile Else
+            make new chunk CHUNK[i * 2 + 2]
+                NEXT
+        //IFNN StartIndex Length
+            for i in [1...LENGTH]:
+                run CHUNKS[i * 2 - 1]
+                if (POP) is TRUE:
+                    run CHUNKS[i * 2]
+                    jump to CHUNKS[LENGTH * 2 + 1]
+            jump to CHUNKS[LENGTH * 2 + 1]
+        //IFELSE StartIndex Length
+            for i in [1...LENGTH]:
+                run CHUNKS[i * 2 - 1]
+                if (POP) is TRUE:
+                    run CHUNKS[i * 2]
+                    jump to CHUNKs[LENGTH * 2 + 2]
+            jump to CHUNKS[LENGTH * 2 + 1]
+    ExprStatementCombined:
+        Literally not used, I think, apart from in loops and stuff where we already decomp it
+    TypeAndIdentifierCSV, TypeAndIdentifierCSVElement:
+        Only used in static analyser
+        In function declaration, static analyser should provide the register which the variable will be stored in or declare so if neccesary.
+    Primary:
+        //yk what? We're mixing register and stack again.
+        //actually no we're not we just use the "variable store" which is tbh basically just a register, but still
+        TODO: FINISH
+        Constant values:
+            String:
+                Store into ram, push ptr to stack
+            Value-Number and char:
+                Parse into relevant number-type, push.
+            Pointer-Number:
+                Parse into byte sequence and load into ram, push ptr to stack.
+            Boolean:
+                Push 0xFF if true else 0
+            Other pointer type:
+                Store into ram, push ptr to stack.
+            
+
+        Identifier:
+            //Static analyser gives enough information to deduce the index into the variable store
+            PUSHVAR Index
+    AliasExpr: [Identifier, Identifier]// Identifier as Identifier
+        //Only in static analyser, TODO: Complete
+
+NULL:
+        ENTERING CHUNK
+            Compile Expression
+        make new chunk CHUNK1
+            Compile Statement
+        make new chunk CHUNK2
+            if Else is not null:
+                Compile Else
+            else:
+                NEXT
+    Declaration: [Identifier; DeclarationModifiersCombined?, Type, AssignmentPrime?]
+        Assign declaration modifiers in static analyser. If there's any modification where there shouldn't be, we throw in the static analyser.
+
+        Also, when we do static analyser:
+        TODO: make Data have a constructor where we inject VariableSlots, which we compile from the static analyser.
+        ENTERING CHUNK
+            if AssignmentPrime is not null:
+                Embeded Compile AssignmentPrime:[=; Expression]
+                    Compile Expression
+                    Look up identifier's variable slot.
+                    If Expression's type isn't the same, cast.
+                    LOADVAR Slot type of identifier
+            NEXT
+    DeclarationModifier, DeclarationModifiersCombined:
+        Static analyser
+    FactorialExpression: [Expression, !+]
+        ENTERING CHUNK
+            Compile expression
+            FACTORIAL Expression.Type Number of Exclamation marks
+            NEXT
+    BinaryExpression: [Operator; Expression1, Expression2]
+        ENTERING CHUNK
+            if Operator != "=":
+                Assert in static analyser that the types and operation are valid
+                Find type of arguments Type
+                Cast Expression1 -> Type
+                Cast Expression2 -> Type
+                OPCODE[Operator] Type
+            else:
+                Assert in static analyser that the assignment is valid.
+                Cast Expression2 -> Type of Expression1
+                Expression1 must be an Identifier, so
+                Locate variable slot containing Expression1 -> SlotNo
+                LOADVAR SlotNo Type of Expression1
+            NEXT
+    ComparisonExpression: [Expression, OperatorExpressionPair+]
+        OperatorExpressionPair: [Operator; Expression]
+        Expressions = Children.Select(x => x is OperatorExpressionPair? x.Children[0] : x);
+        Length = Children.Length;
+        Tuples = Children.Skip(1).Select((x, i) => (OPCODE[x.Data], Length - i, Length - i - 1))
+        Determine base type of all the expressions
+        ENTERING CHUNK
+            for i in range(len(children) - 1):
+                Cast Children[i + 1] Base-Type
+            BATCHAND 
+        for Opcode, i1, i2, enumerate -> i in Tuples:
+            NEW CHUNK [i]
+                Opcode i1 i2 Base-Type
+    OperatorExpressionPair:
+        Not really used, I think
+    FunctionIdentifier:
+        I guess in static analyser assign the function-code
+    CopyExpr: [Expression]
+        ENTERING CHUNK
+            Compile Expression
+            CAST TypeofExpression
+            NEXT
+    NewExpr: [Type, ArgList]:
+        Assert every argument is right in the static analyser
+        FunctionCall(GetFuncNew(Type), ArgList);
+        Exit();
+        
+    Index: [Expression1, Expression2]
+        Validate that Expression1 is indexable
+        If Expression1 is Dictionary:
+            Cast Expression2 Expression1.Keytype
+            Compile Expression1
+            Lookup
+        else:
+            Cast Expression2 INTEGER
+            Compile Expression1
+            INDEX
+    FunctionCall: [Expression, ArgList]
+        ENTERING CHUNK:
+            MaxArgNum <- Get from func name, maybe in static analyser
+            for ArgListElement -> [ArgListLabel as Identifier? Expression], enumerate -> i in ArgList.Children:
+                Argslot <- GetArgListSlotFromPosition(i)
+                
+                Cast Expression Function.ExpectedArgType(i)
+                if Argslot > MaxArgNum:
+                    LOADQUEUE Sizeof(Function.ExpectedArgType(ArgListLabel, i))
+                else:
+                    LOADARG Function.GetArgListSlot(ArgListLabel, i) Sizeof(Function.ExpectedArgType(ArgListLabel, i))
+    ArgList, ArgListElement, TypeCSV:
+        Static analyser
+    UnaryExpression: [Operation; Expression]
+        Assert that the operation is valid.
+        ENTERING CHUNK:
+            Compile Expression
+            Opcode[Operation] Type of Expression
+
+
+    ExprStatementCombined
+
+    - ReTypingAlias, //data: IDENTIFIER, children: [Type Identifier]
+    ReTypeOriginal, //data: IDENTIFIER, children: [Type]
+    Identifier, //data: IDENTIFIER, children: []
+    Section, //data: null, children: flattened array of statements
+    Function, //data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]
+    LoopCTRL, //data: break | continue, children: [] | [identifier: opnestedvalinloopcontrol]
+    For, //data: null, children: [expression, expression, expression, Label, statement, else as Statement]
+    While, //data: null, children: [expression, statement, Label, else as Statement]
+    ValInLCTRL, //data: identifier
+    LoopLabel, //data: identifier
+    Return, //NO FLATTEN, data: null, children: [Expression]
+    BaseType, //data: base type, children: []
+    GenericType, //data: generic type, children: [] // maybe children:[typecsv]?
+    If, //data: null, children: [ExprStatementCombined+, OptionalElse as Statement] where OptionalElse is not EMPTY| [ExprStatementCombined+]
+    Switch, //data: null, children: [Expression, ExprStatementCombined*]
+    ExprStatementCombined, //data: null, children: [Expression, Statement]
+    TypeAndIdentifierCSV, //data: null, children: [TypeAndIdentifierCSVElement+]
+    TypeAndIdentifierCSVElement, //data: Identifier, children: [FunctionArgDeclModifiersCombined, Type]
+    AliasExpr, //data: IDENTIFIER, children: [Identifier]
+    Declaration, //data: Identifier, children: [DeclarationModifiersCombined, Type, AssignmentPrime] | [Type, AssignmentPrime] | [Type] | [Type, AssignmentPrime]
+    DeclarationModifiersCombined, //data: null, children: [DeclarationModifier*]
+    DeclarationModifier, //data: "ref" | "readonly" | "frozen" | "immut", children: []
+    FunctionArgDeclModifiers, //data: *DeclarationModifier | "copy", children: []
+    FunctionArgDeclModifiersCombined, //data: null, children: [FunctionArgDeclModifiers+]
+    AssignmentPrime, //data: "=", children: [Expression]
+    //AssignmentExpr, //data: "=", children: [Identifier, Expression] 
+    FactorialExpression, //data: null, children: [Expression, !+]
+    BinaryExpression, //data: "implies" | "or" | "xor" | "and" | "==" | "!=" | ">" | ">=" | "<" | "<=" | "+" | "-" | "*" | "/" | "**" | "|" | "^" | "&", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser
+    ComparisionExpression, //data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via 
+    OperatorExpressionPair, //data: cmpOperator, children: [Expression]
+    Primary, //data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr
+    FunctionIdentifier, //data: IDENTIFIER, children: []
+    CopyExpr, //data: null, children: [Expression] //NO UP FLATTEN
+    NewExpr, //data: null, children: [Type, ArgList] | [Type]
+    Index, //data: null, children: [Expression, Expression] where Expression1 is Primary or subset (parens etc)
+    FunctionCall, //data: null | ".", children: [Expression, ArgList] | [Expression] where Expression1 i
+    ArgList, //data: null, children: [ArgListElement+]
+    ArgListElement, //data: null, children: [Expression] | [ArgListLabel, Expression]
+    TypeCSV, //data: null, children: [Type+]
+    UnaryExpression,

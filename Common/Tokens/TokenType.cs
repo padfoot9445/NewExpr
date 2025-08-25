@@ -1,7 +1,7 @@
-using System.ComponentModel.DataAnnotations;
 using sly.lexer;
 
 namespace Common.Tokens;
+
 public enum TokenType
 {
     EOF,

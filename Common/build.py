@@ -132,7 +132,8 @@ def main(working_directory: Path, config_path: Path, name: str, log_file: TextIO
     start_time = time()
 
     total_steps = len(build_steps)
-    steps_taken = total_steps
+    steps_taken = 0
+    faliures = 0
     ignored = 0
 
 
@@ -147,10 +148,12 @@ def main(working_directory: Path, config_path: Path, name: str, log_file: TextIO
         command = [str(i) for i in command]
         
         success = time_command(command, log_file, msg) and success
-        if not success:
-            steps_taken -= 1
+        if success:
+            steps_taken += 1
+        else:
+            faliures += 1
 
-    return success, steps_taken, total_steps, ignored, time() - start_time
+    return success, steps_taken, total_steps, ignored, faliures, time() - start_time
 
     
 
@@ -172,16 +175,16 @@ def extract(argv: list[str]) -> tuple[Path, Path, list[str]]:
     
     return working_directory, config_path, argv[argv_beginning:]
     
-def write_message(success: bool, steps_taken: int, total_steps: int, steps_ignored: int, total_time: float):
+def write_message(success: bool, steps_taken: int, total_steps: int, steps_ignored: int, faliures: int, total_time: float):
     
     color = (GREEN if success else RED) + BOLD
     if success:
         print(f"{BOLD}{color}INFO{END}:  {color}{steps_taken - steps_ignored}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
     else:
-        print(f"{BOLD}{color}INFO{END}:  {color}{total_steps - steps_taken}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
+        print(f"{BOLD}{color}INFO{END}:  {color}{faliures}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
 
-def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO, is_root: bool = True) -> tuple[bool, int, int, int, float]:
-    aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_total_time = main_output = main(working_directory, configuration_path, "", log_file)
+def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO, is_root: bool = True) -> tuple[bool, int, int, int, int, float]:
+    aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time = main_output = main(working_directory, configuration_path, "", log_file)
     if not is_root:
         write_message(*main_output) #if it is root, we defer this writing to recursive_main since we special case timing the deletion, build, etc
 
@@ -191,14 +194,15 @@ def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO
     for child_config_path in config.get("child projects", []):
 
         subdirectory, _ = os.path.split(child_config_path)
-        child_success, child_steps_taken, child_total_steps, child_steps_ignored, child_total_time = non_root(working_directory/subdirectory, Path(child_config_path), log_file, is_root=False)
+        child_success, child_steps_taken, child_total_steps, child_steps_ignored, child_faliures, child_total_time = non_root(working_directory/subdirectory, Path(child_config_path), log_file, is_root=False)
         aggregate_success = aggregate_success and child_success
         aggregate_steps_taken += child_steps_taken
         aggregate_total_steps += child_total_steps
         aggregate_steps_ignored += child_steps_ignored
         aggregate_total_time += child_total_time
+        aggregate_faliures += child_faliures
     
-    return aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_total_time
+    return aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time
     
 
 def recursive_main(working_directory: Path, configuration_path: Path, flags: list[str]):
@@ -206,6 +210,7 @@ def recursive_main(working_directory: Path, configuration_path: Path, flags: lis
     other_steps_taken = 0
     other_steps_ignored = 0
     other_steps_success = True
+    other_steps_faliures = 0
     #define dotnet commands
     fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format", True)
     restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore", True)
@@ -250,7 +255,7 @@ def recursive_main(working_directory: Path, configuration_path: Path, flags: lis
     other_steps_success = other_steps_success and time_thread("Delete-Generated-Files", delete_files, do_clean_flag, working_directory)
     other_steps_taken += 1
 
-    success, steps_taken, total_steps, steps_ignored, _ = non_root(working_directory, configuration_path, log_file, is_root=True)
+    success, steps_taken, total_steps, steps_ignored, faliures, _ = non_root(working_directory, configuration_path, log_file, is_root=True)
 
     
     other_steps_total = len(dotnet_build_steps) + 1
@@ -262,8 +267,10 @@ def recursive_main(working_directory: Path, configuration_path: Path, flags: lis
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
             other_steps_success = time_command(command, file_path, msg) and other_steps_success
-            other_steps_taken += 1
-            if not other_steps_success:
+            if other_steps_success:
+                other_steps_taken += 1
+            else:
+                other_steps_faliures += 1
                 time_command(command, sys.stdout, msg)
                 other_steps_taken -= 1; break
         
@@ -274,7 +281,7 @@ def recursive_main(working_directory: Path, configuration_path: Path, flags: lis
     color = GREEN if total_success else RED
     keyword = "succeeded" if total_success else "failed"
     print(f"{HEADERCODE}BUILD{END}: {color}{BOLD}Build {keyword} in {round(total_time_taken, TIME_ROUND)}s")
-    print(f"{color}{BOLD}Total: {total_steps + other_steps_total} | Executed: {other_steps_taken + steps_taken} | Ignored: {other_steps_ignored + steps_ignored} | Failed: 0")
+    print(f"{color}{BOLD}Total: {total_steps + other_steps_total} | Executed: {other_steps_taken + steps_taken} | Ignored: {other_steps_ignored + steps_ignored} | Failed: {other_steps_faliures + faliures}")
     
 
 

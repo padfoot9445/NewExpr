@@ -88,7 +88,7 @@ def delete_files(out: list[bool], clean: bool, working_directory: Path):
                 shutil.rmtree(Path(dirpath).resolve())
     except Exception as e:
         out[0] = False
-        print(f"{RED}{BOLD}INFO{END}:  {RED}{BOLD}{e}{END}")
+        print(f"{RED}{BOLD}BUILD{END}: {RED}{BOLD}{e}{END}")
             
 
 def main(working_directory: Path, config_path: Path, name: str, log_file: TextIO):
@@ -287,13 +287,13 @@ def recursive_main(working_directory: Path, configuration_path: Path, flags: lis
     color = GREEN if total_success else RED
     keyword = "succeeded" if total_success else "failed"
     print(f"{HEADERCODE}BUILD{END}: {color}{BOLD}Build {keyword} in {round(total_time_taken, TIME_ROUND)}s")
-    print(f"{HEADERCODE}INFO{END}:  {BOLD}Total{END}: {total_steps + other_steps_total} {BOLD}| {GREEN}Executed{END}: {other_steps_taken + steps_taken} {BOLD}|{YELLOW} Ignored{END}: {other_steps_ignored + steps_ignored} {BOLD}| {RED}Failed{END}: {other_steps_faliures + faliures}")
+    print(f"{HEADERCODE}BUILD{END}: {BOLD}Total{END}: {total_steps + other_steps_total} {BOLD}| {GREEN}Executed{END}: {other_steps_taken + steps_taken} {BOLD}|{YELLOW} Ignored{END}: {other_steps_ignored + steps_ignored} {BOLD}| {RED}Failed{END}: {other_steps_faliures + faliures}")
     
 
 
     
 
-skip: Callable[[str], None] = lambda name: print(f"{HEADERCODE}INFO{END}:  {BOLD}{name} {YELLOW}ignored{END} in (0.0s)")
+skip: Callable[[str], None] = lambda name: print(f"{HEADERCODE}BUILD{END}: {BOLD}{name} {YELLOW}ignored{END} in (0.0s)")
 
 if __name__ == "__main__":
     working_directory, configuration_path, flags = extract(sys.argv)

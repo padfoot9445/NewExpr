@@ -35,11 +35,15 @@ internal static class BinaryExpressionVisitor
 
         Driver.Emit(HighLevelOperation.MoveRegister(VariableBeginning, startReg, width));
     }
+    private static void IndexAssignmentVisitor<TLeft>(TLeft Left, CodeGenerator Driver, int VariableBeginning, SmallLangType RightType)
+    where TLeft : IndexNode
+    {
         var Pointer = Driver.GetRegisters((int)Left.Expression1.TypeOfExpression!.Size).First();
 
 
         Driver.Exec(Left.Expression1);
         Driver.Emit(HighLevelOperation.LoadFromStack(Pointer, Left.Expression1.TypeOfExpression!.Size));
+    }
     internal static void Visit(BinaryExpressionNode Self, CodeGenerator Driver)
     {
         Driver.EnteringChunk(() =>

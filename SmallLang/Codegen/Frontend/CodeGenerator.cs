@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Numerics;
 using Common.Dispatchers;
 using Common.LinearIR;
 using Common.Metadata;
@@ -54,12 +55,27 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     {
         Debug.Assert(node is T);
     }
+    static internal void CastNode<T>(ISmallLangNode node, out T OutNode)
+    {
+        OutNode = (T)node;
+    }
+
+    static internal bool TryCastNode<T>(ISmallLangNode node, out T? OutNode)
+    {
+        if (node is T)
+        {
+            CastNode(node, out OutNode);
+            return true;
+        }
+        OutNode = default;
+        return false;
+    }
     internal void Exec(ISmallLangNode node)
     {
         var CurrentChunk = Data.CurrentChunk;
         DynamicDispatch(node)(node, this);
     }
-    static Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
+    internal static Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
     where T : ISmallLangNode =>
         (x, y) =>
         {
@@ -67,6 +83,11 @@ public partial class CodeGenerator(SmallLangNode RootNode)
             visitor((T)x, y);
         };
     internal int[] GetRegisters(int Width = 1) => Enumerable.Range(0, Width).Select(_ => Data.GetRegister()).ToArray();
+    internal int[] GetRegisters<T>(T Width) where T : INumber<T>
+    {
+        return GetRegisters(int.CreateTruncating(Width));
+    }
+    internal int[] GetRegisters(SmallLangType Type) => GetRegisters(Type.Size);
     internal int[] GetRegisters(IHasAttributeTypeOfExpression Node) => GetRegisters((int)Node.TypeOfExpression!.Size);
     internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
     static Action<ISmallLangNode, CodeGenerator> DynamicDispatch(ISmallLangNode node) =>

@@ -1,5 +1,5 @@
 NodeTypeDefinitions:
-  ignore: no
+  ignore: yes
   namespace: SmallLang.IR.AST
   usings: []
   generator: nodetypegenerator.py

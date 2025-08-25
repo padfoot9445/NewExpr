@@ -9,7 +9,7 @@ using sly.buildresult;
 using sly.parser.generator;
 using LYParser = sly.parser.Parser<Common.Tokens.TokenType, ISmallLangNode>;
 using NodeType = ISmallLangNode;
-using OutNodeType = Common.AST.DynamicASTNode<ImportantASTNodeType, Attributes>;
+
 public class Parser
 {
     private LYParser LyParser;

@@ -9,8 +9,6 @@ using SmallLang.Parser;
 
 namespace SmallLangTest;
 
-using Node = Common.AST.DynamicASTNode<ImportantASTNodeType, Attributes>;
-using NodeType = ImportantASTNodeType;
 [TestFixture]
 public class ParserTest
 {

@@ -1,7 +1,7 @@
-using System.ComponentModel.DataAnnotations;
 using sly.lexer;
 
 namespace Common.Tokens;
+
 public enum TokenType
 {
     EOF,
@@ -167,6 +167,8 @@ public enum TokenType
     TypeChar,
     [Keyword("void")]
     TypeVoid,
+    [Keyword("bool")]
+    TypeBool,
     #endregion
 
     #region control-flow

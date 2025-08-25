@@ -1,0 +1,191 @@
+TypeData:
+  namespace: SmallLang.IR.Metadata
+  usings: [SmallLang.Exceptions]
+  generator: typedata.py
+  dst: IR/Metadata/Generated/TypeData.cs
+  display name: "Generate-TypeData"
+
+  name: TypeData
+  data:
+    typecodes:
+      &void void: 0
+      &string string: 1
+      &float float: 2
+      &int int: 3
+      &double double: 4
+      &number number: 5
+      &long long: 6
+      &longint longint: 7
+      &byte byte: 8
+      &char char: 9
+      &bool bool: 10
+      &rational rational: 11
+      &array array: 12
+      &list list: 13
+      &set set: 14
+      &dict dict: 15
+
+    type info:
+      - name: *void
+        size: 0
+        is pointer: no
+        is number: no
+        is collection: no
+        simulates real number: no
+        simulates rational number: no
+        value max size: null
+      - name: *string
+        size: 4
+        is pointer: yes
+        is number: no
+        is collection: no
+        simulates real number: no
+        simulates rational number: no
+        value max size: null
+      - name: *float
+        size: 4
+        is pointer: no
+        is number: yes
+        is collection: no
+        simulates real number: yes
+        simulates rational number: no
+        value max size: 32
+      - name: *int
+        size: 4
+        is pointer: no
+        is number: yes
+        is collection: no
+        simulates real number: no
+        simulates rational number: no
+        value max size: 32
+      - name: *double
+        size: 8
+        is pointer: no
+        is number: yes
+        is collection: no
+        simulates real number: yes
+        simulates rational number: no
+        value max size: 64
+      - name: *number
+        size: 4
+        is pointer: yes
+        is number: yes
+        is collection: no
+        simulates real number: yes
+        simulates rational number: no
+        value max size: null
+      - name: *long
+        size: 8
+        is pointer: no
+        is number: yes
+        is collection: no
+        simulates real number: no
+        simulates rational number: no
+        value max size: 64
+      - name: *longint
+        size: 4
+        is pointer: yes
+        is number: yes
+        is collection: no
+        simulates real number: no
+        simulates rational number: no
+        value max size: null
+      - name: *byte
+        size: 1
+        is pointer: no
+        is number: yes
+        is collection: no
+        simulates real number: no
+        simulates rational number: no
+        value max size: 8
+      - name: *char
+        size: 1
+        is pointer: no
+        is number: yes
+        is collection: no
+        simulates real number: no
+        simulates rational number: no
+        value max size: 8
+      - name: *bool
+        size: 1
+        is pointer: no
+        is number: yes
+        is collection: no
+        simulates real number: no
+        simulates rational number: no
+        value max size: 1
+      - name: *rational
+        size: 4
+        is pointer: yes
+        is number: yes
+        is collection: no
+        simulates real number: no
+        simulates rational number: yes
+        value max size: null
+      - name: *array
+        size: 4
+        is pointer: yes
+        is number: no
+        is collection: yes
+        simulates real number: no
+        simulates rational number: no
+        value max size: null
+      - name: *list
+        size: 4
+        is pointer: yes
+        is number: no
+        is collection: yes
+        simulates real number: no
+        simulates rational number: no
+        value max size: null
+      - name: *set
+        size: 4
+        is pointer: yes
+        is number: no
+        is collection: yes
+        simulates real number: no
+        simulates rational number: no
+        value max size: null
+      - name: *dict
+        size: 4
+        is pointer: yes
+        is number: no
+        is collection: yes
+        simulates real number: no
+        simulates rational number: no
+        value max size: null
+    
+    implicit casts:
+      *string : []
+      *longint : [*rational, *number]
+      *rational : [*number]
+      *array : []
+      *list : [*array]
+      *set : []
+      *dict : []
+      
+
+    pointer types:
+      - *string
+      - *number
+      - *longint
+      - *rational
+      - *array
+      - *list
+      - *set
+      - *dict
+
+
+Functions:
+  
+  namespace: SmallLang.IR.Metadata
+  usings: [Common.Metadata]
+  generator: functions.py
+  dst: IR/Metadata/Generated/Functions__StdLibFunctions.cs
+  display name: "Generate-Stdlib-Functions"
+
+  name: Functions
+
+  data:
+    - {name: input, ID: 1, returns: string, arguments: []}
+    - {name: SOut, ID: 2, returns: void, arguments: [string]}

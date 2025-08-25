@@ -1,0 +1,6 @@
+{
+    "Functions": [
+        {"name": "input", "ID": 1,"returns": "string", "arguments": []},
+        {"name": "SOut", "ID":2, "returns": "void", "arguments": ["string"]}
+    ]
+}

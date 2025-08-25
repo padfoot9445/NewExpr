@@ -88,16 +88,14 @@ def delete_files(out: list[bool], clean: bool, working_directory: Path):
         print(f"{RED}{BOLD}INFO{END}:  {RED}{BOLD}{e}{END}")
             
 
-def main(working_directory: str | None, configuration_path: str | None, passed_flags: list[str]):
-    _working_directory = Path(working_directory if working_directory is not None else os.getcwd()).resolve()
-    config_path = Path(configuration_path if configuration_path is not None else _working_directory/"config.yaml").resolve()
+def main(working_directory: Path, config_path: Path, passed_flags: list[str]):
 
 
     with open(config_path) as file_path:
         config = yaml.load(file_path, yaml.Loader)
-        configurations_path = _working_directory/config["configuration directory"]
+        configurations_path = working_directory/config["configuration directory"]
         file_paths = config["files"]
-        code_generation_scripts_directory = _working_directory/Path(config["generators relative path"])
+        code_generation_scripts_directory = working_directory/Path(config["generators relative path"])
     
 
     fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format", True)
@@ -131,7 +129,7 @@ def main(working_directory: str | None, configuration_path: str | None, passed_f
 
 
     #delete old files
-    time_thread("Delete-Generated-Files", delete_files, do_clean_flag, _working_directory)
+    time_thread("Delete-Generated-Files", delete_files, do_clean_flag, working_directory)
 
 
     #get build steps:
@@ -142,10 +140,10 @@ def main(working_directory: str | None, configuration_path: str | None, passed_f
             current_file_dict: dict[str, Any] = yaml.load(file, yaml.Loader)
             for step_name in current_file_dict.keys():
                 generator = code_generation_scripts_directory/current_file_dict[step_name]["generator"]
-                dst = _working_directory/current_file_dict[step_name]["dst"]
+                dst = working_directory/current_file_dict[step_name]["dst"]
                 display_name = current_file_dict[step_name]["display name"]
                 build_steps.append((
-                    [sys.executable, generator, file_path, dst, step_name, _working_directory],
+                    [sys.executable, generator, file_path, dst, step_name, working_directory],
                     display_name,
                     (not current_file_dict[step_name].get("ignore", False))
                 ))
@@ -164,7 +162,7 @@ def main(working_directory: str | None, configuration_path: str | None, passed_f
 
 
     #set up log-file
-    log_file_path = _working_directory/"log.tmp"
+    log_file_path = working_directory/"log.tmp"
     with open(log_file_path, "w") as file_path:
         file_path.write("")
     
@@ -211,18 +209,21 @@ def main(working_directory: str | None, configuration_path: str | None, passed_f
     else:
         print(f"{BOLD}{color}INFO{END}:  {color}{total_steps - steps_taken}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")
 
-def extract(argv: list[str]) -> tuple[str | None, str | None, list[str]]:
+def extract(argv: list[str]) -> tuple[Path, Path, list[str]]:
     argv_beginning = 1
-    working_directory: str | None = None
-    config_path: str | None = None
+    _working_directory: str | None = None
+    _config_path: str | None = None
 
     if len(argv) >= 2 and not argv[1].startswith("-"):
         argv_beginning = 2
-        working_directory = argv[1]
+        _working_directory = argv[1]
     
     if len(argv) >= 3 and not argv[2].startswith("-"):
         argv_beginning = 3
-        config_path = argv[2]
+        _config_path = argv[2]
+    
+    working_directory = Path(_working_directory if _working_directory is not None else os.getcwd()).resolve()
+    config_path = Path(_config_path if _config_path is not None else working_directory/"config.yaml").resolve()
     
     return working_directory, config_path, argv[argv_beginning:]
     

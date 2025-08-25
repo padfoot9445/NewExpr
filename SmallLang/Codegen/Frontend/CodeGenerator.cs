@@ -74,7 +74,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
         var CurrentChunk = Data.CurrentChunk;
         DynamicDispatch(node)(node, this);
     }
-    static Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
+    internal static Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
     where T : ISmallLangNode =>
         (x, y) =>
         {

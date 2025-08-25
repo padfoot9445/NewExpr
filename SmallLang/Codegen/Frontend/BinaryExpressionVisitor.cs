@@ -141,7 +141,7 @@ internal static class BinaryExpressionVisitor
                 (TokenType.BitwiseLeftShift, NonAssignmentOperatorVisitor),
                 (TokenType.BitwiseRightShift, NonAssignmentOperatorVisitor),
                 (TokenType.BitwiseNegation, NonAssignmentOperatorVisitor)
-            )(Self.Data, Self, Driver);
+            )(Self, Driver);
         });
     }
 }

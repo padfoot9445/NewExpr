@@ -796,10 +796,10 @@ classes:
             name: Type
             is optional: no
             is multiple: no
-          - type: *ArgList
+          - type: *ArgListElement
             name: ArgList
-            is optional: yes
-            is multiple: no
+            is optional: no
+            is multiple: yes
         parents:
         - *SmallLangNode
         - *Expression
@@ -836,10 +836,10 @@ classes:
             name: Expression
             is optional: no
             is multiple: no
-          - type: *ArgList
+          - type: *ArgListElement
             name: ArgList
-            is optional: yes
-            is multiple: no
+            is optional: no
+            is multiple: yes
         parents:
         - *SmallLangNode
         - *Expression
@@ -849,21 +849,7 @@ classes:
         has additional data validation function: no
         data validation function: no
         attributes: []
-      
-      - name: *ArgList
-        children:
-          - type: *ArgListElement
-            name: ArgListElements
-            is optional: no
-            is multiple: yes
-        parents:
-        - *SmallLangNode
-        has data: no
-        check data type: no
-        valid data types: []
-        has additional data validation function: no
-        data validation function: no
-        attributes: []
+
       
       - name: *ArgListElement
         children:

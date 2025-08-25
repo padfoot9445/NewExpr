@@ -10,22 +10,23 @@ internal static class BinaryExpressionVisitor
     {
         var GCType = Self.GreatestCommonType!;
 
-        Driver.Cast(Self.Right);
+        Driver.Cast(Self.Right, Self.Left.TypeOfExpression!);
 
         var VariableBeginning = Driver.GetRegisters(1).Single();
 
-        Driver.Emit(HighLevelOperation.LoadFromStack(VariableBeginning, GCType.Size));
+        Driver.Emit(HighLevelOperation.LoadFromStack(VariableBeginning, Self.Left.TypeOfExpression!.Size));
 
         if (Self.Left is IndexNode IndexLeft)
         {
-            IndexAssignmentVisitor(IndexLeft, Driver, VariableBeginning, GCType);
+            IndexAssignmentVisitor(IndexLeft, Driver, VariableBeginning, Self.Left.TypeOfExpression);
         }
         else if (Self.Left is IdentifierNode IDLeft)
         {
-            IdentifierAssignmentVisitor(IDLeft, Driver, VariableBeginning, GCType);
+            IdentifierAssignmentVisitor(IDLeft, Driver, VariableBeginning, Self.Left.TypeOfExpression);
         }
         else throw new Exception();
     }
+
     internal static void Visit(BinaryExpressionNode Self, CodeGenerator Driver)
     {
         Driver.EnteringChunk(() =>

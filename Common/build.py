@@ -190,9 +190,7 @@ def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO
         name = configuration_path.parts[-2]
     name = os.path.splitext(name)[0]
 
-    aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time = main_output = main(working_directory, configuration_path, name, log_file)
-    
-    write_message(*main_output, name)
+    aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time = True, 0, 0, 0, 0, 0
 
     with open(configuration_path) as file:
         config: dict[str, list[str]] = yaml.load(file, yaml.Loader)
@@ -208,6 +206,17 @@ def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO
         aggregate_total_time += child_total_time
         aggregate_faliures += child_faliures
     
+    self_success, self_steps_taken, self_total_steps, self_steps_ignored, self_faliures, self_total_time = main_output = main(working_directory, configuration_path, name, log_file)
+    aggregate_success = aggregate_success and self_success
+    aggregate_steps_taken += self_steps_taken
+    aggregate_total_steps += self_total_steps
+    aggregate_steps_ignored += self_steps_ignored
+    aggregate_faliures += self_faliures
+    aggregate_total_time += self_total_time
+    
+    write_message(*main_output, name)
+
+
     return aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time
     
 

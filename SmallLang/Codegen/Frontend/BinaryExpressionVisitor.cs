@@ -1,12 +1,12 @@
-    private static void AssignmentVisitor(IToken Operator, IExpressionNode Left, IExpressionNode Right, CodeGenerator Driver)
+    private static void AssignmentVisitor(BinaryExpressionNode Self, CodeGenerator Driver)
     {
-        if (Left is IndexNode IndexLeft)
+        if (Self.Left is IndexNode IndexLeft)
         {
-            IndexAssignmentVisitor(IndexLeft, Right, Driver);
+            IndexAssignmentVisitor(IndexLeft, Self.Right, Driver,);
         }
-        else if (Left is IdentifierNode IDLeft)
+        else if (Self.Left is IdentifierNode IDLeft)
         {
-            IdentifierAssignmentVisitor(IDLeft, Right, Driver);
+            IdentifierAssignmentVisitor(IDLeft, Self.Right, Driver,);
         }
         else throw new Exception();
     }
@@ -36,7 +36,7 @@
                 (TokenType.BitwiseLeftShift, NonAssignmentOperatorVisitor),
                 (TokenType.BitwiseRightShift, NonAssignmentOperatorVisitor),
                 (TokenType.BitwiseNegation, NonAssignmentOperatorVisitor)
-            )(Self.Data, Self.Left, Self.Right, Driver);
+            )(Self.Data, Self, Driver);
         });
     }
 }

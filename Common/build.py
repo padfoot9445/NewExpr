@@ -88,11 +88,11 @@ def delete_files(out: list[bool], clean: bool, working_directory: Path):
         print(f"{RED}{BOLD}INFO{END}:  {RED}{BOLD}{e}{END}")
             
 
-def main(working_directory: Path, config_path: Path, name: str):
+def main(working_directory: Path, config_path: Path, name: str, log_file: TextIO):
 
 
-    with open(config_path) as log_file:
-        config = yaml.load(log_file, yaml.Loader)
+    with open(config_path) as main_config_file:
+        config = yaml.load(main_config_file, yaml.Loader)
         configurations_path = working_directory/config["configuration directory"]
         file_paths = config["files"]
         code_generation_scripts_directory = working_directory/Path(config["generators relative path"])
@@ -100,16 +100,16 @@ def main(working_directory: Path, config_path: Path, name: str):
 
     #get build steps:
     build_steps: list[Command] = []
-    for log_file in file_paths:
-        log_file = configurations_path/log_file
-        with open(log_file) as file:
+    for file_path in file_paths:
+        file_path = configurations_path/file_path
+        with open(file_path) as file:
             current_file_dict: dict[str, Any] = yaml.load(file, yaml.Loader)
             for step_name in current_file_dict.keys():
                 generator = code_generation_scripts_directory/current_file_dict[step_name]["generator"]
                 dst = working_directory/current_file_dict[step_name]["dst"]
                 display_name = current_file_dict[step_name]["display name"]
                 build_steps.append((
-                    [sys.executable, generator, log_file, dst, step_name, working_directory],
+                    [sys.executable, generator, file_path, dst, step_name, working_directory],
                     display_name,
                     (not current_file_dict[step_name].get("ignore", False))
                 ))
@@ -180,8 +180,8 @@ def write_message(success: bool, steps_taken: int, total_steps: int, steps_ignor
     else:
         print(f"{BOLD}{color}INFO{END}:  {color}{total_steps - steps_taken}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
 
-def non_root(working_directory: Path, configuration_path: Path, is_root: bool = True) -> tuple[bool, int, int, int, float]:
-    aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_total_time = main_output = main(working_directory, configuration_path, "")
+def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO, is_root: bool = True) -> tuple[bool, int, int, int, float]:
+    aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_total_time = main_output = main(working_directory, configuration_path, "", log_file)
     if not is_root:
         write_message(*main_output) #if it is root, we defer this writing to recursive_main since we special case timing the deletion, build, etc
 
@@ -191,7 +191,7 @@ def non_root(working_directory: Path, configuration_path: Path, is_root: bool = 
     for child_config_path in config.get("child projects", []):
 
         subdirectory, _ = os.path.split(child_config_path)
-        child_success, child_steps_taken, child_total_steps, child_steps_ignored, child_total_time = non_root(working_directory/subdirectory, Path(child_config_path), is_root=False)
+        child_success, child_steps_taken, child_total_steps, child_steps_ignored, child_total_time = non_root(working_directory/subdirectory, Path(child_config_path), log_file, is_root=False)
         aggregate_success = aggregate_success and child_success
         aggregate_steps_taken += child_steps_taken
         aggregate_total_steps += child_total_steps
@@ -242,15 +242,15 @@ def recursive_main(working_directory: Path, configuration_path: Path, flags: lis
 
     #set up log-file
     log_file_path = working_directory/"log.tmp"
-    with open(log_file_path, "w") as file_path:
-        file_path.write("")
+    log_file = open(log_file_path, "w")
+    log_file.write("")
 
 
     #delete old files
     other_steps_success = other_steps_success and time_thread("Delete-Generated-Files", delete_files, do_clean_flag, working_directory)
     other_steps_taken += 1
 
-    success, steps_taken, total_steps, steps_ignored, _ = non_root(working_directory, configuration_path, is_root=True)
+    success, steps_taken, total_steps, steps_ignored, _ = non_root(working_directory, configuration_path, log_file, is_root=True)
 
     
     other_steps_total = len(dotnet_build_steps) + 1

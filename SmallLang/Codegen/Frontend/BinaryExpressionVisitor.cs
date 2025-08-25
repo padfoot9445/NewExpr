@@ -8,13 +8,21 @@ internal static class BinaryExpressionVisitor
 {
     private static void AssignmentVisitor(BinaryExpressionNode Self, CodeGenerator Driver)
     {
+        var GCType = Self.GreatestCommonType!;
+
+        Driver.Cast(Self, GCType);
+
+        var VariableBeginning = Driver.GetRegisters(1).Single();
+
+        Driver.Emit(HighLevelOperation.LoadFromStack(VariableBeginning, GCType.Size));
+
         if (Self.Left is IndexNode IndexLeft)
         {
-            IndexAssignmentVisitor(IndexLeft, Self.Right, Driver,);
+            IndexAssignmentVisitor(IndexLeft, Driver, VariableBeginning, GCType);
         }
         else if (Self.Left is IdentifierNode IDLeft)
         {
-            IdentifierAssignmentVisitor(IDLeft, Self.Right, Driver,);
+            IdentifierAssignmentVisitor(IDLeft, Driver, VariableBeginning, GCType);
         }
         else throw new Exception();
     }

@@ -124,6 +124,11 @@ HighLevelOpcodes:
         - name: DestinationRegisterBeginning
         - name: Width
       comment: Moves a value of width Width from the registers beginning SourceRegisterBeginning to the registers beginning DestinationRegisterBeginning
+    - name: CheckVectorLikeBound
+      arguments:
+        - name: VectorLikePointer
+        - name: AttemptedIndexValue
+      comment: takes a register containing a pointer to a vectorlike, and four registers beginning AttemptedIndexValue which contain the value with which we are attempting to index the vectorlike. Throws a runtime exception if the bounds check fails.
     - name: IndexVectorLike
       arguments:
         - name: VectorLikePointer

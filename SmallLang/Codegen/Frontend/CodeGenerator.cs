@@ -87,6 +87,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     {
         return GetRegisters(int.CreateTruncating(Width));
     }
+    internal int[] GetRegisters(SmallLangType Type) => GetRegisters(Type.Size);
     internal int[] GetRegisters(IHasAttributeTypeOfExpression Node) => GetRegisters((int)Node.TypeOfExpression!.Size);
     internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
     static Action<ISmallLangNode, CodeGenerator> DynamicDispatch(ISmallLangNode node) =>

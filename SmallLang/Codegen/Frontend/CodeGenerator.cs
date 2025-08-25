@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Numerics;
 using Common.Dispatchers;
 using Common.LinearIR;
 using Common.Metadata;
@@ -82,6 +83,10 @@ public partial class CodeGenerator(SmallLangNode RootNode)
             visitor((T)x, y);
         };
     internal int[] GetRegisters(int Width = 1) => Enumerable.Range(0, Width).Select(_ => Data.GetRegister()).ToArray();
+    internal int[] GetRegisters<T>(T Width) where T : INumber<T>
+    {
+        return GetRegisters(int.CreateTruncating(Width));
+    }
     internal int[] GetRegisters(IHasAttributeTypeOfExpression Node) => GetRegisters((int)Node.TypeOfExpression!.Size);
     internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
     static Action<ISmallLangNode, CodeGenerator> DynamicDispatch(ISmallLangNode node) =>

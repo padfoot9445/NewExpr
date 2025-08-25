@@ -148,6 +148,8 @@ HighLevelOpcodes:
         - name: KeyRegisterStart
         - name: MapPointerStart
         - name: ValueRegisterStart
+        - name: KeyType
+        - name: ValueType
       comment:
         Loads the value in ValueRegisterStart into the Map pointed to by MapPointerStart at the key KeyRegisterStart
 

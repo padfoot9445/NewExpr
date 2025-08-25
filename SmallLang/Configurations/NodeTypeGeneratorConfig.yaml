@@ -104,7 +104,7 @@ marker interfaces:
       parents:
       - *ISmallLangNode
       - *Statement
-      attributes: &ExpressionAttrs [*TypeOfExpression, *NestedTypeOfExpression]
+      attributes: &ExpressionAttrs [*TypeOfExpression, *ExpectedTypeOfExpression]
     - name: &Type IType
       parents:
       - *ISmallLangNode

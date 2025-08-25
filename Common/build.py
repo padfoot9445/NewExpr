@@ -1,18 +1,20 @@
 import subprocess
-from typing import Callable, Any, cast
+from typing import Callable, Any, cast, TextIO, Literal
 from pathlib import Path
 import os
-import sys
 import yaml
 from time import time, sleep
 from threading import Thread
 import shutil
+import sys
 
 Command = tuple[list[str | Path], str, bool] #(Command, Name, Execute?)
-
 TIME_ROUND: int = 2
+DEFAULT_YAML_NAME: Literal["config.yaml"] = "config.yaml"
+
 BOLD = "\033[1m"
 END = '\033[0m'
+PURPLE = '\033[35m'
 GREEN = '\033[92m'
 RED = '\033[31m'
 SUCCEED = f"{GREEN}{BOLD}succeeded{END} in"
@@ -24,7 +26,7 @@ YELLOW = '\033[93m'
 def mutate_command(src: list[Command], srcindex: int, val: list[str | Path] | str | bool = False, mutindex: int=2):
     src[srcindex] = cast(Command, tuple(v if mutindex != i else val for i, v in enumerate(src[srcindex])))
 
-def custom_run(out: list[bool], command: Any, path:Any):
+def custom_run(out: list[bool], command: list[str], path:TextIO):
     try:
         subprocess.run(command, check=True, stdout=path)
     except subprocess.CalledProcessError:
@@ -59,7 +61,7 @@ def time_thread(name: str, work_function: Callable[..., Any], *args: Any, **kwar
     assert not work_thread.is_alive()
     return out[0]
 
-def time_command(command: list[str], stdout_destination: Any, msg: str):
+def time_command(command: list[str], stdout_destination: TextIO, msg: str):
     return time_thread(msg,
         custom_run, command, stdout_destination)
 
@@ -76,7 +78,7 @@ def make_dir(dst: Path):
     print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}\033[4:5m{dst}{END}")
     
 
-def delete_files(out: list[bool], clean: bool):
+def delete_files(out: list[bool], clean: bool, working_directory: Path):
     try:
         for dirpath, _, filenames in os.walk(working_directory):
             for i in filenames:
@@ -86,55 +88,17 @@ def delete_files(out: list[bool], clean: bool):
                 shutil.rmtree(Path(dirpath).resolve())
     except Exception as e:
         out[0] = False
-        print(f"{RED}{BOLD}INFO{END}:  {RED}{BOLD}{e}{END}")
+        print(f"{RED}{BOLD}BUILD{END}: {RED}{BOLD}{e}{END}")
             
 
-if __name__ == "__main__":
-
-    working_directory = Path(sys.argv[1] if len(sys.argv) >= 2 and not sys.argv[1].startswith("-") else os.getcwd()).resolve()
-    config_path = Path(sys.argv[2] if len(sys.argv) >= 3 and not sys.argv[2].startswith("-") else working_directory/"config.yaml").resolve()
+def main(working_directory: Path, config_path: Path, name: str, log_file: TextIO):
 
 
-    with open(config_path) as file_path:
-        config = yaml.load(file_path, yaml.Loader)
+    with open(config_path) as main_config_file:
+        config = yaml.load(main_config_file, yaml.Loader)
         configurations_path = working_directory/config["configuration directory"]
         file_paths = config["files"]
         code_generation_scripts_directory = working_directory/Path(config["generators relative path"])
-    
-
-    fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format", True)
-    restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore", True)
-    build_command: Command = (["dotnet", "build", "--no-restore"], "Dotnet-Build", True)
-
-
-    dotnet_build_steps: list[Command] = [
-        restore_command,
-        build_command,
-        fmt_command
-    ]
-
-    do_clean_flag = False
-    def do_clean():
-        global do_clean_flag
-        do_clean_flag = True
-    
-    #handle commmand line arguments
-    flags: list[tuple[str, Callable[[], Any], bool]] = [ #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
-        ("--no-build", lambda: mutate_command(dotnet_build_steps, 1), True),
-        ("--whitespace", lambda: fmt_command[0].append("whitespace"), True),
-        ("--no-format", lambda: mutate_command(dotnet_build_steps, 2), True),
-        ("--no-dotnet", lambda: [mutate_command(dotnet_build_steps, i) for i in range(3)], True),
-        ("--clean", do_clean, True)
-    ]
-
-    for flag, action, desired in flags:
-        if (flag in sys.argv) == desired:
-            action()
-
-
-    #delete old files
-    delete_out = [True]
-    time_thread("Delete-Generated-Files", delete_files, do_clean_flag)
 
 
     #get build steps:
@@ -166,19 +130,15 @@ if __name__ == "__main__":
             i[0][j] = str(i[0][j])
 
 
-    #set up log-file
-    log_file_path = working_directory/"log.tmp"
-    with open(log_file_path, "w") as file_path:
-        file_path.write("")
     
 
-    total_time = time()
+    start_time = time()
 
-    total_steps = len(dotnet_build_steps) + len(build_steps) + 1
-    steps_taken = total_steps
+    total_steps = len(build_steps)
+    steps_taken = 0
+    faliures = 0
     ignored = 0
 
-    skip: Callable[[str], None] = lambda name: print(f"{HEADERCODE}INFO{END}:  {BOLD}{name} {YELLOW}ignored{END} in (0.0s)")
 
     
     #run build steps
@@ -189,28 +149,157 @@ if __name__ == "__main__":
         if not execute:
             skip(msg); ignored += 1; continue
         command = [str(i) for i in command]
-        with open(log_file_path, "a") as file_path:
-            success = time_command(command, file_path, msg) and success
-            if not success:
-                steps_taken -= 1
+        
+        success = time_command(command, log_file, msg) and success
+        if success:
+            steps_taken += 1
+        else:
+            faliures += 1
+
+    return success, steps_taken, total_steps, ignored, faliures, time() - start_time
+
+    
+
+def extract(argv: list[str]) -> tuple[Path, Path, list[str]]:
+    argv_beginning = 1
+    _working_directory: str | None = None
+    _config_path: str | None = None
+
+    if len(argv) >= 2 and not argv[1].startswith("-"):
+        argv_beginning = 2
+        _working_directory = argv[1]
+    
+    if len(argv) >= 3 and not argv[2].startswith("-"):
+        argv_beginning = 3
+        _config_path = argv[2]
+    
+    working_directory = Path(_working_directory if _working_directory is not None else os.getcwd()).resolve()
+    config_path = Path(_config_path if _config_path is not None else working_directory/DEFAULT_YAML_NAME).resolve()
+    
+    return working_directory, config_path, argv[argv_beginning:]
+    
+def write_message(success: bool, steps_taken: int, total_steps: int, steps_ignored: int, faliures: int, total_time: float, name: str):
+        
+    print(f"{HEADERCODE}BUILD{END}: {PURPLE}{BOLD}{name}{END} {BOLD}{f"{GREEN}succeeded" if success else f"{RED}failed"}{END} in {round(total_time, TIME_ROUND)}s {BOLD}({steps_taken}/{total_steps - steps_ignored} + {steps_ignored}){END}")
+
+def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO) -> tuple[bool, int, int, int, int, float]:
+
+    configuration_path = configuration_path.resolve()
+    name = configuration_path.parts[-1]
+    if name == DEFAULT_YAML_NAME:
+        name = configuration_path.parts[-2]
+    name = os.path.splitext(name)[0]
+
+    aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time = main_output = main(working_directory, configuration_path, name, log_file)
+    
+    write_message(*main_output, name)
+
+    with open(configuration_path) as file:
+        config: dict[str, list[str]] = yaml.load(file, yaml.Loader)
+            
+    for child_config_path in config.get("child projects", []):
+
+        subdirectory, _ = os.path.split(child_config_path)
+        child_success, child_steps_taken, child_total_steps, child_steps_ignored, child_faliures, child_total_time = non_root(working_directory/subdirectory, Path(child_config_path), log_file)
+        aggregate_success = aggregate_success and child_success
+        aggregate_steps_taken += child_steps_taken
+        aggregate_total_steps += child_total_steps
+        aggregate_steps_ignored += child_steps_ignored
+        aggregate_total_time += child_total_time
+        aggregate_faliures += child_faliures
+    
+    return aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time
+    
+
+def recursive_main(working_directory: Path, configuration_path: Path, flags: list[str]):
+    start_time = time()
+    other_steps_taken = 0
+    other_steps_ignored = 0
+    other_steps_success = True
+    other_steps_faliures = 0
+    #define dotnet commands
+    fmt_command: Command = (["dotnet", "format", "--no-restore"], "Dotnet-Format", True)
+    restore_command: Command = (["dotnet", "restore"], "Dotnet-Restore", True)
+    build_command: Command = (["dotnet", "build", "--no-restore"], "Dotnet-Build", True)
+
+    dotnet_build_steps: list[Command] = [
+        restore_command,
+        build_command,
+        fmt_command
+    ]
+
+
+    #handle commmand line arguments
+
+    do_clean_flag = False
+    def do_clean():
+        global do_clean_flag
+        do_clean_flag = True
+
+    flags_list: list[tuple[str, Callable[[], Any], bool]] = [
+        #flag to look out for, action to take if flag, [bool]: desired existence (so if True then we take the step if the flag exists, and if false we take the step if the flag does not exist)
+        ("--no-build", lambda: mutate_command(dotnet_build_steps, 1), True),
+        ("--whitespace", lambda: fmt_command[0].append("whitespace"), True),
+        ("--no-format", lambda: mutate_command(dotnet_build_steps, 2), True),
+        ("--no-dotnet", lambda: [mutate_command(dotnet_build_steps, i) for i in range(3)], True),
+        ("--clean", do_clean, True)
+    ]
+    
+    
+    for flag, action, desired in flags_list:
+        if (flag in flags) == desired:
+            action()
+
+
+    #set up log-file
+    log_file_path = working_directory/"log.tmp"
+    log_file = open(log_file_path, "w")
+    log_file.write("")
+
+
+    #delete old files
+    other_steps_success = other_steps_success and time_thread("Delete-Generated-Files", delete_files, do_clean_flag, working_directory)
+    other_steps_taken += 1
+
+    success, steps_taken, total_steps, steps_ignored, faliures, _ = non_root(working_directory, configuration_path, log_file)
+
+    
+    other_steps_total = len(dotnet_build_steps) + 1
 
     for command, msg, execute in dotnet_build_steps:
         if not execute:
-            skip(msg); ignored += 1; continue
+            skip(msg); other_steps_ignored += 1; continue
 
-        if not success:
-            steps_taken -= 1
-            break
         command = [str(i) for i in command]
         with open(log_file_path, "a") as file_path:
-            success = time_command(command, file_path, msg) and success
-            if not success:
+            other_steps_success = time_command(command, file_path, msg) and other_steps_success
+            if other_steps_success:
+                other_steps_taken += 1
+            else:
+                other_steps_faliures += 1
                 time_command(command, sys.stdout, msg)
+                other_steps_taken -= 1; break
+        
+
+    total_time_taken = time() - start_time
+
+    total_success = success and other_steps_success
+    color = GREEN if total_success else RED
+    keyword = "succeeded" if total_success else "failed"
+    print(f"{HEADERCODE}BUILD{END}: {color}{BOLD}Build {keyword} in {round(total_time_taken, TIME_ROUND)}s")
+    print(f"{HEADERCODE}BUILD{END}: {BOLD}Total{END}: {total_steps + other_steps_total} {BOLD}| {GREEN}Executed{END}: {other_steps_taken + steps_taken} {BOLD}|{YELLOW} Ignored{END}: {other_steps_ignored + steps_ignored} {BOLD}| {RED}Failed{END}: {other_steps_faliures + faliures}")
+    
 
 
-    build_code = "\033[092m\033[1m" if success else f"\033[31m{BOLD}"
-    color = (GREEN if success else RED) + BOLD
-    if success:
-        print(f"{BOLD}{color}INFO{END}:  {color}{steps_taken - ignored}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")
-    else:
-        print(f"{BOLD}{color}INFO{END}:  {color}{total_steps - steps_taken}/{total_steps - ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(time() - total_time, TIME_ROUND)}s{END}")
+    
+
+skip: Callable[[str], None] = lambda name: print(f"{HEADERCODE}BUILD{END}: {BOLD}{name} {YELLOW}ignored{END} in (0.0s)")
+
+if __name__ == "__main__":
+    working_directory, configuration_path, flags = extract(sys.argv)
+
+
+    
+    
+
+    recursive_main(working_directory, configuration_path, flags)

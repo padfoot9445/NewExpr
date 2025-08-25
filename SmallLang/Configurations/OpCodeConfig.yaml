@@ -118,6 +118,90 @@ HighLevelOpcodes:
         - name: SourceRegister
         - name: Width
       comment: Pushes a value onto the stack from the registers beginning at SourceRegister
+    - name: MoveRegister
+      arguments:
+        - name: SourceRegisterBeginning
+        - name: DestinationRegisterBeginning
+        - name: Width
+      comment: Moves a value of width Width from the registers beginning SourceRegisterBeginning to the registers beginning DestinationRegisterBeginning
+    - name: CheckVectorLikeBound
+      arguments:
+        - name: VectorLikePointer
+        - name: AttemptedIndexValue
+      comment: takes a register containing a pointer to a vectorlike, and four registers beginning AttemptedIndexValue which contain the value with which we are attempting to index the vectorlike. Throws a runtime exception if the bounds check fails.
+    - name: IndexVectorLike
+      arguments:
+        - name: VectorLikePointer
+        - name: Index
+        - name: DstRegister
+      comment:
+        Returns a pointer to the indexed slot of the vectorlike
+    - name: StoreToMemory
+      arguments:
+        - name: SrcRegisterStart
+        - name: DstPtrStart
+        - name: Width
+      comment:
+        Loads the value from SrcRegister of width Width to the memory segment beginning DstPtrStart
+    - name: LoadHashMap
+      arguments:
+        - name: KeyRegisterStart
+        - name: MapPointerStart
+        - name: ValueRegisterStart
+        - name: KeyType
+        - name: ValueType
+      comment:
+        Loads the value in ValueRegisterStart into the Map pointed to by MapPointerStart at the key KeyRegisterStart
+    
 
+    - name: LogicalImplies
+      arguments: &BinOpArguments
+        - name: SrcRegister1
+        - name: SrcRegister2
+        - name: DstRegister1
+        - name: GCType
+      comment: &BinOpComment SrcRegister1 Op SrcRegister2 -> DstRegister1. GCType is the Greatest Common Type (GCType), and is also the type of the binop expression
+    - name: LogicalOr
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: LogicalXor
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: LogicalAnd
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Addition
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Subtraction
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Multiplication
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Division
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Exponentiation
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseOr
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseXor
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseAnd
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseLeftShift
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseRightShift
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseNegation
+      arguments: *BinOpArguments
+      comment: *BinOpComment
 
   

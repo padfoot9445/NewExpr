@@ -242,4 +242,10 @@ public static class ObjectDispatchers
         TReturn Result
     )> Cases
 ) => Self.Dispatch(Accessor, Default, ValToFunc<TObject, Func<TAttribute, bool>, TReturn>(Cases));
+
+    public static TReturn Map<TObject, TReturn>
+    (
+        this TObject Self,
+        params IEnumerable<(TObject, TReturn)> Cases
+    ) => Self.Dispatch(x => x, Cases.Select<(TObject, TReturn), (Func<TObject, bool>, Func<TObject, TReturn>)>(x => (y => (x.Item1 is null && y is null) || (y is not null && y.Equals(x.Item1)), (_) => x.Item2)));
 }

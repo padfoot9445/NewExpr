@@ -76,7 +76,15 @@ attributes:
     - &ExpectedReturnType
       name: ExpectedReturnType
       type: SmallLangType
-
+    - &GreatestCommonType
+      name: GreatestCommonType
+      type: SmallLangType
+    - &NestedTypeOfExpression
+      name: NestedTypeOfExpression
+      type: List<SmallLangType>
+    - &ExpectedTypeOfExpression
+      name: ExpectedTypeOfExpression
+      type: SmallLangType
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
@@ -96,7 +104,7 @@ marker interfaces:
       parents:
       - *ISmallLangNode
       - *Statement
-      attributes: &ExpressionAttrs [*TypeOfExpression]
+      attributes: &ExpressionAttrs [*TypeOfExpression, *ExpectedTypeOfExpression]
     - name: &Type IType
       parents:
       - *ISmallLangNode
@@ -686,7 +694,7 @@ classes:
         - BitwiseNegation
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*GreatestCommonType]
       
       - name: *ComparisonExpression
         children:

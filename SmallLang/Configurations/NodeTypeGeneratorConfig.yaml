@@ -218,10 +218,10 @@ classes:
             name: Type
             is optional: no
             is multiple: no
-          - type: *TypeAndIdentifierCSV
+          - type: *TypeAndIdentifierCSVElement
             name: TypeAndIdentifierCSV
-            is optional: yes
-            is multiple: no
+            is optional: no
+            is multiple: yes
           - type: *Section
             name: FunctionBody
             is optional: no
@@ -468,20 +468,6 @@ classes:
         data validation function: no
         attributes: []
       
-      - name: *TypeAndIdentifierCSV
-        children:
-          - type: *TypeAndIdentifierCSVElement
-            name: TypeAndIdentifierCSVElements
-            is optional: no
-            is multiple: yes
-        parents:
-        - *SmallLangNode
-        has data: no
-        check data type: no
-        valid data types: []
-        has additional data validation function: no
-        data validation function: no
-        attributes: []
       
       - name: *TypeAndIdentifierCSVElement
         children:

@@ -10,7 +10,7 @@ internal static class BinaryExpressionVisitor
     {
         var GCType = Self.GreatestCommonType!;
 
-        Driver.Cast(Self, GCType);
+        Driver.Cast(Self.Right);
 
         var VariableBeginning = Driver.GetRegisters(1).Single();
 

@@ -124,5 +124,12 @@ HighLevelOpcodes:
         - name: DestinationRegisterBeginning
         - name: Width
       comment: Moves a value of width Width from the registers beginning SourceRegisterBeginning to the registers beginning DestinationRegisterBeginning
+    - name: IndexVectorLike
+      arguments:
+        - name: VectorLikePointer
+        - name: Index
+        - name: DstRegister
+      comment:
+        Returns a pointer to the indexed slot of the vectorlike
 
   

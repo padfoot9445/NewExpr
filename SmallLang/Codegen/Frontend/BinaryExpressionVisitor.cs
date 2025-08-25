@@ -1,7 +1,12 @@
+using System.Diagnostics;
 using Common.Dispatchers;
+using Common.LinearIR;
 using Common.Tokens;
 using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
+using SmallLang.IR.LinearIR;
+using SmallLang.IR.Metadata;
+
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using ArgumentType = Common.LinearIR.NumberWrapper<int, BackingNumberType>;

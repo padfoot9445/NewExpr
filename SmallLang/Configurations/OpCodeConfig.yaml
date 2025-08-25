@@ -118,6 +118,11 @@ HighLevelOpcodes:
         - name: SourceRegister
         - name: Width
       comment: Pushes a value onto the stack from the registers beginning at SourceRegister
-
+    - name: MoveRegister
+      arguments:
+        - name: SourceRegisterBeginning
+        - name: DestinationRegisterBeginning
+        - name: Width
+      comment: Moves a value of width Width from the registers beginning SourceRegisterBeginning to the registers beginning DestinationRegisterBeginning
 
   

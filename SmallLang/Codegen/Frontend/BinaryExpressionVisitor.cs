@@ -24,7 +24,7 @@
                 (TokenType.BitwiseLeftShift, NonAssignmentOperatorVisitor),
                 (TokenType.BitwiseRightShift, NonAssignmentOperatorVisitor),
                 (TokenType.BitwiseNegation, NonAssignmentOperatorVisitor)
-            )(Self.Left, Self.Right, Driver);
+            )(Self.Data, Self.Left, Self.Right, Driver);
         });
     }
 }

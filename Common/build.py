@@ -179,9 +179,9 @@ def write_message(success: bool, steps_taken: int, total_steps: int, steps_ignor
     
     color = (GREEN if success else RED) + BOLD
     if success:
-        print(f"{BOLD}{color}INFO{END}:  {color}{steps_taken - steps_ignored}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
+        print(f"{BOLD}{HEADERCODE}INFO{END}:  {color}{steps_taken - steps_ignored}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
     else:
-        print(f"{BOLD}{color}INFO{END}:  {color}{faliures}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
+        print(f"{BOLD}{HEADERCODE}INFO{END}:  {color}{faliures}/{total_steps - steps_ignored} build steps {BOLD}{f"succeeded" if success else f"failed"}{END}{color} in {round(total_time, TIME_ROUND)}s{END}")
 
 def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO, is_root: bool = True) -> tuple[bool, int, int, int, int, float]:
     aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time = main_output = main(working_directory, configuration_path, "", log_file)

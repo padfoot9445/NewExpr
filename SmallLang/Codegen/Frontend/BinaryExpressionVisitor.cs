@@ -15,7 +15,6 @@ internal static class BinaryExpressionVisitor
 {
     private static void AssignmentVisitor(BinaryExpressionNode Self, CodeGenerator Driver)
     {
-        var GCType = Self.GreatestCommonType!;
 
         Driver.Cast(Self.Right, Self.Left.TypeOfExpression!);
 

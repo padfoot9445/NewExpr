@@ -152,5 +152,56 @@ HighLevelOpcodes:
         - name: ValueType
       comment:
         Loads the value in ValueRegisterStart into the Map pointed to by MapPointerStart at the key KeyRegisterStart
+    
+
+    - name: LogicalImplies
+      arguments: &BinOpArguments
+        - name: SrcRegister1
+        - name: SrcRegister2
+        - name: DstRegister1
+        - name: GCType
+      comment: &BinOpComment SrcRegister1 Op SrcRegister2 -> DstRegister1. GCType is the Greatest Common Type (GCType), and is also the type of the binop expression
+    - name: LogicalOr
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: LogicalXor
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: LogicalAnd
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Addition
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Subtraction
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Multiplication
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Division
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: Exponentiation
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseOr
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseXor
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseAnd
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseLeftShift
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseRightShift
+      arguments: *BinOpArguments
+      comment: *BinOpComment
+    - name: BitwiseNegation
+      arguments: *BinOpArguments
+      comment: *BinOpComment
 
   

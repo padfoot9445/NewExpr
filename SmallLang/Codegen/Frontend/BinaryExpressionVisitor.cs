@@ -1,3 +1,11 @@
+using Common.Dispatchers;
+using Common.Tokens;
+using SmallLang.IR.AST;
+using SmallLang.IR.AST.Generated;
+namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
+
+internal static class BinaryExpressionVisitor
+{
     private static void AssignmentVisitor(BinaryExpressionNode Self, CodeGenerator Driver)
     {
         if (Self.Left is IndexNode IndexLeft)

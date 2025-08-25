@@ -79,6 +79,9 @@ attributes:
     - &GreatestCommonType
       name: GreatestCommonType
       type: SmallLangType
+    - &NestedTypeOfExpression
+      name: NestedTypeOfExpression
+      type: List<SmallLangType>
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
@@ -98,7 +101,7 @@ marker interfaces:
       parents:
       - *ISmallLangNode
       - *Statement
-      attributes: &ExpressionAttrs [*TypeOfExpression]
+      attributes: &ExpressionAttrs [*TypeOfExpression, *NestedTypeOfExpression]
     - name: &Type IType
       parents:
       - *ISmallLangNode

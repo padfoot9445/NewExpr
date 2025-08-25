@@ -1,3 +1,15 @@
+    private static void AssignmentVisitor(IToken Operator, IExpressionNode Left, IExpressionNode Right, CodeGenerator Driver)
+    {
+        if (Left is IndexNode IndexLeft)
+        {
+            IndexAssignmentVisitor(IndexLeft, Right, Driver);
+        }
+        else if (Left is IdentifierNode IDLeft)
+        {
+            IdentifierAssignmentVisitor(IDLeft, Right, Driver);
+        }
+        else throw new Exception();
+    }
     internal static void Visit(BinaryExpressionNode Self, CodeGenerator Driver)
     {
         Driver.EnteringChunk(() =>

@@ -4,6 +4,8 @@ using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
+using ArgumentType = Common.LinearIR.NumberWrapper<int, BackingNumberType>;
+using TypeType = Common.LinearIR.NumberWrapper<byte, BackingNumberType>;
 internal static class BinaryExpressionVisitor
 {
     private static void AssignmentVisitor(BinaryExpressionNode Self, CodeGenerator Driver)

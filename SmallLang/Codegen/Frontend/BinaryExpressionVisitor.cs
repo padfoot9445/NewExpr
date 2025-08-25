@@ -75,6 +75,39 @@ internal static class BinaryExpressionVisitor
             Driver.Emit(HighLevelOperation.LoadHashMap<int, int, int, byte, byte>(Indexer, Pointer, VariableBeginning, Left.Expression2.ExpectedTypeOfExpression!, RightType));
         }
     }
+    private static void NonAssignmentOperatorVisitor(BinaryExpressionNode Self, CodeGenerator Driver)
+    {
+        Debug.Assert(Self.GreatestCommonType is not null);
+
+        var LeftRegister = Driver.GetRegisters(Self.GreatestCommonType).Single();
+        var RightRegister = Driver.GetRegisters(Self.GreatestCommonType).Single();
+        var DstRegister = Driver.GetRegisters(Self.GreatestCommonType).Single();
+
+        Driver.Cast(Self.Left, Self.GreatestCommonType);
+        Driver.Emit(HighLevelOperation.LoadFromStack(LeftRegister, Self.GreatestCommonType.Size));
+
+        Driver.Cast(Self.Right, Self.GreatestCommonType);
+        Driver.Emit(HighLevelOperation.LoadFromStack(RightRegister, Self.GreatestCommonType.Size));
+
+        Driver.Emit(Self.Data.TT.Map<TokenType, Func<ArgumentType, ArgumentType, ArgumentType, TypeType, HighLevelOperation>>(
+
+            (TokenType.LogicalImplies, HighLevelOperation.LogicalImplies),
+            (TokenType.LogicalOr, HighLevelOperation.LogicalOr),
+            (TokenType.LogicalXor, HighLevelOperation.LogicalXor),
+            (TokenType.LogicalAnd, HighLevelOperation.LogicalAnd),
+            (TokenType.Addition, HighLevelOperation.Addition),
+            (TokenType.Subtraction, HighLevelOperation.Subtraction),
+            (TokenType.Multiplication, HighLevelOperation.Multiplication),
+            (TokenType.Division, HighLevelOperation.Division),
+            (TokenType.Exponentiation, HighLevelOperation.Exponentiation),
+            (TokenType.BitwiseOr, HighLevelOperation.BitwiseOr),
+            (TokenType.BitwiseXor, HighLevelOperation.BitwiseXor),
+            (TokenType.BitwiseAnd, HighLevelOperation.BitwiseAnd),
+            (TokenType.BitwiseLeftShift, HighLevelOperation.BitwiseLeftShift),
+            (TokenType.BitwiseRightShift, HighLevelOperation.BitwiseRightShift),
+            (TokenType.BitwiseNegation, HighLevelOperation.BitwiseNegation)
+        )(LeftRegister, RightRegister, DstRegister, Self.GreatestCommonType));
+
     }
     internal static void Visit(BinaryExpressionNode Self, CodeGenerator Driver)
     {

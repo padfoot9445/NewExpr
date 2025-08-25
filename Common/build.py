@@ -182,7 +182,7 @@ def write_message(success: bool, steps_taken: int, total_steps: int, steps_ignor
         
     print(f"{HEADERCODE}BUILD{END}: {PURPLE}{BOLD}{name}{END} {BOLD}{f"{GREEN}succeeded" if success else f"{RED}failed"}{END} in {round(total_time, TIME_ROUND)}s {BOLD}({steps_taken}/{total_steps - steps_ignored} + {steps_ignored}){END}")
 
-def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO, is_root: bool = True) -> tuple[bool, int, int, int, int, float]:
+def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO) -> tuple[bool, int, int, int, int, float]:
 
     configuration_path = configuration_path.resolve()
     name = configuration_path.parts[-1]
@@ -191,8 +191,8 @@ def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO
     name = os.path.splitext(name)[0]
 
     aggregate_success, aggregate_steps_taken, aggregate_total_steps, aggregate_steps_ignored, aggregate_faliures, aggregate_total_time = main_output = main(working_directory, configuration_path, name, log_file)
-    if not is_root:
-        write_message(*main_output, name) #if it is root, we defer this writing to recursive_main since we special case timing the deletion, build, etc
+    
+    write_message(*main_output, name)
 
     with open(configuration_path) as file:
         config: dict[str, list[str]] = yaml.load(file, yaml.Loader)
@@ -200,7 +200,7 @@ def non_root(working_directory: Path, configuration_path: Path, log_file: TextIO
     for child_config_path in config.get("child projects", []):
 
         subdirectory, _ = os.path.split(child_config_path)
-        child_success, child_steps_taken, child_total_steps, child_steps_ignored, child_faliures, child_total_time = non_root(working_directory/subdirectory, Path(child_config_path), log_file, is_root=False)
+        child_success, child_steps_taken, child_total_steps, child_steps_ignored, child_faliures, child_total_time = non_root(working_directory/subdirectory, Path(child_config_path), log_file)
         aggregate_success = aggregate_success and child_success
         aggregate_steps_taken += child_steps_taken
         aggregate_total_steps += child_total_steps
@@ -261,7 +261,7 @@ def recursive_main(working_directory: Path, configuration_path: Path, flags: lis
     other_steps_success = other_steps_success and time_thread("Delete-Generated-Files", delete_files, do_clean_flag, working_directory)
     other_steps_taken += 1
 
-    success, steps_taken, total_steps, steps_ignored, faliures, _ = non_root(working_directory, configuration_path, log_file, is_root=True)
+    success, steps_taken, total_steps, steps_ignored, faliures, _ = non_root(working_directory, configuration_path, log_file)
 
     
     other_steps_total = len(dotnet_build_steps) + 1

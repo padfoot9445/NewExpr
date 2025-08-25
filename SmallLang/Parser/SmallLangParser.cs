@@ -171,30 +171,21 @@ public partial class SmallLangParser
 
     [Operand]
     [Production($"{nameof(NTPrimary)}: {nameof(NTLPrimary)} OpenSquare {nameof(NTExpression)} CloseSquare")]
-    [Production($"{nameof(NTPrimary)}: {nameof(NTLPrimary)}  OpenParen {nameof(NTArgList)} CloseParen")]
     public NodeType NTPrimary(NodeType Node, LyToken Open, NodeType Expr, LyToken Close)
     {
-
-        var Expression = TryCast<NodeType>(Expr);
-        if (Expression is null) return Node;
-        else
-        {
-            var _Open = FromToken(Open);
-            if (_Open.TT == TokenType.OpenParen)
-            {
-                return new FunctionCallNode(TryCast<IExpressionNode>(Node), TryCast<ArgListNode>(Expression));
-            }
-            else if (_Open.TT == TokenType.OpenSquare)
-            {
-
-                return new IndexNode(TryCast<IExpressionNode>(Node), TryCast<IExpressionNode>(Expression));
-            }
-            else
-            {
-                throw new Exception();
-            }
-        }
+        return new IndexNode(TryCast<IExpressionNode>(Node), TryCast<IExpressionNode>(Expr));
     }
+
+    [Operand]
+    [Production($"{nameof(NTPrimary)}: {nameof(NTLPrimary)}  OpenParen {nameof(NTArgListElement)}* CloseParen")]
+    public NodeType NTPrimary(NodeType Node, LyToken Open, List<NodeType> Expression, LyToken Close)
+    {
+
+        return new FunctionCallNode(TryCast<IExpressionNode>(Node), Expression.Select(TryCast<ArgListElementNode>).ToList());
+
+    }
+
+
     [Production($"{nameof(NTLPrimary)}: [{nameof(NTNewExpr)} | {nameof(NTLPrimary1)} | {nameof(NTLPrimary2)} | {nameof(NTLPrimary3)}]")]
     public NodeType NTLPrimary(NodeType Node) => Node;
     [Production($"{nameof(NTLPrimary1)}: OpenParen [d] {nameof(NTExpression)} CloseParen [d]")]
@@ -207,13 +198,10 @@ public partial class SmallLangParser
         IToken oT = FromToken(Token)!;
         return oT.TT == TokenType.Identifier ? new IdentifierNode(oT) : new PrimaryNode(oT);
     }
-    [Production($"{nameof(NTNewExpr)}: New [d] {nameof(NTType)} OpenParen [d] {nameof(NTArgList)}? CloseParen [d]")]
-    public NodeType NTNewExpr(NodeType AType, ValueOption<NodeType> AArgList) => new NewExprNode(TryCast<ITypeNode>(AType), TryCast<ArgListNode>(AArgList));
-    [Production($"{nameof(NTArgList)}: {nameof(NTArgListElement)}*")]
-    public NodeType NTArgList(List<NodeType> Elements) => new ArgListNode(Elements.Select(TryCast<ArgListElementNode>).ToList());
+    [Production($"{nameof(NTNewExpr)}: New [d] {nameof(NTType)} OpenParen [d] {nameof(NTArgListElement)}* CloseParen [d]")]
+    public NodeType NTNewExpr(NodeType AType, List<NodeType> AArgList) => new NewExprNode(TryCast<ITypeNode>(AType), AArgList.Select(TryCast<ArgListElementNode>).ToList());
     [Production($"{nameof(NTArgListElement)}: Comma? {nameof(NTArgumentLabel)}? {nameof(NTExpression)}")]
     public NodeType NTArgListElement(LyToken _, ValueOption<NodeType> Label, NodeType Expr) => new ArgListElementNode(TryCast<IExpressionNode>(Expr), TryCast<IdentifierNode>(Label));
-    [Production($"{nameof(NTArgListPrime)}: Comma [d] {nameof(NTArgListElement)}")]
     public NodeType NTArgListPrime(NodeType Element) => Element;
     [Production($"{nameof(NTArgumentLabel)}: Identifier Colon [d]")]
     public NodeType NTArgumentLabel(LyToken Ident) => new IdentifierNode(FromToken(Ident));

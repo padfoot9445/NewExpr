@@ -27,6 +27,14 @@ internal static class BinaryExpressionVisitor
         else throw new Exception();
     }
 
+    private static void IdentifierAssignmentVisitor<TLeft>(TLeft Left, CodeGenerator Driver, int VariableBeginning, SmallLangType TypeOfVariable)
+    where TLeft : ISmallLangNode, IHasAttributeTypeOfExpression, IHasAttributeVariableName
+    {
+        var startReg = Driver.Data.GetVariableStartRegister(Left.VariableName!);
+        var width = TypeOfVariable.Size;
+
+        Driver.Emit(HighLevelOperation.MoveRegister(VariableBeginning, startReg, width));
+    }
     internal static void Visit(BinaryExpressionNode Self, CodeGenerator Driver)
     {
         Driver.EnteringChunk(() =>

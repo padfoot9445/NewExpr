@@ -20,38 +20,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
         if (self.TypeOfExpression! == dstType) Exec(self);
         throw new NotImplementedException();
     }
-    internal void Emit(HighLevelOperation Op)
-    {
-        if (!IsInChunkFlag) throw new InvalidOperationException("Must be in a chunk to call Driver.Emit. Wrap the emit call in a suitable chunk.");
-        Data.Emit(Op);
-    }
-    internal void EnteringChunk(Action code)
-    {
-        IsInChunkFlag = true;
-        code();
-        IsInChunkFlag = false;
-    }
-    private bool IsInChunkFlag { get; set; } = false;
-    internal void NewChunk(int chunkID, Action code)
-    {
-        Debug.Assert(Data.CurrentChunk.Children.Count == (chunkID - 1));
-        IsNextFlag = false;
-        Data.NewChunk();
-        IsInChunkFlag = true;
-        code();
-        IsInChunkFlag = false;
-        if (!IsNextFlag)
-        {
-            Data.Rewind();
-        }
-    }
-    private bool IsNextFlag { get; set; }
-    private bool NextWasCalledFlag { get; set; }
-    internal void Next()
-    {
-        NextWasCalledFlag = true;
-        IsNextFlag = true;
-    }
+
     internal Data Data { get; init; } = new();
     public Data Parse()
     {
@@ -67,15 +36,7 @@ public partial class CodeGenerator(SmallLangNode RootNode)
         var CurrentChunk = Data.CurrentChunk;
         DynamicDispatch(node)(node, this);
     }
-    internal static Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
-    where T : ISmallLangNode =>
-        (x, y) =>
-        {
-            y.NextWasCalledFlag = false;
-            Verify<T>(x);
-            visitor((T)x, y);
-            if (y.NextWasCalledFlag is false) throw new Exception($"{typeof(T)}: No exit point was set. Set an exit point by calling Next(); in a chunk.");
-        };
+
     internal int[] GetRegisters(int Width = 1) => Enumerable.Range(0, Width).Select(_ => Data.GetRegister()).ToArray();
     internal int[] GetRegisters<T>(T Width) where T : INumber<T>
     {
@@ -85,13 +46,13 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     internal int[] GetRegisters(IHasAttributeTypeOfExpression Node) => GetRegisters((int)Node.TypeOfExpression!.Size);
     internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
 
-    static (Func<ISmallLangNode, bool>, Action<ISmallLangNode, CodeGenerator>) GetCase<T>(Action<T, CodeGenerator> Visitor)
+    (Func<ISmallLangNode, bool>, Action<ISmallLangNode, CodeGenerator>) GetCase<T>(Action<T, CodeGenerator> Visitor)
     where T : ISmallLangNode
     {
         return (x => x is T, VisitFunctionWrapper(Visitor));
     }
 
-    static Action<ISmallLangNode, CodeGenerator> DynamicDispatch(ISmallLangNode node) =>
+    Action<ISmallLangNode, CodeGenerator> DynamicDispatch(ISmallLangNode node) =>
         node.Dispatch(
                 Accessor: x => x,
 

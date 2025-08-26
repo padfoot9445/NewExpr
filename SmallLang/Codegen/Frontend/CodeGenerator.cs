@@ -111,19 +111,19 @@ public partial class CodeGenerator(SmallLangNode RootNode)
         node.Dispatch(
                 Accessor: x => x,
 
-                (x => x is SectionNode, VisitFunctionWrapper<SectionNode>(SectionVisitor.Visit)),
-                (x => x is IdentifierNode, VisitFunctionWrapper<IdentifierNode>(PrimaryVisitor.VisitIdentifier)),
-                (x => x is FunctionNode, VisitFunctionWrapper<FunctionNode>(FunctionVisitor.Visit)),
-                (x => x is ForNode, VisitFunctionWrapper<ForNode>(ForVisitor.Visit)),
-                (x => x is WhileNode, VisitFunctionWrapper<WhileNode>(WhileVisitor.Visit)),
-                (x => x is ReturnNode, VisitFunctionWrapper<ReturnNode>(ReturnVisitor.Visit)),
-                (x => x is LoopCTRLNode, VisitFunctionWrapper<LoopCTRLNode>(LoopCtrlVisitor.Visit)),
-                (x => x is SwitchNode, VisitFunctionWrapper<SwitchNode>(SwitchVisitor.Visit)),
-                (x => x is IfNode, VisitFunctionWrapper<IfNode>(IfVisitor.Visit)),
-                (x => x is PrimaryNode, VisitFunctionWrapper<PrimaryNode>(PrimaryVisitor.Visit)),
-                (x => x is DeclarationNode, VisitFunctionWrapper<DeclarationNode>(DeclarationVisitor.Visit)),
-                (x => x is FactorialExpressionNode, VisitFunctionWrapper<FactorialExpressionNode>(FactorialExpressionVisitor.Visit)),
-                (x => x is ElseNode, VisitFunctionWrapper<ElseNode>(ElseVisitor.Visit))
+                GetCase<SectionNode>(SectionVisitor.Visit),
+                GetCase<IdentifierNode>(PrimaryVisitor.VisitIdentifier),
+                GetCase<FunctionNode>(FunctionVisitor.Visit),
+                GetCase<ForNode>(ForVisitor.Visit),
+                GetCase<WhileNode>(WhileVisitor.Visit),
+                GetCase<ReturnNode>(ReturnVisitor.Visit),
+                GetCase<LoopCTRLNode>(LoopCtrlVisitor.Visit),
+                GetCase<SwitchNode>(SwitchVisitor.Visit),
+                GetCase<IfNode>(IfVisitor.Visit),
+                GetCase<PrimaryNode>(PrimaryVisitor.Visit),
+                GetCase<DeclarationNode>(DeclarationVisitor.Visit),
+                GetCase<FactorialExpressionNode>(FactorialExpressionVisitor.Visit),
+                GetCase<ElseNode>(ElseVisitor.Visit)
 
             );
     internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)

@@ -33,7 +33,10 @@ internal static class IndexVisitor
             }
             else
             {
-
+                //we allow indexing of sets and stuff as a foreach thing. Worst case we handle generation of a view in the instruction
+                var PointerRegister = Driver.GetRegisters(TypeData.Int).First();
+                Driver.Emit(HighLevelOperation.IndexVectorLike(StructRegister, IndexerRegister, PointerRegister));
+                Driver.Emit(HighLevelOperation.LoadFromMemory(PointerRegister, DstRegister, Self.TypeOfExpression.Size));
             }
 
             Driver.Next();

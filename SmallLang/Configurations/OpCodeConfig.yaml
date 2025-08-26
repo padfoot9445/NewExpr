@@ -226,4 +226,11 @@ HighLevelOpcodes:
       arguments: *ComparisonOperatorArguments
       comment: *ComparisonOperatorComments
 
+    - name: BatchAnd
+      arguments:
+        - name: ChunkBegin
+        - name: NumberOfExpressions
+        - name: DstRegister
+      comment:
+        BatchAnd does stuff
   

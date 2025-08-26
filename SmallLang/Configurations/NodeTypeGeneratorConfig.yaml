@@ -85,6 +85,9 @@ attributes:
     - &ExpectedTypeOfExpression
       name: ExpectedTypeOfExpression
       type: SmallLangType
+    - &FunctionID
+      name: FunctionID
+      type: FunctionID
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]

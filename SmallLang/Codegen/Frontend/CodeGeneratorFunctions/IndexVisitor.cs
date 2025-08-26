@@ -21,6 +21,11 @@ internal static class IndexVisitor
             Driver.Exec(Self.Expression1);
             Driver.Emit(HighLevelOperation.PushFromRegister(StructRegister, Self.Expression1.TypeOfExpression.Size));
 
+            var IndexerRegister = Driver.GetRegisters(Self.Expression2.ExpectedTypeOfExpression).First();
+            Driver.Cast(Self.Expression2, Self.Expression2.ExpectedTypeOfExpression);
+            Driver.Emit(HighLevelOperation.PushFromRegister(IndexerRegister, Self.Expression2.ExpectedTypeOfExpression.Size));
+
+            var DstRegister = Driver.GetRegisters(Self).First();
 
             if (Self.TypeOfExpression == TypeData.Dict)
             {

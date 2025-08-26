@@ -1,6 +1,6 @@
 namespace SmallLang.IR.AST;
 
-public interface ISmallLangNode : IEnumerable<ISmallLangNode>
+public interface ISmallLangNode
 {
     bool Equals(object? obj);
     bool Equals(SmallLangNode? other);

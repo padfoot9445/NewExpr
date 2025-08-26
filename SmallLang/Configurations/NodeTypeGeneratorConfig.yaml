@@ -138,7 +138,7 @@ attribute group interfaces:
 
 classes:
   namespace: SmallLang.IR.AST.Generated
-  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata", "Common.Metadata"]
   generator: generate_ast_classes.py
   dst: "IR/AST/Generated/ASTClasses"
   display name: Generate-AST-Classes

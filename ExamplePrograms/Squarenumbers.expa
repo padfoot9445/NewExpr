@@ -1,0 +1,8 @@
+List<[int]> SquareNumbers(immut List<[int]> Input)
+{
+    List<[int]> OutputList = new List<[int]>(Size: GetSize(Input));
+    for(int i = 0; i < GetSize(Input); i++)
+    {
+        OutputList[i] = Input[i] ** 2;
+    }
+}

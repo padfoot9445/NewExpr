@@ -87,7 +87,7 @@ attributes:
       type: SmallLangType
     - &FunctionID
       name: FunctionID
-      type: FunctionID
+      type: FunctionID<BackingNumberType>
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]

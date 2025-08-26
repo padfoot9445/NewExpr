@@ -52,7 +52,6 @@ public partial class CodeGenerator(SmallLangNode RootNode)
         NextWasCalledFlag = true;
         IsNextFlag = true;
     }
-    internal RelativeChunkPointer ACHUNK(int v) => new(v);
     internal Data Data { get; init; } = new();
     public Data Parse()
     {
@@ -62,21 +61,6 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     static internal void Verify<T>(ISmallLangNode node) where T : ISmallLangNode
     {
         Debug.Assert(node is T);
-    }
-    static internal void CastNode<T>(ISmallLangNode node, out T OutNode)
-    {
-        OutNode = (T)node;
-    }
-
-    static internal bool TryCastNode<T>(ISmallLangNode node, out T? OutNode)
-    {
-        if (node is T)
-        {
-            CastNode(node, out OutNode);
-            return true;
-        }
-        OutNode = default;
-        return false;
     }
     internal void Exec(ISmallLangNode node)
     {
@@ -133,13 +117,4 @@ public partial class CodeGenerator(SmallLangNode RootNode)
                 GetCase<NewExprNode>(NewExpressionVisitor.Visit)
 
             );
-    internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)
-    {
-        var ptr = Data.StaticDataArea.Allocate(Area.Count());
-        foreach (var i in Area)
-        {
-            Data.StaticDataArea.Store.Add(i);
-        }
-        return ptr;
-    }
 }

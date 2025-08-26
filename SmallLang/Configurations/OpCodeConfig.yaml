@@ -233,4 +233,11 @@ HighLevelOpcodes:
         - name: DstRegister
       comment:
         BatchAnd does stuff
+    - name: CopyStruct
+      arguments:
+        - name: SrcRegister
+        - name: DstRegister
+        - name: PointerWidth
+      comment:
+        Copies the struct *SrcRegister to a new memory location and stores the result in *DstRegister
   

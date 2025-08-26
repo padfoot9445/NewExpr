@@ -29,7 +29,7 @@ internal static class IndexVisitor
 
             if (Self.TypeOfExpression == TypeData.Dict)
             {
-
+                Driver.Emit(HighLevelOperation.QueryHashMap<int, int, int, byte, byte>(IndexerRegister, StructRegister, DstRegister, Self.Expression2.ExpectedTypeOfExpression, Self.TypeOfExpression));
             }
             else
             {

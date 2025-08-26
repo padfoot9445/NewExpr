@@ -203,5 +203,27 @@ HighLevelOpcodes:
     - name: BitwiseNegation
       arguments: *BinOpArguments
       comment: *BinOpComment
+    - name: EqualTo
+      arguments: &ComparisonOperatorArguments
+        - name: SrcRegister1
+        - name: SrcRegister2
+        - name: DstRegister1
+        - name: GCType
+      comment: &ComparisonOperatorComments Compares between two objects of type Type in r@SrcRegister1 and r@SrcRegister2, and places the result of that comparison in r@DstRegister
+    - name: NotEqualTo
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
+    - name: GreaterThan
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
+    - name: GreaterThanOrEqualTo
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
+    - name: LessThan
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
+    - name: LessThanOrEqualTo
+      arguments: *ComparisonOperatorArguments
+      comment: *ComparisonOperatorComments
 
   

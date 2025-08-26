@@ -129,7 +129,8 @@ public partial class CodeGenerator(SmallLangNode RootNode)
                 GetCase<CopyExprNode>(CopyExpressionVisitor.Visit),
                 GetCase<IndexNode>(IndexVisitor.Visit),
                 GetCase<FunctionCallNode>(FunctionCallVisitor.Visit),
-                GetCase<UnaryExpressionNode>(UnaryExpressionVisitor.Visit)
+                GetCase<UnaryExpressionNode>(UnaryExpressionVisitor.Visit),
+                GetCase<NewExprNode>(NewExpressionVisitor.Visit)
 
             );
     internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)

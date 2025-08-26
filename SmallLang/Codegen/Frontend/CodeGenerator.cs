@@ -40,8 +40,10 @@ public partial class CodeGenerator(SmallLangNode RootNode)
         }
     }
     private bool IsNextFlag { get; set; }
+    private bool NextWasCalledFlag { get; set; }
     internal void Next()
     {
+        NextWasCalledFlag = true;
         IsNextFlag = true;
     }
     internal RelativeChunkPointer ACHUNK(int v) => new(v);
@@ -79,8 +81,10 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     where T : ISmallLangNode =>
         (x, y) =>
         {
+            y.NextWasCalledFlag = false;
             Verify<T>(x);
             visitor((T)x, y);
+            if (y.NextWasCalledFlag is false) throw new Exception($"{typeof(T)}: No exit point was set. Set an exit point by calling Next(); in a chunk.");
         };
     internal int[] GetRegisters(int Width = 1) => Enumerable.Range(0, Width).Select(_ => Data.GetRegister()).ToArray();
     internal int[] GetRegisters<T>(T Width) where T : INumber<T>

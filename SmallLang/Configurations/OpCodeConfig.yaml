@@ -240,6 +240,18 @@ HighLevelOpcodes:
     - name: LessThanOrEqualTo
       arguments: *ComparisonOperatorArguments
       comment: *ComparisonOperatorComments
+    - name: BitwiseNegation
+      arguments: &UnaryExpressionArguments
+        - SrcRegister
+        - DstRegister
+        - Type
+      comment: &UnaryExpressionComment Applies the operation on SrcRegister and puts the result in DstRegister.
+    - name: Subtraction
+      arguments: *UnaryExpressionArguments
+      comment: *UnaryExpressionComment
+    - name: LogicalNot
+      arguments: *UnaryExpressionArguments
+      comment: *UnaryExpressionComment
 
     - name: BatchAnd
       arguments:

@@ -22,18 +22,24 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     }
     internal void Emit(HighLevelOperation Op)
     {
+        if (!IsInChunkFlag) throw new InvalidOperationException("Must be in a chunk to call Driver.Emit. Wrap the emit call in a suitable chunk.");
         Data.Emit(Op);
     }
     internal void EnteringChunk(Action code)
     {
+        IsInChunkFlag = true;
         code();
+        IsInChunkFlag = false;
     }
+    private bool IsInChunkFlag { get; set; } = false;
     internal void NewChunk(int chunkID, Action code)
     {
         Debug.Assert(Data.CurrentChunk.Children.Count == (chunkID - 1));
         IsNextFlag = false;
         Data.NewChunk();
+        IsInChunkFlag = true;
         code();
+        IsInChunkFlag = false;
         if (!IsNextFlag)
         {
             Data.Rewind();

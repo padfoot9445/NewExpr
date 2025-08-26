@@ -12,6 +12,8 @@ internal static class IndexVisitor
     internal static void Visit(IndexNode Self, CodeGenerator Driver)
     {
         Debug.Assert(Self.Expression1.TypeOfExpression is not null);
+        Debug.Assert(Self.Expression2.ExpectedTypeOfExpression is not null);
+        Debug.Assert(Self.TypeOfExpression is not null);
         Driver.EnteringChunk(() =>
         {
             var StructRegister = Driver.GetRegisters(Self.Expression1.TypeOfExpression).First();

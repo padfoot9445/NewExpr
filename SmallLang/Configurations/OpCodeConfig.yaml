@@ -255,4 +255,9 @@ HighLevelOpcodes:
         - name: PointerWidth
       comment:
         Copies the struct *SrcRegister to a new memory location and stores the result in *DstRegister
-  
+
+    - name: Call
+      arguments:
+        - name: FunctionID
+      comment:
+        Calls the function FunctionID. Arguments on stack, return on stack.

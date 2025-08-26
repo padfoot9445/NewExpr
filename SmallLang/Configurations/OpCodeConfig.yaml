@@ -152,7 +152,15 @@ HighLevelOpcodes:
         - name: ValueType
       comment:
         Loads the value in ValueRegisterStart into the Map pointed to by MapPointerStart at the key KeyRegisterStart
-    
+    - name: QueryHashMap
+      arguments:
+        - name: KeyRegisterStart
+        - name: MapPointerStart
+        - name: DstRegisterStart
+        - name: KeyType
+        - name: ValueType
+      comment:
+        Loads the appropriate value in the hashmap to the registers beginning DstRegisterStart
 
     - name: LogicalImplies
       arguments: &BinOpArguments

@@ -34,7 +34,7 @@ internal static class ComparisonExpressionVisitor
             Driver.Cast(Self.Expression, Self.GreatestCommonType);
             Driver.Emit(HighLevelOperation.LoadFromStack(ExpressionRegister, Width));
             Driver.Emit(HighLevelOperation.BatchAnd(1, Expressions.Count, ResultRegister));
-            Driver.Emit(HighLevelOperation.Push(ResultRegister));
+            Driver.Emit(HighLevelOperation.PushFromRegister(ResultRegister, TypeData.Bool.Size));
         });
 
         for (int i = 1; i < Expressions.Count; i++)

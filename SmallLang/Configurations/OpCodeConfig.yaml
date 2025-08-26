@@ -242,9 +242,9 @@ HighLevelOpcodes:
       comment: *ComparisonOperatorComments
     - name: BitwiseNegation
       arguments: &UnaryExpressionArguments
-        - SrcRegister
-        - DstRegister
-        - Type
+        - name: SrcRegister
+        - name: DstRegister
+        - name: Type
       comment: &UnaryExpressionComment Applies the operation on SrcRegister and puts the result in DstRegister.
     - name: Subtraction
       arguments: *UnaryExpressionArguments

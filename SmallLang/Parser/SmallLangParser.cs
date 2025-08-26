@@ -1,6 +1,7 @@
 
 using System.Data;
 using Common.Tokens;
+using sly.lexer;
 using sly.parser.generator;
 using sly.parser.parser;
 using SmallLang.IR.AST;
@@ -132,7 +133,30 @@ public partial class SmallLangParser
     public NodeType NTSwitchBody(NodeType AExpr, NodeType AStatement) => new ExprSectionCombinedNode(TryCast<IExpressionNode>(AExpr, nameof(NTSwitchBody)),
     ToSection<IStatementNode>(AStatement, nameof(NTSwitchBody)));
     [Production($"{nameof(NTFunction)}: {nameof(NTType)} Identifier OpenParen [d] {nameof(NTTypeAndIdentifierCSVElement)}* CloseParen [d] {nameof(NTStatement)}")]
-    public NodeType NTFunction(NodeType AType, LyToken Ident, List<NodeType> TICSV, NodeType Statement) => new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType, nameof(NTFunction)), TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), ToSection<IStatementNode>(Statement, nameof(NTFunction)));
+    public NodeType NTFunction(NodeType AType, LyToken Ident, List<NodeType> TICSV, NodeType Statement)
+    {
+        var OutSection = ToSection<IStatementNode>(Statement, nameof(NTFunction));
+        List<IStatementNode> Copies = [];
+
+        foreach (var Element in TICSV)
+        {
+            var TypeAndIdentifier = TryCast<TypeAndIdentifierCSVElementNode>(Element);
+            if (TypeAndIdentifier.FunctionArgDeclModifiersCombined.FunctionArgDeclModifierss.Any(x => x.Data.TT == TokenType.Copy))
+            {
+                Copies.Add(new BinaryExpressionNode(
+                    Data: IToken.NewToken(TokenType.Equals, "Inserted Assignment at function definition of Copy parameter", -1, null, -1),
+                    Left: new IdentifierNode(TypeAndIdentifier.Data),
+                    Right: new CopyExprNode(new IdentifierNode(TypeAndIdentifier.Data)) // different object to emulate normal behavior more closely
+                ));
+            }
+        }
+
+
+        OutSection = OutSection with { Statements = [.. Copies, .. OutSection.Statements] };
+
+
+        return new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType, nameof(NTFunction)), TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), OutSection);
+    }
     [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: Comma? {nameof(NTFunctionArgDeclModifiersCombined)} {nameof(NTType)} Identifier")]
     public NodeType NTTypeAndIdentifierCSVElement(LyToken _, NodeType Modifiers, NodeType AType, LyToken Ident) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers), TryCast<ITypeNode>(AType));
     [Production($"{nameof(NTBlock)}: OpenCurly [d] {nameof(NTSection)} CloseCurly [d]")]

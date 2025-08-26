@@ -143,6 +143,13 @@ HighLevelOpcodes:
         - name: Width
       comment:
         Loads the value from SrcRegister of width Width to the memory segment beginning DstPtrStart
+    - name: LoadFromMemory
+      arguments:
+        - name: SrcPointerStart
+        - name: DstRegisterStart
+        - name: Width
+      comment:
+        Loads the value contained at the pointer stored in r@SrcPointerStart into r@DstRegisterStart
     - name: LoadHashMap
       arguments:
         - name: KeyRegisterStart

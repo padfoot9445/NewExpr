@@ -22,6 +22,8 @@ internal static class BinaryExpressionVisitor
 
         Driver.Emit(HighLevelOperation.LoadFromStack(VariableBeginning, Self.Left.TypeOfExpression!.Size));
 
+        Driver.Emit(HighLevelOperation.PushFromRegister(VariableBeginning, Self.Left.TypeOfExpression.Size)); //push the value back on the register because this is an expression still and expressions put values on stack
+
         if (Self.Left is IndexNode IndexLeft)
         {
             IndexAssignmentVisitor(IndexLeft, Driver, VariableBeginning, Self.Left.TypeOfExpression);
@@ -114,6 +116,7 @@ internal static class BinaryExpressionVisitor
             (TokenType.BitwiseNegation, HighLevelOperation.BitwiseNegation)
         )(LeftRegister, RightRegister, DstRegister, Self.GreatestCommonType));
 
+        Driver.Emit(HighLevelOperation.PushFromRegister(DstRegister, Self.GreatestCommonType.Size));
     }
     internal static void Visit(BinaryExpressionNode Self, CodeGenerator Driver)
     {

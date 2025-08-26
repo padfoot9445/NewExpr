@@ -100,6 +100,13 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     internal int[] GetRegisters(SmallLangType Type) => GetRegisters(Type.Size);
     internal int[] GetRegisters(IHasAttributeTypeOfExpression Node) => GetRegisters((int)Node.TypeOfExpression!.Size);
     internal TreeChunk GetChild(int ChunkID) => Data.CurrentChunk.Children[ChunkID - 1];
+
+    static (Func<ISmallLangNode, bool>, Action<ISmallLangNode, CodeGenerator>) GetCase<T>(Action<T, CodeGenerator> Visitor)
+    where T : ISmallLangNode
+    {
+        return (x => x is T, VisitFunctionWrapper(Visitor));
+    }
+
     static Action<ISmallLangNode, CodeGenerator> DynamicDispatch(ISmallLangNode node) =>
         node.Dispatch(
                 Accessor: x => x,

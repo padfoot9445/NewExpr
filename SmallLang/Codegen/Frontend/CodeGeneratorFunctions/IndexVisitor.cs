@@ -38,6 +38,7 @@ internal static class IndexVisitor
                 Driver.Emit(HighLevelOperation.IndexVectorLike(StructRegister, IndexerRegister, PointerRegister));
                 Driver.Emit(HighLevelOperation.LoadFromMemory(PointerRegister, DstRegister, Self.TypeOfExpression.Size));
             }
+
             Driver.Emit(HighLevelOperation.PushFromRegister(DstRegister, Self.TypeOfExpression.Size));
 
             Driver.Next();

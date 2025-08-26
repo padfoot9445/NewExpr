@@ -267,6 +267,7 @@ NULL:
                 LOADVAR SlotNo Type of Expression1
             NEXT
     ComparisonExpression: [Expression, OperatorExpressionPair+]
+        All the expressions must have a GCType. If they don't, the comparison is invalid and user must do x == y and y == z instead.
         OperatorExpressionPair: [Operator; Expression]
         Expressions = Children.Select(x => x is OperatorExpressionPair? x.Children[0] : x);
         Length = Children.Length;

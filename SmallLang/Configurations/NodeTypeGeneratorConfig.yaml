@@ -52,7 +52,7 @@ NodeTypeDefinitions:
 
 attributes:
   namespace: SmallLang.IR.AST.Generated
-  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
+  usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata", "Common.Metadata"]
   generator: attribute_interface_generator.py
   dst: "IR/AST/Generated/AttributeInterfaces"
   display name: Generate-Attribute-Interfaces

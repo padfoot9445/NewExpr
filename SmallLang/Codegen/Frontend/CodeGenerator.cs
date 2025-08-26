@@ -123,7 +123,13 @@ public partial class CodeGenerator(SmallLangNode RootNode)
                 GetCase<PrimaryNode>(PrimaryVisitor.Visit),
                 GetCase<DeclarationNode>(DeclarationVisitor.Visit),
                 GetCase<FactorialExpressionNode>(FactorialExpressionVisitor.Visit),
-                GetCase<ElseNode>(ElseVisitor.Visit)
+                GetCase<ElseNode>(ElseVisitor.Visit),
+                GetCase<BinaryExpressionNode>(BinaryExpressionVisitor.Visit),
+                GetCase<ComparisonExpressionNode>(ComparisonExpressionVisitor.Visit),
+                GetCase<CopyExprNode>(CopyExpressionVisitor.Visit),
+                GetCase<IndexNode>(IndexVisitor.Visit),
+                GetCase<FunctionCallNode>(FunctionCallVisitor.Visit),
+                GetCase<UnaryExpressionNode>(UnaryExpressionVisitor.Visit)
 
             );
     internal Pointer<BackingNumberType> AddStaticData(IEnumerable<BackingNumberType> Area)

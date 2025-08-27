@@ -6,6 +6,7 @@ using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.Metadata;
 using SmallLang.Parser;
+using SmallLangTest.Generated;
 
 namespace SmallLangTest;
 
@@ -288,5 +289,14 @@ public class ParserTest
     {
         var res = Parse("foo();").Statements.First() as FunctionCallNode;
         Assert.That(res, Is.Not.Null);
+    }
+
+    [Test]
+    public void Test__Parse_AllPrograms__Does_Not_Throw()
+    {
+        foreach (string Program in ExamplePrograms.AllPrograms)
+        {
+            Assert.That(() => Parse(Program), Throws.Nothing);
+        }
     }
 }

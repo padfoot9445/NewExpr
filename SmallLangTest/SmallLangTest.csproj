@@ -25,6 +25,7 @@
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\SmallLang\IR\IR.csproj" />
     <ProjectReference Include="..\SmallLang\Parser\Parser.csproj" />
+    <ProjectReference Include="..\SmallLang\Drivers\Drivers.csproj" />
   </ItemGroup>
 
 </Project>

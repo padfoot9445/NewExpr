@@ -74,7 +74,7 @@ def make_dir(dst: Path):
     
     if os.path.isdir(dst): return
     
-    os.mkdir(dst)
+    os.makedirs(dst, exist_ok=True)
     print(f"{YELLOW}{BOLD}INFO{END}:  {YELLOW}{BOLD}\033[4:5m{dst}{END}")
     
 

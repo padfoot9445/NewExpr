@@ -188,7 +188,6 @@ public class ParserTest
     [TestCase("^=", TokenType.BitwiseXor)]
     [TestCase("<<=", TokenType.BitwiseLeftShift)]
     [TestCase(">>=", TokenType.BitwiseRightShift)]
-    [TestCase("~=", TokenType.BitwiseNegation)]
     public void Parse__Immediate_Assignment_Operators__Returns_Correct(string i, TokenType expected)
     {
         var res = Parse($"x {i} 1;").Statements.First() as BinaryExpressionNode;

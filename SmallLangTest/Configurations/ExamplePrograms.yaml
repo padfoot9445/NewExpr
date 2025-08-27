@@ -7,4 +7,4 @@ ExamplePrograms:
 
   data:
     programs path: ../ExamplePrograms/
-    extensions: [expa]
+    extensions: [.expa]

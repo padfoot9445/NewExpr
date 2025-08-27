@@ -1,5 +1,5 @@
 ExamplePrograms:
-  namespace: SmallLangTest.ExamplePrograms
+  namespace: SmallLangTest.Generated
   usings: []
   generator: ExamplePrograms.py
   dst: ./Generated/ExamplePrograms

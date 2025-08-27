@@ -1,4 +1,4 @@
-List<[int]> BubbleSort(copy List<[int]> Input)
+list<[int]> BubbleSort(copy list<[int]> Input)
 {
     while(not IsSorted(Input))
     {
@@ -15,7 +15,7 @@ List<[int]> BubbleSort(copy List<[int]> Input)
     }
 }
 
-bool IsSorted(List<[int]> Input)
+bool IsSorted(list<[int]> Input)
 {
     bool OutValue = true;
     for(int i = 0; i < GetLength(Input) - 1; i++)

@@ -167,6 +167,8 @@ public enum TokenType
     TypeChar,
     [Keyword("void")]
     TypeVoid,
+    [Keyword("bool")]
+    TypeBool,
     #endregion
 
     #region control-flow

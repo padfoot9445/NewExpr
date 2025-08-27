@@ -238,6 +238,6 @@ public partial class SmallLangParser
     public NodeType NTType(NodeType Node) => Node;
     [Production($"{nameof(NTGenericType)}: [TypeArray | TypeList | TypeSet | TypeDict | TypeCollection] OpenAngleSquare [d] {nameof(NTTypeCSV)} CloseAngleSquare [d]")]
     public NodeType NTGenericType(LyToken TypeToken, NodeType TypeArgs) => new GenericTypeNode(FromToken(TypeToken), TryCast<TypeCSVNode>(TypeArgs).Types);
-    [Production($"{nameof(NTBaseType)}: [TypeByte | TypeShort | TypeInt | TypeLong | TypeLongInt | TypeFloat | TypeDouble | TypeRational | TypeNumber | TypeString | TypeChar | TypeVoid]")]
+    [Production($"{nameof(NTBaseType)}: [TypeBool | TypeByte | TypeShort | TypeInt | TypeLong | TypeLongInt | TypeFloat | TypeDouble | TypeRational | TypeNumber | TypeString | TypeChar | TypeVoid]")]
     public NodeType NTBaseType(LyToken TypeToken) => new BaseTypeNode(FromToken(TypeToken));
 }

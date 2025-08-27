@@ -1,5 +1,5 @@
 files: []
-generators relative path: ./Common/CodeGenerationScripts
+generators relative path: ../Common/CodeGenerationScripts
 
 configuration directory: ./Configurations
 

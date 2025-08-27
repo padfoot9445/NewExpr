@@ -220,7 +220,7 @@ public static class ObjectDispatchers
             TAttribute Value,
             TReturn Result
         )> Cases
-    ) => Self.Switch(Accessor, Comparer, Cases);
+    ) => Self.Switch(Accessor, Default: _ => throw new MatchNotFoundException(), Comparer, Cases);
     public static TReturn Dispatch<TObject, TAttribute, TReturn>
 (
     this TObject Self,

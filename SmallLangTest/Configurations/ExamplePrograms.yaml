@@ -1,0 +1,10 @@
+ExamplePrograms:
+  namespace: SmallLangTest.ExamplePrograms
+  usings: []
+  generator: ExamplePrograms.py
+  dst: ./Generated/ExamplePrograms
+  display name: "Load-Example-Programs"
+
+  data:
+    programs path: ../ExamplePrograms/
+    extensions: [.expa]

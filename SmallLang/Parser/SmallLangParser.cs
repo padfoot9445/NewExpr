@@ -157,8 +157,8 @@ public partial class SmallLangParser
 
         return new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType, nameof(NTFunction)), TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), OutSection);
     }
-    [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: Comma? {nameof(NTFunctionArgDeclModifiersCombined)}? {nameof(NTType)} Identifier")]
-    public NodeType NTTypeAndIdentifierCSVElement(LyToken _, ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers) ?? new([]), TryCast<ITypeNode>(AType));
+    [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: {nameof(NTFunctionArgDeclModifiersCombined)}? {nameof(NTType)} Identifier Comma?")]
+    public NodeType NTTypeAndIdentifierCSVElement(ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident, LyToken _) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers) ?? new([]), TryCast<ITypeNode>(AType));
     [Production($"{nameof(NTBlock)}: OpenCurly [d] {nameof(NTSection)} CloseCurly [d]")]
     public NodeType NTBlock(NodeType ASection) => ASection;
     [Production($"{nameof(NTExpression)}: {nameof(NTAliasExpr)}")]
@@ -224,8 +224,8 @@ public partial class SmallLangParser
     }
     [Production($"{nameof(NTNewExpr)}: New [d] {nameof(NTType)} OpenParen [d] {nameof(NTArgListElement)}* CloseParen [d]")]
     public NodeType NTNewExpr(NodeType AType, List<NodeType> AArgList) => new NewExprNode(TryCast<ITypeNode>(AType), AArgList.Select(TryCast<ArgListElementNode>).ToList());
-    [Production($"{nameof(NTArgListElement)}: Comma? {nameof(NTArgumentLabel)}? {nameof(NTExpression)}")]
-    public NodeType NTArgListElement(LyToken _, ValueOption<NodeType> Label, NodeType Expr) => new ArgListElementNode(TryCast<IExpressionNode>(Expr), TryCast<IdentifierNode>(Label));
+    [Production($"{nameof(NTArgListElement)}: {nameof(NTArgumentLabel)}? {nameof(NTExpression)} Comma?")]
+    public NodeType NTArgListElement(ValueOption<NodeType> Label, NodeType Expr, LyToken _) => new ArgListElementNode(TryCast<IExpressionNode>(Expr), TryCast<IdentifierNode>(Label));
     public NodeType NTArgListPrime(NodeType Element) => Element;
     [Production($"{nameof(NTArgumentLabel)}: Identifier Colon [d]")]
     public NodeType NTArgumentLabel(LyToken Ident) => new IdentifierNode(FromToken(Ident));

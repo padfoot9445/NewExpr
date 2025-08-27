@@ -296,7 +296,7 @@ public class ParserTest
     {
         foreach (string Program in ExamplePrograms.AllPrograms)
         {
-            Assert.That(() => Parse(Program), Throws.Nothing);
+            Assert.That(() => Parse(Program), Throws.Nothing, message: Program);
         }
     }
 }

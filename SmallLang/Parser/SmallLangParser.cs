@@ -157,8 +157,8 @@ public partial class SmallLangParser
 
         return new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType, nameof(NTFunction)), TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), OutSection);
     }
-    [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: Comma? {nameof(NTFunctionArgDeclModifiersCombined)} {nameof(NTType)} Identifier")]
-    public NodeType NTTypeAndIdentifierCSVElement(LyToken _, NodeType Modifiers, NodeType AType, LyToken Ident) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers), TryCast<ITypeNode>(AType));
+    [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: Comma? {nameof(NTFunctionArgDeclModifiersCombined)}? {nameof(NTType)} Identifier")]
+    public NodeType NTTypeAndIdentifierCSVElement(LyToken _, ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers) ?? new([]), TryCast<ITypeNode>(AType));
     [Production($"{nameof(NTBlock)}: OpenCurly [d] {nameof(NTSection)} CloseCurly [d]")]
     public NodeType NTBlock(NodeType ASection) => ASection;
     [Production($"{nameof(NTExpression)}: {nameof(NTAliasExpr)}")]

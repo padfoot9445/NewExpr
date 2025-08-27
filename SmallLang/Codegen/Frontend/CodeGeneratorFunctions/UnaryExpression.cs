@@ -24,7 +24,7 @@ internal static class UnaryExpressionVisitor
             Driver.Emit(Self.Data.TT.Map<TokenType, Func<ArgumentType, ArgumentType, TypeType, HighLevelOperation>>
             (
                 (TokenType.BitwiseNegation, HighLevelOperation.BitwiseNegation),
-                (TokenType.Subtraction, HighLevelOperation.Subtraction),
+                (TokenType.Subtraction, HighLevelOperation.UnarySubtraction),
                 (TokenType.LogicalNot, HighLevelOperation.LogicalNot)
             )(SrcRegister, DstRegister, Self.TypeOfExpression!));
 

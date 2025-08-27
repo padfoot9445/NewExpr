@@ -112,8 +112,7 @@ internal static class BinaryExpressionVisitor
             (TokenType.BitwiseXor, HighLevelOperation.BitwiseXor),
             (TokenType.BitwiseAnd, HighLevelOperation.BitwiseAnd),
             (TokenType.BitwiseLeftShift, HighLevelOperation.BitwiseLeftShift),
-            (TokenType.BitwiseRightShift, HighLevelOperation.BitwiseRightShift),
-            (TokenType.BitwiseNegation, HighLevelOperation.BitwiseNegation)
+            (TokenType.BitwiseRightShift, HighLevelOperation.BitwiseRightShift)
         )(LeftRegister, RightRegister, DstRegister, Self.GreatestCommonType));
 
         Driver.Emit(HighLevelOperation.PushFromRegister(DstRegister, Self.GreatestCommonType.Size));

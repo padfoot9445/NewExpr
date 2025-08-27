@@ -694,7 +694,6 @@ classes:
         - Equals
         - BitwiseLeftShift
         - BitwiseRightShift
-        - BitwiseNegation
         has additional data validation function: no
         data validation function: no
         attributes: [*GreatestCommonType]

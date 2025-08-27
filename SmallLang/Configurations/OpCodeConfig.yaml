@@ -215,9 +215,6 @@ HighLevelOpcodes:
     - name: BitwiseRightShift
       arguments: *BinOpArguments
       comment: *BinOpComment
-    - name: BitwiseNegation
-      arguments: *BinOpArguments
-      comment: *BinOpComment
     - name: EqualTo
       arguments: &ComparisonOperatorArguments
         - name: SrcRegister1
@@ -246,7 +243,7 @@ HighLevelOpcodes:
         - name: DstRegister
         - name: Type
       comment: &UnaryExpressionComment Applies the operation on SrcRegister and puts the result in DstRegister.
-    - name: Subtraction
+    - name: UnarySubtraction
       arguments: *UnaryExpressionArguments
       comment: *UnaryExpressionComment
     - name: LogicalNot

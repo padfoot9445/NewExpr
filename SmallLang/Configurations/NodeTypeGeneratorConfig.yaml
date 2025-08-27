@@ -394,6 +394,7 @@ classes:
         - TypeString
         - TypeChar
         - TypeVoid
+        - TypeBool
         has additional data validation function: no
         data validation function: no
         attributes:

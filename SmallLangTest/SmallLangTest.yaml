@@ -1,4 +1,5 @@
-files: []
+files:
+  - ExamplePrograms.yaml
 generators relative path: ../Common/CodeGenerationScripts
 
 configuration directory: ./Configurations

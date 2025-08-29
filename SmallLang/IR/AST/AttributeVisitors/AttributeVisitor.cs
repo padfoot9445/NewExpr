@@ -1,3 +1,4 @@
+using SmallLang.IR.AST.Generated;
 using SmallLang.IR.Metadata;
 
 namespace SmallLang.IR.AST.AttributeVisitors;
@@ -8,6 +9,8 @@ public static partial class AttributeVisitor
 {
     private static readonly IEnumerable<Action<ISmallLangNode>> EvaluationPasses =
     [
+        TryEvaluate<UnaryExpressionNode>,
+        TryEvaluate<FunctionCallNode>
     ];
     public static void BuildAttributes(this ISmallLangNode node)
     {

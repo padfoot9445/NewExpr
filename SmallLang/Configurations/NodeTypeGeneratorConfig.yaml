@@ -845,7 +845,7 @@ classes:
         valid data types: []
         has additional data validation function: no
         data validation function: no
-        attributes: [*FunctionID]
+        attributes: [*FunctionID, *VariableName]
 
       
       - name: *ArgListElement

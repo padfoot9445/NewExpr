@@ -8,7 +8,6 @@ public static partial class AttributeVisitor
 {
     private static readonly IEnumerable<Action<ISmallLangNode>> EvaluationPasses =
     [
-        TryEvaluate<ISmallLangNode>
     ];
     public static void BuildAttributes(this ISmallLangNode node)
     {

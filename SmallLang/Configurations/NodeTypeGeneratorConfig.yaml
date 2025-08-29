@@ -250,7 +250,7 @@ classes:
         - Identifier
         has additional data validation function: no
         data validation function: no
-        attributes: []
+        attributes: [*VariableName]
       
       - name: *LoopCTRL
         children:

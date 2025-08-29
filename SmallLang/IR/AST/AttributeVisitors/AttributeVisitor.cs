@@ -7,11 +7,15 @@ public static partial class AttributeVisitor
 
     }
 
-    public static void TryEvaluate<T>(SmallLangNode node)
+    public static bool TryEvaluate<T>(ISmallLangNode node) where T : ISmallLangNode
     {
         if (node is T TNode)
         {
-            Evaluate()
+            int HashBefore = TNode.GetHashCode();
+            Evaluate(TNode);
+
+            return HashBefore == TNode.GetHashCode();
         }
+        return true;
     }
 }

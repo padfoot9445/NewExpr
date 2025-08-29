@@ -6,4 +6,5 @@ public interface ISmallLangNode
     bool Equals(SmallLangNode? other);
     int GetHashCode();
     string ToString();
+    IEnumerable<ISmallLangNode> ChildNodes { get; }
 }

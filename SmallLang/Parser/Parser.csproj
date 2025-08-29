@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="sly" Version="3.7.5-alpha1" />
+    <PackageReference Include="sly" Version="3.7.5" />
   </ItemGroup>
 
   <ItemGroup>

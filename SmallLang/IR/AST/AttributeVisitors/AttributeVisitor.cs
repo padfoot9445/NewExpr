@@ -25,4 +25,6 @@ public static partial class AttributeVisitor
         }
         return true;
     }
+
+    private static Dictionary<VariableName, SmallFunctionSignature> FunctionSignatures { get; } = new();
 }

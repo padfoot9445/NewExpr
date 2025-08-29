@@ -2,6 +2,10 @@ namespace SmallLang.IR.AST.AttributeVisitors;
 
 public static partial class AttributeVisitor
 {
+    private static readonly IEnumerable<Func<ISmallLangNode, bool>> EvaluationPasses =
+    [
+        TryEvaluate<ISmallLangNode>
+    ];
     public static void BuildAttributes(this ISmallLangNode node)
     {
 

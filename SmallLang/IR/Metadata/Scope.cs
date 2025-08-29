@@ -1,37 +1,18 @@
 namespace SmallLang.IR.Metadata;
 
-public struct Scope()
+public record Scope()
 {
-    Scope(HashSet<VariableName> Names) : this() { VariablesInScope = Names; }
-    private HashSet<VariableName> VariablesInScope = [];
-    public (int, int) GetLocationOfVariable(VariableName Name) => throw new NotImplementedException();
-    public bool Contains(VariableName variableName) => VariablesInScope.Contains(variableName);
-    public Scope ScopeUnion(Scope other)
+    public required Scope? Parent { get; init; }
+    public HashSet<VariableName> NamesDefinedInThisScope { get; } = new();
+    public VariableName GetName(string name) => throw new NotImplementedException();
+    public bool IsDefined(string name) => IsDefined(GetName(name));
+    public bool IsDefined(VariableName name) => NamesDefinedInThisScope.Contains(name) || (Parent is not null && Parent.IsDefined(name));
+    public virtual bool Equals(Scope? other)
     {
-        return new(VariablesInScope.Union(other.VariablesInScope).ToHashSet());
+        return other is not null && Parent == other.Parent && NamesDefinedInThisScope.Intersect(other.NamesDefinedInThisScope).Count() == NamesDefinedInThisScope.Count;
     }
-    public Scope Append(VariableName other)
-    {
-        return ScopeUnion(new([other]));
-    }
-    public override bool Equals(object? other) => other is Scope scope && VariablesInScope.Intersect(scope.VariablesInScope).Count() == VariablesInScope.Count;
-    public static bool operator ==(Scope left, Scope right)
-    {
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(Scope left, Scope right)
-    {
-        return !(left == right);
-    }
-
     public override int GetHashCode()
     {
-        throw new NotImplementedException();
-    }
-
-    internal object Union(Scope? v)
-    {
-        throw new NotImplementedException();
+        return Parent is null ? 0 : (Parent.GetHashCode() + 1) * 17;
     }
 }

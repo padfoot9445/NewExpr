@@ -29,6 +29,17 @@ public static partial class AttributeVisitor
         }
         return true;
     }
-
+    private static TReturn? GetIfNotNullRefReturn<TO1, TO2, TReturn>(TO1 Src, TO2? Key, Func<TO1, TO2, TReturn> Accessor)
+    where TReturn : class
+    {
+        if (Key is not null) return Accessor(Src, Key);
+        return null;
+    }
+    private static TReturn? GetIfNotNullValueReturn<TO1, TO2, TReturn>(TO1 Src, TO2? Key, Func<TO1, TO2, TReturn> Accessor)
+    where TReturn : struct
+    {
+        if (Key is not null) return Accessor(Src, Key);
+        return null;
+    }
     private static Dictionary<VariableName, SmallFunctionSignature> FunctionSignatures { get; } = new();
 }

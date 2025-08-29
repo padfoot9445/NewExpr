@@ -45,7 +45,8 @@ def time_thread(name: str, work_function: Callable[..., Any], *args: Any, **kwar
 
     start_time = time()
     time_str = f"(0.0s)"
-    sys.stdout.write(f"{BUILD}: {name} {" " * len(SUCCEED)} {time_str}"); sys.stdout.flush()
+    first_part = f"{BUILD}: {name} "
+    sys.stdout.write(f"{first_part}{" " * len(SUCCEED)} {time_str}"); sys.stdout.flush()
 
     while True:
         sleep(0.01)
@@ -55,9 +56,10 @@ def time_thread(name: str, work_function: Callable[..., Any], *args: Any, **kwar
         if not work_thread.is_alive(): break
 
 
-    sys.stdout.write("\b" * (len(SUCCEED) + len(time_str) + 1)) #+1 to account for the space between succeed and time_str
+    sys.stdout.write("\b" * (len(SUCCEED) + len(time_str) + 1 + len(first_part))) #+1 to account for the space between succeed and time_str
     time_str = f"({round(time() - start_time, TIME_ROUND)}s)"
-    sys.stdout.write(f"{SUCCEED if out[0] else FAIL} {time_str} {" " * 20}"); print() #flush and newline
+    final_output: str = f"{first_part}{SUCCEED if out[0] else FAIL} {time_str}"
+    sys.stdout.write(f"{final_output}{" " * (os.get_terminal_size()[0] - len("succeeded" if out[0] else "failed") - len("in") - len(time_str) - 1 - len(name) - len("BUILD: "))}"); print() #flush and newline
     assert not work_thread.is_alive()
     return out[0]
 

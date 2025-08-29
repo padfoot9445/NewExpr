@@ -14,7 +14,7 @@ public static partial class AttributeVisitor
         }
     }
 
-    public static bool TryEvaluate<T>(ISmallLangNode node) where T : ISmallLangNode
+    private static bool TryEvaluate<T>(ISmallLangNode node) where T : ISmallLangNode
     {
         if (node is T TNode)
         {

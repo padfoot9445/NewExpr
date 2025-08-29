@@ -88,6 +88,9 @@ attributes:
     - &FunctionID
       name: FunctionID
       type: FunctionID<BackingNumberType>
+    - &Scope
+      name: Scope
+      type: Scope
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
@@ -97,25 +100,26 @@ marker interfaces:
 
   &node-type-suffix node-type suffix: &NodeTypeSuffix Node
   
-
+  SmallLangAttributes: &SmallLangAttributes
+    - *Scope
   data:
     - name: &Statement IStatement
       parents:
       - &ISmallLangNode ISmallLang
-      attributes: &StatementAttrs []
+      attributes: &StatementAttrs [<<: *SmallLangAttributes]
     - name: &Expression IExpression
       parents:
       - *ISmallLangNode
       - *Statement
-      attributes: &ExpressionAttrs [*TypeOfExpression, *ExpectedTypeOfExpression]
+      attributes: &ExpressionAttrs [<<: *SmallLangAttributes, *TypeOfExpression, *ExpectedTypeOfExpression]
     - name: &Type IType
       parents:
       - *ISmallLangNode
-      attributes: &TypeAttrs [*TypeLiteralType]
+      attributes: &TypeAttrs [<<: *SmallLangAttributes, *TypeLiteralType]
     - name: &Loop ILoop
       parents:
         - *Statement
-      attributes: &LoopAttrs [*LoopGUID]
+      attributes: &LoopAttrs [<<: *SmallLangAttributes, *LoopGUID]
 
 
 attribute group interfaces:

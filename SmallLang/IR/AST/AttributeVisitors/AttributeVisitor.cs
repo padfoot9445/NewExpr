@@ -2,7 +2,7 @@ namespace SmallLang.IR.AST.AttributeVisitors;
 
 public static partial class AttributeVisitor
 {
-    public static void BuildAttributes(this SmallLangNode node)
+    public static void BuildAttributes(this ISmallLangNode node)
     {
 
     }

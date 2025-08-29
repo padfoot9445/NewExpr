@@ -8,7 +8,10 @@ public static partial class AttributeVisitor
     ];
     public static void BuildAttributes(this ISmallLangNode node)
     {
-
+        while (true)
+        {
+            if (EvaluationPasses.Select(x => x(node)).All(x => x)) break;
+        }
     }
 
     public static bool TryEvaluate<T>(ISmallLangNode node) where T : ISmallLangNode

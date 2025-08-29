@@ -1,5 +1,7 @@
 namespace SmallLang.IR.AST.AttributeVisitors;
 
+using SmallFunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, SmallLangType>;
+
 public static partial class AttributeVisitor
 {
     private static readonly IEnumerable<Func<ISmallLangNode, bool>> EvaluationPasses =

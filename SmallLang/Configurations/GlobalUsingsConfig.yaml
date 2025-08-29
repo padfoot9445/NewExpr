@@ -9,7 +9,5 @@ GlobalUsingsConfig:
     aliases:
       BackingNumberType: byte
       HighLevelOpcodeBackingType: uint
-      SmallFunctionSignature: Common.Metadata.FunctionSignature<byte, SmallLang.IR.Metadata.SmallLangType>
-      SmallFunctionID: Common.Metadata.FunctionID<byte>
     usings: {}
 

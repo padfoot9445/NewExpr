@@ -6,28 +6,33 @@ using SmallFunctionSignature = Common.Metadata.FunctionSignature<BackingNumberTy
 
 public static partial class AttributeVisitor
 {
-    private static readonly IEnumerable<Func<ISmallLangNode, bool>> EvaluationPasses =
+    private static readonly IEnumerable<Action<ISmallLangNode>> EvaluationPasses =
     [
         TryEvaluate<ISmallLangNode>
     ];
     public static void BuildAttributes(this ISmallLangNode node)
     {
-        while (true)
+        int HashBefore = unchecked(node.GetHashCode() + 1);
+        while (HashBefore != node.GetHashCode())
         {
-            if (EvaluationPasses.Select(x => x(node)).All(x => x)) break;
+            foreach (var pass in EvaluationPasses)
+            {
+                pass(node);
+            }
+
+            foreach (var childnode in node.ChildNodes)
+            {
+                childnode.BuildAttributes();
+            }
         }
     }
 
-    private static bool TryEvaluate<T>(ISmallLangNode node) where T : ISmallLangNode
+    private static void TryEvaluate<T>(ISmallLangNode node) where T : ISmallLangNode
     {
         if (node is T TNode)
         {
-            int HashBefore = TNode.GetHashCode();
             Evaluate((dynamic)TNode);
-
-            return HashBefore == TNode.GetHashCode();
         }
-        return true;
     }
     private static TReturn? GetIfNotNullRefReturn<TO1, TO2, TReturn>(TO1 Src, TO2? Key, Func<TO1, TO2, TReturn> Accessor)
     where TReturn : class

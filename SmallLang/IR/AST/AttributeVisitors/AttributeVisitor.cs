@@ -48,9 +48,9 @@ public static partial class AttributeVisitor
         if (Key is not null) return Accessor(Src, Key);
         return null;
     }
-    private static void DoIfNotNull<T>(T? Nullable, Action action)
+    private static void DoIfNotNull(Action action, params object?[] args)
     {
-        if (Nullable is not null) action();
+        if (args.All(x => x is not null)) { action(); }
     }
     private static Dictionary<VariableName, SmallFunctionSignature> FunctionSignatures { get; } = new();
 }

@@ -1,6 +1,6 @@
 namespace SmallLang.IR.Metadata;
 
-public record Scope()
+public record Scope
 {
     //Should be set by the parent in the case of implicit sections, or set by the child (self) in case of explicit sections
     public required Scope? Parent { get; init; }

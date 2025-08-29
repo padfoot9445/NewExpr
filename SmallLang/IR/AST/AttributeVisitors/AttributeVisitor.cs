@@ -1,3 +1,5 @@
+using SmallLang.IR.Metadata;
+
 namespace SmallLang.IR.AST.AttributeVisitors;
 
 using SmallFunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, SmallLangType>;

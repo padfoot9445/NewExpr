@@ -1,6 +1,6 @@
 from initializer import *
 from codegenframework import *
-from attribute_interface_generator import get_attribute_property, get_interface_name_from_attribute
+from attribute_interface_generator import base_get_attribute_property, get_interface_name_from_attribute
 
 from collections import Counter, defaultdict
 from collections.abc import Iterator, Callable
@@ -23,6 +23,8 @@ def get_children(children: list[dict[str, str | bool]], suffix: str) -> Iterator
 if __name__ == "__main__":
     _, output_directory, _, raw_config, config = initialize()
     suffix = raw_config["node-type suffix"]
+
+    get_attribute_property: Callable[[dict[str, str]], str] = lambda x: base_get_attribute_property(x, True)
 
     #write subnodes
     for subnode in config:

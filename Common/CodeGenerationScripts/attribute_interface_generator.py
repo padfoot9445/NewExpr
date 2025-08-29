@@ -4,9 +4,11 @@ from collections.abc import Callable
 
 get_interface_name: Callable[[str], str] = lambda x: f"IHasAttribute{x}"
 get_interface_name_from_attribute: Callable[[dict[str, str]], str] = lambda x: get_interface_name(x["name"])
-get_attribute_property: Callable[[dict[str, str]], str] = lambda attribute: f"public {attribute["type"]}? {attribute["name"]} {{ get; }}"
+base_get_attribute_property: Callable[[dict[str, str], bool], str] = lambda attribute, setter: f"public {attribute["type"]}? {attribute["name"]} {{ get; {"internal set; " if setter else ""}}}"
 if __name__ == "__main__":
     _, output_directory, _, raw_config, config = initialize()
+
+    get_attribute_property: Callable[[dict[str, str]], str] = lambda x: base_get_attribute_property(x, False)
 
     #write interfaces for attributes
     for attribute in config:

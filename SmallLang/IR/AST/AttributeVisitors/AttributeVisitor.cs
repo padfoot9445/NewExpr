@@ -19,7 +19,7 @@ public static partial class AttributeVisitor
         if (node is T TNode)
         {
             int HashBefore = TNode.GetHashCode();
-            Evaluate(TNode);
+            Evaluate((dynamic)TNode);
 
             return HashBefore == TNode.GetHashCode();
         }

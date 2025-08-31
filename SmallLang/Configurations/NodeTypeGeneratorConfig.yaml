@@ -1,51 +1,53 @@
 NodeTypeDefinitions:
-  ignore: yes
+  ignore: no
   namespace: SmallLang.IR.AST
-  usings: []
-  generator: nodetypegenerator.py
-  dst: IR/AST/Generated/ImportantASTNodeType.cs
-  display name: "Generate-AST-NodeType-Enum"
+  usings: [SmallLang.IR.AST.Generated]
+  generator: visitor_generator.py
+  dst: IR/AST/ASTVisitors/Generated/ISmallLangNodeVisitor.cs
+  display name: "Generate-Visitor-Interface"
+  name: ISmallLangNodeVisitor
 
-  name: ImportantASTNodeType
+  &node-type-suffix node-type suffix: &NodeTypeSuffix Node
+
   data:
-    - &ReTypingAlias ReTypingAlias: "data: IDENTIFIER, children: [Type Identifier]"
-    - &ReTypeOriginal ReTypeOriginal: "data: IDENTIFIER, children: [Type]"
-    - &Identifier Identifier: "data: IDENTIFIER, children: []"
-    - &Section Section: "data: null, children: flattened array of statements"
-    - &Function Function: "data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]"
-    - &LoopCTRL LoopCTRL: "data: break | continue, children: [] | [identifier: opnestedvalinloopcontrol]"
-    - &For For: "data: null, children: [expression, expression, expression, Label, statement, else as Statement]"
-    - &While While: "data: null, children: [expression, statement, Label, else as Statement]"
-    - &LoopLabel LoopLabel: "data: identifier"
-    - &Return Return: "NO FLATTEN, data: null, children: [Expression]"
-    - &BaseType BaseType: "data: base type, children: []"
-    - &GenericType GenericType: "data: generic type, children: [] // maybe children:[typecsv]?"
-    - &If If: "data: null, children: [ExprStatementCombined+, OptionalElse as Statement] where OptionalElse is not EMPTY| [ExprStatementCombined+]"
-    - &Switch Switch: "data: null, children: [Expression, ExprStatementCombined*]"
-    - &ExprStatementCombined ExprSectionCombined: "data: null, children: [Expression, Section]"
-    - &TypeAndIdentifierCSVElement TypeAndIdentifierCSVElement: "data: Identifier, children: [FunctionArgDeclModifiersCombined, Type]"
-    - &AliasExpr AliasExpr: "data: IDENTIFIER, children: [Identifier]"
-    - &Declaration Declaration: "data: Identifier, children: [DeclarationModifiersCombined, Type, AssignmentPrime] | [Type, AssignmentPrime] | [Type] | [Type, AssignmentPrime]"
-    - &DeclarationModifiersCombined DeclarationModifiersCombined: "data: null, children: [DeclarationModifier*]"
-    - &DeclarationModifier DeclarationModifier: "data: \"ref\" | \"readonly\" | \"frozen\" | \"immut\", children: []"
-    - &FunctionArgDeclModifiers FunctionArgDeclModifiers: "data: *DeclarationModifier | \"copy\", children: []"
-    - &FunctionArgDeclModifiersCombined FunctionArgDeclModifiersCombined: "data: null, children: [FunctionArgDeclModifiers+]"
-    - &AssignmentPrime AssignmentPrime: "data: \"=\", children: [Expression]"
-    - &FactorialExpression FactorialExpression: "data: null, children: [Expression, !+]"
-    - &BinaryExpression BinaryExpression: "data: \"implies\" | \"or\" | \"xor\" | \"and\" | \"==\" | \"!=\" | \">\" | \">=\" | \"<\" | \"<=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"*\" | \"|\" | \"^\" | \"&\", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser"
-    - &ComparisonExpression ComparisonExpression: "data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via "
-    - &OperatorExpressionPair OperatorExpressionPair: "data: cmpOperator, children: [Expression]"
-    - &Primary Primary: "data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr"
-    - &FunctionIdentifier FunctionIdentifier: "data: IDENTIFIER, children: []"
-    - &CopyExpr CopyExpr: "data: null, children: [Expression] //NO UP FLATTEN"
-    - &NewExpr NewExpr: "data: null, children: [Type, ArgList] | [Type]"
-    - &Index Index: "data: null, children: [Expression, Expression] where Expression1 is Primary or subset (parens etc)"
-    - &FunctionCall FunctionCall: "data: null | \".\", children: [Expression, ArgList] | [Expression] where Expression1 i"
-    - &ArgListElement ArgListElement: "data: null, children: [Expression] | [ArgListLabel, Expression]"
-    - &TypeCSV TypeCSV: "data: null, children: [Type+]"
-    - &UnaryExpression UnaryExpression: ""
-    - &Else Else: ""
-    - &FactorialSymbol FactorialSymbol: ""
+    &ReTypingAlias ReTypingAlias: "data: IDENTIFIER, children: [Type Identifier]"
+    &ReTypeOriginal ReTypeOriginal: "data: IDENTIFIER, children: [Type]"
+    &Identifier Identifier: "data: IDENTIFIER, children: []"
+    &Section Section: "data: null, children: flattened array of statements"
+    &Function Function: "data: identifier, children: [type, statement] | [type, typeandidentifiercsv, statement]"
+    &LoopCTRL LoopCTRL: "data: break | continue, children: [] | [identifier: opnestedvalinloopcontrol]"
+    &For For: "data: null, children: [expression, expression, expression, Label, statement, else as Statement]"
+    &While While: "data: null, children: [expression, statement, Label, else as Statement]"
+    &LoopLabel LoopLabel: "data: identifier"
+    &Return Return: "NO FLATTEN, data: null, children: [Expression]"
+    &BaseType BaseType: "data: base type, children: []"
+    &GenericType GenericType: "data: generic type, children: [] // maybe children:[typecsv]?"
+    &If If: "data: null, children: [ExprStatementCombined+, OptionalElse as Statement] where OptionalElse is not EMPTY| [ExprStatementCombined+]"
+    &Switch Switch: "data: null, children: [Expression, ExprStatementCombined*]"
+    &ExprStatementCombined ExprSectionCombined: "data: null, children: [Expression, Section]"
+    &TypeAndIdentifierCSVElement TypeAndIdentifierCSVElement: "data: Identifier, children: [FunctionArgDeclModifiersCombined, Type]"
+    &AliasExpr AliasExpr: "data: IDENTIFIER, children: [Identifier]"
+    &Declaration Declaration: "data: Identifier, children: [DeclarationModifiersCombined, Type, AssignmentPrime] | [Type, AssignmentPrime] | [Type] | [Type, AssignmentPrime]"
+    &DeclarationModifiersCombined DeclarationModifiersCombined: "data: null, children: [DeclarationModifier*]"
+    &DeclarationModifier DeclarationModifier: "data: \"ref\" | \"readonly\" | \"frozen\" | \"immut\", children: []"
+    &FunctionArgDeclModifiers FunctionArgDeclModifiers: "data: *DeclarationModifier | \"copy\", children: []"
+    &FunctionArgDeclModifiersCombined FunctionArgDeclModifiersCombined: "data: null, children: [FunctionArgDeclModifiers+]"
+    &AssignmentPrime AssignmentPrime: "data: \"=\", children: [Expression]"
+    &FactorialExpression FactorialExpression: "data: null, children: [Expression, !+]"
+    &BinaryExpression BinaryExpression: "data: \"implies\" | \"or\" | \"xor\" | \"and\" | \"==\" | \"!=\" | \">\" | \">=\" | \"<\" | \"<=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"*\" | \"|\" | \"^\" | \"&\", children: [Expression, Expression] // Deconstruct syntactic sugar of x < y > z and x == y == z etc into binary and and ops in parser"
+    &ComparisonExpression ComparisonExpression: "data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via "
+    &OperatorExpressionPair OperatorExpressionPair: "data: cmpOperator, children: [Expression]"
+    &Primary Primary: "data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr"
+    &FunctionIdentifier FunctionIdentifier: "data: IDENTIFIER, children: []"
+    &CopyExpr CopyExpr: "data: null, children: [Expression] //NO UP FLATTEN"
+    &NewExpr NewExpr: "data: null, children: [Type, ArgList] | [Type]"
+    &Index Index: "data: null, children: [Expression, Expression] where Expression1 is Primary or subset (parens etc)"
+    &FunctionCall FunctionCall: "data: null | \".\", children: [Expression, ArgList] | [Expression] where Expression1 i"
+    &ArgListElement ArgListElement: "data: null, children: [Expression] | [ArgListLabel, Expression]"
+    &TypeCSV TypeCSV: "data: null, children: [Type+]"
+    &UnaryExpression UnaryExpression: ""
+    &Else Else: ""
+    &FactorialSymbol FactorialSymbol: ""
 
 
 attributes:
@@ -93,7 +95,7 @@ marker interfaces:
   dst: "IR/AST/Generated/MarkerInterfaces"
   display name: Generate-AST-Node-Marker-Interfaces
 
-  &node-type-suffix node-type suffix: &NodeTypeSuffix Node
+  *node-type-suffix : *NodeTypeSuffix
   
 
   data:

@@ -17,10 +17,9 @@ public abstract class ASTVisitor<T, TPrologue, TBody, TEpilogue> : ISmallLangNod
 
     protected virtual T ReturnCombiner(TPrologue? prologue, TBody body, TEpilogue? epilogue)
     {
-        if (body is T Return) return Return;
-        throw new Exception("If TBody is not convertible to T, then a custom ReturnCombiner must be defined.");
+        return Cast(body);
     }
-
+    protected abstract T Cast(TBody body);
     protected virtual T Combinator<TArgumentType>(ISmallLangNode? Parent, TArgumentType self, Func<ISmallLangNode?, TArgumentType, TBody> BodyFunction)
     where TArgumentType : ISmallLangNode
     {

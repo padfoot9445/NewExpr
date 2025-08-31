@@ -34,7 +34,7 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
 
     protected override object? VisitDeclarationModifiersCombined(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self) => default;
 
-    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => SetScopeNew(self, self.Statement);
+    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => SetScopeNew(self, self.Section);
 
     protected override object? VisitExprSectionCombined(ISmallLangNode? Parent, ExprSectionCombinedNode self) => default;
 

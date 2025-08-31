@@ -1,4 +1,5 @@
 using System.Collections;
+using SmallLang.IR.Metadata;
 
 namespace SmallLang.IR.AST;
 
@@ -8,4 +9,6 @@ public abstract record class SmallLangNode : ISmallLangNode
     public IEnumerable<ISmallLangNode> ChildNodes => Children.Where(x => x != null).Select(x => x!);
 
     public abstract T AcceptVisitor<T>(ISmallLangNode? Parent, ISmallLangNodeVisitor<T> visitor);
+
+    public Scope? Scope { get; internal set; } = null;
 }

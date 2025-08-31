@@ -8,7 +8,8 @@ base_get_attribute_property: Callable[[dict[str, str], bool], str] = lambda attr
 if __name__ == "__main__":
     _, output_directory, _, raw_config, config = initialize()
 
-    get_attribute_property: Callable[[dict[str, str]], str] = lambda x: base_get_attribute_property(x, False)
+    get_settable_attribute_property: Callable[[dict[str, str]], str] = lambda x: base_get_attribute_property(x, True)
+    get_attribute_property: Callable[[dict[str, str]], str] = lambda x : base_get_attribute_property(x, False)
 
     #write interfaces for attributes
     for attribute in config:
@@ -26,6 +27,20 @@ if __name__ == "__main__":
                         get_attribute_property(attribute)
                     ],
                     prefix=["public"]
+                ),
+                file
+            )
+        
+        with open(output_directory/f"{interface_name}Settable.cs", "w") as file:
+            write_header(raw_config, file)
+            write_block(
+                code_block(
+                    name=interface_name + "Settable",
+                    keyword="interface",
+                    content=[
+                        get_settable_attribute_property(attribute)
+                    ],
+                    prefix=["internal"]
                 ),
                 file
             )

@@ -100,29 +100,28 @@ marker interfaces:
 
   &node-type-suffix node-type suffix: &NodeTypeSuffix Node
   
-  SmallLangAttributes: &SmallLangAttributes
-    - *Scope
+  SmallLangAttributes: &SmallLangAttributes []
   data:
     - name: &Statement IStatement
       parents:
       - &ISmallLangNode ISmallLang
-      attributes: &StatementAttrs [<<: *SmallLangAttributes]
+      attributes: &StatementAttrs []
       has data: no
     - name: &Expression IExpression
       parents:
       - *ISmallLangNode
       - *Statement
-      attributes: &ExpressionAttrs [<<: *SmallLangAttributes, *TypeOfExpression, *ExpectedTypeOfExpression]
+      attributes: &ExpressionAttrs [*TypeOfExpression, *ExpectedTypeOfExpression]
       has data: no
     - name: &Type IType
       parents:
       - *ISmallLangNode
-      attributes: &TypeAttrs [<<: *SmallLangAttributes, *TypeLiteralType]
+      attributes: &TypeAttrs [*TypeLiteralType]
       has data: yes
     - name: &Loop ILoop
       parents:
         - *Statement
-      attributes: &LoopAttrs [<<: *SmallLangAttributes, *LoopGUID]
+      attributes: &LoopAttrs [*LoopGUID]
       has data: no
 
 

@@ -5,6 +5,10 @@ namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
 internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object?>
 {
+    private static void SetScope(IHasAttributeScope Self, IHasAttributeScopeSettable Dst)
+    {
+
+    }
     protected override object? Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
         => ((SmallLangNode)(ISmallLangNode)self).Scope = new Scope() { Parent = Parent?.Scope };
     protected override object? Cast(object? body)
@@ -32,7 +36,7 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
 
     protected override object? VisitDeclarationModifiersCombined(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self) => default;
 
-    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => default;
+    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => ((IHasAttributeScopeSettable)self.Statement).Scope = new Scope() { Parent = self.Scope };
 
     protected override object? VisitExprSectionCombined(ISmallLangNode? Parent, ExprSectionCombinedNode self) => default;
 

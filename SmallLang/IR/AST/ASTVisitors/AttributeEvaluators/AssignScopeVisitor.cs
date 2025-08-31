@@ -3,94 +3,88 @@ using SmallLang.IR.Metadata;
 
 namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
-internal class AssignScopeVisitor : ISmallLangNodeVisitor<object?>
+internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object?>
 {
-    private static object? PropagateScope(ISmallLangNode? Parent, SmallLangNode self)
+    protected override object? Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
+        => ((SmallLangNode)(ISmallLangNode)self).Scope = new Scope() { Parent = Parent?.Scope };
+    protected override object? Cast(object? body)
     {
-        if (Parent is not null)
-        {
-            self.Scope ??= Parent.Scope;
-        }
-        else
-        {
-            self.Scope = new Scope { Parent = null };
-        }
-        return default;
+        return body;
     }
 
-    public object? Visit(ISmallLangNode? Parent, ReTypingAliasNode self) => PropagateScope(Parent, self);
+    protected override object? VisitAliasExpr(ISmallLangNode? Parent, AliasExprNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, ReTypeOriginalNode self) => PropagateScope(Parent, self);
+    protected override object? VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, IdentifierNode self) => PropagateScope(Parent, self);
+    protected override object? VisitAssignmentPrime(ISmallLangNode? Parent, AssignmentPrimeNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, SectionNode self) => PropagateScope(Parent, self);
+    protected override object? VisitBaseType(ISmallLangNode? Parent, BaseTypeNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, FunctionNode self) => PropagateScope(Parent, self);
+    protected override object? VisitBinaryExpression(ISmallLangNode? Parent, BinaryExpressionNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, LoopCTRLNode self) => PropagateScope(Parent, self);
+    protected override object? VisitComparisonExpression(ISmallLangNode? Parent, ComparisonExpressionNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, ForNode self) => PropagateScope(Parent, self);
+    protected override object? VisitCopyExpr(ISmallLangNode? Parent, CopyExprNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, WhileNode self) => PropagateScope(Parent, self);
+    protected override object? VisitDeclaration(ISmallLangNode? Parent, DeclarationNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, LoopLabelNode self) => PropagateScope(Parent, self);
+    protected override object? VisitDeclarationModifier(ISmallLangNode? Parent, DeclarationModifierNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, ReturnNode self) => PropagateScope(Parent, self);
+    protected override object? VisitDeclarationModifiersCombined(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, BaseTypeNode self) => PropagateScope(Parent, self);
+    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, GenericTypeNode self) => PropagateScope(Parent, self);
+    protected override object? VisitExprSectionCombined(ISmallLangNode? Parent, ExprSectionCombinedNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, IfNode self) => PropagateScope(Parent, self);
+    protected override object? VisitFactorialExpression(ISmallLangNode? Parent, FactorialExpressionNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, SwitchNode self) => PropagateScope(Parent, self);
+    protected override object? VisitFactorialSymbol(ISmallLangNode? Parent, FactorialSymbolNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, ExprSectionCombinedNode self) => PropagateScope(Parent, self);
+    protected override object? VisitFor(ISmallLangNode? Parent, ForNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self) => PropagateScope(Parent, self);
+    protected override object? VisitFunction(ISmallLangNode? Parent, FunctionNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, AliasExprNode self) => PropagateScope(Parent, self);
+    protected override object? VisitFunctionArgDeclModifiers(ISmallLangNode? Parent, FunctionArgDeclModifiersNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, DeclarationNode self) => PropagateScope(Parent, self);
+    protected override object? VisitFunctionArgDeclModifiersCombined(ISmallLangNode? Parent, FunctionArgDeclModifiersCombinedNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self) => PropagateScope(Parent, self);
+    protected override object? VisitFunctionCall(ISmallLangNode? Parent, FunctionCallNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, DeclarationModifierNode self) => PropagateScope(Parent, self);
+    protected override object? VisitFunctionIdentifier(ISmallLangNode? Parent, FunctionIdentifierNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, FunctionArgDeclModifiersNode self) => PropagateScope(Parent, self);
+    protected override object? VisitGenericType(ISmallLangNode? Parent, GenericTypeNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, FunctionArgDeclModifiersCombinedNode self) => PropagateScope(Parent, self);
+    protected override object? VisitIdentifier(ISmallLangNode? Parent, IdentifierNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, AssignmentPrimeNode self) => PropagateScope(Parent, self);
+    protected override object? VisitIf(ISmallLangNode? Parent, IfNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, FactorialExpressionNode self) => PropagateScope(Parent, self);
+    protected override object? VisitIndex(ISmallLangNode? Parent, IndexNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, BinaryExpressionNode self) => PropagateScope(Parent, self);
+    protected override object? VisitLoopCTRL(ISmallLangNode? Parent, LoopCTRLNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, ComparisonExpressionNode self) => PropagateScope(Parent, self);
+    protected override object? VisitLoopLabel(ISmallLangNode? Parent, LoopLabelNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, OperatorExpressionPairNode self) => PropagateScope(Parent, self);
+    protected override object? VisitNewExpr(ISmallLangNode? Parent, NewExprNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, PrimaryNode self) => PropagateScope(Parent, self);
+    protected override object? VisitOperatorExpressionPair(ISmallLangNode? Parent, OperatorExpressionPairNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, FunctionIdentifierNode self) => PropagateScope(Parent, self);
+    protected override object? VisitPrimary(ISmallLangNode? Parent, PrimaryNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, CopyExprNode self) => PropagateScope(Parent, self);
+    protected override object? VisitReturn(ISmallLangNode? Parent, ReturnNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, NewExprNode self) => PropagateScope(Parent, self);
+    protected override object? VisitReTypeOriginal(ISmallLangNode? Parent, ReTypeOriginalNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, IndexNode self) => PropagateScope(Parent, self);
+    protected override object? VisitReTypingAlias(ISmallLangNode? Parent, ReTypingAliasNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, FunctionCallNode self) => PropagateScope(Parent, self);
+    protected override object? VisitSection(ISmallLangNode? Parent, SectionNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, ArgListElementNode self) => PropagateScope(Parent, self);
+    protected override object? VisitSwitch(ISmallLangNode? Parent, SwitchNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, TypeCSVNode self) => PropagateScope(Parent, self);
+    protected override object? VisitTypeAndIdentifierCSVElement(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, UnaryExpressionNode self) => PropagateScope(Parent, self);
+    protected override object? VisitTypeCSV(ISmallLangNode? Parent, TypeCSVNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, ElseNode self) => PropagateScope(Parent, self);
+    protected override object? VisitUnaryExpression(ISmallLangNode? Parent, UnaryExpressionNode self) => default;
 
-    public object? Visit(ISmallLangNode? Parent, FactorialSymbolNode self) => PropagateScope(Parent, self);
+    protected override object? VisitWhile(ISmallLangNode? Parent, WhileNode self) => default;
 }

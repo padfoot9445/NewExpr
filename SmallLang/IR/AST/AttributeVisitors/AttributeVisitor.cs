@@ -1,3 +1,4 @@
+using SmallLang.Exceptions;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.Metadata;
 
@@ -56,4 +57,8 @@ public static partial class AttributeVisitor
         if (args.All(x => x is not null)) { action(); }
     }
     private static Dictionary<VariableName, SmallFunctionSignature> FunctionSignatures { get; } = new();
+    private static void Assert(bool Condition, string Message = "Assert failed")
+    {
+        throw new ExpaException(Message);
+    }
 }

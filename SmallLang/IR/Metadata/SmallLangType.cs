@@ -13,4 +13,5 @@ public record class SmallLangType(uint BaseValue, string Name, bool IsRefType = 
     {
         return TypeData.ImplicitCastTo(this, other);
     }
+    public bool ExplicitCast(SmallLangType other) => CanDeclareTo(other);
 }

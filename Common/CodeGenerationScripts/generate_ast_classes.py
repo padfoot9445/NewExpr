@@ -72,7 +72,7 @@ if __name__ == "__main__":
         ] + [
             get_attribute_property(attribute) for attribute in attributes
         ] + [
-            "public T AcceptVisitor<T>(ISmallLangNodeVisitor<T> visitor) => visitor.Visit(this);"
+            "public override T AcceptVisitor<T>(ISmallLangNode? Parent, ISmallLangNodeVisitor<T> visitor) => visitor.Visit(Parent, this);"
         ]
 
         

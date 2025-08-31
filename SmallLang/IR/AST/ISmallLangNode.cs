@@ -7,5 +7,5 @@ public interface ISmallLangNode
     int GetHashCode();
     string ToString();
     IEnumerable<ISmallLangNode> ChildNodes { get; }
-    T AcceptVisitor<T>(ISmallLangNodeVisitor<T> visitor);
+    T AcceptVisitor<T>(ISmallLangNode? Parent, ISmallLangNodeVisitor<T> visitor);
 }

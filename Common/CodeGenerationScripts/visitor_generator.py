@@ -11,9 +11,7 @@ if __name__ == "__main__":
                 raw_config[NAME] + "<T>",
                 "public interface",
                 [
-                    f"T Visit({i}{raw_config["node-type suffix"]} self);" for i in config
-                ] + [
-                    f"T Visit(SmallLangNode self);"
+                    f"T Visit(ISmallLangNode? Parent, {i}{raw_config["node-type suffix"]} self);" for i in config
                 ]
             )
             , file)

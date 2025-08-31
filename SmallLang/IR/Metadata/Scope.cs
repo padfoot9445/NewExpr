@@ -14,4 +14,9 @@ public record Scope
         NamesDefinedInThisScope.Add(name);
         NamesDefinedInThisScopeDictionary[name] = Type;
     }
+    public SmallLangType? TypeOf(VariableName name)
+    {
+        if (NamesDefinedInThisScopeDictionary.TryGetValue(name, out var type)) return type;
+        else return null;
+    }
 }

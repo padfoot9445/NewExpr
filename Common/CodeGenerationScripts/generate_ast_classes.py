@@ -109,6 +109,6 @@ if __name__ == "__main__":
                         "partial" if subnode["has additional data validation function"] else "",
                         "record"
                     ],
-                    parents=[f"{i}{suffix}" for i in parents] + [get_interface_name_from_attribute(attribute) for attribute in attributes]
+                    parents=[f"{i}{suffix}" for i in parents] + [get_interface_name_from_attribute(attribute) for attribute in attributes] + [get_interface_name_from_attribute(attribute) + "Settable" for attribute in attributes]
                 )
                 , file)

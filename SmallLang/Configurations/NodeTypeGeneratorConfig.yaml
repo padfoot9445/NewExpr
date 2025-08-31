@@ -168,7 +168,7 @@ classes:
             is optional: no
             is multiple: no
           - type: *Identifier
-            name: Identifier2
+            name: Identifier
             is optional: no
             is multiple: no
         parents:

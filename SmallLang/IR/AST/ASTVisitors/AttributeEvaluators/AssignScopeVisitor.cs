@@ -5,8 +5,6 @@ namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
 internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object?>
 {
-    private static object? SetScopeNew(IHasAttributeScope Self, IHasAttributeScope Dst)
-        => ((IHasAttributeScopeSettable)Dst).Scope = new Scope() { Parent = Self.Scope };
     protected override object? Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
         => ((SmallLangNode)(ISmallLangNode)self).Scope = Parent?.Scope ?? new Scope() { Parent = null };
     protected override object? Cast(object? body)
@@ -34,7 +32,7 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
 
     protected override object? VisitDeclarationModifiersCombined(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self) => default;
 
-    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => SetScopeNew(self, self.Section);
+    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => default;
 
     protected override object? VisitExprSectionCombined(ISmallLangNode? Parent, ExprSectionCombinedNode self) => default;
 
@@ -42,9 +40,9 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
 
     protected override object? VisitFactorialSymbol(ISmallLangNode? Parent, FactorialSymbolNode self) => default;
 
-    protected override object? VisitFor(ISmallLangNode? Parent, ForNode self) => SetScopeNew(self, self.LoopBody);
+    protected override object? VisitFor(ISmallLangNode? Parent, ForNode self) => default;
 
-    protected override object? VisitFunction(ISmallLangNode? Parent, FunctionNode self) => SetScopeNew(self, self.FunctionBody);
+    protected override object? VisitFunction(ISmallLangNode? Parent, FunctionNode self) => default;
 
     protected override object? VisitFunctionArgDeclModifiers(ISmallLangNode? Parent, FunctionArgDeclModifiersNode self) => default;
 
@@ -87,5 +85,5 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
 
     protected override object? VisitUnaryExpression(ISmallLangNode? Parent, UnaryExpressionNode self) => default;
 
-    protected override object? VisitWhile(ISmallLangNode? Parent, WhileNode self) => SetScopeNew(self, self.LoopBody);
+    protected override object? VisitWhile(ISmallLangNode? Parent, WhileNode self) => default;
 }

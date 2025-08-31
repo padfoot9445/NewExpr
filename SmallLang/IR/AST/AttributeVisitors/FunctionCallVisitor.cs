@@ -9,7 +9,6 @@ public static partial class AttributeVisitor
     {
         node.VariableName = node.Identifier.VariableName;
         node.TypeOfExpression = GetIfNotNullRefReturn(FunctionSignatures, node.VariableName, (x, y) => x[y].RetVal);
-        node.ExpectedTypeOfExpression = node.TypeOfExpression;
         node.FunctionID = GetIfNotNullRefReturn(FunctionSignatures, node.VariableName, (x, y) => x[y].ID);
     }
 }

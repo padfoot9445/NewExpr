@@ -101,25 +101,25 @@ marker interfaces:
   *node-type-suffix : *NodeTypeSuffix
   
   SmallLangAttributes: &SmallLangAttributes
-    - *Scope
+    []
   data:
     - name: &Statement IStatement
       parents:
       - &ISmallLangNode ISmallLang
-      attributes: &StatementAttrs [<<: *SmallLangAttributes]
+      attributes: &StatementAttrs []
     - name: &Expression IExpression
       parents:
       - *ISmallLangNode
       - *Statement
-      attributes: &ExpressionAttrs [<<: *SmallLangAttributes, *TypeOfExpression, *ExpectedTypeOfExpression]
+      attributes: &ExpressionAttrs [*TypeOfExpression, *ExpectedTypeOfExpression]
     - name: &Type IType
       parents:
       - *ISmallLangNode
-      attributes: &TypeAttrs [<<: *SmallLangAttributes, *TypeLiteralType]
+      attributes: &TypeAttrs [*TypeLiteralType]
     - name: &Loop ILoop
       parents:
         - *Statement
-      attributes: &LoopAttrs [<<: *SmallLangAttributes, *LoopGUID]
+      attributes: &LoopAttrs [*LoopGUID]
 
 
 attribute group interfaces:

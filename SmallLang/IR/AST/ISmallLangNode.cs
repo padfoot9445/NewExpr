@@ -1,8 +1,10 @@
 using Common.AST;
 
+using SmallLang.IR.AST.Generated;
+
 namespace SmallLang.IR.AST;
 
-public interface ISmallLangNode : ITreeNode<ISmallLangNode>
+public interface ISmallLangNode : ITreeNode<ISmallLangNode>, IHasAttributeScope
 {
     bool Equals(object? obj);
     bool Equals(SmallLangNode? other);

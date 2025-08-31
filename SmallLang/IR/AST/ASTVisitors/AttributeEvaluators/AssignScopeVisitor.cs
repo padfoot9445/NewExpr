@@ -5,10 +5,8 @@ namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
 internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object?>
 {
-    private static void SetScope(IHasAttributeScope Self, IHasAttributeScopeSettable Dst)
-    {
-
-    }
+    private static object? SetScopeNew(IHasAttributeScope Self, IHasAttributeScope Dst)
+        => ((IHasAttributeScopeSettable)Dst).Scope = new Scope() { Parent = Self.Scope };
     protected override object? Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
         => ((SmallLangNode)(ISmallLangNode)self).Scope = new Scope() { Parent = Parent?.Scope };
     protected override object? Cast(object? body)
@@ -36,7 +34,7 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
 
     protected override object? VisitDeclarationModifiersCombined(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self) => default;
 
-    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => ((IHasAttributeScopeSettable)self.Statement).Scope = new Scope() { Parent = self.Scope };
+    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => SetScopeNew(self, self.Statement);
 
     protected override object? VisitExprSectionCombined(ISmallLangNode? Parent, ExprSectionCombinedNode self) => default;
 
@@ -44,9 +42,9 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
 
     protected override object? VisitFactorialSymbol(ISmallLangNode? Parent, FactorialSymbolNode self) => default;
 
-    protected override object? VisitFor(ISmallLangNode? Parent, ForNode self) => default;
+    protected override object? VisitFor(ISmallLangNode? Parent, ForNode self) => SetScopeNew(self, self.LoopBody);
 
-    protected override object? VisitFunction(ISmallLangNode? Parent, FunctionNode self) => default;
+    protected override object? VisitFunction(ISmallLangNode? Parent, FunctionNode self) => SetScopeNew(self, self.FunctionBody);
 
     protected override object? VisitFunctionArgDeclModifiers(ISmallLangNode? Parent, FunctionArgDeclModifiersNode self) => default;
 
@@ -61,7 +59,6 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
     protected override object? VisitIdentifier(ISmallLangNode? Parent, IdentifierNode self) => default;
 
     protected override object? VisitIf(ISmallLangNode? Parent, IfNode self) => default;
-
     protected override object? VisitIndex(ISmallLangNode? Parent, IndexNode self) => default;
 
     protected override object? VisitLoopCTRL(ISmallLangNode? Parent, LoopCTRLNode self) => default;
@@ -80,7 +77,7 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
 
     protected override object? VisitReTypingAlias(ISmallLangNode? Parent, ReTypingAliasNode self) => default;
 
-    protected override object? VisitSection(ISmallLangNode? Parent, SectionNode self) => default;
+    protected override object? VisitSection(ISmallLangNode? Parent, SectionNode self) => self.Scope = new Scope() { Parent = Parent?.Scope };
 
     protected override object? VisitSwitch(ISmallLangNode? Parent, SwitchNode self) => default;
 
@@ -90,5 +87,5 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
 
     protected override object? VisitUnaryExpression(ISmallLangNode? Parent, UnaryExpressionNode self) => default;
 
-    protected override object? VisitWhile(ISmallLangNode? Parent, WhileNode self) => default;
+    protected override object? VisitWhile(ISmallLangNode? Parent, WhileNode self) => SetScopeNew(self, self.LoopBody);
 }

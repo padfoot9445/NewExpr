@@ -135,8 +135,8 @@ public class ParserTest
         Assert.That(((SectionNode)res.LoopBody).Statements[1], Is.InstanceOf<FunctionCallNode>());
 
         Assert.That(res.Else, Is.Not.Null);
-        Assert.That(res.Else!.Statement, Is.InstanceOf<SectionNode>());
-        Assert.That(((SectionNode)res.Else.Statement).Statements[0], Is.InstanceOf<FunctionCallNode>());
+        Assert.That(res.Else!.Section, Is.InstanceOf<SectionNode>());
+        Assert.That(((SectionNode)res.Else.Section).Statements[0], Is.InstanceOf<FunctionCallNode>());
     }
     [Test]
     public void Parse__While_Loop__Returns_Correct()

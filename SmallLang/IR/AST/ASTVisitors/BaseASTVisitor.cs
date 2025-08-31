@@ -2,8 +2,34 @@ using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.IR.AST.ASTVisitors;
 
-public abstract class ASTVisitor<T, TPrologue, TBody, TEpilogue> : ISmallLangNodeVisitor<T>
+public abstract class BaseASTVisitor<T, TPrologue, TBody, TEpilogue> : ISmallLangNodeVisitor<T>
 {
+    public List<T> BeginVisiting(ISmallLangNode node) => BeginVisiting<List<T>>(node, (x, y) => [.. x, .. y], (x, y) => [.. x, y]);
+    public TOut BeginVisiting<TOut>(ISmallLangNode node, Func<TOut, TOut, TOut> Accumulator, Func<TOut, T, TOut> SubAccumulator)
+    where TOut : new()
+    {
+        TOut RetVal = new();
+        int Last = unchecked(node.GetHashCode() + 1);
+        int CurrentHashCode;
+
+        while (Last != (CurrentHashCode = node.GetHashCode()))
+        {
+            Last = CurrentHashCode;
+            RetVal = Accumulator(RetVal, RecursiveVisit(null, node, Accumulator, SubAccumulator));
+        }
+        return RetVal;
+    }
+    private TOut RecursiveVisit<TOut>(ISmallLangNode? Parent, ISmallLangNode self, Func<TOut, TOut, TOut> Accumulator, Func<TOut, T, TOut> SubAccumulator)
+    where TOut : new()
+    {
+        var RetVal = SubAccumulator(new(), self.AcceptVisitor(Parent, this));
+        foreach (var childnode in self.ChildNodes)
+        {
+            RetVal = Accumulator(RetVal, RecursiveVisit(self, childnode, Accumulator, SubAccumulator));
+        }
+        return RetVal;
+    }
+
     protected virtual TPrologue? Prologue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
     where TArgumentType : ISmallLangNode
     {

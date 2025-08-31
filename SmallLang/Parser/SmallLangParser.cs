@@ -1,5 +1,6 @@
 
 using System.Data;
+using System.Diagnostics;
 using Common.Tokens;
 using sly.lexer;
 using sly.parser.generator;
@@ -111,8 +112,9 @@ public partial class SmallLangParser
         List<ExprSectionCombinedNode> rc = [ThisCombined];
         if (ElseNode is not null)
         {
-            if (ElseNode.Statement is IfNode If)
+            if (ElseNode.Section.Statements.Count > 0 && ElseNode.Section.Statements.First() is IfNode If)
             {
+                Debug.Assert(ElseNode.Section.Statements.Count == 1);
                 rc.AddRange(If.ExprStatementCombineds);
                 ElseNode = If.Else;
             }
@@ -124,7 +126,7 @@ public partial class SmallLangParser
 
 
     [Production($"{nameof(NTElse)}: Else [d] {nameof(NTStatement)}")]
-    public NodeType NTElse(NodeType AStatement) => new ElseNode(TryCast<IStatementNode>(AStatement, nameof(NTElse))); //passthrough
+    public NodeType NTElse(NodeType AStatement) => new ElseNode(ToSection<IStatementNode>(AStatement, nameof(NTElse))); //passthrough
     [Production($"{nameof(NTSwitch)}: Switch [d] OpenParen [d] {nameof(NTExpression)} CloseParen [d] OpenCurly [d] {nameof(NTSwitchBody)}* CloseCurly [d]")]
     public NodeType NTSwitch(NodeType AExpression, List<NodeType> ASwitchBody) => new SwitchNode(
         TryCast<IExpressionNode>(AExpression), ASwitchBody.Select(TryCast<ExprSectionCombinedNode>).ToList());

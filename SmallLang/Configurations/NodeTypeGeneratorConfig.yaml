@@ -268,8 +268,8 @@ classes:
       
       - name: *Else
         children:
-          - type: *Statement
-            name: Statement
+          - type: *Section
+            name: Section
             is optional: no
             is multiple: no
         parents:

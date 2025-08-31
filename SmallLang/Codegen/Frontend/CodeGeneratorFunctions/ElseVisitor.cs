@@ -14,7 +14,7 @@ internal static class ElseVisitor
     {
         Driver.EnteringChunk(() =>
         {
-            Driver.Exec(Self.Statement);
+            Driver.Exec(Self.Section);
         });
     }
 }

@@ -8,7 +8,7 @@ internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object
     private static object? SetScopeNew(IHasAttributeScope Self, IHasAttributeScope Dst)
         => ((IHasAttributeScopeSettable)Dst).Scope = new Scope() { Parent = Self.Scope };
     protected override object? Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
-        => ((SmallLangNode)(ISmallLangNode)self).Scope = new Scope() { Parent = Parent?.Scope };
+        => ((SmallLangNode)(ISmallLangNode)self).Scope = Parent?.Scope ?? new Scope() { Parent = null };
     protected override object? Cast(object? body)
     {
         return body;

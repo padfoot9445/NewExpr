@@ -2,7 +2,7 @@ using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.IR.AST.ASTVisitors;
 
-public abstract class ASTVisitor<T, TPrologue, TBody, TEpilogue> : ISmallLangNodeVisitor<T>
+public abstract class BaseASTVisitor<T, TPrologue, TBody, TEpilogue> : ISmallLangNodeVisitor<T>
 {
     protected virtual TPrologue? Prologue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
     where TArgumentType : ISmallLangNode

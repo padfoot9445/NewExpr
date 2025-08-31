@@ -107,19 +107,23 @@ marker interfaces:
       parents:
       - &ISmallLangNode ISmallLang
       attributes: &StatementAttrs [<<: *SmallLangAttributes]
+      has data: no
     - name: &Expression IExpression
       parents:
       - *ISmallLangNode
       - *Statement
       attributes: &ExpressionAttrs [<<: *SmallLangAttributes, *TypeOfExpression, *ExpectedTypeOfExpression]
+      has data: no
     - name: &Type IType
       parents:
       - *ISmallLangNode
       attributes: &TypeAttrs [<<: *SmallLangAttributes, *TypeLiteralType]
+      has data: yes
     - name: &Loop ILoop
       parents:
         - *Statement
       attributes: &LoopAttrs [<<: *SmallLangAttributes, *LoopGUID]
+      has data: no
 
 
 attribute group interfaces:

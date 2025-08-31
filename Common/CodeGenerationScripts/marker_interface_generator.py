@@ -19,7 +19,7 @@ if __name__ == "__main__":
                     name=name,
                     keyword="interface",
                     content=[
-
+                        "IToken Data { get; }" if interface["has data"] else ""
                     ],
                     affixes=[":", join_two_parent_groups((i + suffix for i in parents), (get_interface_name(i["name"]) for i in attributes))],
                     modifiers=[AccessModifiers.Public]

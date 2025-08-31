@@ -12,7 +12,8 @@ public static partial class AttributeVisitor
         TryEvaluate<UnaryExpressionNode>,
         TryEvaluate<FunctionCallNode>,
         TryEvaluate<IdentifierNode>,
-        TryEvaluate<FunctionNode>
+        TryEvaluate<FunctionNode>,
+        TryEvaluate<ReTypeOriginalNode>
     ];
     public static void BuildAttributes(this ISmallLangNode node)
     {

@@ -10,7 +10,9 @@ public static partial class AttributeVisitor
     private static readonly IEnumerable<Action<ISmallLangNode>> EvaluationPasses =
     [
         TryEvaluate<UnaryExpressionNode>,
-        TryEvaluate<FunctionCallNode>
+        TryEvaluate<FunctionCallNode>,
+        TryEvaluate<IdentifierNode>,
+        TryEvaluate<FunctionNode>
     ];
     public static void BuildAttributes(this ISmallLangNode node)
     {

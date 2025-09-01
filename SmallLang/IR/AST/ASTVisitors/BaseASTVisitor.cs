@@ -16,14 +16,13 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
         }
         return node;
     }
-    private ISmallLangNode RecursiveVisit(ISmallLangNode? Parent, ISmallLangNode self)
+    private void RecursiveVisit(ISmallLangNode? Parent, ISmallLangNode self)
     {
         self.AcceptVisitor(Parent, this);
         foreach (var childnode in self.ChildNodes)
         {
             RecursiveVisit(self, childnode);
         }
-        return self;
     }
 
     protected virtual void Prologue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)

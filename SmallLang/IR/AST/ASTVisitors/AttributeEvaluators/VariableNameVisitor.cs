@@ -66,7 +66,14 @@ internal class VariableNameVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitFor(ISmallLangNode? Parent, ForNode self) => self; //looplabel handles defining itself
 
-    protected override ISmallLangNode VisitFunction(ISmallLangNode? Parent, FunctionNode self) => self;
+    protected override ISmallLangNode VisitFunction(ISmallLangNode? Parent, FunctionNode self)
+    {
+        NotNull(self.Scope);
+
+        self.Scope.DefineName(self.FunctionName.Data.Lexeme);
+
+        return self;
+    }
 
     protected override ISmallLangNode VisitFunctionArgDeclModifiers(ISmallLangNode? Parent, FunctionArgDeclModifiersNode self) => self;
 

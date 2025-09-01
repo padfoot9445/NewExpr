@@ -11,10 +11,15 @@ public record Scope
         {
             DefineFunction(Function);
         }
+        ScopeID = ++UsedScopeIDs;
     }
+    private static int UsedScopeIDs { get; set; } = 0;
+    private readonly int ScopeID;
+    private string ScopeName => Parent is null ? "Global" : ScopeID.ToString();
+    public string FullScopeName => Parent is not null ? $"{Parent.FullScopeName}.{ScopeName}" : ScopeName;
     public required Scope? Parent { get; init; }
     public HashSet<VariableName> NamesDefinedInThisScope { get; } = new();
-    public VariableName GetName(string name) => throw new NotImplementedException();
+    public VariableName GetName(string name) => new VariableName($"{FullScopeName}::{name}");
     public bool IsDefined(string name) => IsDefined(GetName(name));
     public bool IsDefined(VariableName name) => NamesDefinedInThisScope.Contains(name) || (Parent is not null && Parent.IsDefined(name));
     public virtual bool Equals(Scope? other)

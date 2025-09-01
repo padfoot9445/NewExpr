@@ -18,9 +18,10 @@ public record Scope()
         return Parent is null ? 0 : (Parent.GetHashCode() + 1) * 17;
     }
     private Functions FunctionsDefinedInThisScope { get; } = new();
+    private bool FunctionIsDefinedInThisScope(string name) => FunctionsDefinedInThisScope.RegisteredFunctions.Any(x => x.Name == name);
     public bool FunctionIsDefined(string name)
     {
-        return FunctionsDefinedInThisScope.RegisteredFunctions.Any(x => x.Name == name) || (Parent is not null && Parent.FunctionIsDefined(name));
+        return FunctionIsDefinedInThisScope(name) || (Parent is not null && Parent.FunctionIsDefined(name));
     }
     public void DefineFunction(FunctionSignature functionSignature)
     {

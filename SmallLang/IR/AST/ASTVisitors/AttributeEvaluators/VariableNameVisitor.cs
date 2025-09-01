@@ -125,7 +125,14 @@ internal class VariableNameVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitSwitch(ISmallLangNode? Parent, SwitchNode self) => self;
 
-    protected override ISmallLangNode VisitTypeAndIdentifierCSVElement(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self) => self;
+    protected override ISmallLangNode VisitTypeAndIdentifierCSVElement(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self)
+    {
+        NotNull(self.Scope);
+
+        self.Scope.DefineName(self.Identifier.Data.Lexeme);
+
+        return self;
+    }
 
     protected override ISmallLangNode VisitTypeCSV(ISmallLangNode? Parent, TypeCSVNode self) => self;
 

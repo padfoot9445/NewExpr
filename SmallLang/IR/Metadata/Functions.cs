@@ -6,10 +6,7 @@ partial class Functions
 {
     public Functions()
     {
-        foreach (var Func in StdLibFunctions)
-        {
-            RegisterFunction(Func);
-        }
+
     }
     public void RegisterFunction(FunctionSignature<BackingNumberType, SmallLangType> Signature)
     {

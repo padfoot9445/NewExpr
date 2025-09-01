@@ -1,7 +1,7 @@
 # Build Instructions
 This project relies heavily on custom source generation. As such, the following steps are required to build it after a fresh clone:
 
-0. Ensure you have python installed
+0. Ensure you have python and a dotnet SDK installed
 Much of the build steps are written in python. Hence, a python interpreter needs to be installed. The rest of the steps assumes it is on your path as `python3`.
 
 You can check if you have python installed by running
@@ -11,6 +11,16 @@ python3 --version
 
 If you do not have python installed, see [here](https://www.python.org/downloads/).
 
+Furthermore, this project itself is written entirely in C#, and targets dotnet 9. You will require the relevant dotnet SDK to compile it. You can still run the build script with the `--no-dotnet` flag, detailed below, if you do not have the SDK installed, but it will not be very useful, as you will not be able to do anything with the project.
+
+You can check if you have the correct version of the dotnet SDK installed by running
+
+```powershell
+dotnet --version
+```
+
+If this gives a version below `9.0`, or errors, see [here](https://dotnet.microsoft.com/en-us/download).
+
 1. Create a python virtual environment
 
 Though this step is optional, it is highly recommended. This is to ensure the dependencies installed below do not contaminate your python installation.
@@ -19,7 +29,7 @@ Though this step is optional, it is highly recommended. This is to ensure the de
 python3 -m venv .env
 .env/bin/activate
 ```
-
+> Note: when testing on git bash .env/bin/activate did not activate the virtual environment. If this happens for you, replace `python3` in all further steps with `.env/bin/python3.exe`.
 2. Install PyYAML
 The configuration-files for this project are written in yaml, and PyYaml is used to parse them.
 
@@ -58,3 +68,9 @@ with optional arguments:
 - `--no-dotnet` only regenerates generated source without building
 - `--no-format` does not run dotnet format (recommended)
 - `--clean` also removes any folders instead of just removing files during cleanup
+
+4. Test your build
+
+This project is currently in development. As such, there are some tests on master which will not pass. However, the majority of tests *will* pass.
+
+At the time of writing (1st September 2025), there are 7553 successful tests, which take in total ~= 35 seconds to run.

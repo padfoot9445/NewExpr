@@ -31,7 +31,7 @@ public class VariableNameVisitorTests
 
     }
     [TestCaseSource(nameof(GetTestCases))]
-    public void All_Programs__Variable_Name_Visitor__BeginVisiting__No_Scope_Is_Null(ISmallLangNode ast)
+    public void All_Programs__Variable_Name_Visitor__BeginVisiting__No_VariableName_Is_Null(ISmallLangNode ast)
     {
         new VariableNameVisitor().BeginVisiting(ast);
 

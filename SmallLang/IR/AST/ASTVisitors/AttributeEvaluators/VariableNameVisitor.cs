@@ -118,7 +118,11 @@ internal class VariableNameVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitReTypeOriginal(ISmallLangNode? Parent, ReTypeOriginalNode self) => self;
 
-    protected override ISmallLangNode VisitReTypingAlias(ISmallLangNode? Parent, ReTypingAliasNode self) => self;
+    protected override ISmallLangNode VisitReTypingAlias(ISmallLangNode? Parent, ReTypingAliasNode self)
+    {
+        self.Scope!.DefineName(self.Identifier2.Data.Lexeme);
+        return self;
+    }
 
     protected override ISmallLangNode VisitSection(ISmallLangNode? Parent, SectionNode self) => self;
 

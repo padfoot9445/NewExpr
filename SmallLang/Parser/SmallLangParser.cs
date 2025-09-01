@@ -176,7 +176,7 @@ public partial class SmallLangParser
     [Production($"{nameof(NTDeclarationExpr)}: [{nameof(NTDeclarationExpr1)} | {nameof(NTAssignmentExpr)}]")]
     public NodeType NTDeclarationExpr(NodeType Node) => Node;
     [Production($"{nameof(NTDeclarationExpr1)}: {nameof(NTDeclarationModifiersCombined)}? {nameof(NTType)} Identifier {nameof(NTAssignmentPrime)}?")]
-    public NodeType NTDeclarationExpr1(ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident, ValueOption<NodeType> AAssignmentPrime) => new DeclarationNode(FromToken(Ident), TryCast<ITypeNode>(AType), TryCast<DeclarationModifiersCombinedNode>(Modifiers) ?? new DeclarationModifiersCombinedNode([]), TryCast<AssignmentPrimeNode>(AAssignmentPrime));
+    public NodeType NTDeclarationExpr1(ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident, ValueOption<NodeType> AAssignmentPrime) => new DeclarationNode(TryCast<ITypeNode>(AType), TryCast<DeclarationModifiersCombinedNode>(Modifiers) ?? new DeclarationModifiersCombinedNode([]), new(FromToken(Ident)), TryCast<AssignmentPrimeNode>(AAssignmentPrime));
     [Production($"{nameof(NTDeclarationModifiersCombined)}: {nameof(NTDeclarationModifier)}*")]
     public NodeType NTDeclarationModifiersCombined(List<NodeType> Modifiers) => new DeclarationModifiersCombinedNode(Modifiers.Select(TryCast<DeclarationModifierNode>).ToList());
     [Production($"{nameof(NTDeclarationModifier)}: [Ref | Readonly | Frozen | Immut]")]

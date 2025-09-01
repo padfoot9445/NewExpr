@@ -3,8 +3,15 @@ namespace SmallLang.IR.Metadata;
 using Common.Metadata;
 using FunctionID = Common.Metadata.FunctionID<BackingNumberType>;
 using FunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, SmallLangType>;
-public record Scope()
+public record Scope
 {
+    public Scope()
+    {
+        foreach (var Function in Functions.StdLibFunctions)
+        {
+            DefineFunction(Function);
+        }
+    }
     public required Scope? Parent { get; init; }
     public HashSet<VariableName> NamesDefinedInThisScope { get; } = new();
     public VariableName GetName(string name) => throw new NotImplementedException();

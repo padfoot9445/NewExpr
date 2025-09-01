@@ -10,6 +10,7 @@ internal class VariableNameVisitor : BaseASTVisitor
     protected override void PreVisit(ISmallLangNode node)
     {
         Debug.Assert(node.Flatten().All(x => x.Scope is not null));
+        //TODO: Define stdlib identifiers
     }
     private static void NotNull([NotNull] object? o1) => NotNullMul([o1]);
     private static void NotNullMul([NotNull] params object?[] objects)

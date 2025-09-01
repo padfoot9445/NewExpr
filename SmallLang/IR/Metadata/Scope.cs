@@ -17,14 +17,13 @@ public record Scope()
     {
         return Parent is null ? 0 : (Parent.GetHashCode() + 1) * 17;
     }
-
-    private HashSet<FunctionSignature> FunctionsDefinedInThisScope { get; init; } = new();
+    private Functions FunctionsDefinedInThisScope { get; } = new();
     public bool FunctionIsDefined(string name)
     {
-        return FunctionsDefinedInThisScope.Any(x => x.Name == name) || (Parent is not null && Parent.FunctionIsDefined(name));
+        return FunctionsDefinedInThisScope.RegisteredFunctions.Any(x => x.Name == name) || (Parent is not null && Parent.FunctionIsDefined(name));
     }
     public void DefineFunction(FunctionSignature functionSignature)
     {
-        FunctionsDefinedInThisScope.Add(functionSignature);
+        FunctionsDefinedInThisScope.RegisterFunction(functionSignature);
     }
 }

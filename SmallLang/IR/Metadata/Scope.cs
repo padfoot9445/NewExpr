@@ -18,10 +18,20 @@ public record Scope
     private string ScopeName => Parent is null ? "Global" : ScopeID.ToString();
     public string FullScopeName => Parent is not null ? $"{Parent.FullScopeName}.{ScopeName}" : ScopeName;
     public required Scope? Parent { get; init; }
-    public HashSet<VariableName> NamesDefinedInThisScope { get; } = new();
-    public VariableName GetName(string name) => new VariableName($"{FullScopeName}::{name}");
-    public bool IsDefined(string name) => IsDefined(GetName(name));
-    public bool IsDefined(VariableName name) => NamesDefinedInThisScope.Contains(name) || (Parent is not null && Parent.IsDefined(name));
+    public HashSet<string> NamesDefinedInThisScope { get; } = new();
+    public VariableName GetName(string name)
+    {
+        return new VariableName($"{FullScopeName}::{name}");
+    }
+    public VariableName SearchName(string name)
+    {
+        if (IsDefinedLocally(name)) return GetName(name);
+        else if (Parent is not null) return Parent.SearchName(name);
+        else throw new ArgumentOutOfRangeException($"{name} was not defined");
+    }
+    public bool IsDefined(string name) => IsDefinedLocally(name) || (Parent is not null && Parent.IsDefined(name));
+    public bool IsDefinedLocally(string name) => NamesDefinedInThisScope.Contains(name);
+
     public virtual bool Equals(Scope? other)
     {
         return other is not null && Parent == other.Parent && NamesDefinedInThisScope.Intersect(other.NamesDefinedInThisScope).Count() == NamesDefinedInThisScope.Count;

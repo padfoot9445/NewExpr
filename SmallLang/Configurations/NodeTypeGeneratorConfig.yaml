@@ -856,8 +856,8 @@ classes:
       
       - name: *FunctionCall
         children:
-          - type: *Expression
-            name: Expression
+          - type: *Identifier
+            name: Identifier
             is optional: no
             is multiple: no
           - type: *ArgListElement

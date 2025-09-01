@@ -207,7 +207,7 @@ public partial class SmallLangParser
     public NodeType NTPrimary(NodeType Node, LyToken Open, List<NodeType> Expression, LyToken Close)
     {
 
-        return new FunctionCallNode(TryCast<IExpressionNode>(Node), Expression.Select(TryCast<ArgListElementNode>).ToList());
+        return new FunctionCallNode(TryCast<IdentifierNode>(Node), Expression.Select(TryCast<ArgListElementNode>).ToList());
 
     }
 

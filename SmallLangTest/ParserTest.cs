@@ -13,8 +13,8 @@ namespace SmallLangTest;
 [TestFixture]
 public class ParserTest
 {
-    T Parse<T>(string input) => new Parser(input).Parse<T>();
-    SectionNode Parse(string input) => Parse<SectionNode>(input);
+    private static T Parse<T>(string input) => new Parser(input).Parse<T>();
+    public static SectionNode Parse(string input) => Parse<SectionNode>(input);
     [Test]
     public void Ctor__Any_Input__Does_Not_Throw()
     {

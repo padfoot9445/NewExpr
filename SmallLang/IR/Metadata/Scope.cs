@@ -27,4 +27,17 @@ public record Scope()
     {
         FunctionsDefinedInThisScope.RegisterFunction(functionSignature);
     }
+    public FunctionSignature GetSignature(string name)
+    {
+        if (FunctionIsDefinedInThisScope(name))
+        {
+            return FunctionsDefinedInThisScope.GetSignature(name);
+        }
+        else
+        {
+            if (Parent is null) throw new ArgumentOutOfRangeException($"Could not find function defined in the current or enclosing scope of name {name}");
+            else return Parent.GetSignature(name);
+
+        }
+    }
 }

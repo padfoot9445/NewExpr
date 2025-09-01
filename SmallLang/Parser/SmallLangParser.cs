@@ -147,8 +147,8 @@ public partial class SmallLangParser
             {
                 Copies.Add(new BinaryExpressionNode(
                     Data: IToken.NewToken(TokenType.Equals, "Inserted Assignment at function definition of Copy parameter", -1, null, -1),
-                    Left: new IdentifierNode(TypeAndIdentifier.Data),
-                    Right: new CopyExprNode(new IdentifierNode(TypeAndIdentifier.Data)) // different object to emulate normal behavior more closely
+                    Left: TypeAndIdentifier.Identifier,
+                    Right: new CopyExprNode(TypeAndIdentifier.Identifier) // different object to emulate normal behavior more closely
                 ));
             }
         }
@@ -160,7 +160,7 @@ public partial class SmallLangParser
         return new FunctionNode(TryCast<ITypeNode>(AType, nameof(NTFunction)), TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), OutSection, FunctionName: new(FromToken(Ident)));
     }
     [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: {nameof(NTFunctionArgDeclModifiersCombined)} {nameof(NTType)} Identifier Comma?")]
-    public NodeType NTTypeAndIdentifierCSVElement(NodeType Modifiers, NodeType AType, LyToken Ident, LyToken _) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers), TryCast<ITypeNode>(AType));
+    public NodeType NTTypeAndIdentifierCSVElement(NodeType Modifiers, NodeType AType, LyToken Ident, LyToken _) => new TypeAndIdentifierCSVElementNode(TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers), TryCast<ITypeNode>(AType), new(FromToken(Ident)));
     [Production($"{nameof(NTBlock)}: OpenCurly [d] {nameof(NTSection)} CloseCurly [d]")]
     public NodeType NTBlock(NodeType ASection) => ASection;
     [Production($"{nameof(NTExpression)}: {nameof(NTAliasExpr)}")]

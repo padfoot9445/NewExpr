@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace SmallLang.IR.Metadata;
 
 using Common.Metadata;
@@ -31,7 +33,12 @@ public record Scope
     }
     public bool IsDefined(string name) => IsDefinedLocally(name) || (Parent is not null && Parent.IsDefined(name));
     public bool IsDefinedLocally(string name) => NamesDefinedInThisScope.Contains(name);
-
+    public VariableName DefineName(string name)
+    {
+        NamesDefinedInThisScope.Add(name);
+        Debug.Assert(SearchName(name) == GetName(name));
+        return GetName(name);
+    }
     public virtual bool Equals(Scope? other)
     {
         return other is not null && Parent == other.Parent && NamesDefinedInThisScope.Intersect(other.NamesDefinedInThisScope).Count() == NamesDefinedInThisScope.Count;

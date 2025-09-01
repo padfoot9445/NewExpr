@@ -14,18 +14,9 @@ if __name__ == "__main__":
             code_class(
                 name = class_name,
                 content = [
-                    code_ctor(
-                        class_name = class_name,
-                        content = [
-                            "Values = new Functions();"
-                        ] + [
-                            f"Values.RegisterFunction({i["name"]});"
-                            for i in config
-                        ],
-                        access_modifier = "static"
-                    )
-                ] + [
                     f"public static FunctionSignature<BackingNumberType, SmallLangType>{i["name"]} {{ get; }} = new({get_params(i)});" for i in config
+                ] + [
+                    f"public static IEnumerable<FunctionSignature<BackingNumberType, SmallLangType>> StdLibFunctions {{ get; }} = [{", ".join(i["name"] for i in config)}];"
                 ],
                 modifiers = ["partial"]
             )

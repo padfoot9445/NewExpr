@@ -38,7 +38,6 @@ NodeTypeDefinitions:
     &ComparisonExpression ComparisonExpression: "data: null, children: [Expression, OperatorExpressionPair+] // x < y > z > a -> [x, (< y), (> z), (> a)] via "
     &OperatorExpressionPair OperatorExpressionPair: "data: cmpOperator, children: [Expression]"
     &Primary Primary: "data: IDENTIFIER | NUMBER | STRING | BOOL, children: [] //paren expr is passthrough expr"
-    &FunctionIdentifier FunctionIdentifier: "data: IDENTIFIER, children: []"
     &CopyExpr CopyExpr: "data: null, children: [Expression] //NO UP FLATTEN"
     &NewExpr NewExpr: "data: null, children: [Type, ArgList] | [Type]"
     &Index Index: "data: null, children: [Expression, Expression] where Expression1 is Primary or subset (parens etc)"
@@ -781,22 +780,6 @@ classes:
         data validation function: no
         attributes: 
           - *TypeOfExpression
-      
-      - name: *FunctionIdentifier
-        children: 
-          - type: *Identifier
-            name: Identifier
-            is multiple: no
-            is optional: no
-        parents:
-        - *SmallLangNode
-        - *Expression
-        has data: no
-        check data type: no
-        valid data types: []
-        has additional data validation function: no
-        data validation function: no
-        attributes: []
       
       - name: *CopyExpr
         children:

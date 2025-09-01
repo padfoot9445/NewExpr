@@ -74,7 +74,6 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
     protected abstract ISmallLangNode VisitComparisonExpression(ISmallLangNode? Parent, ComparisonExpressionNode self);
     protected abstract ISmallLangNode VisitOperatorExpressionPair(ISmallLangNode? Parent, OperatorExpressionPairNode self);
     protected abstract ISmallLangNode VisitPrimary(ISmallLangNode? Parent, PrimaryNode self);
-    protected abstract ISmallLangNode VisitFunctionIdentifier(ISmallLangNode? Parent, FunctionIdentifierNode self);
     protected abstract ISmallLangNode VisitCopyExpr(ISmallLangNode? Parent, CopyExprNode self);
     protected abstract ISmallLangNode VisitNewExpr(ISmallLangNode? Parent, NewExprNode self);
     protected abstract ISmallLangNode VisitIndex(ISmallLangNode? Parent, IndexNode self);
@@ -141,8 +140,6 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
     ISmallLangNode ISmallLangNodeVisitor<ISmallLangNode>.Visit(ISmallLangNode? Parent, OperatorExpressionPairNode self) => Combinator(Parent, self, VisitOperatorExpressionPair);
 
     ISmallLangNode ISmallLangNodeVisitor<ISmallLangNode>.Visit(ISmallLangNode? Parent, PrimaryNode self) => Combinator(Parent, self, VisitPrimary);
-
-    ISmallLangNode ISmallLangNodeVisitor<ISmallLangNode>.Visit(ISmallLangNode? Parent, FunctionIdentifierNode self) => Combinator(Parent, self, VisitFunctionIdentifier);
 
     ISmallLangNode ISmallLangNodeVisitor<ISmallLangNode>.Visit(ISmallLangNode? Parent, CopyExprNode self) => Combinator(Parent, self, VisitCopyExpr);
 

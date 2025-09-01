@@ -47,8 +47,6 @@ internal class AssignScopeVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitFunctionCall(ISmallLangNode? Parent, FunctionCallNode self) => self;
 
-    protected override ISmallLangNode VisitFunctionIdentifier(ISmallLangNode? Parent, FunctionIdentifierNode self) => self;
-
     protected override ISmallLangNode VisitGenericType(ISmallLangNode? Parent, GenericTypeNode self) => self;
 
     protected override ISmallLangNode VisitIdentifier(ISmallLangNode? Parent, IdentifierNode self) => self;

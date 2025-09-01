@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Common.AST;
+using SmallLang.Exceptions;
 using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
@@ -83,7 +84,15 @@ internal class VariableNameVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitGenericType(ISmallLangNode? Parent, GenericTypeNode self) => self;
 
-    protected override ISmallLangNode VisitIdentifier(ISmallLangNode? Parent, IdentifierNode self) => self;
+    protected override ISmallLangNode VisitIdentifier(ISmallLangNode? Parent, IdentifierNode self)
+    {
+        NotNull(self.Scope);
+
+        if (!self.Scope.IsDefined(self.Data.Lexeme)) throw new ExpaException($"Identifier {self.Data.Lexeme} was not defined before use at Line {self.Data.Line}, Position {self.Data.Position}.");
+
+        self.VariableName = self.Scope.SearchName(self.Data.Lexeme);
+        return self;
+    }
 
     protected override ISmallLangNode VisitIf(ISmallLangNode? Parent, IfNode self) => self;
 

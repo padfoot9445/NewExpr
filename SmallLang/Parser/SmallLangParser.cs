@@ -84,7 +84,7 @@ public partial class SmallLangParser
     [Production($"{nameof(NTLoop)}: {nameof(NTWhileLoop)}")]
     public NodeType NTLoop(NodeType Loop) => Loop;
     [Production($"{nameof(NTLoopLabel)}: As [d] Identifier")]
-    public NodeType NTLoopLabel(LyToken ident) => new LoopLabelNode(FromToken(ident));
+    public NodeType NTLoopLabel(LyToken ident) => new LoopLabelNode(new(FromToken(ident)));
     [Production($"{nameof(NTForLoop)}: For [d] OpenParen [d] {nameof(NTExpression)} Semicolon [d] {nameof(NTExpression)} Semicolon [d] {nameof(NTExpression)} CloseParen [d] {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
     public NodeType NTForLoop(NodeType Init, NodeType Condition, NodeType Step, ValueOption<NodeType> LoopLabel, NodeType Statement, ValueOption<NodeType> Else) => new ForNode(
         TryCast<IExpressionNode>(Init, nameof(NTForLoop)),

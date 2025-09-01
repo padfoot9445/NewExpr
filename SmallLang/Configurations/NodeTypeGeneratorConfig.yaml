@@ -360,13 +360,16 @@ classes:
         attributes: []
       
       - name: *LoopLabel
-        children: []
+        children: 
+          - type: *Identifier
+            name: Identifier
+            is multiple: no
+            is optional: no
         parents:
         - *SmallLangNode
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: []

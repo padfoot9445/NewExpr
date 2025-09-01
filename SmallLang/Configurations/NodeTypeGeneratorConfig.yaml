@@ -247,13 +247,16 @@ classes:
             name: FunctionBody
             is optional: no
             is multiple: no
+          - type: *Identifier
+            name: FunctionName
+            is optional: no
+            is multiple: no
         parents:
         - *SmallLangNode
         - *Statement
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: []

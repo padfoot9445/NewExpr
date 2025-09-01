@@ -157,7 +157,7 @@ public partial class SmallLangParser
         OutSection = OutSection with { Statements = [.. Copies, .. OutSection.Statements] };
 
 
-        return new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType, nameof(NTFunction)), TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), OutSection);
+        return new FunctionNode(TryCast<ITypeNode>(AType, nameof(NTFunction)), TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), OutSection, FunctionName: new(FromToken(Ident)));
     }
     [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: {nameof(NTFunctionArgDeclModifiersCombined)} {nameof(NTType)} Identifier Comma?")]
     public NodeType NTTypeAndIdentifierCSVElement(NodeType Modifiers, NodeType AType, LyToken Ident, LyToken _) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers), TryCast<ITypeNode>(AType));

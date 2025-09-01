@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Common.AST;
 using SmallLang.IR.AST.Generated;
 
@@ -17,6 +18,14 @@ internal class VariableNameVisitor : BaseASTVisitor
         {
             Debug.Assert(x is not null);
         }
+    }
+    protected override ISmallLangNode VisitAliasExpr(ISmallLangNode? Parent, AliasExprNode self)
+    {
+        NotNull(self.Scope);
+        //Identifier1 will handle itself
+        self.Scope.DefineName(self.Identifier2.Data.Lexeme);
+        //now Identifier2 will also handle itself
+        return self;
     }
 
     protected override ISmallLangNode VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self) => self;
@@ -54,8 +63,6 @@ internal class VariableNameVisitor : BaseASTVisitor
     protected override ISmallLangNode VisitFunctionArgDeclModifiersCombined(ISmallLangNode? Parent, FunctionArgDeclModifiersCombinedNode self) => self;
 
     protected override ISmallLangNode VisitFunctionCall(ISmallLangNode? Parent, FunctionCallNode self) => self;
-
-    protected override ISmallLangNode VisitFunctionIdentifier(ISmallLangNode? Parent, FunctionIdentifierNode self) => self;
 
     protected override ISmallLangNode VisitGenericType(ISmallLangNode? Parent, GenericTypeNode self) => self;
 

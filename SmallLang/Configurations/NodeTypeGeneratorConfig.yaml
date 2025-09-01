@@ -165,16 +165,19 @@ classes:
             is optional: no
             is multiple: no
           - type: *Identifier
+            name: Identifier1
+            is optional: no
+            is multiple: no
+          - type: *Identifier
             name: Identifier2
             is optional: no
             is multiple: no
         parents:
         - *SmallLangNode
         - *Expression
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: []
@@ -185,13 +188,16 @@ classes:
             name: Type
             is optional: no
             is multiple: no
+          - type: *Identifier
+            name: Identifier
+            is optional: no
+            is multiple: no
         parents:
         - *SmallLangNode
         - *Expression
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: []
@@ -241,13 +247,16 @@ classes:
             name: FunctionBody
             is optional: no
             is multiple: no
+          - type: *Identifier
+            name: FunctionName
+            is optional: no
+            is multiple: no
         parents:
         - *SmallLangNode
         - *Statement
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: []
@@ -351,13 +360,16 @@ classes:
         attributes: []
       
       - name: *LoopLabel
-        children: []
+        children: 
+          - type: *Identifier
+            name: Identifier
+            is multiple: no
+            is optional: no
         parents:
         - *SmallLangNode
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: []
@@ -495,12 +507,15 @@ classes:
             name: Type
             is optional: no
             is multiple: no
+          - type: *Identifier
+            name: Identifier
+            is optional: no
+            is multiple: no
         parents:
         - *SmallLangNode
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: []
@@ -508,16 +523,19 @@ classes:
       - name: *AliasExpr
         children:
           - type: *Identifier
-            name: Identifier
+            name: Identifier1
+            is optional: no
+            is multiple: no
+          - type: *Identifier
+            name: Identifier2
             is optional: no
             is multiple: no
         parents:
         - *SmallLangNode
         - *Expression
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: []
@@ -532,6 +550,10 @@ classes:
             name: DeclarationModifiersCombined
             is optional: no
             is multiple: no
+          - type: *Identifier
+            name: Identifier
+            is optional: no
+            is multiple: no
           - type: *AssignmentPrime
             name: AssignmentPrime
             is optional: yes
@@ -539,10 +561,9 @@ classes:
         parents:
         - *SmallLangNode
         - *Expression
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: 
@@ -752,7 +773,6 @@ classes:
         has data: yes
         check data type: yes
         valid data types:
-        - Identifier
         - Number
         - String
         - TrueLiteral
@@ -763,14 +783,17 @@ classes:
           - *TypeOfExpression
       
       - name: *FunctionIdentifier
-        children: []
+        children: 
+          - type: *Identifier
+            name: Identifier
+            is multiple: no
+            is optional: no
         parents:
         - *SmallLangNode
         - *Expression
-        has data: yes
-        check data type: yes
-        valid data types:
-        - Identifier
+        has data: no
+        check data type: no
+        valid data types: []
         has additional data validation function: no
         data validation function: no
         attributes: []
@@ -833,8 +856,8 @@ classes:
       
       - name: *FunctionCall
         children:
-          - type: *Expression
-            name: Expression
+          - type: *Identifier
+            name: Identifier
             is optional: no
             is multiple: no
           - type: *ArgListElement

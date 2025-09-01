@@ -84,7 +84,7 @@ public partial class SmallLangParser
     [Production($"{nameof(NTLoop)}: {nameof(NTWhileLoop)}")]
     public NodeType NTLoop(NodeType Loop) => Loop;
     [Production($"{nameof(NTLoopLabel)}: As [d] Identifier")]
-    public NodeType NTLoopLabel(LyToken ident) => new LoopLabelNode(FromToken(ident));
+    public NodeType NTLoopLabel(LyToken ident) => new LoopLabelNode(new(FromToken(ident)));
     [Production($"{nameof(NTForLoop)}: For [d] OpenParen [d] {nameof(NTExpression)} Semicolon [d] {nameof(NTExpression)} Semicolon [d] {nameof(NTExpression)} CloseParen [d] {nameof(NTLoopLabel)}? {nameof(NTStatement)} {nameof(NTElse)}?")]
     public NodeType NTForLoop(NodeType Init, NodeType Condition, NodeType Step, ValueOption<NodeType> LoopLabel, NodeType Statement, ValueOption<NodeType> Else) => new ForNode(
         TryCast<IExpressionNode>(Init, nameof(NTForLoop)),
@@ -147,8 +147,8 @@ public partial class SmallLangParser
             {
                 Copies.Add(new BinaryExpressionNode(
                     Data: IToken.NewToken(TokenType.Equals, "Inserted Assignment at function definition of Copy parameter", -1, null, -1),
-                    Left: new IdentifierNode(TypeAndIdentifier.Data),
-                    Right: new CopyExprNode(new IdentifierNode(TypeAndIdentifier.Data)) // different object to emulate normal behavior more closely
+                    Left: TypeAndIdentifier.Identifier,
+                    Right: new CopyExprNode(TypeAndIdentifier.Identifier) // different object to emulate normal behavior more closely
                 ));
             }
         }
@@ -157,10 +157,10 @@ public partial class SmallLangParser
         OutSection = OutSection with { Statements = [.. Copies, .. OutSection.Statements] };
 
 
-        return new FunctionNode(FromToken(Ident), TryCast<ITypeNode>(AType, nameof(NTFunction)), TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), OutSection);
+        return new FunctionNode(TryCast<ITypeNode>(AType, nameof(NTFunction)), TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), OutSection, FunctionName: new(FromToken(Ident)));
     }
     [Production($"{nameof(NTTypeAndIdentifierCSVElement)}: {nameof(NTFunctionArgDeclModifiersCombined)} {nameof(NTType)} Identifier Comma?")]
-    public NodeType NTTypeAndIdentifierCSVElement(NodeType Modifiers, NodeType AType, LyToken Ident, LyToken _) => new TypeAndIdentifierCSVElementNode(FromToken(Ident), TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers), TryCast<ITypeNode>(AType));
+    public NodeType NTTypeAndIdentifierCSVElement(NodeType Modifiers, NodeType AType, LyToken Ident, LyToken _) => new TypeAndIdentifierCSVElementNode(TryCast<FunctionArgDeclModifiersCombinedNode>(Modifiers), TryCast<ITypeNode>(AType), new(FromToken(Ident)));
     [Production($"{nameof(NTBlock)}: OpenCurly [d] {nameof(NTSection)} CloseCurly [d]")]
     public NodeType NTBlock(NodeType ASection) => ASection;
     [Production($"{nameof(NTExpression)}: {nameof(NTAliasExpr)}")]
@@ -168,15 +168,15 @@ public partial class SmallLangParser
     [Production($"{nameof(NTAliasExpr)}: [{nameof(NTAliasExpr1)} | {nameof(NTAliasExpr2)} | {nameof(NTAliasExpr3)} | {nameof(NTDeclarationExpr)}]")]
     public NodeType NTAliasExpr(NodeType Node) => Node;
     [Production($"{nameof(NTAliasExpr1)}: Identifier As [d] Identifier")]
-    public NodeType NTAliasExpr1(LyToken Ident, LyToken Ident2) => new AliasExprNode(FromToken(Ident), new IdentifierNode(FromToken(Ident2)));
+    public NodeType NTAliasExpr1(LyToken Ident, LyToken Ident2) => new AliasExprNode(new(FromToken(Ident)), new IdentifierNode(FromToken(Ident2)));
     [Production($"{nameof(NTAliasExpr2)}: Identifier As [d] {nameof(NTType)} Identifier")]
-    public NodeType NTAliasExpr2(LyToken Ident, NodeType AType, LyToken Ident2) => new ReTypingAliasNode(FromToken(Ident), TryCast<ITypeNode>(AType), new IdentifierNode(FromToken(Ident2)));
+    public NodeType NTAliasExpr2(LyToken Ident, NodeType AType, LyToken Ident2) => new ReTypingAliasNode(TryCast<ITypeNode>(AType), new IdentifierNode(FromToken(Ident)), new IdentifierNode(FromToken(Ident2)));
     [Production($"{nameof(NTAliasExpr3)}: Identifier As [d] {nameof(NTType)}")]
-    public NodeType NTAliasExpr3(LyToken Ident, NodeType Type) => new ReTypeOriginalNode(FromToken(Ident), TryCast<ITypeNode>(Type));
+    public NodeType NTAliasExpr3(LyToken Ident, NodeType Type) => new ReTypeOriginalNode(TryCast<ITypeNode>(Type), new IdentifierNode(FromToken(Ident)));
     [Production($"{nameof(NTDeclarationExpr)}: [{nameof(NTDeclarationExpr1)} | {nameof(NTAssignmentExpr)}]")]
     public NodeType NTDeclarationExpr(NodeType Node) => Node;
     [Production($"{nameof(NTDeclarationExpr1)}: {nameof(NTDeclarationModifiersCombined)}? {nameof(NTType)} Identifier {nameof(NTAssignmentPrime)}?")]
-    public NodeType NTDeclarationExpr1(ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident, ValueOption<NodeType> AAssignmentPrime) => new DeclarationNode(FromToken(Ident), TryCast<ITypeNode>(AType), TryCast<DeclarationModifiersCombinedNode>(Modifiers) ?? new DeclarationModifiersCombinedNode([]), TryCast<AssignmentPrimeNode>(AAssignmentPrime));
+    public NodeType NTDeclarationExpr1(ValueOption<NodeType> Modifiers, NodeType AType, LyToken Ident, ValueOption<NodeType> AAssignmentPrime) => new DeclarationNode(TryCast<ITypeNode>(AType), TryCast<DeclarationModifiersCombinedNode>(Modifiers) ?? new DeclarationModifiersCombinedNode([]), new(FromToken(Ident)), TryCast<AssignmentPrimeNode>(AAssignmentPrime));
     [Production($"{nameof(NTDeclarationModifiersCombined)}: {nameof(NTDeclarationModifier)}*")]
     public NodeType NTDeclarationModifiersCombined(List<NodeType> Modifiers) => new DeclarationModifiersCombinedNode(Modifiers.Select(TryCast<DeclarationModifierNode>).ToList());
     [Production($"{nameof(NTDeclarationModifier)}: [Ref | Readonly | Frozen | Immut]")]
@@ -207,7 +207,7 @@ public partial class SmallLangParser
     public NodeType NTPrimary(NodeType Node, LyToken Open, List<NodeType> Expression, LyToken Close)
     {
 
-        return new FunctionCallNode(TryCast<IExpressionNode>(Node), Expression.Select(TryCast<ArgListElementNode>).ToList());
+        return new FunctionCallNode(TryCast<IdentifierNode>(Node), Expression.Select(TryCast<ArgListElementNode>).ToList());
 
     }
 

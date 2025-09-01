@@ -4,6 +4,13 @@ namespace SmallLang.IR.Metadata;
 
 partial class Functions
 {
+    public Functions()
+    {
+        foreach (var Func in StdLibFunctions)
+        {
+            RegisterFunction(Func);
+        }
+    }
     public void RegisterFunction(FunctionSignature<BackingNumberType, SmallLangType> Signature)
     {
         RegisteredFunctions.Add(Signature);

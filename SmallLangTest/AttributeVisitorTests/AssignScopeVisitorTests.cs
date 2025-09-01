@@ -27,7 +27,7 @@ public class AssignScopeVisitorTest
             var ast = ParserTest.Parse(program);
             AssignScopeVisitor.BeginVisiting(ast);
 
-            Assert.That(ast.Flatten().Select(x => x.Scope is null).Any(), Is.False);
+            Assert.That(ast.Flatten().Select(x => x.Scope is null), Does.Not.Contain(true));
         }
     }
 

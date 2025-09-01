@@ -28,7 +28,11 @@ internal class VariableNameVisitor : BaseASTVisitor
         return self;
     }
 
-    protected override ISmallLangNode VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self) => self;
+    protected override ISmallLangNode VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self)
+    {
+        //identifier's variablename won't be accurate, but it shouldn't matter
+        return self;
+    }
 
     protected override ISmallLangNode VisitAssignmentPrime(ISmallLangNode? Parent, AssignmentPrimeNode self) => self;
 

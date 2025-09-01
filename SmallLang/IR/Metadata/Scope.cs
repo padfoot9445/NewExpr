@@ -1,5 +1,7 @@
 namespace SmallLang.IR.Metadata;
 
+using FunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, SmallLangType>;
+
 public record Scope()
 {
     public required Scope? Parent { get; init; }
@@ -14,5 +16,15 @@ public record Scope()
     public override int GetHashCode()
     {
         return Parent is null ? 0 : (Parent.GetHashCode() + 1) * 17;
+    }
+
+    private HashSet<FunctionSignature> FunctionsDefinedInThisScope { get; init; } = new();
+    public bool FunctionIsDefined(string name)
+    {
+        return FunctionsDefinedInThisScope.Any(x => x.Name == name) || (Parent is not null && Parent.FunctionIsDefined(name));
+    }
+    public void DefineFunction(FunctionSignature functionSignature)
+    {
+        FunctionsDefinedInThisScope.Add(functionSignature);
     }
 }

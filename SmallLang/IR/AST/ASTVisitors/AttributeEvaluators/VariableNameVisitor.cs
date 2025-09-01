@@ -64,7 +64,7 @@ internal class VariableNameVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitFactorialSymbol(ISmallLangNode? Parent, FactorialSymbolNode self) => self;
 
-    protected override ISmallLangNode VisitFor(ISmallLangNode? Parent, ForNode self) => self;
+    protected override ISmallLangNode VisitFor(ISmallLangNode? Parent, ForNode self) => self; //looplabel handles defining itself
 
     protected override ISmallLangNode VisitFunction(ISmallLangNode? Parent, FunctionNode self) => self;
 

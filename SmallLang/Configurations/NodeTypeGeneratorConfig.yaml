@@ -773,7 +773,6 @@ classes:
         has data: yes
         check data type: yes
         valid data types:
-        - Identifier
         - Number
         - String
         - TrueLiteral

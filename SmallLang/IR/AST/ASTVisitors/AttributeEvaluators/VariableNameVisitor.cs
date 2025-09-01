@@ -44,7 +44,12 @@ internal class VariableNameVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitCopyExpr(ISmallLangNode? Parent, CopyExprNode self) => self;
 
-    protected override ISmallLangNode VisitDeclaration(ISmallLangNode? Parent, DeclarationNode self) => self;
+    protected override ISmallLangNode VisitDeclaration(ISmallLangNode? Parent, DeclarationNode self)
+    {
+        NotNull(self.Scope);
+        self.Scope.DefineName(self.Identifier.Data.Lexeme);
+        return self;
+    }
 
     protected override ISmallLangNode VisitDeclarationModifier(ISmallLangNode? Parent, DeclarationModifierNode self) => self;
 

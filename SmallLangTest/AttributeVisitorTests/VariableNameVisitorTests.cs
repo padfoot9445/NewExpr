@@ -1,0 +1,35 @@
+using Common.AST;
+using SmallLang.IR.AST;
+using SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
+using SmallLang.IR.AST.Generated;
+using SmallLangTest;
+using SmallLangTest.Generated;
+namespace SmallLangTest.AttributeVisitorTests;
+
+[TestFixture]
+public class VariableNameVisitorTests
+{
+
+    [Test, Timeout(5000)]
+    public void All_Programs__Variable_Name_Visitor__BeginVisiting__Does_Not_Throw()
+    {
+        foreach (var program in ExamplePrograms.AllPrograms)
+        {
+            var VariableNameVisitor = new VariableNameVisitor();
+            Assert.That(() => VariableNameVisitor.BeginVisiting(ParserTest.Parse(program)), Throws.Nothing, message: program);
+        }
+    }
+    [Test]
+    public void All_Programs__Variable_Name_Visitor__BeginVisiting__No_Scope_Is_Null()
+    {
+        foreach (var program in ExamplePrograms.AllPrograms)
+        {
+            var VariableNameVisitor = new VariableNameVisitor();
+            var ast = ParserTest.Parse(program);
+            VariableNameVisitor.BeginVisiting(ast);
+
+            Assert.That(ast.Flatten().OfType<IHasAttributeVariableName>().All(x => x.VariableName is not null), Is.True);
+        }
+    }
+
+}

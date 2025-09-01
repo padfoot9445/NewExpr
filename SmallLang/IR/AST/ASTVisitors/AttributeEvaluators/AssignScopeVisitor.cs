@@ -3,87 +3,88 @@ using SmallLang.IR.Metadata;
 
 namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
-internal class AssignScopeVisitor : ASTVisitor<object?, object?, object?, object?>
+internal class AssignScopeVisitor : BaseASTVisitor
 {
-    protected override object? Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
-        => ((SmallLangNode)(ISmallLangNode)self).Scope = Parent?.Scope ?? new Scope() { Parent = null };
-    protected override object? Cast(object? body)
+    protected override void Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
+        => ((SmallLangNode)(ISmallLangNode)self).Scope ??= Parent?.Scope ?? new Scope() { Parent = null };
+
+
+    protected override ISmallLangNode VisitAliasExpr(ISmallLangNode? Parent, AliasExprNode self) => self;
+
+    protected override ISmallLangNode VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self) => self;
+
+    protected override ISmallLangNode VisitAssignmentPrime(ISmallLangNode? Parent, AssignmentPrimeNode self) => self;
+
+    protected override ISmallLangNode VisitBaseType(ISmallLangNode? Parent, BaseTypeNode self) => self;
+
+    protected override ISmallLangNode VisitBinaryExpression(ISmallLangNode? Parent, BinaryExpressionNode self) => self;
+
+    protected override ISmallLangNode VisitComparisonExpression(ISmallLangNode? Parent, ComparisonExpressionNode self) => self;
+
+    protected override ISmallLangNode VisitCopyExpr(ISmallLangNode? Parent, CopyExprNode self) => self;
+
+    protected override ISmallLangNode VisitDeclaration(ISmallLangNode? Parent, DeclarationNode self) => self;
+
+    protected override ISmallLangNode VisitDeclarationModifier(ISmallLangNode? Parent, DeclarationModifierNode self) => self;
+
+    protected override ISmallLangNode VisitDeclarationModifiersCombined(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self) => self;
+
+    protected override ISmallLangNode VisitElse(ISmallLangNode? Parent, ElseNode self) => self;
+
+    protected override ISmallLangNode VisitExprSectionCombined(ISmallLangNode? Parent, ExprSectionCombinedNode self) => self;
+
+    protected override ISmallLangNode VisitFactorialExpression(ISmallLangNode? Parent, FactorialExpressionNode self) => self;
+
+    protected override ISmallLangNode VisitFactorialSymbol(ISmallLangNode? Parent, FactorialSymbolNode self) => self;
+
+    protected override ISmallLangNode VisitFor(ISmallLangNode? Parent, ForNode self) => self;
+
+    protected override ISmallLangNode VisitFunction(ISmallLangNode? Parent, FunctionNode self) => self;
+
+    protected override ISmallLangNode VisitFunctionArgDeclModifiers(ISmallLangNode? Parent, FunctionArgDeclModifiersNode self) => self;
+
+    protected override ISmallLangNode VisitFunctionArgDeclModifiersCombined(ISmallLangNode? Parent, FunctionArgDeclModifiersCombinedNode self) => self;
+
+    protected override ISmallLangNode VisitFunctionCall(ISmallLangNode? Parent, FunctionCallNode self) => self;
+
+    protected override ISmallLangNode VisitFunctionIdentifier(ISmallLangNode? Parent, FunctionIdentifierNode self) => self;
+
+    protected override ISmallLangNode VisitGenericType(ISmallLangNode? Parent, GenericTypeNode self) => self;
+
+    protected override ISmallLangNode VisitIdentifier(ISmallLangNode? Parent, IdentifierNode self) => self;
+
+    protected override ISmallLangNode VisitIf(ISmallLangNode? Parent, IfNode self) => self;
+    protected override ISmallLangNode VisitIndex(ISmallLangNode? Parent, IndexNode self) => self;
+
+    protected override ISmallLangNode VisitLoopCTRL(ISmallLangNode? Parent, LoopCTRLNode self) => self;
+
+    protected override ISmallLangNode VisitLoopLabel(ISmallLangNode? Parent, LoopLabelNode self) => self;
+
+    protected override ISmallLangNode VisitNewExpr(ISmallLangNode? Parent, NewExprNode self) => self;
+
+    protected override ISmallLangNode VisitOperatorExpressionPair(ISmallLangNode? Parent, OperatorExpressionPairNode self) => self;
+
+    protected override ISmallLangNode VisitPrimary(ISmallLangNode? Parent, PrimaryNode self) => self;
+
+    protected override ISmallLangNode VisitReturn(ISmallLangNode? Parent, ReturnNode self) => self;
+
+    protected override ISmallLangNode VisitReTypeOriginal(ISmallLangNode? Parent, ReTypeOriginalNode self) => self;
+
+    protected override ISmallLangNode VisitReTypingAlias(ISmallLangNode? Parent, ReTypingAliasNode self) => self;
+
+    protected override ISmallLangNode VisitSection(ISmallLangNode? Parent, SectionNode self)
     {
-        return body;
+        self.Scope = new Scope() { Parent = Parent?.Scope };
+        return self;
     }
 
-    protected override object? VisitAliasExpr(ISmallLangNode? Parent, AliasExprNode self) => default;
+    protected override ISmallLangNode VisitSwitch(ISmallLangNode? Parent, SwitchNode self) => self;
 
-    protected override object? VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self) => default;
+    protected override ISmallLangNode VisitTypeAndIdentifierCSVElement(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self) => self;
 
-    protected override object? VisitAssignmentPrime(ISmallLangNode? Parent, AssignmentPrimeNode self) => default;
+    protected override ISmallLangNode VisitTypeCSV(ISmallLangNode? Parent, TypeCSVNode self) => self;
 
-    protected override object? VisitBaseType(ISmallLangNode? Parent, BaseTypeNode self) => default;
+    protected override ISmallLangNode VisitUnaryExpression(ISmallLangNode? Parent, UnaryExpressionNode self) => self;
 
-    protected override object? VisitBinaryExpression(ISmallLangNode? Parent, BinaryExpressionNode self) => default;
-
-    protected override object? VisitComparisonExpression(ISmallLangNode? Parent, ComparisonExpressionNode self) => default;
-
-    protected override object? VisitCopyExpr(ISmallLangNode? Parent, CopyExprNode self) => default;
-
-    protected override object? VisitDeclaration(ISmallLangNode? Parent, DeclarationNode self) => default;
-
-    protected override object? VisitDeclarationModifier(ISmallLangNode? Parent, DeclarationModifierNode self) => default;
-
-    protected override object? VisitDeclarationModifiersCombined(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self) => default;
-
-    protected override object? VisitElse(ISmallLangNode? Parent, ElseNode self) => default;
-
-    protected override object? VisitExprSectionCombined(ISmallLangNode? Parent, ExprSectionCombinedNode self) => default;
-
-    protected override object? VisitFactorialExpression(ISmallLangNode? Parent, FactorialExpressionNode self) => default;
-
-    protected override object? VisitFactorialSymbol(ISmallLangNode? Parent, FactorialSymbolNode self) => default;
-
-    protected override object? VisitFor(ISmallLangNode? Parent, ForNode self) => default;
-
-    protected override object? VisitFunction(ISmallLangNode? Parent, FunctionNode self) => default;
-
-    protected override object? VisitFunctionArgDeclModifiers(ISmallLangNode? Parent, FunctionArgDeclModifiersNode self) => default;
-
-    protected override object? VisitFunctionArgDeclModifiersCombined(ISmallLangNode? Parent, FunctionArgDeclModifiersCombinedNode self) => default;
-
-    protected override object? VisitFunctionCall(ISmallLangNode? Parent, FunctionCallNode self) => default;
-
-    protected override object? VisitFunctionIdentifier(ISmallLangNode? Parent, FunctionIdentifierNode self) => default;
-
-    protected override object? VisitGenericType(ISmallLangNode? Parent, GenericTypeNode self) => default;
-
-    protected override object? VisitIdentifier(ISmallLangNode? Parent, IdentifierNode self) => default;
-
-    protected override object? VisitIf(ISmallLangNode? Parent, IfNode self) => default;
-    protected override object? VisitIndex(ISmallLangNode? Parent, IndexNode self) => default;
-
-    protected override object? VisitLoopCTRL(ISmallLangNode? Parent, LoopCTRLNode self) => default;
-
-    protected override object? VisitLoopLabel(ISmallLangNode? Parent, LoopLabelNode self) => default;
-
-    protected override object? VisitNewExpr(ISmallLangNode? Parent, NewExprNode self) => default;
-
-    protected override object? VisitOperatorExpressionPair(ISmallLangNode? Parent, OperatorExpressionPairNode self) => default;
-
-    protected override object? VisitPrimary(ISmallLangNode? Parent, PrimaryNode self) => default;
-
-    protected override object? VisitReturn(ISmallLangNode? Parent, ReturnNode self) => default;
-
-    protected override object? VisitReTypeOriginal(ISmallLangNode? Parent, ReTypeOriginalNode self) => default;
-
-    protected override object? VisitReTypingAlias(ISmallLangNode? Parent, ReTypingAliasNode self) => default;
-
-    protected override object? VisitSection(ISmallLangNode? Parent, SectionNode self) => self.Scope = new Scope() { Parent = Parent?.Scope };
-
-    protected override object? VisitSwitch(ISmallLangNode? Parent, SwitchNode self) => default;
-
-    protected override object? VisitTypeAndIdentifierCSVElement(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self) => default;
-
-    protected override object? VisitTypeCSV(ISmallLangNode? Parent, TypeCSVNode self) => default;
-
-    protected override object? VisitUnaryExpression(ISmallLangNode? Parent, UnaryExpressionNode self) => default;
-
-    protected override object? VisitWhile(ISmallLangNode? Parent, WhileNode self) => default;
+    protected override ISmallLangNode VisitWhile(ISmallLangNode? Parent, WhileNode self) => self;
 }

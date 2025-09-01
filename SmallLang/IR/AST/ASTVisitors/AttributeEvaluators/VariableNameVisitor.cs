@@ -100,7 +100,13 @@ internal class VariableNameVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitLoopCTRL(ISmallLangNode? Parent, LoopCTRLNode self) => self;
 
-    protected override ISmallLangNode VisitLoopLabel(ISmallLangNode? Parent, LoopLabelNode self) => self;
+    protected override ISmallLangNode VisitLoopLabel(ISmallLangNode? Parent, LoopLabelNode self)
+    {
+        NotNull(self.Scope);
+
+        self.Scope.DefineName(self.Identifier.Data.Lexeme);
+        return self;
+    }
 
     protected override ISmallLangNode VisitNewExpr(ISmallLangNode? Parent, NewExprNode self) => self;
 

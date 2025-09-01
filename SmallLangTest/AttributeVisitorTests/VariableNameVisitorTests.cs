@@ -10,26 +10,33 @@ namespace SmallLangTest.AttributeVisitorTests;
 public class VariableNameVisitorTests
 {
 
-    [Test, Timeout(5000)]
-    public void All_Programs__Variable_Name_Visitor__BeginVisiting__Does_Not_Throw()
+    private static IEnumerable<ISmallLangNode> GetTestCases()
     {
         foreach (var program in ExamplePrograms.AllPrograms)
         {
-            var VariableNameVisitor = new VariableNameVisitor();
-            Assert.That(() => VariableNameVisitor.BeginVisiting(ParserTest.Parse(program)), Throws.Nothing, message: program);
+            var AST = ParserTest.Parse(program);
+            var AssignScopeVisitor = new AssignScopeVisitor();
+
+            AssignScopeVisitor.BeginVisiting(AST);
+
+            yield return AST;
         }
     }
-    [Test]
-    public void All_Programs__Variable_Name_Visitor__BeginVisiting__No_Scope_Is_Null()
-    {
-        foreach (var program in ExamplePrograms.AllPrograms)
-        {
-            var VariableNameVisitor = new VariableNameVisitor();
-            var ast = ParserTest.Parse(program);
-            VariableNameVisitor.BeginVisiting(ast);
 
-            Assert.That(ast.Flatten().OfType<IHasAttributeVariableName>().All(x => x.VariableName is not null), Is.True);
-        }
+    [TestCaseSource(nameof(GetTestCases)), Timeout(5000)]
+    public void All_Programs__Variable_Name_Visitor__BeginVisiting__Does_Not_Throw(ISmallLangNode ast)
+    {
+
+        Assert.That(() => new VariableNameVisitor().BeginVisiting(ast), Throws.Nothing);
+
+    }
+    [TestCaseSource(nameof(GetTestCases))]
+    public void All_Programs__Variable_Name_Visitor__BeginVisiting__No_Scope_Is_Null(ISmallLangNode ast)
+    {
+        new VariableNameVisitor().BeginVisiting(ast);
+
+        Assert.That(ast.Flatten().OfType<IHasAttributeVariableName>().All(x => x.VariableName is not null), Is.True);
+
     }
 
 }

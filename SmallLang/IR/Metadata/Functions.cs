@@ -9,7 +9,6 @@ partial class Functions
         RegisteredFunctions.Add(Signature);
     }
     public List<FunctionSignature<BackingNumberType, SmallLangType>> RegisteredFunctions { get; } = new();
-    public readonly List<FunctionSignature<BackingNumberType, SmallLangType>> Signatures = new();
     public FunctionSignature<BackingNumberType, SmallLangType> GetSignature(string Name)
     {
         return RegisteredFunctions.Where(x => x.Name == Name).Single();

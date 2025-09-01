@@ -10,7 +10,14 @@ internal class VariableNameVisitor : BaseASTVisitor
     {
         Debug.Assert(node.Flatten().All(x => x.Scope is not null));
     }
-    protected override ISmallLangNode VisitAliasExpr(ISmallLangNode? Parent, AliasExprNode self) => self;
+    private static void NotNull([NotNull] object? o1) => NotNullMul([o1]);
+    private static void NotNullMul([NotNull] params object?[] objects)
+    {
+        foreach (var x in objects)
+        {
+            Debug.Assert(x is not null);
+        }
+    }
 
     protected override ISmallLangNode VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self) => self;
 

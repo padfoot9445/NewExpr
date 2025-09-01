@@ -172,7 +172,7 @@ public partial class SmallLangParser
     [Production($"{nameof(NTAliasExpr2)}: Identifier As [d] {nameof(NTType)} Identifier")]
     public NodeType NTAliasExpr2(LyToken Ident, NodeType AType, LyToken Ident2) => new ReTypingAliasNode(TryCast<ITypeNode>(AType), new IdentifierNode(FromToken(Ident)), new IdentifierNode(FromToken(Ident2)));
     [Production($"{nameof(NTAliasExpr3)}: Identifier As [d] {nameof(NTType)}")]
-    public NodeType NTAliasExpr3(LyToken Ident, NodeType Type) => new ReTypeOriginalNode(FromToken(Ident), TryCast<ITypeNode>(Type));
+    public NodeType NTAliasExpr3(LyToken Ident, NodeType Type) => new ReTypeOriginalNode(TryCast<ITypeNode>(Type), new IdentifierNode(FromToken(Ident)));
     [Production($"{nameof(NTDeclarationExpr)}: [{nameof(NTDeclarationExpr1)} | {nameof(NTAssignmentExpr)}]")]
     public NodeType NTDeclarationExpr(NodeType Node) => Node;
     [Production($"{nameof(NTDeclarationExpr1)}: {nameof(NTDeclarationModifiersCombined)}? {nameof(NTType)} Identifier {nameof(NTAssignmentPrime)}?")]

@@ -1,7 +1,8 @@
 namespace SmallLang.IR.Metadata;
 
+using Common.Metadata;
+using FunctionID = Common.Metadata.FunctionID<BackingNumberType>;
 using FunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, SmallLangType>;
-
 public record Scope()
 {
     public required Scope? Parent { get; init; }
@@ -40,4 +41,5 @@ public record Scope()
 
         }
     }
+    public FunctionID GetID(string name) => GetSignature(name).ID;
 }

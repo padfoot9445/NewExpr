@@ -1,9 +1,15 @@
+using System.Diagnostics;
+using Common.AST;
 using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
 internal class VariableNameVisitor : BaseASTVisitor
 {
+    protected override void PreVisit(ISmallLangNode node)
+    {
+        Debug.Assert(node.Flatten().All(x => x.Scope is not null));
+    }
     protected override ISmallLangNode VisitAliasExpr(ISmallLangNode? Parent, AliasExprNode self) => self;
 
     protected override ISmallLangNode VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self) => self;

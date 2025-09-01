@@ -4,8 +4,6 @@ namespace SmallLang.IR.Metadata;
 
 partial class Functions
 {
-    public static readonly FunctionSignature<BackingNumberType, SmallLangType> Input = new(Name: "name", ID: new(1), RetVal: TypeData.Dict, ArgTypes: []);
-    public static readonly Functions Values;
     public void RegisterFunction(FunctionSignature<BackingNumberType, SmallLangType> Signature)
     {
         RegisteredFunctions.Add(Signature);

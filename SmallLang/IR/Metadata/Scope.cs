@@ -55,6 +55,7 @@ public record Scope
     }
     public void DefineFunction(FunctionSignature functionSignature)
     {
+        DefineName(functionSignature.Name);
         FunctionsDefinedInThisScope.RegisterFunction(functionSignature);
     }
     public FunctionSignature GetSignature(string name)

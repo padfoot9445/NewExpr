@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Common.Dispatchers;
 using Common.Metadata;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.Metadata;
@@ -29,5 +30,12 @@ internal class FunctionIDVisitor : BaseASTVisitor
         }
 
         return base.VisitFunctionCall(Parent, self);
+    }
+    protected override ISmallLangNode VisitNewExpr(ISmallLangNode? Parent, NewExprNode self)
+    {
+        NotNull(self.Scope, self.Type.TypeLiteralType);
+        self.FunctionID = self.Scope.GetIDOfConstructorFunction(self.Type.TypeLiteralType);
+
+        return base.VisitNewExpr(Parent, self);
     }
 }

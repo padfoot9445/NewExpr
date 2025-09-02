@@ -8,6 +8,8 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
 {
     public ISmallLangNode BeginVisiting(ISmallLangNode node)
     {
+        CurrentRootNode = node;
+
         PreVisit(node);
 
         int Last = unchecked(node.GetHashCode() + 1);
@@ -30,6 +32,11 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
             RecursiveVisit(self, childnode);
         }
     }
+
+    [AllowNull]
+    private ISmallLangNode CurrentRootNode { get; set; } = null;
+    protected ISmallLangNode RecursiveGetParent(ISmallLangNode self, Func<ISmallLangNode, bool> Predicate) => self.RecursiveGetParent(CurrentRootNode, Predicate);
+
     protected virtual void PreVisit(ISmallLangNode node) { }
     protected virtual void PostVisit(ISmallLangNode node) { }
 

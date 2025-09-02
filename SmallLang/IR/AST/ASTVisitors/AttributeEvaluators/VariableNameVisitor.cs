@@ -123,7 +123,7 @@ internal class VariableNameVisitor : BaseASTVisitor
         else
         {
             Debug.Assert(self.VariableName is not null, message: self.Data.Lexeme);
-            Debug.Assert(self.VariableName.Name == PlaceholderVariableNameName);
+            Debug.Assert(self.VariableName.Name == PlaceholderVariableNameName || self.VariableName.Name == ArgumentLabelVariableName);
         }
         return self;
     }

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Common.AST;
 using SmallLang.Exceptions;
 using SmallLang.IR.AST.Generated;
@@ -8,10 +9,24 @@ namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
 internal class VariableNameVisitor : BaseASTVisitor
 {
+    private const string PlaceholderVariableNameName = "__FUNCTION_NAME_TO_BE_ASSIGNED";
     protected override void PreVisit(ISmallLangNode node)
     {
         Debug.Assert(node.Flatten().All(x => x.Scope is not null));
         //TODO: Define stdlib identifiers
+    }
+    protected override void PostVisit(ISmallLangNode node)
+    {
+
+        Func<IdentifierNode, string> GetErrorMessage = self => $"Identifier {self.Data.Lexeme} was not defined before use at Line {self.Data.Line}, Position {self.Data.Position}.";
+
+        StringBuilder UltimateErrorMessage = new();
+        foreach (var NullIdentifierNode in node.Flatten().OfType<IHasAttributeVariableName>().Where(x => x.VariableName!.Name == PlaceholderVariableNameName))
+        {
+            UltimateErrorMessage.AppendLine(NullIdentifierNode is IdentifierNode IDNode ? GetErrorMessage(IDNode) : $"NodeType {NullIdentifierNode.GetType()} had an identifier which was not recognized"); //should really only be IdentifierNodes here
+        }
+        throw new ExpaException(UltimateErrorMessage.ToString());
+
     }
     private static void NotNull([NotNull] object? o1)
     {
@@ -77,7 +92,11 @@ internal class VariableNameVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitFunctionArgDeclModifiersCombined(ISmallLangNode? Parent, FunctionArgDeclModifiersCombinedNode self) => self;
 
-    protected override ISmallLangNode VisitFunctionCall(ISmallLangNode? Parent, FunctionCallNode self) => self;
+    protected override ISmallLangNode VisitFunctionCall(ISmallLangNode? Parent, FunctionCallNode self)
+    {
+        self.Identifier.VariableName = new(PlaceholderVariableNameName); //hack to signal that we are going to assign the function name later. This should never clash with an actual variablename because all Variablenames begin with Global.
+        return self;
+    }
 
     protected override ISmallLangNode VisitGenericType(ISmallLangNode? Parent, GenericTypeNode self) => self;
 
@@ -85,9 +104,12 @@ internal class VariableNameVisitor : BaseASTVisitor
     {
         NotNull(self.Scope);
 
-        if (!self.Scope.IsDefined(self.Data.Lexeme)) throw new ExpaException($"Identifier {self.Data.Lexeme} was not defined before use at Line {self.Data.Line}, Position {self.Data.Position}.");
+        if (self.VariableName is null && !self.Scope.IsDefined(self.Data.Lexeme)) throw new ExpaException($"Identifier {self.Data.Lexeme} was not defined before use at Line {self.Data.Line}, Position {self.Data.Position}.");
 
-        self.VariableName = self.Scope.SearchName(self.Data.Lexeme);
+        else if (self.Scope.IsDefined(self.Data.Lexeme))
+        {
+            self.VariableName = self.Scope.SearchName(self.Data.Lexeme);
+        }
         return self;
     }
 

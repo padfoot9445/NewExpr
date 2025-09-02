@@ -73,6 +73,21 @@ if __name__ == "__main__":
             get_attribute_property(attribute) for attribute in attributes
         ] + [
             "public override T AcceptVisitor<T>(ISmallLangNode? Parent, ISmallLangNodeVisitor<T> visitor) => visitor.Visit(Parent, this);"
+        ] + [
+            code_method(
+                method_name = "GetHashCode",
+                content = [
+                    "HashCode hash = new();"
+                ] + [
+                    f"hash.Add({i["name"]});" for i in attributes
+                ] + [
+                    "hash.Add(Data);" if subnode["has data"] else ""
+                ] + [
+                    "return hash.GetHashCode();"
+                ],
+                return_type = "int",
+                access_modifier="public override"
+            )
         ]
 
         

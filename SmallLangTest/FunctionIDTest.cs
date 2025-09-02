@@ -19,6 +19,10 @@ public class FunctionIDTests
 
             AssignScopeVisitor.BeginVisiting(AST);
 
+            var TLTVisitor = new TypeLiteralTypeVisitor();
+
+            TLTVisitor.BeginVisiting(AST);
+
             yield return (AST, program);
         }
     }

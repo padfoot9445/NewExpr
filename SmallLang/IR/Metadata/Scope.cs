@@ -45,7 +45,7 @@ public record Scope
     }
     public override int GetHashCode()
     {
-        return Parent is null ? 0 : (Parent.GetHashCode() + 1) * 17;
+        return Parent is null ? 0 : HashCode.Combine(Parent.GetHashCode(), NamesDefinedInThisScope.Aggregate(17, (x, y) => x ^ y.GetHashCode()), FunctionsDefinedInThisScope.GetHashCode());
     }
     private Functions FunctionsDefinedInThisScope { get; } = new();
     private bool FunctionIsDefinedInThisScope(string name) => FunctionsDefinedInThisScope.RegisteredFunctions.Any(x => x.Name == name);

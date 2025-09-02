@@ -12,7 +12,7 @@ partial class Functions
     {
         RegisteredFunctions.Add(Signature);
     }
-    public List<FunctionSignature<BackingNumberType, SmallLangType>> RegisteredFunctions { get; } = new();
+    public HashSet<FunctionSignature<BackingNumberType, SmallLangType>> RegisteredFunctions { get; } = new();
     public FunctionSignature<BackingNumberType, SmallLangType> GetSignature(string Name)
     {
         return RegisteredFunctions.Single(x => x.Name == Name);

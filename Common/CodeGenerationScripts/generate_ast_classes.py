@@ -83,7 +83,7 @@ if __name__ == "__main__":
                 ] + [
                     "hash.Add(Data);" if subnode["has data"] else ""
                 ] + [
-                    "hash.Add(base);"
+                    "foreach(var child in ChildNodes){ hash.Add(child.GetHashCode()); }"
                 ] + 
                 [
                     "return hash.ToHashCode();"

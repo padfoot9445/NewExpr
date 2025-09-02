@@ -1,4 +1,3 @@
-using Common.AST;
 using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.IR.AST.ASTVisitors;
@@ -9,11 +8,12 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
     {
         PreVisit(node);
 
-        var Last = node.Flatten().Select(x => x);
+        int Last = unchecked(node.GetHashCode() + 1);
+        int CurrentHashCode;
 
-        while (!Last.SequenceEqual(node.Flatten()))
+        while (Last != (CurrentHashCode = node.GetHashCode()))
         {
-            Last = node.Flatten();
+            Last = CurrentHashCode;
             RecursiveVisit(null, node);
         }
 

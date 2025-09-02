@@ -2,6 +2,7 @@ using System.Diagnostics;
 
 namespace SmallLang.IR.Metadata;
 
+using Common.Dispatchers;
 using Common.Metadata;
 using FunctionID = Common.Metadata.FunctionID<BackingNumberType>;
 using FunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, SmallLangType>;
@@ -72,4 +73,16 @@ public record Scope
         }
     }
     public FunctionID GetID(string name) => GetSignature(name).ID;
+    public FunctionID GetIDOfConstructorFunction(SmallLangType type)
+    {
+        Debug.Assert(type.Name.Length >= 2, message: "it is not illegal for a type to have a name shorter than two characters, but this is not currently supported by the implementation.");
+        try
+        {
+            return GetID($"Construct{type.Name[0].ToString().ToUpper()}{type.Name[1..]}");
+        }
+        catch (ArgumentOutOfRangeException e) when (e.Message.StartsWith("Could not find function defined"))
+        {
+            throw new ArgumentOutOfRangeException($"{type} was not a supported collection type", e);
+        }
+    }
 }

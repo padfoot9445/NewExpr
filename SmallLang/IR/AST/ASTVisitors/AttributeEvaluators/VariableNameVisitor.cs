@@ -110,6 +110,11 @@ internal class VariableNameVisitor : BaseASTVisitor
         {
             self.VariableName = self.Scope.SearchName(self.Data.Lexeme);
         }
+        else
+        {
+            Debug.Assert(self.VariableName is not null, message: self.Data.Lexeme);
+            Debug.Assert(self.VariableName.Name == PlaceholderVariableNameName);
+        }
         return self;
     }
 

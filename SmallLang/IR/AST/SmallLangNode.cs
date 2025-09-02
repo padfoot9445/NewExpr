@@ -12,4 +12,16 @@ public abstract record class SmallLangNode : ISmallLangNode, IHasAttributeScope,
     public abstract T AcceptVisitor<T>(ISmallLangNode? Parent, ISmallLangNodeVisitor<T> visitor);
 
     public Scope? Scope { get; set; } = null;
+
+    public override int GetHashCode()
+    {
+        HashCode hash = new();
+        foreach (var child in ChildNodes)
+        {
+            hash.Add(child);
+        }
+        hash.Add(Scope);
+
+        return hash.GetHashCode();
+    }
 }

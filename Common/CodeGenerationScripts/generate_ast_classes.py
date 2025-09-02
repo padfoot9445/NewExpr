@@ -86,7 +86,7 @@ if __name__ == "__main__":
                     "hash.Add(base);"
                 ] + 
                 [
-                    "return hash.GetHashCode();"
+                    "return hash.ToHashCode();"
                 ],
                 return_type = "int",
                 access_modifier="public override"

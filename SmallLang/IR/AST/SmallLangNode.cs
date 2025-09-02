@@ -22,6 +22,6 @@ public abstract record class SmallLangNode : ISmallLangNode, IHasAttributeScope,
         }
         hash.Add(Scope);
 
-        return hash.GetHashCode();
+        return hash.ToHashCode();
     }
 }

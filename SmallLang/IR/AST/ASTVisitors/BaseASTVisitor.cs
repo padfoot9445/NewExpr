@@ -16,6 +16,8 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
             Last = CurrentHashCode;
             RecursiveVisit(null, node);
         }
+
+        PostVisit(node);
         return node;
     }
     private void RecursiveVisit(ISmallLangNode? Parent, ISmallLangNode self)
@@ -27,6 +29,7 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
         }
     }
     protected virtual void PreVisit(ISmallLangNode node) { }
+    protected virtual void PostVisit(ISmallLangNode node) { }
 
     protected virtual void Prologue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
     where TArgumentType : ISmallLangNode

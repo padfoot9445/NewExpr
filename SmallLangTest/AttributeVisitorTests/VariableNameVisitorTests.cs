@@ -30,7 +30,7 @@ public class VariableNameVisitorTests
         Assert.That(() => new VariableNameVisitor().BeginVisiting(input.ast), Throws.Nothing, message: input.program);
 
     }
-    [TestCaseSource(nameof(GetTestCases))]
+    [TestCaseSource(nameof(GetTestCases)), Timeout(5000)]
     public void All_Programs__Variable_Name_Visitor__BeginVisiting__No_VariableName_Is_Null((ISmallLangNode ast, string program) input)
     {
         new VariableNameVisitor().BeginVisiting(input.ast);

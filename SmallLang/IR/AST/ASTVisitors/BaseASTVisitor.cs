@@ -11,7 +11,7 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
 
         var Last = node.Flatten().Select(x => x);
 
-        while (Last != node.Flatten())
+        while (!Last.SequenceEqual(node.Flatten()))
         {
             Last = node.Flatten();
             RecursiveVisit(null, node);

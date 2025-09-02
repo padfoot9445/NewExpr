@@ -83,6 +83,9 @@ if __name__ == "__main__":
                 ] + [
                     "hash.Add(Data);" if subnode["has data"] else ""
                 ] + [
+                    "hash.Add(base);"
+                ] + 
+                [
                     "return hash.GetHashCode();"
                 ],
                 return_type = "int",

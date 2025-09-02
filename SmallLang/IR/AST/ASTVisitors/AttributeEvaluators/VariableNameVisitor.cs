@@ -10,6 +10,7 @@ namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 internal class VariableNameVisitor : BaseASTVisitor
 {
     private const string PlaceholderVariableNameName = "__FUNCTION_NAME_TO_BE_ASSIGNED";
+    private const string ArgumentLabelVariableName = "Argument::";
     protected override void PreVisit(ISmallLangNode node)
     {
         Debug.Assert(node.Flatten().All(x => x.Scope is not null));
@@ -46,7 +47,13 @@ internal class VariableNameVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self)
     {
-        //identifier's variablename won't be accurate, but it shouldn't matter
+        //set ArgList Identifiers' VariableName(s) to be Argument tmp name etc
+        //NOTE: the VariableName here cannot be relied upon
+        if (self.Identifier is not null)
+        {
+            self.Identifier.VariableName = new(ArgumentLabelVariableName);
+        }
+
         return self;
     }
 

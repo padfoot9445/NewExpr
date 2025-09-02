@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.IR.AST.ASTVisitors;
@@ -161,4 +163,17 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
     ISmallLangNode ISmallLangNodeVisitor<ISmallLangNode>.Visit(ISmallLangNode? Parent, ElseNode self) => Combinator(Parent, self, VisitElse);
 
     ISmallLangNode ISmallLangNodeVisitor<ISmallLangNode>.Visit(ISmallLangNode? Parent, FactorialSymbolNode self) => Combinator(Parent, self, VisitFactorialSymbol);
+    protected static void NotNull([NotNull] object? O1) => Debug.Assert(O1 is not null);
+    protected static void NotNull([NotNull] object? O1, [NotNull] object? O2)
+    {
+        NotNull(O1); NotNull(O2);
+    }
+    protected static void NotNull([NotNull] object? O1, [NotNull] object? O2, [NotNull] object? O3)
+    {
+        NotNull(O1, O2); NotNull(O3);
+    }
+    protected static void NotNull([NotNull] object? O1, [NotNull] object? O2, [NotNull] object? O3, [NotNull] object? O4)
+    {
+        NotNull(O1, O2); NotNull(O3, O4);
+    }
 }

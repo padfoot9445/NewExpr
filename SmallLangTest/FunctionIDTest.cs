@@ -39,7 +39,7 @@ public class FunctionIDTests
     {
         new FunctionIDVisitor().BeginVisiting(input.ast);
 
-        Assert.That(input.ast.Flatten().OfType<IHasAttributeFunctionID>().All(x => x.FunctionID is not null), Is.True, message: input.program);
+        Assert.That(input.ast.Flatten().OfType<IHasAttributeFunctionID>().All(x => x.FunctionID is not null), Is.True, message: $"{input.program}\n\n{input.ast.Flatten().OfType<IHasAttributeFunctionID>().Where(x => x.FunctionID is null).Select(x => x.ToString()).Aggregate((x, y) => $"{x}\n{y}")}");
 
     }
 

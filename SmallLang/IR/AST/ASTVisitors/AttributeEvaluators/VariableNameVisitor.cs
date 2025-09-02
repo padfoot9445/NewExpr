@@ -62,6 +62,7 @@ internal class VariableNameVisitor : BaseASTVisitor
     {
         NotNull(self.Scope);
         self.Scope.DefineName(self.Identifier.Data.Lexeme);
+        self.VariableName = self.Identifier.VariableName;
         return self;
     }
 

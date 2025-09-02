@@ -18,6 +18,8 @@ internal class VariableNameVisitor : BaseASTVisitor
     protected override void PostVisit(ISmallLangNode node)
     {
 
+        if (node.Flatten().OfType<IHasAttributeVariableName>().All(x => x.VariableName!.Name != PlaceholderVariableNameName)) return;
+
         Func<IdentifierNode, string> GetErrorMessage = self => $"Identifier {self.Data.Lexeme} was not defined before use at Line {self.Data.Line}, Position {self.Data.Position}.";
 
         StringBuilder UltimateErrorMessage = new();

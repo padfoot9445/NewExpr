@@ -31,10 +31,6 @@ internal class VariableNameVisitor : BaseASTVisitor
         throw new ExpaException(UltimateErrorMessage.ToString());
 
     }
-    private static void NotNull([NotNull] object? o1)
-    {
-        Debug.Assert(o1 is not null);
-    }
 
     protected override ISmallLangNode VisitAliasExpr(ISmallLangNode? Parent, AliasExprNode self)
     {

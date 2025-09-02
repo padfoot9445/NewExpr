@@ -23,4 +23,16 @@ public static class NodeSearchExtensions
             return ParentNodes.Single();
         }
     }
+
+    public static ISmallLangNode RecursiveGetParent(this ISmallLangNode self, ISmallLangNode Root, Func<ISmallLangNode, bool> Predicate)
+    {
+
+        ISmallLangNode NodeUnderConsideration = self.GetParent(Root) ?? throw new ArgumentException("Self was equal to Root. This cannot be the case if you want to get information from a parent.");
+
+        while (!Predicate(NodeUnderConsideration))
+        {
+            NodeUnderConsideration = NodeUnderConsideration.GetParent(Root) ?? throw new ArgumentException("Reached Root before predicate was satisfied.");
+        }
+        return NodeUnderConsideration;
+    }
 }

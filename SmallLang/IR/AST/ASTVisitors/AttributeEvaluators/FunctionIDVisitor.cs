@@ -12,8 +12,10 @@ internal class FunctionIDVisitor : BaseASTVisitor
     protected override ISmallLangNode VisitFunction(ISmallLangNode? Parent, FunctionNode self)
     {
         NotNull(self.Scope, self.Type.TypeLiteralType);
-        self.Scope.DefineFunction(new FunctionSignature(self.FunctionName.Data.Lexeme, FunctionID.GetNext(), self.Type.TypeLiteralType, self.TypeAndIdentifierCSV.Select(x => x.Type.TypeLiteralType!).ToList()));
-
+        if (!self.Scope.IsDefined(self.FunctionName.Data.Lexeme))
+        {
+            self.Scope.DefineFunction(new FunctionSignature(self.FunctionName.Data.Lexeme, FunctionID.GetNext(), self.Type.TypeLiteralType, self.TypeAndIdentifierCSV.Select(x => x.Type.TypeLiteralType!).ToList()));
+        }
         return base.VisitFunction(Parent, self);
     }
 

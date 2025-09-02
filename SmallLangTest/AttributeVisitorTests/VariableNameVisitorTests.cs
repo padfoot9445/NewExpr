@@ -10,7 +10,7 @@ namespace SmallLangTest.AttributeVisitorTests;
 public class VariableNameVisitorTests
 {
 
-    private static IEnumerable<(ISmallLangNode, string)> GetTestCases()
+    internal static IEnumerable<(ISmallLangNode, string)> GetTestCases()
     {
         foreach (var program in ExamplePrograms.AllPrograms)
         {

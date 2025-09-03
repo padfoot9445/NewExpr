@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Common.AST;
 using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.IR.AST.ASTVisitors;

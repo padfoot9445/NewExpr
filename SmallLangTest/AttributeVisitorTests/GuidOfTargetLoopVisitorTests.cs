@@ -11,17 +11,7 @@ public class GUIDOfTargetLoopVisitorTests
 {
 
     internal static IEnumerable<(ISmallLangNode, string)> GetTestCases()
-    {
-        foreach (var program in ExamplePrograms.AllPrograms)
-        {
-            var AST = ParserTest.Parse(program);
-            var LoopGUIDVisitor = new LoopGUIDVisitor();
-
-            LoopGUIDVisitor.BeginVisiting(AST);
-
-            yield return (AST, program);
-        }
-    }
+    => TypeLiteralTypeTests.GetNewTestCases(new TypeLiteralTypeVisitor(), TypeLiteralTypeTests.GetTestCases());
 
     [TestCaseSource(nameof(GetTestCases)), Timeout(5000)]
     public void All_Programs__GUID_Of_Target_Loop_Visitor__BeginVisiting__Does_Not_Throw((ISmallLangNode ast, string program) input)

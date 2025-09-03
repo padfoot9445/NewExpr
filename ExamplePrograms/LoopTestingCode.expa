@@ -1,0 +1,14 @@
+while(true) as OuterLoop
+{
+    for(int i = 0; i < 1; ++i)
+    {
+        if(i > 2)
+        {
+            continue OuterLoop;
+        }
+        else
+        {
+            break;
+        }
+    }
+}

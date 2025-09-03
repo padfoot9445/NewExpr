@@ -21,7 +21,7 @@ public class GUIDOfTargetLoopVisitorTests
 
     }
     [TestCaseSource(nameof(GetTestCases)), Timeout(5000)]
-    public void All_Programs__GUID_Of_Target_Loop_Visitor__BeginVisiting__No_VariableName_Is_Null((ISmallLangNode ast, string program) input)
+    public void All_Programs__GUID_Of_Target_Loop_Visitor__BeginVisiting__No_Target_Loop_GUID_Is_Null((ISmallLangNode ast, string program) input)
     {
         new GUIDOfTargetLoopVisitor().BeginVisiting(input.ast);
 

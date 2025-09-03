@@ -1,9 +1,18 @@
+using System.Diagnostics;
+using Common.AST;
 using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
 internal class GUIDOfTargetLoopVisitor : BaseASTVisitor
 {
+
+    protected override void PreVisit(ISmallLangNode node)
+    {
+
+        Debug.Assert(node.Flatten().OfType<IHasAttributeLoopGUID>().All(x => x.LoopGUID is not null));
+        base.PreVisit(node);
+    }
     private static bool CompareLoopLabel(IdentifierNode Label, ILoopNode LoopNode)
     {
         return

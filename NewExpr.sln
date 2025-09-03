@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "SmallLang\Parser\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallLangTest", "SmallLangTest\SmallLangTest.csproj", "{43A2613C-254E-4BFD-BCA7-71BCBB4C94DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunStuff", "RunStuff\RunStuff.csproj", "{F00B7403-315F-4AC7-87FE-F013F786A79D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,18 @@ Global
 		{43A2613C-254E-4BFD-BCA7-71BCBB4C94DF}.Release|x64.Build.0 = Release|Any CPU
 		{43A2613C-254E-4BFD-BCA7-71BCBB4C94DF}.Release|x86.ActiveCfg = Release|Any CPU
 		{43A2613C-254E-4BFD-BCA7-71BCBB4C94DF}.Release|x86.Build.0 = Release|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Debug|x64.Build.0 = Debug|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Debug|x86.Build.0 = Debug|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Release|x64.ActiveCfg = Release|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Release|x64.Build.0 = Release|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Release|x86.ActiveCfg = Release|Any CPU
+		{F00B7403-315F-4AC7-87FE-F013F786A79D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

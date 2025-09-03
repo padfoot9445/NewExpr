@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SmallLang.IR.Metadata;
 
@@ -106,5 +107,19 @@ public record Scope
     public FunctionID GetIDOfConstructorFunction(GenericSmallLangType type)
     {
         return new(0);
+    }
+
+    private Dictionary<VariableName, GenericSmallLangType> TypeNameCombinationsDefinedInThisScope { get; } = [];
+
+    public void DefineTypeOfName(VariableName variableName, GenericSmallLangType Type)
+    {
+        TypeNameCombinationsDefinedInThisScope[variableName] = Type;
+    }
+
+    public bool TryGetTypeOfVariable(VariableName variableName, [NotNullWhen(true)] out GenericSmallLangType? type)
+    {
+        if (TypeNameCombinationsDefinedInThisScope.TryGetValue(variableName, out type)) return true;
+        else if (Parent is null) return false;
+        else return Parent.TryGetTypeOfVariable(variableName, out type);
     }
 }

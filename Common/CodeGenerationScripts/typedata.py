@@ -14,7 +14,15 @@ def get_SmallLangType_params(type_data: dict[str, Any], config: dict[str, Any]):
     max_size = to_csharp(type_data["value max size"])
     type_code = to_csharp(config["typecodes"][name])
 
-    number_type = "None" if not is_number else ("Float" if is_real else ("Rational" if is_rational else "INt"))
+    if is_number == "false":
+        number_type = "None"
+    elif is_real == "true":
+        number_type = "Float"
+    elif is_rational == "true":
+        number_type = "Rational"
+    else:
+        number_type = "Int"
+
     return f"BaseValue: {type_code}, Name: \"{name}\", IsRefType: {is_pointer}, Size: {size}, IsNum: {is_number}, NumberType: NumberType.{number_type}, IsCollection: {is_collection}, ValMaxSize: {max_size}"
 
 if __name__ == "__main__":

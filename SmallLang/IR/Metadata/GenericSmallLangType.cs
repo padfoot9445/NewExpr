@@ -8,33 +8,8 @@ using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 
 namespace SmallLang.IR.Metadata;
-
-public interface ISmallLangType
-{
-    uint BaseValue { get; init; }
-    string Name { get; init; }
-    bool IsRefType { get; init; }
-    uint Size { get; init; }
-    bool IsNum { get; init; }
-    NumberType NumberType { get; init; }
-    bool IsCollection { get; init; }
-    int? ValMaxSize { get; init; }
-
-    bool CanDeclareTo(SmallLangType other);
-
-    void Deconstruct(out uint BaseValue, out string Name, out bool IsRefType, out uint Size, out bool IsNum,
-        out NumberType NumberType, out bool IsCollection, out int? ValMaxSize);
-
-    bool Equals(object? obj);
-    bool Equals(GenericNumberWrapper<byte>? other);
-    bool Equals(SmallLangType? other);
-    int GetHashCode();
-    bool ImplicitCast(SmallLangType other);
-    string ToString();
-}
-
 public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode<GenericSmallLangType>,
-    IMetadataTypes<GenericSmallLangType>, ISmallLangType
+    IMetadataTypes<GenericSmallLangType>
 {
 
     

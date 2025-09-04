@@ -14,7 +14,7 @@ public record class SmallLangType(
     NumberType NumberType = NumberType.None,
     bool IsCollection = false,
     int? ValMaxSize = null) : GenericNumberWrapper<BackingNumberType>((BackingNumberType)BaseValue),
-    IMetadataTypes<SmallLangType>, ISmallLangType
+    IMetadataTypes<SmallLangType>
 {
     public bool CanDeclareTo(SmallLangType other)
     {

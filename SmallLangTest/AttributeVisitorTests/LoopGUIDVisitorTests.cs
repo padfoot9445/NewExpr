@@ -6,11 +6,11 @@ using SmallLangTest;
 using SmallLangTest.Generated;
 namespace SmallLangTest.AttributeVisitorTests;
 
-[TestFixture, Timeout(5000)]
+[TestFixture, CancelAfter(5000)]
 public class LoopGUIDVisitorTest
 {
 
-    [Test, Timeout(5000)]
+    [Test, CancelAfter(5000)]
     public void All_Programs__LoopGUID_BeginVisiting__Does_Not_Throw()
     {
         foreach (var program in ExamplePrograms.AllPrograms)

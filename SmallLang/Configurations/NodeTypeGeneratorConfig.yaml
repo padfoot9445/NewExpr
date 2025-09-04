@@ -59,10 +59,10 @@ attributes:
   data:
     - &TypeOfExpression
       name: TypeOfExpression
-      type: SmallLangType
+      type: GenericSmallLangType
     - &TypeLiteralType
       name: TypeLiteralType
-      type: SmallLangType
+      type: GenericSmallLangType
     - &VariableName
       name: VariableName
       type: VariableName
@@ -74,22 +74,25 @@ attributes:
       type: LoopGUID
     - &ExpectedReturnType
       name: ExpectedReturnType
-      type: SmallLangType
+      type: GenericSmallLangType
     - &GreatestCommonType
       name: GreatestCommonType
-      type: SmallLangType
+      type: GenericSmallLangType
     - &NestedTypeOfExpression
       name: NestedTypeOfExpression
-      type: List<SmallLangType>
+      type: List<GenericSmallLangType>
     - &ExpectedTypeOfExpression
       name: ExpectedTypeOfExpression
-      type: SmallLangType
+      type: GenericSmallLangType
     - &FunctionID
       name: FunctionID
       type: FunctionID<BackingNumberType>
     - &Scope
       name: Scope
       type: Scope
+    - &GenericSmallLangType
+      name: GenericSLType
+      type: GenericSmallLangType
 marker interfaces:
   namespace: SmallLang.IR.AST.Generated
   usings: ["Common.Tokens", "Common.AST", "SmallLang.IR.Metadata"]
@@ -110,7 +113,7 @@ marker interfaces:
       parents:
       - *ISmallLangNode
       - *Statement
-      attributes: &ExpressionAttrs [*TypeOfExpression, *ExpectedTypeOfExpression]
+      attributes: &ExpressionAttrs [*TypeOfExpression, *ExpectedTypeOfExpression, *GenericSmallLangType]
     - name: &Type IType
       parents:
       - *ISmallLangNode

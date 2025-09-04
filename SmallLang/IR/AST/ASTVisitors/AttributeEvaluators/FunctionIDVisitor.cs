@@ -7,7 +7,8 @@ using SmallLang.IR.Metadata;
 namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
 using FunctionID = FunctionID<BackingNumberType>;
-using FunctionSignature = FunctionSignature<BackingNumberType, SmallLangType>;
+using FunctionSignature = FunctionSignature<BackingNumberType, GenericSmallLangType>;
+
 internal class FunctionIDVisitor : BaseASTVisitor
 {
     protected override ISmallLangNode VisitFunction(ISmallLangNode? Parent, FunctionNode self)
@@ -15,8 +16,10 @@ internal class FunctionIDVisitor : BaseASTVisitor
         NotNull(self.Scope, self.Type.TypeLiteralType);
         if (!self.Scope.IsDefined(self.FunctionName.Data.Lexeme))
         {
-            self.Scope.DefineFunction(new FunctionSignature(self.FunctionName.Data.Lexeme, FunctionID.GetNext(), self.Type.TypeLiteralType, self.TypeAndIdentifierCSV.Select(x => x.Type.TypeLiteralType!).ToList()));
+            self.Scope.DefineFunction(new FunctionSignature(self.FunctionName.Data.Lexeme, FunctionID.GetNext(),
+                self.Type.TypeLiteralType, self.TypeAndIdentifierCSV.Select(x => x.Type.TypeLiteralType!).ToList()));
         }
+
         return base.VisitFunction(Parent, self);
     }
 
@@ -31,6 +34,7 @@ internal class FunctionIDVisitor : BaseASTVisitor
 
         return base.VisitFunctionCall(Parent, self);
     }
+
     protected override ISmallLangNode VisitNewExpr(ISmallLangNode? Parent, NewExprNode self)
     {
         NotNull(self.Scope, self.Type.TypeLiteralType);

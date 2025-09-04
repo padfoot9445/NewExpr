@@ -7,13 +7,13 @@ internal class TypeLiteralTypeVisitor : BaseASTVisitor
 {
     protected override ISmallLangNode VisitBaseType(ISmallLangNode? Parent, BaseTypeNode self)
     {
-        self.TypeLiteralType = TypeData.GetType(self.Data.Lexeme);
+        self.TypeLiteralType = GenericSmallLangType.ParseType(self);
         return base.VisitBaseType(Parent, self);
     }
 
     protected override ISmallLangNode VisitGenericType(ISmallLangNode? Parent, GenericTypeNode self)
     {
-        self.TypeLiteralType = TypeData.GetType(self.Data.Lexeme);
+        self.TypeLiteralType = GenericSmallLangType.ParseType(self);
         return base.VisitGenericType(Parent, self);
     }
 }

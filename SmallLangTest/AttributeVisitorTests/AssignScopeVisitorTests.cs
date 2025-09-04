@@ -9,7 +9,7 @@ namespace SmallLangTest.AttributeVisitorTests;
 public class AssignScopeVisitorTest
 {
 
-    [Test, Timeout(5000)]
+    [Test, CancelAfter(5000)]
     public void All_Programs__AssignScope_BeginVisiting__Does_Not_Throw()
     {
         foreach (var program in ExamplePrograms.AllPrograms)

@@ -6,7 +6,7 @@ using SmallLangTest;
 using SmallLangTest.Generated;
 namespace SmallLangTest.AttributeVisitorTests;
 
-[TestFixture, Timeout(5000)]
+[TestFixture, CancelAfter(5000)]
 public class FunctionIDTests
 {
 
@@ -27,14 +27,14 @@ public class FunctionIDTests
         }
     }
 
-    [TestCaseSource(nameof(GetTestCases)), Timeout(5000)]
+    [TestCaseSource(nameof(GetTestCases)), CancelAfter(5000)]
     public void All_Programs__FunctionID_Visitor__BeginVisiting__Does_Not_Throw((ISmallLangNode ast, string program) input)
     {
 
         Assert.That(() => new FunctionIDVisitor().BeginVisiting(input.ast), Throws.Nothing, message: input.program);
 
     }
-    [TestCaseSource(nameof(GetTestCases)), Timeout(5000)]
+    [TestCaseSource(nameof(GetTestCases)), CancelAfter(5000)]
     public void All_Programs__FunctionID_Visitor__BeginVisiting__No_VariableName_Is_Null((ISmallLangNode ast, string program) input)
     {
         new FunctionIDVisitor().BeginVisiting(input.ast);

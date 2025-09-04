@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Common.Dispatchers;
 using Common.LinearIR;
 using Common.Tokens;
+using sly.lexer;
 using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
@@ -11,18 +12,21 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 using ArgumentType = Common.LinearIR.NumberWrapper<int, BackingNumberType>;
 using TypeType = Common.LinearIR.NumberWrapper<byte, BackingNumberType>;
+
 internal static class BinaryExpressionVisitor
 {
     private static void AssignmentVisitor(BinaryExpressionNode Self, CodeGenerator Driver)
     {
-
         Driver.Cast(Self.Right, Self.Left.TypeOfExpression!);
 
         var VariableBeginning = Driver.GetRegisters(1).Single();
 
         Driver.Emit(HighLevelOperation.LoadFromStack(VariableBeginning, Self.Left.TypeOfExpression!.Size));
 
-        Driver.Emit(HighLevelOperation.PushFromRegister(VariableBeginning, Self.Left.TypeOfExpression.Size)); //push the value back on the register because this is an expression still and expressions put values on stack
+        Driver.Emit(
+            HighLevelOperation.PushFromRegister(VariableBeginning,
+                Self.Left.TypeOfExpression
+                    .Size)); //push the value back on the register because this is an expression still and expressions put values on stack
 
         if (Self.Left is IndexNode IndexLeft)
         {
@@ -35,25 +39,28 @@ internal static class BinaryExpressionVisitor
         else throw new Exception();
     }
 
-    private static void IdentifierAssignmentVisitor<TLeft>(TLeft Left, CodeGenerator Driver, int VariableBeginning, SmallLangType TypeOfVariable)
-    where TLeft : ISmallLangNode, IHasAttributeTypeOfExpression, IHasAttributeVariableName
+    private static void IdentifierAssignmentVisitor<TLeft>(TLeft Left, CodeGenerator Driver, int VariableBeginning,
+        GenericSmallLangType TypeOfVariable)
+        where TLeft : ISmallLangNode, IHasAttributeTypeOfExpression, IHasAttributeVariableName
     {
         var startReg = Driver.Data.GetVariableStartRegister(Left.VariableName!);
         var width = TypeOfVariable.Size;
 
         Driver.Emit(HighLevelOperation.MoveRegister(VariableBeginning, startReg, width));
     }
-    private static void IndexAssignmentVisitor<TLeft>(TLeft Left, CodeGenerator Driver, int VariableBeginning, SmallLangType RightType)
-    where TLeft : IndexNode
+
+    private static void IndexAssignmentVisitor<TLeft>(TLeft Left, CodeGenerator Driver, int VariableBeginning,
+        GenericSmallLangType RightType)
+        where TLeft : IndexNode
     {
         var Pointer = Driver.GetRegisters((int)Left.Expression1.TypeOfExpression!.Size).First();
 
 
         Driver.Exec(Left.Expression1);
         Driver.Emit(HighLevelOperation.LoadFromStack(Pointer, Left.Expression1.TypeOfExpression!.Size));
-        if (Left.Expression1.TypeOfExpression == TypeData.Array || Left.Expression1.TypeOfExpression == TypeData.List) //TODO: Generalize this to SmallLangType.IsVectorLike
+        if (Left.Expression1.TypeOfExpression == TypeData.Array ||
+            Left.Expression1.TypeOfExpression == TypeData.List) //TODO: Generalize this to SmallLangType.IsVectorLike
         {
-
             var Indexer = Driver.GetRegisters((int)TypeData.Int.Size).First();
             var ItemPtr = Driver.GetRegisters((int)Left.TypeOfExpression!.Size).First();
 
@@ -73,16 +80,20 @@ internal static class BinaryExpressionVisitor
         }
         else if (Left.Expression1.TypeOfExpression == TypeData.Dict)
         {
-            var KeyType = Left.Expression2.ExpectedTypeOfExpression; //the expected Type of Expression of a in x[a]. This is correct, as validated in analyser.
+            var KeyType =
+                Left.Expression2
+                    .ExpectedTypeOfExpression; //the expected Type of Expression of a in x[a]. This is correct, as validated in analyser.
 
             var Indexer = Driver.GetRegisters((int)KeyType!.Size).First();
 
             Driver.Cast(Left.Expression2, KeyType);
             Driver.Emit(HighLevelOperation.LoadFromStack(Indexer, KeyType.Size));
 
-            Driver.Emit(HighLevelOperation.LoadHashMap<int, int, int, byte, byte>(Indexer, Pointer, VariableBeginning, Left.Expression2.ExpectedTypeOfExpression!, RightType));
+            Driver.Emit(HighLevelOperation.LoadHashMap<int, int, int, byte, byte>(Indexer, Pointer, VariableBeginning,
+                Left.Expression2.ExpectedTypeOfExpression!, RightType));
         }
     }
+
     private static void NonAssignmentOperatorVisitor(BinaryExpressionNode Self, CodeGenerator Driver)
     {
         Debug.Assert(Self.GreatestCommonType is not null);
@@ -97,36 +108,35 @@ internal static class BinaryExpressionVisitor
         Driver.Cast(Self.Right, Self.GreatestCommonType);
         Driver.Emit(HighLevelOperation.LoadFromStack(RightRegister, Self.GreatestCommonType.Size));
 
-        Driver.Emit(Self.Data.TT.Map<TokenType, Func<ArgumentType, ArgumentType, ArgumentType, TypeType, HighLevelOperation>>(
-
-            (TokenType.LogicalImplies, HighLevelOperation.LogicalImplies),
-            (TokenType.LogicalOr, HighLevelOperation.LogicalOr),
-            (TokenType.LogicalXor, HighLevelOperation.LogicalXor),
-            (TokenType.LogicalAnd, HighLevelOperation.LogicalAnd),
-            (TokenType.Addition, HighLevelOperation.Addition),
-            (TokenType.Subtraction, HighLevelOperation.Subtraction),
-            (TokenType.Multiplication, HighLevelOperation.Multiplication),
-            (TokenType.Division, HighLevelOperation.Division),
-            (TokenType.Exponentiation, HighLevelOperation.Exponentiation),
-            (TokenType.BitwiseOr, HighLevelOperation.BitwiseOr),
-            (TokenType.BitwiseXor, HighLevelOperation.BitwiseXor),
-            (TokenType.BitwiseAnd, HighLevelOperation.BitwiseAnd),
-            (TokenType.BitwiseLeftShift, HighLevelOperation.BitwiseLeftShift),
-            (TokenType.BitwiseRightShift, HighLevelOperation.BitwiseRightShift)
-        )(LeftRegister, RightRegister, DstRegister, Self.GreatestCommonType));
+        Driver.Emit(Self.Data.TT
+            .Map<TokenType, Func<ArgumentType, ArgumentType, ArgumentType, TypeType, HighLevelOperation>>(
+                (TokenType.LogicalImplies, HighLevelOperation.LogicalImplies),
+                (TokenType.LogicalOr, HighLevelOperation.LogicalOr),
+                (TokenType.LogicalXor, HighLevelOperation.LogicalXor),
+                (TokenType.LogicalAnd, HighLevelOperation.LogicalAnd),
+                (TokenType.Addition, HighLevelOperation.Addition),
+                (TokenType.Subtraction, HighLevelOperation.Subtraction),
+                (TokenType.Multiplication, HighLevelOperation.Multiplication),
+                (TokenType.Division, HighLevelOperation.Division),
+                (TokenType.Exponentiation, HighLevelOperation.Exponentiation),
+                (TokenType.BitwiseOr, HighLevelOperation.BitwiseOr),
+                (TokenType.BitwiseXor, HighLevelOperation.BitwiseXor),
+                (TokenType.BitwiseAnd, HighLevelOperation.BitwiseAnd),
+                (TokenType.BitwiseLeftShift, HighLevelOperation.BitwiseLeftShift),
+                (TokenType.BitwiseRightShift, HighLevelOperation.BitwiseRightShift)
+            )(LeftRegister, RightRegister, DstRegister, Self.GreatestCommonType));
 
         Driver.Emit(HighLevelOperation.PushFromRegister(DstRegister, Self.GreatestCommonType.Size));
     }
+
     internal static void Visit(BinaryExpressionNode Self, CodeGenerator Driver)
     {
         Driver.EnteringChunk(() =>
         {
-            Self.Switch
+            Self.Switch<BinaryExpressionNode, TokenType, Action<BinaryExpressionNode, CodeGenerator>>
             (
                 x => x.Data.TT,
                 (x, y) => x == y,
-
-
                 (TokenType.Equals, AssignmentVisitor),
                 (TokenType.LogicalImplies, NonAssignmentOperatorVisitor),
                 (TokenType.LogicalOr, NonAssignmentOperatorVisitor),

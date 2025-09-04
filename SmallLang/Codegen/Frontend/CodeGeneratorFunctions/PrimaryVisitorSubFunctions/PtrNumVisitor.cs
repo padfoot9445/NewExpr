@@ -5,6 +5,7 @@ using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
+
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFunctions;
 
 internal static class PtrNumVisitor
@@ -14,18 +15,18 @@ internal static class PtrNumVisitor
         Driver.Emit
         (
             HighLevelOperation.Push(
-            Self.Switch
-            (
-                x => x.TypeOfExpression!,
-                Comparer: (x, y) => x == y,
-                (TypeData.Longint, VisitLongInt),
-                (TypeData.Rational, VisitRational),
-                (TypeData.Number, VisitNumber)
-
-            )
-                (Self, Driver)
-        ));
+                Self.Switch<PrimaryNode, SmallLangType, Func<PrimaryNode, CodeGenerator, Pointer<byte>>>
+                    (
+                        x => x.TypeOfExpression!.OutmostType,
+                        Comparer: (x, y) => x == y,
+                        (TypeData.Longint, VisitLongInt),
+                        (TypeData.Rational, VisitRational),
+                        (TypeData.Number, VisitNumber)
+                    )
+                    (Self, Driver)
+            ));
     }
+
     static List<BackingNumberType> GetArrayOfBNTs(string number)
     {
         int width = (int)Math.Ceiling(Math.Log10(BackingNumberType.MaxValue));
@@ -40,13 +41,17 @@ internal static class PtrNumVisitor
         //Add typecode and length prefix
         var LengthArray = new GenericNumberWrapper<int>(Chars.Count).Value;
 
-        foreach (var i in LengthArray.Reverse())//Chars.Count = 15: [0x00, 0x00, 0x00, 0x0F] -> [0x0F, 0x00, 0x00, 0x00] which is then prepended from start to finish to get back to big-endian order
+        foreach (var i in
+                 LengthArray
+                     .Reverse()) //Chars.Count = 15: [0x00, 0x00, 0x00, 0x0F] -> [0x0F, 0x00, 0x00, 0x00] which is then prepended from start to finish to get back to big-endian order
         {
             Chars = Chars.Prepend(i).ToList();
         }
+
         Chars = Chars.Prepend(TypeData.Longint.Value.Single()).ToList();
         return Chars;
     }
+
     static Pointer<BackingNumberType> VisitLongInt(PrimaryNode Self, CodeGenerator Driver)
     {
         var Chars = GetArrayOfBNTs(Self.Data!.Lexeme);
@@ -70,15 +75,16 @@ internal static class PtrNumVisitor
 
         List<BackingNumberType> PtrList = [.. NumeratorPtr.Value, .. DenominatorPtr.Value];
         Debug.Assert(PtrList.Count <= BackingNumberType.MaxValue);
-        List<BackingNumberType> RationalList = [TypeData.Rational.Value.Single(), (BackingNumberType)PtrList.Count, .. PtrList];
+        List<BackingNumberType> RationalList =
+            [TypeData.Rational.Value.Single(), (BackingNumberType)PtrList.Count, .. PtrList];
 
         var RationalPtr = Driver.Data.StaticDataArea.AllocateAndFill(RationalList.Count, RationalList);
 
         return RationalPtr;
     }
+
     static Pointer<BackingNumberType> VisitNumber(PrimaryNode Self, CodeGenerator Driver)
     {
         throw new NotImplementedException();
     }
-
 }

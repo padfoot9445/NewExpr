@@ -5,7 +5,7 @@ namespace SmallLangTest;
 [TestFixture]
 public class ASTTests
 {
-    [Test, Timeout(5000)]
+    [Test, CancelAfter(5000)]
     public void GetHashCode__Node_With_VariableNames_Changed__Returns_Different()
     {
         var node = ParserTest.Parse("int x = 1;");

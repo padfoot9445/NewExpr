@@ -6,21 +6,21 @@ using SmallLangTest;
 using SmallLangTest.Generated;
 namespace SmallLangTest.AttributeVisitorTests;
 
-[TestFixture, Timeout(5000)]
+[TestFixture, CancelAfter(5000)]
 public class ExpectedReturnTypeVisitorTests
 {
 
     internal static IEnumerable<(ISmallLangNode, string)> GetTestCases()
     => TypeLiteralTypeTests.GetNewTestCases(new TypeLiteralTypeVisitor(), TypeLiteralTypeTests.GetTestCases());
 
-    [TestCaseSource(nameof(GetTestCases)), Timeout(5000)]
+    [TestCaseSource(nameof(GetTestCases)), CancelAfter(5000)]
     public void All_Programs__Expected_Return_Type_Visitor__BeginVisiting__Does_Not_Throw((ISmallLangNode ast, string program) input)
     {
 
         Assert.That(() => new ExpectedReturnTypeVisitor().BeginVisiting(input.ast), Throws.Nothing, message: input.program);
 
     }
-    [TestCaseSource(nameof(GetTestCases)), Timeout(5000)]
+    [TestCaseSource(nameof(GetTestCases)), CancelAfter(5000)]
     public void All_Programs__Expected_Return_Type_Visitor__BeginVisiting__No_Target_Loop_GUID_Is_Null((ISmallLangNode ast, string program) input)
     {
         new ExpectedReturnTypeVisitor().BeginVisiting(input.ast);

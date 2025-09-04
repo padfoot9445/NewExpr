@@ -7,7 +7,7 @@ using SmallLangTest.Generated;
 
 namespace SmallLangTest.AttributeVisitorTests;
 
-[TestFixture, Timeout(5000)]
+[TestFixture, CancelAfter(5000)]
 public class TypeLiteralTypeTests
 {
     internal static IEnumerable<(ISmallLangNode, string)> GetNewTestCases(BaseASTVisitor visitor, IEnumerable<(ISmallLangNode, string)> Src)

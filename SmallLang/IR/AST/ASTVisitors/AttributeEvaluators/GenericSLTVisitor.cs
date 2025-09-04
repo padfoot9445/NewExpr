@@ -124,4 +124,10 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
         self.GenericSLType = GetGenericSLTFromLiteralType(self.Type);
         return base.VisitNewExpr(Parent, self);
     }
+
+    protected override ISmallLangNode VisitIndex(ISmallLangNode? Parent, IndexNode self)
+    {
+        self.GenericSLType = self.Expression1.GenericSLType?.OutmostType == TypeData.Dict ? self.Expression1.GenericSLType.ChildNodes.ElementAt(1) : self.Expression1.GenericSLType?.ChildNodes.ElementAt(0);
+        return base.VisitIndex(Parent, self);
+    }
 }

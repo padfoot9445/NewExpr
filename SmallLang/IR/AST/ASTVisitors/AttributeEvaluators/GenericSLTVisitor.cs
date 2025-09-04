@@ -136,4 +136,10 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
         self.GenericSLType = self.Scope?.GetSignature(self.Identifier.Data.Lexeme).RetVal;
         return base.VisitFunctionCall(Parent, self);
     }
+
+    protected override ISmallLangNode VisitUnaryExpression(ISmallLangNode? Parent, UnaryExpressionNode self)
+    {
+        self.GenericSLType = self.Expression.GenericSLType;
+        return base.VisitUnaryExpression(Parent, self);
+    }
 }

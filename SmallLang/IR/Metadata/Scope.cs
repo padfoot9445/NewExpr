@@ -96,7 +96,7 @@ public record Scope
         else
         {
             if (Parent is null)
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentException(
                     $"Could not find function defined in the current or enclosing scope of name {name}");
             else return Parent.GetSignature(name);
         }

@@ -70,7 +70,16 @@ public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode
         get => OutmostType.ValMaxSize;
         init => _ = value;
     }
-
+    public static GenericSmallLangType GreatestCommonType(GenericSmallLangType self, GenericSmallLangType other)
+    {
+        if (self == other) return self;
+        else if (self.ChildNodes.Any() || other.ChildNodes.Any())
+        {
+            throw new ArgumentException("Cannot find gct of generic types which are not the same");
+        }
+        else return new(self.OutmostType.GreatestCommonType(other.OutmostType));
+    }
+    public GenericSmallLangType GreatestCommonType(GenericSmallLangType other) => GreatestCommonType(this, other);
     bool IMetadataTypes<GenericSmallLangType>.CanDeclareTo(GenericSmallLangType other)
     {
         return this.OutmostType.CanDeclareTo(other.OutmostType);

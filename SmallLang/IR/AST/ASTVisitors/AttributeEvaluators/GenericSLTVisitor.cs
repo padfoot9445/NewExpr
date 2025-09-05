@@ -108,6 +108,7 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
         {
             TokenType.String => self.Data.Lexeme.Length == 1 ? TypeData.Char : TypeData.String,
             TokenType.Number => self.Data.Lexeme.Contains('.') ? TypeData.Number : TypeData.Longint,
+            TokenType.TrueLiteral or TokenType.FalseLiteral => TypeData.Bool,
             _ => throw new ExpaException($"Token {self.Data} was not recognized when attempting to determine its type")
         });
         return base.VisitPrimary(Parent, self);

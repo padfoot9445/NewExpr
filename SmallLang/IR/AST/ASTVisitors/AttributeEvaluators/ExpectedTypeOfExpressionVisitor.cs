@@ -12,6 +12,7 @@ internal class ExpectedTypeOfExpressionVisitor : BaseASTVisitor
     protected override void PreVisit(ISmallLangNode node)
     {
         AssertPropertyIsNotNull<IHasAttributeGenericSLType>(x => x.GenericSLType is not null);
+        AssertPropertyIsNotNull<IHasAttributeTypeLiteralType>(x => x.TypeLiteralType is not null);
         base.PreVisit(node);
     }
 
@@ -66,5 +67,35 @@ internal class ExpectedTypeOfExpressionVisitor : BaseASTVisitor
             }
         }
         return base.VisitFunctionCall(Parent, self);
+    }
+
+    protected override ISmallLangNode VisitNewExpr(ISmallLangNode? Parent, NewExprNode self)
+    {
+        if (self.Type.TypeLiteralType!.OutmostType == TypeData.Dict)
+        {
+            foreach (var (i, arg) in self.ArgList.Index())
+            {
+                arg.ExpectedTypeOfExpression = self.Type.TypeLiteralType.ChildNodes.ElementAt(i % 2 == 0 ? 1 : 0);
+            }
+        }
+        else
+        {
+            bool seenSize = false;
+            foreach (var arg in self.ArgList)
+            {
+                if (arg.Identifier is not null && arg.Identifier.Data.Lexeme == "Size")
+                {
+                    if (seenSize) throw new ExpaException("Cannot specify parameter Size twice");
+                    arg.ExpectedTypeOfExpression = new(TypeData.Int);
+                    seenSize = true;
+                }
+                else
+                {
+                    arg.ExpectedTypeOfExpression = self.Type.TypeLiteralType.ChildNodes.First();
+                }
+            }
+        }
+
+        return base.VisitNewExpr(Parent, self);
     }
 }

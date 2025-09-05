@@ -33,7 +33,10 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
             RecursiveVisit(self, childnode);
         }
     }
-
+    protected void AssertPropertyIsNotNull<T>(Func<T, bool> predicate)
+    {
+        Debug.Assert(CurrentRootNode.Flatten().OfType<T>().All(predicate));
+    }
     [AllowNull]
     protected ISmallLangNode CurrentRootNode { get; set; } = null;
     protected ISmallLangNode RecursiveGetParent(ISmallLangNode self, Func<ISmallLangNode, bool> Predicate) => self.RecursiveGetParent(CurrentRootNode, Predicate);

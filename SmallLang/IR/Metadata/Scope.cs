@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SmallLang.IR.Metadata;
 
@@ -16,13 +17,14 @@ public record Scope
 
         NamesDefinedInThisScope = new HashSet<string>();
         FunctionsDefinedInThisScope = new Functions();
+        TypeNameCombinationsDefinedInThisScope = new();
+        ScopeID = ++UsedScopeIDs;
         foreach (var Function in Functions.StdLibFunctions)
         {
             DefineFunction(Function);
         }
 
 
-        ScopeID = ++UsedScopeIDs;
     }
 
     private static int UsedScopeIDs { get; set; } = 0;
@@ -84,6 +86,10 @@ public record Scope
     {
         DefineName(functionSignature.Name);
         FunctionsDefinedInThisScope.RegisterFunction(functionSignature);
+
+        DefineTypeOfName(GetName(functionSignature.Name), new(TypeData.Void));
+
+        Console.WriteLine($"Scope {ScopeID} defining function {functionSignature.Name} with VName {GetName(functionSignature.Name)}");
     }
 
     public FunctionSignature GetSignature(string name)
@@ -95,7 +101,7 @@ public record Scope
         else
         {
             if (Parent is null)
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentException(
                     $"Could not find function defined in the current or enclosing scope of name {name}");
             else return Parent.GetSignature(name);
         }
@@ -106,5 +112,20 @@ public record Scope
     public FunctionID GetIDOfConstructorFunction(GenericSmallLangType type)
     {
         return new(0);
+    }
+
+    private Dictionary<VariableName, GenericSmallLangType> TypeNameCombinationsDefinedInThisScope { get; } = [];
+
+    public void DefineTypeOfName(VariableName variableName, GenericSmallLangType Type)
+    {
+        Debug.Assert(variableName is not null);
+        TypeNameCombinationsDefinedInThisScope[variableName] = Type;
+    }
+
+    public bool TryGetTypeOfVariable(VariableName variableName, [NotNullWhen(true)] out GenericSmallLangType? type)
+    {
+        if (TypeNameCombinationsDefinedInThisScope.TryGetValue(variableName, out type)) return true;
+        else if (Parent is null) return false;
+        else return Parent.TryGetTypeOfVariable(variableName, out type);
     }
 }

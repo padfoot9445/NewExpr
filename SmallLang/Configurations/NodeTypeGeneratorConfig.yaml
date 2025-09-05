@@ -75,9 +75,6 @@ attributes:
     - &ExpectedReturnType
       name: ExpectedReturnType
       type: GenericSmallLangType
-    - &NestedTypeOfExpression
-      name: NestedTypeOfExpression
-      type: List<GenericSmallLangType>
     - &ExpectedTypeOfExpression
       name: ExpectedTypeOfExpression
       type: GenericSmallLangType
@@ -85,7 +82,7 @@ attributes:
       name: FunctionID
       type: FunctionID<BackingNumberType>
     - &Scope
-      name: Scope
+      name: Scope #must not remove even though it's unused in config -- it's used by SmallLangType
       type: Scope
     - &GenericSmallLangType
       name: GenericSLType

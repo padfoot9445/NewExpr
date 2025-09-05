@@ -176,7 +176,7 @@ public static class ObjectDispatchers
         Self.Dispatch(Accessor, NoReturnToReturnFunc(Default), NoReturnToReturnCases(Cases));
     }
 
-    public static void Dispatch<TObject, TAttribute, TReturn>
+    public static void Dispatch<TObject, TAttribute>
     (
         this TObject Self,
         Func<TObject, TAttribute> Accessor,

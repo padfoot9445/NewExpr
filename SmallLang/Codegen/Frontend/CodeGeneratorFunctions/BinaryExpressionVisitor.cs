@@ -30,11 +30,11 @@ internal static class BinaryExpressionVisitor
 
         if (Self.Left is IndexNode IndexLeft)
         {
-            IndexAssignmentVisitor(IndexLeft, Driver, VariableBeginning, Self.Left.TypeOfExpression);
+            IndexAssignmentVisitor(IndexLeft, Driver, VariableBeginning, Self.Left.GenericSLType!);
         }
         else if (Self.Left is IdentifierNode IDLeft)
         {
-            IdentifierAssignmentVisitor(IDLeft, Driver, VariableBeginning, Self.Left.TypeOfExpression);
+            IdentifierAssignmentVisitor(IDLeft, Driver, VariableBeginning, Self.Left.GenericSLType!);
         }
         else throw new Exception();
     }

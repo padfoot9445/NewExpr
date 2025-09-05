@@ -17,7 +17,7 @@ internal static class PtrNumVisitor
             HighLevelOperation.Push(
                 Self.Switch<PrimaryNode, SmallLangType, Func<PrimaryNode, CodeGenerator, Pointer<byte>>>
                     (
-                        x => x.TypeOfExpression!.OutmostType,
+                        x => x.TypeOfExpression!,
                         Comparer: (x, y) => x == y,
                         (TypeData.Longint, VisitLongInt),
                         (TypeData.Rational, VisitRational),

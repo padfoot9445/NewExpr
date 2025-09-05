@@ -190,6 +190,36 @@ public static class ObjectDispatchers
         Self.Dispatch(Accessor, NoReturnToReturnCases(Cases));
     }
 
+    public static TReturn Dispatch<TObject, TAttribute, TReturn>
+    (
+        this TObject Self,
+        Func<TObject, TAttribute> Accessor,
+        params IEnumerable
+        <(
+            Func<TAttribute, bool> Predicate,
+            TReturn Result
+            )> Cases
+    )
+    {
+        return Self.Dispatch(Accessor, GetDefault<TObject, TReturn>(), Cases);
+    }
+
+    public static TReturn Dispatch<TObject, TAttribute, TReturn>
+    (
+        this TObject Self,
+        Func<TObject, TAttribute> Accessor,
+        Func<TObject, TReturn> Default,
+        params IEnumerable
+        <(
+            Func<TAttribute, bool> Predicate,
+            TReturn Result
+            )> Cases
+    )
+    {
+        return Self.Dispatch(Accessor, Default, ValToFunc<TObject, Func<TAttribute, bool>, TReturn>(Cases));
+    }
+
+
     public static TReturn Switch<TObject, TAttribute, TReturn>
     (
         this TObject Self,
@@ -282,35 +312,6 @@ public static class ObjectDispatchers
     )
     {
         return Self.Switch(Accessor, GetDefault<TObject, TReturn>(), Comparer, Cases);
-    }
-
-    public static TReturn Dispatch<TObject, TAttribute, TReturn>
-    (
-        this TObject Self,
-        Func<TObject, TAttribute> Accessor,
-        params IEnumerable
-        <(
-            Func<TAttribute, bool> Predicate,
-            TReturn Result
-            )> Cases
-    )
-    {
-        return Self.Dispatch(Accessor, GetDefault<TObject, TReturn>(), Cases);
-    }
-
-    public static TReturn Dispatch<TObject, TAttribute, TReturn>
-    (
-        this TObject Self,
-        Func<TObject, TAttribute> Accessor,
-        Func<TObject, TReturn> Default,
-        params IEnumerable
-        <(
-            Func<TAttribute, bool> Predicate,
-            TReturn Result
-            )> Cases
-    )
-    {
-        return Self.Dispatch(Accessor, Default, ValToFunc<TObject, Func<TAttribute, bool>, TReturn>(Cases));
     }
 
     public static TReturn Map<TObject, TReturn>

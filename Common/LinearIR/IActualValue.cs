@@ -1,6 +1,9 @@
+using JetBrains.Annotations;
+
 namespace Common.LinearIR;
 
-public interface IActualValue<TActualValue>
+[PublicAPI]
+public interface IActualValue<out TActualValue>
 {
     public TActualValue BackingValue { get; }
 }

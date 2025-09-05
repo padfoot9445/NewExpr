@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using Common.Tokens;
-using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
@@ -25,20 +23,23 @@ internal static class IndexVisitor
 
             var IndexerRegister = Driver.GetRegisters(ExpectedTypeOfExpressionOfSecondExpression).First();
             Driver.Cast(Self.Expression2, ExpectedTypeOfExpressionOfSecondExpression);
-            Driver.Emit(HighLevelOperation.PushFromRegister(IndexerRegister, ExpectedTypeOfExpressionOfSecondExpression.Size));
+            Driver.Emit(HighLevelOperation.PushFromRegister(IndexerRegister,
+                ExpectedTypeOfExpressionOfSecondExpression.Size));
 
             var DstRegister = Driver.GetRegisters(Self).First();
 
             if (Self.TypeOfExpression == TypeData.Dict)
             {
-                Driver.Emit(HighLevelOperation.QueryHashMap<int, int, int, byte, byte>(IndexerRegister, StructRegister, DstRegister, ExpectedTypeOfExpressionOfSecondExpression, Self.TypeOfExpression));
+                Driver.Emit(HighLevelOperation.QueryHashMap<int, int, int, byte, byte>(IndexerRegister, StructRegister,
+                    DstRegister, ExpectedTypeOfExpressionOfSecondExpression, Self.TypeOfExpression));
             }
             else
             {
                 //we allow indexing of sets and stuff as a foreach thing. Worst case we handle generation of a view in the instruction
                 var PointerRegister = Driver.GetRegisters(TypeData.Int).First();
                 Driver.Emit(HighLevelOperation.IndexVectorLike(StructRegister, IndexerRegister, PointerRegister));
-                Driver.Emit(HighLevelOperation.LoadFromMemory(PointerRegister, DstRegister, Self.TypeOfExpression.Size));
+                Driver.Emit(HighLevelOperation.LoadFromMemory(PointerRegister, DstRegister,
+                    Self.TypeOfExpression.Size));
             }
 
             Driver.Emit(HighLevelOperation.PushFromRegister(DstRegister, Self.TypeOfExpression.Size));

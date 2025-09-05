@@ -15,12 +15,10 @@ public class AttributeEvaluator : BaseASTVisitor
         new ExpectedReturnTypeVisitor(),
         new ExpectedTypeOfExpressionVisitor()
     ];
+
     protected override void PreVisit(ISmallLangNode node)
     {
-        foreach (var pass in OrderedPasses)
-        {
-            pass.BeginVisiting(node);
-        }
+        foreach (var pass in OrderedPasses) pass.BeginVisiting(node);
         base.PreVisit(node);
     }
 }

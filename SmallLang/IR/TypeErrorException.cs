@@ -4,10 +4,10 @@ namespace SmallLang.Exceptions;
 
 public class TypeErrorException : ExpaException
 {
-    public readonly GenericSmallLangType Expected;
     public readonly GenericSmallLangType Actual;
-    public readonly int Position;
     public readonly string? AdditionalMessage;
+    public readonly GenericSmallLangType Expected;
+    public readonly int Position;
 
     public TypeErrorException(GenericSmallLangType Expected, GenericSmallLangType Actual, int Position,
         string? Message = null) : base($"Expected A value of type {Expected} but was {Actual} at {Position}." +
@@ -16,6 +16,6 @@ public class TypeErrorException : ExpaException
         this.Expected = Expected;
         this.Actual = Actual;
         this.Position = Position;
-        this.AdditionalMessage = Message;
+        AdditionalMessage = Message;
     }
 }

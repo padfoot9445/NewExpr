@@ -50,9 +50,7 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
         NotNull(self.Identifier2.Scope, self.Identifier2.VariableName);
         self.GenericSLType = self.Identifier1.GenericSLType;
         if (self.GenericSLType is not null)
-        {
             self.Identifier2.Scope.DefineTypeOfName(self.Identifier2.VariableName, self.GenericSLType);
-        }
 
         return base.VisitAliasExpr(Parent, self);
     }
@@ -83,9 +81,7 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
                         IsLeafNode: true, OutmostType.IsNum: true
                     }
                 } rightPrimaryNode)
-            {
                 rightPrimaryNode.GenericSLType = self.Left.GenericSLType;
-            }
 
             self.GenericSLType = self.Left.GenericSLType;
         }
@@ -129,7 +125,9 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitIndex(ISmallLangNode? Parent, IndexNode self)
     {
-        self.GenericSLType = self.Expression1.GenericSLType?.OutmostType == TypeData.Dict ? self.Expression1.GenericSLType.ChildNodes.ElementAt(1) : self.Expression1.GenericSLType?.ChildNodes.ElementAt(0);
+        self.GenericSLType = self.Expression1.GenericSLType?.OutmostType == TypeData.Dict
+            ? self.Expression1.GenericSLType.ChildNodes.ElementAt(1)
+            : self.Expression1.GenericSLType?.ChildNodes.ElementAt(0);
         return base.VisitIndex(Parent, self);
     }
 
@@ -147,13 +145,12 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitLoopCTRL(ISmallLangNode? Parent, LoopCTRLNode self)
     {
-
         if (self.Identifier is not null)
         {
             NotNull(self.Scope, self.Identifier?.VariableName);
-            self.Scope.DefineTypeOfName(self.Identifier.VariableName, new(TypeData.Void));
-
+            self.Scope.DefineTypeOfName(self.Identifier.VariableName, new GenericSmallLangType(TypeData.Void));
         }
+
         return base.VisitLoopCTRL(Parent, self);
     }
 
@@ -162,7 +159,7 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
         if (self.Identifier is not null)
         {
             NotNull(self.Scope, self.Identifier?.VariableName);
-            self.Scope.DefineTypeOfName(self.Identifier.VariableName, new(TypeData.Void));
+            self.Scope.DefineTypeOfName(self.Identifier.VariableName, new GenericSmallLangType(TypeData.Void));
         }
 
         return base.VisitLoopLabel(Parent, self);
@@ -172,31 +169,27 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
     {
         NotNull(self.Scope, self.FunctionName.VariableName);
 
-        self.Scope.DefineTypeOfName(self.FunctionName.VariableName, new(TypeData.Void));
+        self.Scope.DefineTypeOfName(self.FunctionName.VariableName, new GenericSmallLangType(TypeData.Void));
 
         foreach (var node in self.TypeAndIdentifierCSV)
-        {
             self.FunctionBody.Scope!.DefineTypeOfName(node.Identifier.VariableName!, node.Type.TypeLiteralType!);
-        }
         return base.VisitFunction(Parent, self);
     }
 
-    protected override ISmallLangNode VisitTypeAndIdentifierCSVElement(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self)
+    protected override ISmallLangNode VisitTypeAndIdentifierCSVElement(ISmallLangNode? Parent,
+        TypeAndIdentifierCSVElementNode self)
     {
-
         self.Identifier.GenericSLType = self.Type.TypeLiteralType;
         return base.VisitTypeAndIdentifierCSVElement(Parent, self);
     }
 
     protected override ISmallLangNode VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self)
     {
-        if (self.Identifier is not null)
-        {
-            self.Identifier.GenericSLType = new(TypeData.Void);
-        }
+        if (self.Identifier is not null) self.Identifier.GenericSLType = new GenericSmallLangType(TypeData.Void);
 
         return base.VisitArgListElement(Parent, self);
     }
+
     protected override ISmallLangNode VisitAssignmentPrime(ISmallLangNode? Parent, AssignmentPrimeNode self)
     {
         self.GenericSLType = self.Expression.GenericSLType;

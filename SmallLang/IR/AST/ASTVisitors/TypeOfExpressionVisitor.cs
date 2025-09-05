@@ -9,13 +9,12 @@ internal class TypeOfExpressionVisitor : BaseASTVisitor
         AssertPropertyIsNotNull<IHasAttributeGenericSLType>(x => x.GenericSLType is not null);
         base.PreVisit(node);
     }
+
     protected override void Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
     {
         if (self is IHasAttributeTypeOfExpressionSettable and IHasAttributeGenericSLType)
-        {
             ((IHasAttributeTypeOfExpressionSettable)self).TypeOfExpression =
                 ((IHasAttributeGenericSLType)self).GenericSLType!.OutmostType;
-        }
         base.Epilogue(Parent, self);
     }
 }

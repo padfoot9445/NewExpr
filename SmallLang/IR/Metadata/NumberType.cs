@@ -5,5 +5,5 @@ public enum NumberType
     None = 0,
     Int,
     Float,
-    Rational,
+    Rational
 }

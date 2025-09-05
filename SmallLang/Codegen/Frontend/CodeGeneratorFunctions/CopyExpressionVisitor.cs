@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using Common.Tokens;
-using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
@@ -20,13 +18,10 @@ internal static class CopyExpressionVisitor
             var DstRegister = Driver.GetRegisters(Self).First();
 
             if (Self.Expression.TypeOfExpression.IsRefType)
-            {
                 Driver.Emit(HighLevelOperation.CopyStruct(Register, DstRegister, TypeData.Int.Size));
-            }
             else
-            {
-                Driver.Emit(HighLevelOperation.MoveRegister(Register, DstRegister, Self.Expression.TypeOfExpression.Size));
-            }
+                Driver.Emit(HighLevelOperation.MoveRegister(Register, DstRegister,
+                    Self.Expression.TypeOfExpression.Size));
 
             Driver.Emit(HighLevelOperation.PushFromRegister(DstRegister, Self.Expression.TypeOfExpression.Size));
         });

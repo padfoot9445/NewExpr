@@ -1,103 +1,29 @@
 using Common.Tokens;
 using sly.parser.generator;
-using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using LyToken = sly.lexer.Token<Common.Tokens.TokenType>;
 using NodeType = SmallLang.IR.AST.ISmallLangNode;
+
 namespace SmallLang.Parser;
 
 public partial class SmallLangParser
 {
-    #region ComparisonExpressions
-    const int EqualToPrecedence = PlusEqualsExprPrecedence + 1;
-    const int NotEqualToPrecedence = EqualToPrecedence;
-    const int GreaterThanPrecedence = NotEqualToPrecedence;
-    const int LessThanPrecedence = GreaterThanPrecedence;
-    const int GreaterThanOrEqualToPrecedence = LessThanPrecedence;
-    const int LessThanOrEqualToPrecedence = GreaterThanOrEqualToPrecedence;
-    [Infix((int)TokenType.EqualTo, Associativity.Right, EqualToPrecedence)]
-    [Infix((int)TokenType.NotEqualTo, Associativity.Right, NotEqualToPrecedence)]
-    [Infix((int)TokenType.GreaterThan, Associativity.Right, GreaterThanPrecedence)]
-    [Infix((int)TokenType.LessThan, Associativity.Right, LessThanPrecedence)]
-    [Infix((int)TokenType.GreaterThanOrEqualTo, Associativity.Right, GreaterThanOrEqualToPrecedence)]
-    [Infix((int)TokenType.LessThanOrEqualTo, Associativity.Right, LessThanOrEqualToPrecedence)]
-    public NodeType ComparisonExpressions(NodeType Left, LyToken Operator, NodeType Right)
-    {
-        var OpToken = FromToken(Operator);
-
-        var Expr = TryCast<IExpressionNode>(Left);
-
-        if (Right is ComparisonExpressionNode RC)
-        {
-            return new ComparisonExpressionNode(Expr, [
-                new(OpToken, RC.Expression),
-                ..RC.OperatorExpressionPairs
-            ]);
-        }
-        else
-        {
-            return new ComparisonExpressionNode(Expr, [new(OpToken, TryCast<IExpressionNode>(Right))]);
-        }
-    }
-    #endregion
-    #region OtherExpressions
-    const int AssignmentExprPrecedence = 1;
-    const int ImpliesExprPrecedence = AssignmentExprPrecedence + 1;
-    const int OrExprPrecedence = ImpliesExprPrecedence + 1;
-
-    const int XorExprPrecedence = OrExprPrecedence + 1;
-
-    const int AndExprPrecedence = XorExprPrecedence + 1;
-
-    const int NotExprPrecedence = AndExprPrecedence + 1;
-    const int PlusEqualsExprPrecedence = NotExprPrecedence + 1;
-    const int MinusEqualsExprPrecedence = PlusEqualsExprPrecedence;
-    const int MultiplicationEqualsExprPrecedence = MinusEqualsExprPrecedence;
-    const int DivisionEqualsExprPrecedence = MultiplicationEqualsExprPrecedence;
-    const int BitwiseAndEqualsPrecedence = DivisionEqualsExprPrecedence;
-    const int BitwiseOrEqualsPrecedence = BitwiseAndEqualsPrecedence;
-    const int BitwiseXorEqualsPrecedence = BitwiseOrEqualsPrecedence;
-    const int BitwiseNotEqualsPrecedence = BitwiseXorEqualsPrecedence;
-
-    const int BitwiseLeftShiftEqualsPrecedence = BitwiseNotEqualsPrecedence;
-    const int BitwiseRightShiftEqualsPrecedence = BitwiseLeftShiftEqualsPrecedence;
-    const int AdditionPrecedence = EqualToPrecedence + 1;
-    const int SubtractionPrecedence = AdditionPrecedence;
-
-    const int MultiplicationPrecedence = SubtractionPrecedence + 1;
-    const int DivisionPrecedence = MultiplicationPrecedence;
-
-    const int PowerPrecedence = DivisionPrecedence + 1;
-
-    const int NegationPrecedence = PowerPrecedence + 1;
-
-    const int FactorialPrecedence = NegationPrecedence + 1;
-    const int RShiftPrecedence = FactorialPrecedence + 1;
-    const int LShiftPrecedence = RShiftPrecedence + 1;
-    const int BitwiseOrExprPrecedence = LShiftPrecedence + 1;
-
-    const int BitwiseXorExprPrecedence = BitwiseOrExprPrecedence + 1;
-
-    const int BitwiseAndExprPrecedence = BitwiseXorExprPrecedence + 1;
-
-    const int BitwiseNotExprPrecedence = BitwiseAndExprPrecedence + 1;
-    const int IncrementExprPrecedence = BitwiseNotExprPrecedence + 1;
-    const int DecrementExprPrecedence = IncrementExprPrecedence;
-    #endregion
-
     [Postfix((int)TokenType.Factorial, Associativity.Left, FactorialPrecedence)]
     public NodeType Factorial(NodeType Left, LyToken Op)
     {
         if (Left is FactorialExpressionNode Factorial)
-        {
-            Factorial.FactorialSymbols.Add(new(FromToken(Op)));
-        }
-        return new FactorialExpressionNode(TryCast<IExpressionNode>(Left), [new(FromToken(Op))]);
+            Factorial.FactorialSymbols.Add(new FactorialSymbolNode(FromToken(Op)));
+        return new FactorialExpressionNode(TryCast<IExpressionNode>(Left), [new FactorialSymbolNode(FromToken(Op))]);
     }
+
     [Prefix((int)TokenType.LogicalNot, Associativity.Right, NotExprPrecedence)]
     [Prefix((int)TokenType.BitwiseNegation, Associativity.Right, BitwiseNotExprPrecedence)]
     [Prefix((int)TokenType.Subtraction, Associativity.Right, NegationPrecedence)]
-    public NodeType Prefix(LyToken Op, NodeType Right) => new UnaryExpressionNode(FromToken(Op), TryCast<IExpressionNode>(Right));
+    public NodeType Prefix(LyToken Op, NodeType Right)
+    {
+        return new UnaryExpressionNode(FromToken(Op), TryCast<IExpressionNode>(Right));
+    }
+
     [Infix((int)TokenType.Equals, Associativity.Right, AssignmentExprPrecedence)]
     [Infix((int)TokenType.LogicalOr, Associativity.Left, OrExprPrecedence)]
     [Infix((int)TokenType.LogicalXor, Associativity.Left, XorExprPrecedence)]
@@ -117,6 +43,7 @@ public partial class SmallLangParser
     {
         return new BinaryExpressionNode(FromToken(Op), TryCast<IExpressionNode>(left), TryCast<IExpressionNode>(right));
     }
+
     [Infix((int)TokenType.PlusEquals, Associativity.Right, PlusEqualsExprPrecedence)]
     [Infix((int)TokenType.MinusEquals, Associativity.Right, MinusEqualsExprPrecedence)]
     [Infix((int)TokenType.MultiplicationEquals, Associativity.Right, MultiplicationEqualsExprPrecedence)]
@@ -166,8 +93,8 @@ public partial class SmallLangParser
                 NewType = TokenType.BitwiseRightShift; break;
             default:
                 throw new Exception("Unexpected");
-
         }
+
         return new BinaryExpressionNode(
             IToken.NewToken(TokenType.Equals, "Autogenerated equals", Op.Position.Index, Line: Op.Position.Line),
             TryCast<IExpressionNode>(left),
@@ -175,14 +102,15 @@ public partial class SmallLangParser
                 IToken.NewToken(NewType, "InsertedOp", Op.Position.Index, Line: Op.Position.Line),
                 TryCast<IExpressionNode>(left),
                 TryCast<IExpressionNode>(right)
-        ));
+            ));
     }
+
     [Prefix((int)TokenType.Increment, Associativity.Left, IncrementExprPrecedence)]
     [Prefix((int)TokenType.Decrement, Associativity.Right, DecrementExprPrecedence)]
     public NodeType PreCrementOp(LyToken left, NodeType right)
     {
         var RExp = TryCast<IExpressionNode>(right);
-        TokenType newToken = left.TokenID switch
+        var newToken = left.TokenID switch
         {
             TokenType.Increment => TokenType.Addition,
             TokenType.Decrement => TokenType.Subtraction,
@@ -190,7 +118,8 @@ public partial class SmallLangParser
         };
         return new BinaryExpressionNode
         (
-            IToken.NewToken(TokenType.Equals, "InsertedPostcrement", left.Position.Index, Line: left.Position.Line), RExp,
+            IToken.NewToken(TokenType.Equals, "InsertedPostcrement", left.Position.Index, Line: left.Position.Line),
+            RExp,
             new BinaryExpressionNode
             (
                 IToken.NewToken(newToken, "InsertedPostcrement", left.Position.Index, Line: left.Position.Line),
@@ -198,4 +127,84 @@ public partial class SmallLangParser
                 new PrimaryNode(IToken.NewToken(TokenType.Number, "1", left.Position.Index, Line: left.Position.Line))
             ));
     }
+
+    #region ComparisonExpressions
+
+    private const int EqualToPrecedence = PlusEqualsExprPrecedence + 1;
+    private const int NotEqualToPrecedence = EqualToPrecedence;
+    private const int GreaterThanPrecedence = NotEqualToPrecedence;
+    private const int LessThanPrecedence = GreaterThanPrecedence;
+    private const int GreaterThanOrEqualToPrecedence = LessThanPrecedence;
+    private const int LessThanOrEqualToPrecedence = GreaterThanOrEqualToPrecedence;
+
+    [Infix((int)TokenType.EqualTo, Associativity.Right, EqualToPrecedence)]
+    [Infix((int)TokenType.NotEqualTo, Associativity.Right, NotEqualToPrecedence)]
+    [Infix((int)TokenType.GreaterThan, Associativity.Right, GreaterThanPrecedence)]
+    [Infix((int)TokenType.LessThan, Associativity.Right, LessThanPrecedence)]
+    [Infix((int)TokenType.GreaterThanOrEqualTo, Associativity.Right, GreaterThanOrEqualToPrecedence)]
+    [Infix((int)TokenType.LessThanOrEqualTo, Associativity.Right, LessThanOrEqualToPrecedence)]
+    public NodeType ComparisonExpressions(NodeType Left, LyToken Operator, NodeType Right)
+    {
+        var OpToken = FromToken(Operator);
+
+        var Expr = TryCast<IExpressionNode>(Left);
+
+        if (Right is ComparisonExpressionNode RC)
+            return new ComparisonExpressionNode(Expr, [
+                new OperatorExpressionPairNode(OpToken, RC.Expression),
+                ..RC.OperatorExpressionPairs
+            ]);
+
+        return new ComparisonExpressionNode(Expr,
+            [new OperatorExpressionPairNode(OpToken, TryCast<IExpressionNode>(Right))]);
+    }
+
+    #endregion
+
+    #region OtherExpressions
+
+    private const int AssignmentExprPrecedence = 1;
+    private const int ImpliesExprPrecedence = AssignmentExprPrecedence + 1;
+    private const int OrExprPrecedence = ImpliesExprPrecedence + 1;
+
+    private const int XorExprPrecedence = OrExprPrecedence + 1;
+
+    private const int AndExprPrecedence = XorExprPrecedence + 1;
+
+    private const int NotExprPrecedence = AndExprPrecedence + 1;
+    private const int PlusEqualsExprPrecedence = NotExprPrecedence + 1;
+    private const int MinusEqualsExprPrecedence = PlusEqualsExprPrecedence;
+    private const int MultiplicationEqualsExprPrecedence = MinusEqualsExprPrecedence;
+    private const int DivisionEqualsExprPrecedence = MultiplicationEqualsExprPrecedence;
+    private const int BitwiseAndEqualsPrecedence = DivisionEqualsExprPrecedence;
+    private const int BitwiseOrEqualsPrecedence = BitwiseAndEqualsPrecedence;
+    private const int BitwiseXorEqualsPrecedence = BitwiseOrEqualsPrecedence;
+    private const int BitwiseNotEqualsPrecedence = BitwiseXorEqualsPrecedence;
+
+    private const int BitwiseLeftShiftEqualsPrecedence = BitwiseNotEqualsPrecedence;
+    private const int BitwiseRightShiftEqualsPrecedence = BitwiseLeftShiftEqualsPrecedence;
+    private const int AdditionPrecedence = EqualToPrecedence + 1;
+    private const int SubtractionPrecedence = AdditionPrecedence;
+
+    private const int MultiplicationPrecedence = SubtractionPrecedence + 1;
+    private const int DivisionPrecedence = MultiplicationPrecedence;
+
+    private const int PowerPrecedence = DivisionPrecedence + 1;
+
+    private const int NegationPrecedence = PowerPrecedence + 1;
+
+    private const int FactorialPrecedence = NegationPrecedence + 1;
+    private const int RShiftPrecedence = FactorialPrecedence + 1;
+    private const int LShiftPrecedence = RShiftPrecedence + 1;
+    private const int BitwiseOrExprPrecedence = LShiftPrecedence + 1;
+
+    private const int BitwiseXorExprPrecedence = BitwiseOrExprPrecedence + 1;
+
+    private const int BitwiseAndExprPrecedence = BitwiseXorExprPrecedence + 1;
+
+    private const int BitwiseNotExprPrecedence = BitwiseAndExprPrecedence + 1;
+    private const int IncrementExprPrecedence = BitwiseNotExprPrecedence + 1;
+    private const int DecrementExprPrecedence = IncrementExprPrecedence;
+
+    #endregion
 }

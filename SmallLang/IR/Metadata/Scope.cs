@@ -1,15 +1,16 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Common.Metadata;
 
 namespace SmallLang.IR.Metadata;
 
-using Common.Dispatchers;
-using Common.Metadata;
-using FunctionID = Common.Metadata.FunctionID<BackingNumberType>;
-using FunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, GenericSmallLangType>;
+using FunctionID = FunctionID<BackingNumberType>;
+using FunctionSignature = FunctionSignature<BackingNumberType, GenericSmallLangType>;
 
 public sealed class Scope : IEquatable<Scope>
 {
+    private readonly int ScopeID;
+
     public Scope(Scope? Parent)
     {
         this.Parent = Parent;
@@ -17,22 +18,27 @@ public sealed class Scope : IEquatable<Scope>
 
         NamesDefinedInThisScope = new HashSet<string>();
         FunctionsDefinedInThisScope = new Functions();
-        TypeNameCombinationsDefinedInThisScope = new();
+        TypeNameCombinationsDefinedInThisScope = new Dictionary<VariableName, GenericSmallLangType>();
         ScopeID = ++UsedScopeIDs;
-        foreach (var Function in Functions.StdLibFunctions)
-        {
-            DefineFunction(Function);
-        }
-
-
+        foreach (var Function in Functions.StdLibFunctions) DefineFunction(Function);
     }
 
-    private static int UsedScopeIDs { get; set; } = 0;
-    private readonly int ScopeID;
+    private static int UsedScopeIDs { get; set; }
     private string ScopeName => Parent is null ? "Global" : ScopeID.ToString();
     public string FullScopeName => Parent is not null ? $"{Parent.FullScopeName}.{ScopeName}" : ScopeName;
     public Scope? Parent { get; }
     public HashSet<string> NamesDefinedInThisScope { get; }
+
+    private Functions FunctionsDefinedInThisScope { get; }
+
+    private Dictionary<VariableName, GenericSmallLangType> TypeNameCombinationsDefinedInThisScope { get; } = [];
+
+    public bool Equals(Scope? other)
+    {
+        return other is not null && Parent == other.Parent &&
+               NamesDefinedInThisScope.Intersect(other.NamesDefinedInThisScope).Count() ==
+               NamesDefinedInThisScope.Count;
+    }
 
     public VariableName GetName(string name)
     {
@@ -42,12 +48,19 @@ public sealed class Scope : IEquatable<Scope>
     public VariableName SearchName(string name)
     {
         if (IsDefinedLocally(name)) return GetName(name);
-        else if (Parent is not null) return Parent.SearchName(name);
-        else throw new ArgumentOutOfRangeException($"{name} was not defined");
+        if (Parent is not null) return Parent.SearchName(name);
+        throw new ArgumentOutOfRangeException($"{name} was not defined");
     }
 
-    public bool IsDefined(string name) => IsDefinedLocally(name) || (Parent is not null && Parent.IsDefined(name));
-    public bool IsDefinedLocally(string name) => NamesDefinedInThisScope.Contains(name);
+    public bool IsDefined(string name)
+    {
+        return IsDefinedLocally(name) || (Parent is not null && Parent.IsDefined(name));
+    }
+
+    public bool IsDefinedLocally(string name)
+    {
+        return NamesDefinedInThisScope.Contains(name);
+    }
 
     public VariableName DefineName(string name)
     {
@@ -66,15 +79,10 @@ public sealed class Scope : IEquatable<Scope>
     {
         return !(@this == other);
     }
+
     public override bool Equals(object? obj)
     {
         return Equals(obj as Scope);
-    }
-    public bool Equals(Scope? other)
-    {
-        return other is not null && Parent == other.Parent &&
-               NamesDefinedInThisScope.Intersect(other.NamesDefinedInThisScope).Count() ==
-               NamesDefinedInThisScope.Count;
     }
 
     public override int GetHashCode()
@@ -86,10 +94,10 @@ public sealed class Scope : IEquatable<Scope>
                 FunctionsDefinedInThisScope.GetHashCode());
     }
 
-    private Functions FunctionsDefinedInThisScope { get; }
-
-    private bool FunctionIsDefinedInThisScope(string name) =>
-        FunctionsDefinedInThisScope.RegisteredFunctions.Any(x => x.Name == name);
+    private bool FunctionIsDefinedInThisScope(string name)
+    {
+        return FunctionsDefinedInThisScope.RegisteredFunctions.Any(x => x.Name == name);
+    }
 
     public bool FunctionIsDefined(string name)
     {
@@ -101,32 +109,28 @@ public sealed class Scope : IEquatable<Scope>
         DefineName(functionSignature.Name);
         FunctionsDefinedInThisScope.RegisterFunction(functionSignature);
 
-        DefineTypeOfName(GetName(functionSignature.Name), new(TypeData.Void));
+        DefineTypeOfName(GetName(functionSignature.Name), new GenericSmallLangType(TypeData.Void));
     }
 
     public FunctionSignature GetSignature(string name)
     {
-        if (FunctionIsDefinedInThisScope(name))
-        {
-            return FunctionsDefinedInThisScope.GetSignature(name);
-        }
-        else
-        {
-            if (Parent is null)
-                throw new ArgumentException(
-                    $"Could not find function defined in the current or enclosing scope of name {name}");
-            else return Parent.GetSignature(name);
-        }
+        if (FunctionIsDefinedInThisScope(name)) return FunctionsDefinedInThisScope.GetSignature(name);
+
+        if (Parent is null)
+            throw new ArgumentException(
+                $"Could not find function defined in the current or enclosing scope of name {name}");
+        return Parent.GetSignature(name);
     }
 
-    public FunctionID GetID(string name) => GetSignature(name).ID;
+    public FunctionID GetID(string name)
+    {
+        return GetSignature(name).ID;
+    }
 
     public FunctionID GetIDOfConstructorFunction(GenericSmallLangType type)
     {
-        return new(0);
+        return new FunctionID(0);
     }
-
-    private Dictionary<VariableName, GenericSmallLangType> TypeNameCombinationsDefinedInThisScope { get; } = [];
 
     public void DefineTypeOfName(VariableName variableName, GenericSmallLangType Type)
     {
@@ -137,7 +141,7 @@ public sealed class Scope : IEquatable<Scope>
     public bool TryGetTypeOfVariable(VariableName variableName, [NotNullWhen(true)] out GenericSmallLangType? type)
     {
         if (TypeNameCombinationsDefinedInThisScope.TryGetValue(variableName, out type)) return true;
-        else if (Parent is null) return false;
-        else return Parent.TryGetTypeOfVariable(variableName, out type);
+        if (Parent is null) return false;
+        return Parent.TryGetTypeOfVariable(variableName, out type);
     }
 }

@@ -9,7 +9,11 @@ public abstract class Chunk<TOpcode, T> : IChunk<TOpcode, T> where T : INumber<T
 
     public Operation<TOpcode, T> this[int index] => operations[index];
 
-    Operation<TOpcode, T> IList<Operation<TOpcode, T>>.this[int index] { get => operations[index]; set => operations[index] = value; }
+    Operation<TOpcode, T> IList<Operation<TOpcode, T>>.this[int index]
+    {
+        get => operations[index];
+        set => operations[index] = value;
+    }
 
     // public IEnumerable<Operation<TOpcode, T>> Instructions => operations.Select(x => x);
 

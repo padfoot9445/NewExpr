@@ -14,7 +14,8 @@ internal class ExpectedReturnTypeVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitReturn(ISmallLangNode? Parent, ReturnNode self)
     {
-        self.ExpectedReturnType ??= ((FunctionNode)RecursiveGetParent(self, x => x is FunctionNode)).Type.TypeLiteralType;
+        self.ExpectedReturnType ??=
+            ((FunctionNode)RecursiveGetParent(self, x => x is FunctionNode)).Type.TypeLiteralType;
         return base.VisitReturn(Parent, self);
     }
 }

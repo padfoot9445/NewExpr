@@ -2,7 +2,6 @@ using System.Diagnostics;
 using Common.Dispatchers;
 using Common.LinearIR;
 using Common.Tokens;
-using sly.lexer;
 using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
@@ -10,8 +9,8 @@ using SmallLang.IR.Metadata;
 
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using ArgumentType = Common.LinearIR.NumberWrapper<int, BackingNumberType>;
-using TypeType = Common.LinearIR.NumberWrapper<byte, BackingNumberType>;
+using ArgumentType = NumberWrapper<int, BackingNumberType>;
+using TypeType = NumberWrapper<byte, BackingNumberType>;
 
 internal static class BinaryExpressionVisitor
 {
@@ -19,7 +18,7 @@ internal static class BinaryExpressionVisitor
     {
         Driver.Cast(Self.Right, Self.Left.TypeOfExpression!);
 
-        var VariableBeginning = Driver.GetRegisters(1).Single();
+        var VariableBeginning = Driver.GetRegisters().Single();
 
         Driver.Emit(HighLevelOperation.LoadFromStack(VariableBeginning, Self.Left.TypeOfExpression!.Size));
 
@@ -29,13 +28,9 @@ internal static class BinaryExpressionVisitor
                     .Size)); //push the value back on the register because this is an expression still and expressions put values on stack
 
         if (Self.Left is IndexNode IndexLeft)
-        {
             IndexAssignmentVisitor(IndexLeft, Driver, VariableBeginning, Self.Left.GenericSLType!);
-        }
         else if (Self.Left is IdentifierNode IDLeft)
-        {
             IdentifierAssignmentVisitor(IDLeft, Driver, VariableBeginning, Self.Left.GenericSLType!);
-        }
         else throw new Exception();
     }
 
@@ -81,7 +76,8 @@ internal static class BinaryExpressionVisitor
         else if (Left.Expression1.TypeOfExpression == TypeData.Dict)
         {
             var KeyType =
-                Left.Expression1.GenericSLType!.ChildNodes.First().OutmostType; //the expected Type of Expression of a in x[a]. This is correct, as validated in analyser.
+                Left.Expression1.GenericSLType!.ChildNodes.First()
+                    .OutmostType; //the expected Type of Expression of a in x[a]. This is correct, as validated in analyser.
 
             var Indexer = Driver.GetRegisters((int)KeyType!.Size).First();
 

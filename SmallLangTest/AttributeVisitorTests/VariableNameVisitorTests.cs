@@ -2,14 +2,14 @@ using Common.AST;
 using SmallLang.IR.AST;
 using SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 using SmallLang.IR.AST.Generated;
-using SmallLangTest;
 using SmallLangTest.Generated;
+
 namespace SmallLangTest.AttributeVisitorTests;
 
-[TestFixture, CancelAfter(5000)]
+[TestFixture]
+[CancelAfter(5000)]
 public class VariableNameVisitorTests
 {
-
     internal static IEnumerable<(ISmallLangNode, string)> GetTestCases()
     {
         foreach (var program in ExamplePrograms.AllPrograms)
@@ -23,20 +23,22 @@ public class VariableNameVisitorTests
         }
     }
 
-    [TestCaseSource(nameof(GetTestCases)), CancelAfter(5000)]
-    public void All_Programs__Variable_Name_Visitor__BeginVisiting__Does_Not_Throw((ISmallLangNode ast, string program) input)
+    [TestCaseSource(nameof(GetTestCases))]
+    [CancelAfter(5000)]
+    public void All_Programs__Variable_Name_Visitor__BeginVisiting__Does_Not_Throw(
+        (ISmallLangNode ast, string program) input)
     {
-
-        Assert.That(() => new VariableNameVisitor().BeginVisiting(input.ast), Throws.Nothing, message: input.program);
-
+        Assert.That(() => new VariableNameVisitor().BeginVisiting(input.ast), Throws.Nothing, input.program);
     }
-    [TestCaseSource(nameof(GetTestCases)), CancelAfter(5000)]
-    public void All_Programs__Variable_Name_Visitor__BeginVisiting__No_VariableName_Is_Null((ISmallLangNode ast, string program) input)
+
+    [TestCaseSource(nameof(GetTestCases))]
+    [CancelAfter(5000)]
+    public void All_Programs__Variable_Name_Visitor__BeginVisiting__No_VariableName_Is_Null(
+        (ISmallLangNode ast, string program) input)
     {
         new VariableNameVisitor().BeginVisiting(input.ast);
 
-        Assert.That(input.ast.Flatten().OfType<IHasAttributeVariableName>().All(x => x.VariableName is not null), Is.True, message: input.program);
-
+        Assert.That(input.ast.Flatten().OfType<IHasAttributeVariableName>().All(x => x.VariableName is not null),
+            Is.True, input.program);
     }
-
 }

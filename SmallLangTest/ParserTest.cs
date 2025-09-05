@@ -1,10 +1,5 @@
-using System.Diagnostics;
 using Common.Tokens;
-using NUnit.Framework.Constraints;
-using SmallLang;
-using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
-using SmallLang.IR.Metadata;
 using SmallLang.Parser;
 using SmallLangTest.Generated;
 
@@ -13,19 +8,30 @@ namespace SmallLangTest;
 [TestFixture]
 public class ParserTest
 {
-    private static T Parse<T>(string input) => new Parser(input).Parse<T>();
-    public static SectionNode Parse(string input) => Parse<SectionNode>(input);
+    private static T Parse<T>(string input)
+    {
+        return new Parser(input).Parse<T>();
+    }
+
+    public static SectionNode Parse(string input)
+    {
+        return Parse<SectionNode>(input);
+    }
+
     [Test]
     public void Ctor__Any_Input__Does_Not_Throw()
     {
         Assert.That(() => new Parser(""), Throws.Nothing);
     }
+
     [Test]
     public void Parse__Section__Returns_Correct()
     {
         Assert.Multiple(() =>
         {
-            var res = new Parser("frozen readonly int i = 0; Function(1, 2, 3); if(i == 2){return 1;} while(true){i =  i + 1;} return 2; break ident;").Parse<SectionNode>();
+            var res = new Parser(
+                    "frozen readonly int i = 0; Function(1, 2, 3); if(i == 2){return 1;} while(true){i =  i + 1;} return 2; break ident;")
+                .Parse<SectionNode>();
 
             //var res = new Parser("1").Parse();
             Assert.That(res, Is.InstanceOf<SectionNode>());
@@ -38,10 +44,13 @@ public class ParserTest
             Assert.That(res.Statements[5], Is.InstanceOf<LoopCTRLNode>());
         });
     }
+
     public static IEnumerable<TestCaseData> GetInfixOperators()
     {
-        return new string[] { "+", "-", "*", "/", "**", "or", "xor", "and", "&", "|", "^", "<<", ">>" }.Select(x => new TestCaseData(x));
+        return new[] { "+", "-", "*", "/", "**", "or", "xor", "and", "&", "|", "^", "<<", ">>" }.Select(x =>
+            new TestCaseData(x));
     }
+
     [TestCaseSource(nameof(GetInfixOperators))]
     public void Parse__Expressions__Returns_Correct(string Operator)
     {
@@ -59,11 +68,13 @@ public class ParserTest
             Assert.That(res.Right, Is.InstanceOf<PrimaryNode>());
         });
     }
+
     public static IEnumerable<TestCaseData> GetComparisonOperator()
     {
-        return new string[] { "==", "!=", "<", "<=", ">=", ">" }.Select(x => new TestCaseData(x));
+        return new[] { "==", "!=", "<", "<=", ">=", ">" }.Select(x => new TestCaseData(x));
     }
-    void AssertOpExprPair<T>(OperatorExpressionPairNode res, string OpLexeme, TokenType OpTT)
+
+    private void AssertOpExprPair<T>(OperatorExpressionPairNode res, string OpLexeme, TokenType OpTT)
     {
         Assert.Multiple(() =>
         {
@@ -73,10 +84,12 @@ public class ParserTest
             Assert.That(res.Data.Lexeme, Is.EqualTo(OpLexeme));
         });
     }
+
     [Test]
     public void Parse__Comparisons__Returns_Correct()
     {
-        var res1 = new Parser("1 == x != (int i = 0) < Func(1,2, 3) <= 1 + 2 ** 3 >= Array[8 + 7] > Final;").Parse<SectionNode>();
+        var res1 = new Parser("1 == x != (int i = 0) < Func(1,2, 3) <= 1 + 2 ** 3 >= Array[8 + 7] > Final;")
+            .Parse<SectionNode>();
         Assert.Multiple(() =>
         {
             var _res = res1.Statements[0];
@@ -98,6 +111,7 @@ public class ParserTest
             AssertOpExprPair<IdentifierNode>(res.OperatorExpressionPairs[5], ">", TokenType.GreaterThan);
         });
     }
+
     [Test]
     public void Parse__Return_Statement__Returns_Correct()
     {
@@ -109,6 +123,7 @@ public class ParserTest
 
         Assert.That(res!.Expression, Is.InstanceOf<BinaryExpressionNode>());
     }
+
     [TestCase("break", TokenType.Break)]
     [TestCase("continue", TokenType.Continue)]
     public void Parse__LCTRLStatements__Returns_Correct(string i, TokenType e)
@@ -121,34 +136,40 @@ public class ParserTest
         Assert.That(res2.Data!.TT, Is.EqualTo(e));
         Assert.That(res2.Identifier, Is.InstanceOf<IdentifierNode>());
     }
+
     [Test]
     public void Parse__For_Loop__Returns_Correct()
     {
-        var res = Parse($"for (int i = 0; i < Func(); i = i + 1) as Label \n{{\t j = j + 1; \n\t DoSomething(i, j);\n}} else \n{{\n\tDoElse();}}").Statements.Single() as ForNode;
+        var res = Parse(
+                "for (int i = 0; i < Func(); i = i + 1) as Label \n{\t j = j + 1; \n\t DoSomething(i, j);\n} else \n{\n\tDoElse();}")
+            .Statements.Single() as ForNode;
         Assert.That(res, Is.InstanceOf<ForNode>());
         Assert.That(res.InitializingExpression, Is.InstanceOf<DeclarationNode>());
         Assert.That(res.ConditionExpression, Is.InstanceOf<ComparisonExpressionNode>());
         Assert.That(res.PostLoopExpression, Is.InstanceOf<BinaryExpressionNode>());
         Assert.That(res.LoopLabel, Is.InstanceOf<LoopLabelNode>());
         Assert.That(res.LoopBody, Is.InstanceOf<SectionNode>());
-        Assert.That(((SectionNode)res.LoopBody).Statements[0], Is.InstanceOf<BinaryExpressionNode>());
+        Assert.That(res.LoopBody.Statements[0], Is.InstanceOf<BinaryExpressionNode>());
         Assert.That(((SectionNode)res.LoopBody).Statements[1], Is.InstanceOf<FunctionCallNode>());
 
         Assert.That(res.Else, Is.Not.Null);
         Assert.That(res.Else!.Section, Is.InstanceOf<SectionNode>());
         Assert.That(((SectionNode)res.Else.Section).Statements[0], Is.InstanceOf<FunctionCallNode>());
     }
+
     [Test]
     public void Parse__While_Loop__Returns_Correct()
     {
-        var res = Parse($"while (Func()) {{\n\t j = j + 1;\n\t DoSomething(i, j);\n}} else {{}}").Statements.Single() as WhileNode;
+        var res =
+            Parse("while (Func()) {\n\t j = j + 1;\n\t DoSomething(i, j);\n} else {}").Statements.Single() as WhileNode;
         Assert.That(res, Is.InstanceOf<WhileNode>());
         Assert.That(res.ConditionExpression, Is.InstanceOf<FunctionCallNode>());
         Assert.That(res.LoopBody, Is.InstanceOf<SectionNode>());
-        var LoopBody = res.LoopBody as SectionNode;
+        var LoopBody = res.LoopBody;
         Assert.That(LoopBody.Statements[0], Is.InstanceOf<BinaryExpressionNode>());
         Assert.That(LoopBody.Statements[1], Is.InstanceOf<FunctionCallNode>());
     }
+
     [TestCase("for (int i = 0; i < 1; i = i + 1){}", false, false)]
     [TestCase("for (int i = 0; i < 1; i = i + 1) as Label{}", true, false)]
     [TestCase("for (int i = 0; i < 1; i = i + 1){} else {}", false, true)]
@@ -169,7 +190,6 @@ public class ParserTest
         }
         else if (res is WhileNode While)
         {
-
             Assert.That(While.LoopLabel == null, Is.EqualTo(!LabelExists));
             Assert.That(While.Else == null, Is.EqualTo(!ElseExists));
         }
@@ -178,6 +198,7 @@ public class ParserTest
             Assert.Fail();
         }
     }
+
     [TestCase("+=", TokenType.Addition)]
     [TestCase("-=", TokenType.Subtraction)]
     [TestCase("*=", TokenType.Multiplication)]
@@ -202,6 +223,7 @@ public class ParserTest
         Assert.That(((PrimaryNode)add.Right).Data!.TT, Is.EqualTo(TokenType.Number));
         Assert.That(add.Data!.TT, Is.EqualTo(expected));
     }
+
     [TestCase("++", TokenType.Addition)]
     [TestCase("--", TokenType.Subtraction)]
     public void Parse__Precrement_Assignment_Operators__Returns_Correct(string i, TokenType expected)
@@ -218,6 +240,7 @@ public class ParserTest
         Assert.That(((PrimaryNode)add.Right).Data!.Lexeme, Is.EqualTo("1"));
         Assert.That(add.Data!.TT, Is.EqualTo(expected));
     }
+
     [Test]
     public void Parse__If__Returns_Correct()
     {
@@ -228,10 +251,11 @@ public class ParserTest
         Assert.That(res.ExprStatementCombineds[1].Expression, Is.InstanceOf<ComparisonExpressionNode>());
         Assert.That(res.ExprStatementCombineds[0].Expression, Is.InstanceOf<IdentifierNode>());
     }
+
     [Test]
     public void Parse__Switch__Returns_Correct()
     {
-        string i = @"
+        var i = @"
         switch (FunctionCall())
         {
             1: DoOne();
@@ -247,10 +271,11 @@ public class ParserTest
         Assert.That(res.ExprStatementCombineds[0].Section.Statements[0], Is.InstanceOf<FunctionCallNode>());
         //if does not throw, good enough tbh
     }
+
     [Test]
     public void Test__Function_Definition__Does_Not_Throw()
     {
-        string i = @"
+        var i = @"
         collection<[list<[int]>, number]> Transform(copy ref immut readonly frozen number x, 
         int y, frozen readonly 
         immut int z)
@@ -293,9 +318,6 @@ public class ParserTest
     [Test]
     public void Test__Parse_AllPrograms__Does_Not_Throw()
     {
-        foreach (string Program in ExamplePrograms.AllPrograms)
-        {
-            Assert.That(() => Parse(Program), Throws.Nothing, message: Program);
-        }
+        foreach (var Program in ExamplePrograms.AllPrograms) Assert.That(() => Parse(Program), Throws.Nothing, Program);
     }
 }

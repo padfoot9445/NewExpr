@@ -2,8 +2,10 @@ using System.Numerics;
 
 namespace Common.LinearIR;
 
-public record class Operation<TOpCode, TBacking>(IOpActual<TBacking, TOpCode> Op, params IOperationArgument<TBacking>[] Operands)
-where TBacking : INumber<TBacking>
+public record class Operation<TOpCode, TBacking>(
+    IOpActual<TBacking, TOpCode> Op,
+    params IOperationArgument<TBacking>[] Operands)
+    where TBacking : INumber<TBacking>
 {
     public override string ToString()
     {

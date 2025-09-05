@@ -10,8 +10,6 @@ public class FrontendCodegenTest
     public void Compile_All_Programs__Does_Not_Throw()
     {
         foreach (var Program in ExamplePrograms.AllPrograms)
-        {
-            Assert.That(() => HighToLowLevelCompilerDriver.Compile(Program), Throws.Nothing, message: Program);
-        }
+            Assert.That(() => HighToLowLevelCompilerDriver.Compile(Program), Throws.Nothing, Program);
     }
 }

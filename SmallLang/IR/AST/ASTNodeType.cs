@@ -2,7 +2,6 @@ namespace SmallLang.IR.AST;
 
 public enum ASTNodeType
 {
-
     ArgListLabel, //data: IDENTIFIER
     Type, //unused, passthrough
     Loop, //unused, passthrough
@@ -51,5 +50,5 @@ public enum ASTNodeType
     FunctionCall, //data: null | ".", children: [Expression, ArgList] | [Expression] where Expression1 i
     ArgList, //data: null, children: [ArgListElement+]
     ArgListElement, //data: null, children: [Expression] | [ArgListLabel, Expression]
-    TypeCSV, //data: null, children: [Type+]
+    TypeCSV //data: null, children: [Type+]
 }

@@ -650,7 +650,7 @@ classes:
         - "Equals"
         has additional data validation function: no
         data validation function: no
-        attributes: [*TypeOfExpression]
+        attributes: [*TypeOfExpression, *GenericSmallLangType]
       
       - name: *FactorialSymbol
         children: []

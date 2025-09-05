@@ -9,7 +9,9 @@ public abstract class Scanner : IScanner
     protected int Current;
     protected int Start;
 
-    public Scanner(string input)
+#pragma warning disable IDE0290 // Use primary constructor
+    protected Scanner(string input)
+#pragma warning restore IDE0290 // Use primary constructor
     {
         this.input = input.Trim();
     }

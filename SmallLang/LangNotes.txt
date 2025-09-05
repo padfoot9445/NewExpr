@@ -3,6 +3,8 @@ must remember to typecheck in attribute evaluator
 must remember to handle closures, although currently we might well just not support
 optimise registers later. 
 
+TODO: all attribute interfaces inherit from IHasAttribute<T> { public T? Attribute { get; }} and provide default implementation
+
 !Obselete Make sure that the option to specify which register to load to is only used when we know for a fact there's enough space at that register-hole
 
 allow everything to be implicit casted to bool I reckon

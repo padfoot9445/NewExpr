@@ -81,8 +81,7 @@ internal static class BinaryExpressionVisitor
         else if (Left.Expression1.TypeOfExpression == TypeData.Dict)
         {
             var KeyType =
-                Left.Expression2
-                    .ExpectedTypeOfExpression; //the expected Type of Expression of a in x[a]. This is correct, as validated in analyser.
+                Left.Expression1.GenericSLType!.ChildNodes.First().OutmostType; //the expected Type of Expression of a in x[a]. This is correct, as validated in analyser.
 
             var Indexer = Driver.GetRegisters((int)KeyType!.Size).First();
 
@@ -90,7 +89,7 @@ internal static class BinaryExpressionVisitor
             Driver.Emit(HighLevelOperation.LoadFromStack(Indexer, KeyType.Size));
 
             Driver.Emit(HighLevelOperation.LoadHashMap<int, int, int, byte, byte>(Indexer, Pointer, VariableBeginning,
-                Left.Expression2.ExpectedTypeOfExpression!, RightType));
+                KeyType, RightType));
         }
     }
 

@@ -12,7 +12,6 @@ internal static class IndexVisitor
     internal static void Visit(IndexNode Self, CodeGenerator Driver)
     {
         Debug.Assert(Self.Expression1.TypeOfExpression is not null);
-        Debug.Assert(Self.Expression2.ExpectedTypeOfExpression is not null);
         Debug.Assert(Self.TypeOfExpression is not null);
 
         Driver.EnteringChunk(() =>
@@ -20,16 +19,19 @@ internal static class IndexVisitor
             var StructRegister = Driver.GetRegisters(Self.Expression1.TypeOfExpression).First();
             Driver.Exec(Self.Expression1);
             Driver.Emit(HighLevelOperation.PushFromRegister(StructRegister, Self.Expression1.TypeOfExpression.Size));
+            var ExpectedTypeOfExpressionOfSecondExpression = Self.Expression1.TypeOfExpression == TypeData.Dict
+                ? Self.Expression1.GenericSLType!.ChildNodes.First().OutmostType
+                : TypeData.Int;
 
-            var IndexerRegister = Driver.GetRegisters(Self.Expression2.ExpectedTypeOfExpression).First();
-            Driver.Cast(Self.Expression2, Self.Expression2.ExpectedTypeOfExpression);
-            Driver.Emit(HighLevelOperation.PushFromRegister(IndexerRegister, Self.Expression2.ExpectedTypeOfExpression.Size));
+            var IndexerRegister = Driver.GetRegisters(ExpectedTypeOfExpressionOfSecondExpression).First();
+            Driver.Cast(Self.Expression2, ExpectedTypeOfExpressionOfSecondExpression);
+            Driver.Emit(HighLevelOperation.PushFromRegister(IndexerRegister, ExpectedTypeOfExpressionOfSecondExpression.Size));
 
             var DstRegister = Driver.GetRegisters(Self).First();
 
             if (Self.TypeOfExpression == TypeData.Dict)
             {
-                Driver.Emit(HighLevelOperation.QueryHashMap<int, int, int, byte, byte>(IndexerRegister, StructRegister, DstRegister, Self.Expression2.ExpectedTypeOfExpression, Self.TypeOfExpression));
+                Driver.Emit(HighLevelOperation.QueryHashMap<int, int, int, byte, byte>(IndexerRegister, StructRegister, DstRegister, ExpectedTypeOfExpressionOfSecondExpression, Self.TypeOfExpression));
             }
             else
             {

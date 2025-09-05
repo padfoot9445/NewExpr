@@ -26,7 +26,7 @@ internal static class FunctionCallVisitor
     {
         foreach (var i in ArgList)
         {
-            Driver.Cast(i.Expression, i.Expression.ExpectedTypeOfExpression!); //no need to load into register because we want it on the stack
+            Driver.Cast(i.Expression, i.ExpectedTypeOfExpression!); //no need to load into register because we want it on the stack
         }
 
 

@@ -1,26 +1,26 @@
-list<[int]> BubbleSort(copy list<[int]> Input)
+list<[int]> BubbleSort(copy list<[int]> _Input)
 {
-    while(not IsSorted(Input))
+    while(not IsSorted(_Input))
     {
-        for(int i = 0; i < GetLength(Input) / 2; ++i)
+        for(int i = 0; i < GetLength(_Input) / 2; ++i)
         {
             int TmpVar;
-            if(Input[i * 2] > Input[i * 2 + 1])
+            if(_Input[i * 2] > _Input[i * 2 + 1])
             {
-                TmpVar = Input[i * 2];
-                Input[i * 2] = Input[i * 2 + 1];
-                Input[i * 2 + 1] = TmpVar;
+                TmpVar = _Input[i * 2];
+                _Input[i * 2] = _Input[i * 2 + 1];
+                _Input[i * 2 + 1] = TmpVar;
             }
         }
     }
 }
 
-bool IsSorted(list<[int]> Input)
+bool IsSorted(list<[int]> _Input)
 {
     bool OutValue = true;
-    for(int i = 0; i < GetLength(Input) - 1; ++i)
+    for(int i = 0; i < GetLength(_Input) - 1; ++i)
     {
-        OutValue = OutValue and Input[i] <= Input[i + 1];
+        OutValue = OutValue and _Input[i] <= _Input[i + 1];
     }
     return OutValue;
 }

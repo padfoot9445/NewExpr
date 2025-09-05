@@ -6,6 +6,7 @@ namespace SmallLang.Drivers;
 
 public class HighToLowLevelCompilerDriver
 {
+    protected HighToLowLevelCompilerDriver() { }
     public static Data Compile(string Code, Func<SmallLangNode, CodeGenerator>? GetCodeGenerator = null)
     {
         GetCodeGenerator ??= x => new CodeGenerator(x);

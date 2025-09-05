@@ -1,8 +1,8 @@
-list<[int]> SquareNumbers(immut list<[int]> Input)
+list<[int]> SquareNumbers(immut list<[int]> _Input)
 {
-    list<[int]> OutputList = new list<[int]>(Size: GetLength(Input));
-    for(int i = 0; i < GetLength(Input); ++i)
+    list<[int]> OutputList = new list<[int]>(Size: GetLength(_Input));
+    for(int i = 0; i < GetLength(_Input); ++i)
     {
-        OutputList[i] = Input[i] ** 2;
+        OutputList[i] = _Input[i] ** 2;
     }
 }

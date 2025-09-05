@@ -113,7 +113,7 @@ marker interfaces:
       parents:
       - *ISmallLangNode
       - *Statement
-      attributes: &ExpressionAttrs [*TypeOfExpression, *ExpectedTypeOfExpression, *GenericSmallLangType]
+      attributes: &ExpressionAttrs [*TypeOfExpression, *GenericSmallLangType]
     - name: &Type IType
       parents:
       - *ISmallLangNode

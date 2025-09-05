@@ -20,51 +20,9 @@ public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode
     public SmallLangType OutmostType { get; init; }
     public bool IsLeafNode => ChildNodes.Any() is false;
 
-    public uint BaseValue
-    {
-        get => OutmostType.BaseValue;
-        init => _ = value;
-    }
-
-    public string Name
-    {
-        get => OutmostType.Name;
-        init => _ = value;
-    }
-
-    public bool IsRefType
-    {
-        get => OutmostType.IsRefType;
-        init => _ = value;
-    }
-
     public uint Size
     {
         get => OutmostType.Size;
-        init => _ = value;
-    }
-
-    public bool IsNum
-    {
-        get => OutmostType.IsNum;
-        init => _ = value;
-    }
-
-    public NumberType NumberType
-    {
-        get => OutmostType.NumberType;
-        init => _ = value;
-    }
-
-    public bool IsCollection
-    {
-        get => OutmostType.IsCollection;
-        init => _ = value;
-    }
-
-    public int? ValMaxSize
-    {
-        get => OutmostType.ValMaxSize;
         init => _ = value;
     }
 

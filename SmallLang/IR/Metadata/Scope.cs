@@ -17,13 +17,14 @@ public record Scope
 
         NamesDefinedInThisScope = new HashSet<string>();
         FunctionsDefinedInThisScope = new Functions();
+        TypeNameCombinationsDefinedInThisScope = new();
+        ScopeID = ++UsedScopeIDs;
         foreach (var Function in Functions.StdLibFunctions)
         {
             DefineFunction(Function);
         }
 
 
-        ScopeID = ++UsedScopeIDs;
     }
 
     private static int UsedScopeIDs { get; set; } = 0;
@@ -117,6 +118,7 @@ public record Scope
 
     public void DefineTypeOfName(VariableName variableName, GenericSmallLangType Type)
     {
+        Debug.Assert(variableName is not null);
         TypeNameCombinationsDefinedInThisScope[variableName] = Type;
     }
 

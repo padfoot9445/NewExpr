@@ -1,6 +1,5 @@
 using Common.Dispatchers;
 using Common.Tokens;
-using JetBrains.Annotations;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFunctions;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;

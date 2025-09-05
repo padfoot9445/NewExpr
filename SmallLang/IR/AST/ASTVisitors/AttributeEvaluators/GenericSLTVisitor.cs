@@ -37,17 +37,11 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitIdentifier(ISmallLangNode? Parent, IdentifierNode self)
     {
-        if (Parent is LoopLabelNode or LoopCTRLNode)
-        {
-            self.GenericSLType = new(TypeData.Void);
-        }
-        else
-        {
-            NotNull(self.VariableName, self.Scope);
-            self.Scope.TryGetTypeOfVariable(self.VariableName, out var VarType);
+        NotNull(self.VariableName, self.Scope);
+        self.Scope.TryGetTypeOfVariable(self.VariableName, out var VarType);
 
-            self.GenericSLType ??= VarType;
-        }
+        self.GenericSLType ??= VarType;
+
         return base.VisitIdentifier(Parent, self);
     }
 
@@ -149,5 +143,58 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
     {
         self.GenericSLType = self.Expression.GenericSLType;
         return base.VisitUnaryExpression(Parent, self);
+    }
+
+    protected override ISmallLangNode VisitLoopCTRL(ISmallLangNode? Parent, LoopCTRLNode self)
+    {
+
+        if (self.Identifier is not null)
+        {
+            NotNull(self.Scope, self.Identifier?.VariableName);
+            self.Scope.DefineTypeOfName(self.Identifier.VariableName, new(TypeData.Void));
+
+        }
+        return base.VisitLoopCTRL(Parent, self);
+    }
+
+    protected override ISmallLangNode VisitLoopLabel(ISmallLangNode? Parent, LoopLabelNode self)
+    {
+        if (self.Identifier is not null)
+        {
+            NotNull(self.Scope, self.Identifier?.VariableName);
+            self.Scope.DefineTypeOfName(self.Identifier.VariableName, new(TypeData.Void));
+        }
+
+        return base.VisitLoopLabel(Parent, self);
+    }
+
+    protected override ISmallLangNode VisitFunction(ISmallLangNode? Parent, FunctionNode self)
+    {
+        NotNull(self.Scope, self.FunctionName.VariableName);
+
+        self.Scope.DefineTypeOfName(self.FunctionName.VariableName, new(TypeData.Void));
+
+        foreach (var node in self.TypeAndIdentifierCSV)
+        {
+            self.FunctionBody.Scope!.DefineTypeOfName(node.Identifier.VariableName!, node.Type.TypeLiteralType!);
+        }
+        return base.VisitFunction(Parent, self);
+    }
+
+    protected override ISmallLangNode VisitTypeAndIdentifierCSVElement(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self)
+    {
+
+        self.Identifier.GenericSLType = self.Type.TypeLiteralType;
+        return base.VisitTypeAndIdentifierCSVElement(Parent, self);
+    }
+
+    protected override ISmallLangNode VisitArgListElement(ISmallLangNode? Parent, ArgListElementNode self)
+    {
+        if (self.Identifier is not null)
+        {
+            self.Identifier.GenericSLType = new(TypeData.Void);
+        }
+
+        return base.VisitArgListElement(Parent, self);
     }
 }

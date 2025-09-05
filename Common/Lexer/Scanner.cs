@@ -113,6 +113,7 @@ public abstract class Scanner : IScanner
             }
             else if (IsNum(input[Current]))
             {
+                //do nothing
             }
             else
             {

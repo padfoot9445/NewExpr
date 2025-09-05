@@ -1,5 +1,7 @@
 namespace Common.Dispatchers;
 
+using JetBrains.Annotations;
+[PublicAPI]
 public static class ObjectDispatchers
 {
     private static IEnumerable

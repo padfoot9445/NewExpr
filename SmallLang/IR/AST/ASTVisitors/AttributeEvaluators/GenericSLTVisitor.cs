@@ -197,4 +197,9 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
 
         return base.VisitArgListElement(Parent, self);
     }
+    protected override ISmallLangNode VisitAssignmentPrime(ISmallLangNode? Parent, AssignmentPrimeNode self)
+    {
+        self.GenericSLType = self.Expression.GenericSLType;
+        return base.VisitAssignmentPrime(Parent, self);
+    }
 }

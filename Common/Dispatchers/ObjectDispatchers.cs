@@ -85,7 +85,7 @@ public static class ObjectDispatchers
         return x =>
         {
             Default(x);
-            return default;
+            return false;
         };
     }
 

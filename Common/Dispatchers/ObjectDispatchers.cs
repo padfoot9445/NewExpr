@@ -112,7 +112,7 @@ public static class ObjectDispatchers
                 Func<TObject, TReturn> Result
                 )
             >
-            (x => (x.Predicate, y => x.Result));
+            (x => (x.Predicate, _ => x.Result));
     }
 
 

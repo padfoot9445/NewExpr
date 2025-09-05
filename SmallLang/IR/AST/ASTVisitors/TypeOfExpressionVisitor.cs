@@ -14,7 +14,7 @@ internal class TypeOfExpressionVisitor : BaseASTVisitor
         if (self is IHasAttributeTypeOfExpressionSettable and IHasAttributeGenericSLType)
         {
             ((IHasAttributeTypeOfExpressionSettable)self).TypeOfExpression =
-                ((IHasAttributeGenericSLType)self).GenericSLType.OutmostType;
+                ((IHasAttributeGenericSLType)self).GenericSLType!.OutmostType;
         }
         base.Epilogue(Parent, self);
     }

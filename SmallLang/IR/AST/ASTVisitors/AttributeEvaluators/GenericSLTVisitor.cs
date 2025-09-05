@@ -37,10 +37,17 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitIdentifier(ISmallLangNode? Parent, IdentifierNode self)
     {
-        NotNull(self.VariableName, self.Scope);
-        self.Scope.TryGetTypeOfVariable(self.VariableName, out var VarType);
+        if (Parent is LoopLabelNode or LoopCTRLNode)
+        {
+            self.GenericSLType = new(TypeData.Void);
+        }
+        else
+        {
+            NotNull(self.VariableName, self.Scope);
+            self.Scope.TryGetTypeOfVariable(self.VariableName, out var VarType);
 
-        self.GenericSLType ??= VarType;
+            self.GenericSLType ??= VarType;
+        }
         return base.VisitIdentifier(Parent, self);
     }
 

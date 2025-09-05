@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 using Common.Tokens;
 
@@ -184,15 +185,9 @@ public abstract class Scanner : IScanner
 
     private bool IsQuote(out string QuoteLiteral)
     {
-        foreach (var i in StringQuotes)
-            if (StrEq(Current, Current + i.Length, i))
-            {
-                QuoteLiteral = i;
-                return true;
-            }
-
-        QuoteLiteral = "";
-        return false;
+        //finds the first quote literal -> QuoteLiteral. If none can be found, "" -> QuoteLiteral. Returns true if a quote was found.
+        QuoteLiteral = StringQuotes.Where(i => StrEq(Current, Current + i.Length, i)).DefaultIfEmpty("").First();
+        return QuoteLiteral is not "";
     }
 
     private char ConsumeEscape()

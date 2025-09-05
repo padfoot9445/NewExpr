@@ -58,7 +58,7 @@ public static class ObjectDispatchers
         (x => (x.Predicate, y =>
                 {
                     x.Result(y);
-                    return default;
+                    return false;
                 }
         ));
     }

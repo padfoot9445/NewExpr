@@ -177,7 +177,7 @@ public abstract class Scanner : IScanner
 
     private static bool IsNum(char c)
     {
-        return c >= '0' && c <= '9';
+        return c is >= '0' and <= '9';
     }
 
     private static bool IsValidFirstIdentChar(char c)

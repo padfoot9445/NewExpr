@@ -8,7 +8,7 @@ using Common.Metadata;
 using FunctionID = Common.Metadata.FunctionID<BackingNumberType>;
 using FunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, GenericSmallLangType>;
 
-public record Scope
+public sealed class Scope : IEquatable<Scope>
 {
     public Scope(Scope? Parent)
     {
@@ -32,7 +32,7 @@ public record Scope
     private string ScopeName => Parent is null ? "Global" : ScopeID.ToString();
     public string FullScopeName => Parent is not null ? $"{Parent.FullScopeName}.{ScopeName}" : ScopeName;
     public Scope? Parent { get; }
-    public HashSet<string> NamesDefinedInThisScope { get; } = [];
+    public HashSet<string> NamesDefinedInThisScope { get; }
 
     public VariableName GetName(string name)
     {
@@ -56,7 +56,21 @@ public record Scope
         return GetName(name);
     }
 
-    public virtual bool Equals(Scope? other)
+
+    public static bool operator ==(Scope? @this, Scope? other)
+    {
+        return (@this is null && other is null) || (@this is not null && @this.Equals(other));
+    }
+
+    public static bool operator !=(Scope @this, Scope other)
+    {
+        return !(@this == other);
+    }
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as Scope);
+    }
+    public bool Equals(Scope? other)
     {
         return other is not null && Parent == other.Parent &&
                NamesDefinedInThisScope.Intersect(other.NamesDefinedInThisScope).Count() ==
@@ -72,7 +86,7 @@ public record Scope
                 FunctionsDefinedInThisScope.GetHashCode());
     }
 
-    private Functions FunctionsDefinedInThisScope { get; } = new();
+    private Functions FunctionsDefinedInThisScope { get; }
 
     private bool FunctionIsDefinedInThisScope(string name) =>
         FunctionsDefinedInThisScope.RegisteredFunctions.Any(x => x.Name == name);

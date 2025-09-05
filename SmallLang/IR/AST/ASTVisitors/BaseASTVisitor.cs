@@ -35,7 +35,7 @@ public abstract class BaseASTVisitor : ISmallLangNodeVisitor<ISmallLangNode>
     }
 
     [AllowNull]
-    private ISmallLangNode CurrentRootNode { get; set; } = null;
+    protected ISmallLangNode CurrentRootNode { get; set; } = null;
     protected ISmallLangNode RecursiveGetParent(ISmallLangNode self, Func<ISmallLangNode, bool> Predicate) => self.RecursiveGetParent(CurrentRootNode, Predicate);
 
     protected virtual void PreVisit(ISmallLangNode node) { }

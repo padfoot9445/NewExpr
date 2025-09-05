@@ -9,12 +9,18 @@ using FunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, G
 
 public record Scope
 {
-    public Scope()
+    public Scope(Scope? Parent)
     {
+        this.Parent = Parent;
+
+
+        NamesDefinedInThisScope = new HashSet<string>();
+        FunctionsDefinedInThisScope = new Functions();
         foreach (var Function in Functions.StdLibFunctions)
         {
             DefineFunction(Function);
         }
+
 
         ScopeID = ++UsedScopeIDs;
     }
@@ -23,8 +29,8 @@ public record Scope
     private readonly int ScopeID;
     private string ScopeName => Parent is null ? "Global" : ScopeID.ToString();
     public string FullScopeName => Parent is not null ? $"{Parent.FullScopeName}.{ScopeName}" : ScopeName;
-    public required Scope? Parent { get; init; }
-    public HashSet<string> NamesDefinedInThisScope { get; } = new();
+    public Scope? Parent { get; }
+    public HashSet<string> NamesDefinedInThisScope { get; } = [];
 
     public VariableName GetName(string name)
     {

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Common.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.Metadata;
@@ -6,10 +7,17 @@ namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
 internal class AssignScopeVisitor : BaseASTVisitor
 {
-    private readonly Scope GlobalScope = new() { Parent = null };
-
+    protected override void PreVisit(ISmallLangNode node)
+    {
+        ((SmallLangNode)node).Scope = new Scope(null);
+        base.PreVisit(node);
+    }
     protected override void Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
-        => ((SmallLangNode)(ISmallLangNode)self).Scope ??= Parent?.Scope ?? GlobalScope;
+    {
+        if (ReferenceEquals(self, CurrentRootNode)) return;
+
+        ((SmallLangNode)(ISmallLangNode)self).Scope ??= Parent!.Scope!;
+    }
 
 
     protected override ISmallLangNode VisitAliasExpr(ISmallLangNode? Parent, AliasExprNode self) => self;
@@ -75,7 +83,10 @@ internal class AssignScopeVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitSection(ISmallLangNode? Parent, SectionNode self)
     {
-        self.Scope ??= new Scope() { Parent = Parent?.Scope };
+        if (ReferenceEquals(self, CurrentRootNode) || self.Scope is not null) return self;
+
+        Debug.Assert(Parent?.Scope is not null);
+        self.Scope = new Scope(Parent.Scope);
         return self;
     }
 

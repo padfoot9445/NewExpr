@@ -39,7 +39,7 @@ public class GenericSmallLangTypeExpressionTests
     {
         new GenericSLTypeVisitor().BeginVisiting(input.ast);
 
-        Assert.That(input.ast.Flatten().OfType<IHasAttributeGenericSLType>().All(x => x.GenericSLType is not null), Is.True, message: $"{input.program}\n\n{string.Join('\n', input.ast.Flatten().OfType<IHasAttributeFunctionID>().Where(x => x.FunctionID is null).Select(x => x.ToString()))}");
+        Assert.That(input.ast.Flatten().OfType<IHasAttributeGenericSLType>().All(x => x.GenericSLType is not null), Is.True, message: $"{input.program}\n\n{string.Join('\n', input.ast.Flatten().OfType<IHasAttributeGenericSLType>().Where(x => x.GenericSLType is null).Select(x => x.ToString()))}");
 
     }
 

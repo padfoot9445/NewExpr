@@ -15,7 +15,6 @@ public abstract class Chunk<TOpcode, T> : IChunk<TOpcode, T> where T : INumber<T
         set => operations[index] = value;
     }
 
-    // public IEnumerable<Operation<TOpcode, T>> Instructions => operations.Select(x => x);
 
     public int Count => operations.Count;
 

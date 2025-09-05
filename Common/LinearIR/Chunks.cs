@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Numerics;
+using JetBrains.Annotations;
 
 namespace Common.LinearIR;
 
+[PublicAPI]
 public abstract class Chunks<T, C, TOpcode> : IChunks<TOpcode, T>
     where T : INumber<T> where C : IChunk<TOpcode, T>, new()
 {

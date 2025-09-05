@@ -4,7 +4,7 @@ from codegenframework import *
 from initializer import *
 
 
-def generate_classes(config_path: str | Path, output_directory: str | Path, section_key: str, raw_config: Any, config: Any):
+def generate_classes(output_directory: str | Path, raw_config: Any, config: Any):
     output_directory = Path(output_directory)
 
     
@@ -40,4 +40,4 @@ def generate_classes(config_path: str | Path, output_directory: str | Path, sect
 if __name__ == "__main__":
     
     config_path, output_dir, section_key, raw_config, config = initialize()
-    generate_classes(config_path, output_dir, section_key, raw_config, config)
+    generate_classes(output_dir, raw_config, config)

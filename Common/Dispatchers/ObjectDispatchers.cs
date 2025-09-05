@@ -211,7 +211,7 @@ public static class ObjectDispatchers
             )> Cases
     )
     {
-        return Self.Switch(Accessor, Comparer, Cases);
+        return Self.Switch<TObject, TAttribute, TReturn>(Accessor, _ => throw new ArgumentException("Case for value {Accessor(Self)} was not found."), Comparer, Cases);
     }
 
     public static void Switch<TObject, TAttribute>

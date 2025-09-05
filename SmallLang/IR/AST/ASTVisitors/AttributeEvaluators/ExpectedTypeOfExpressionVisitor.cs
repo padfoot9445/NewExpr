@@ -3,6 +3,7 @@ using System.Runtime.InteropServices.JavaScript;
 using Common.AST;
 using SmallLang.Exceptions;
 using SmallLang.IR.AST.Generated;
+using SmallLang.IR.Metadata;
 
 namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
@@ -16,17 +17,30 @@ internal class ExpectedTypeOfExpressionVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitFunctionCall(ISmallLangNode? Parent, FunctionCallNode self)
     {
-        var FunctionDefinitionNode = CurrentRootNode.Flatten()
+        ImmutableArray<GenericSmallLangType> IndexableArgList;
+        Dictionary<string, GenericSmallLangType> FunctionDefinitionArgList;
+
+        if (Functions.StdLibFunctions.Select(x => x.Name).Contains(self.Identifier.Data.Lexeme))
+        {
+            IndexableArgList = Functions.StdLibFunctions.Single(x => x.Name == self.Identifier.Data.Lexeme)
+                .ArgTypes.ToImmutableArray();
+            FunctionDefinitionArgList = [];
+        }
+        else
+        {
+            var FunctionDefinitionNode = CurrentRootNode.Flatten()
             .OfType<FunctionNode>()
             .Single(x => x.FunctionName.VariableName == self.Identifier.VariableName);
+            //ReSharper disable All
+            IndexableArgList =
+                FunctionDefinitionNode.TypeAndIdentifierCSV.Select(x => x.Type.GetGenericSLTFromLiteralType()).ToImmutableArray();
+            //ReSharper enable All
 
-        var IndexableArgList =
-            FunctionDefinitionNode.TypeAndIdentifierCSV.Select(x => x.Type.GetGenericSLTFromLiteralType()).ToImmutableArray();
+            FunctionDefinitionArgList = FunctionDefinitionNode.TypeAndIdentifierCSV
+                .Select(x => (x.Identifier.Data.Lexeme, x.Type.GetGenericSLTFromLiteralType()))
+                .ToDictionary();
 
-        var FunctionDefinitionArgList = FunctionDefinitionNode.TypeAndIdentifierCSV
-            .Select(x => (x.Identifier.Data.Lexeme, x.Type.GetGenericSLTFromLiteralType()))
-            .ToDictionary();
-
+        }
         bool SeenIdentifier = false;
         foreach (var (i, v) in self.ArgList.Index())
         {

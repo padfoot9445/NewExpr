@@ -21,7 +21,7 @@ internal static class PrimaryVisitor
         Driver.EnteringChunk(() =>
         {
             Self.Switch<PrimaryNode, SmallLangType, Action<PrimaryNode, CodeGenerator>>(
-                    x => x.TypeOfExpression!.OutmostType,
+                    x => x.TypeOfExpression!,
                     (x, y) => x == y,
                     (TypeData.String, VisitString),
                     (TypeData.Char, ValNumVisitor.Visit),

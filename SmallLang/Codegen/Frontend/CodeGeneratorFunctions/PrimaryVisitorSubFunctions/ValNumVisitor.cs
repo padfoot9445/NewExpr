@@ -32,7 +32,7 @@ internal static class ValNumVisitor
     {
         Action Emitter = self.Switch
         (
-            Accessor: x => x.TypeOfExpression!.OutmostType,
+            Accessor: x => x.TypeOfExpression!,
             Comparer: (x, y) => x == y,
             (TypeData.Char, EmitCodeDelegateGenerator(char.Parse, self, Driver)),
             (TypeData.Float,

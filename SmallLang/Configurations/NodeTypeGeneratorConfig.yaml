@@ -59,7 +59,7 @@ attributes:
   data:
     - &TypeOfExpression
       name: TypeOfExpression
-      type: GenericSmallLangType
+      type: SmallLangType
     - &TypeLiteralType
       name: TypeLiteralType
       type: GenericSmallLangType

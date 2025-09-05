@@ -125,24 +125,4 @@ public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode
             }
     }
 
-    public bool CanDeclareTo(SmallLangType other)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Deconstruct(out uint BaseValue, out string Name, out bool IsRefType, out uint Size, out bool IsNum,
-        out NumberType NumberType, out bool IsCollection, out int? ValMaxSize)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Equals(SmallLangType? other)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool ImplicitCast(SmallLangType other)
-    {
-        throw new NotImplementedException();
-    }
 }

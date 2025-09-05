@@ -1,3 +1,4 @@
+using Common.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.Metadata;
 

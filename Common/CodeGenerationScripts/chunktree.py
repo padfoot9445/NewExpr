@@ -9,18 +9,18 @@ def generate_classes(output_directory: str | Path, raw_config: Any, config: Any)
 
     
 
-    for ChunkType in config:
-        assert isinstance(ChunkType, dict)
+    for chunk_type in config:
+        assert isinstance(chunk_type, dict)
         
-        with open(str(output_directory/cast(str,ChunkType[NAME])) + ".cs", "w") as file:
+        with open(str(output_directory/cast(str,chunk_type[NAME])) + ".cs", "w") as file:
             
-            children_names: list[str] = cast(list[str],ChunkType[CHILDREN])
+            children_names: list[str] = cast(list[str],chunk_type[CHILDREN])
 
             # write_block("\n".join(header()),file)
             write_header(raw_config, file)
             write_block(
                 code_class(
-                    name = cast(str, ChunkType[NAME]) + "TreeChunk",
+                    name = cast(str, chunk_type[NAME]) + "TreeChunk",
                     content = [
                         f"protected override IEnumerable<BaseTreeChunk> Children => [{", ".join(children_names)}];",
                     ],

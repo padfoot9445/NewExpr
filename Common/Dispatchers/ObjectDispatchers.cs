@@ -218,7 +218,7 @@ public static class ObjectDispatchers
             )> Cases
     )
     {
-        return Self.Switch<TObject, TAttribute, TReturn>(Accessor, _ => throw new ArgumentException("Case for value {Accessor(Self)} was not found."), Comparer, Cases);
+        return Self.Switch(Accessor, GetDefault<TObject, TReturn>(), Comparer, Cases);
     }
 
     public static void Switch<TObject, TAttribute>
@@ -250,7 +250,7 @@ public static class ObjectDispatchers
             )> Cases
     )
     {
-        Self.Switch(Accessor, Comparer, Cases);
+        Self.Switch(Accessor, GetDefault<TObject>(), Comparer, Cases);
     }
 
     public static TReturn Switch<TObject, TAttribute, TReturn>
@@ -281,7 +281,7 @@ public static class ObjectDispatchers
             )> Cases
     )
     {
-        return Self.Switch(Accessor, _ => throw new MatchNotFoundException(), Comparer, Cases);
+        return Self.Switch(Accessor, GetDefault<TObject, TReturn>(), Comparer, Cases);
     }
 
     public static TReturn Dispatch<TObject, TAttribute, TReturn>

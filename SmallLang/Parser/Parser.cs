@@ -39,7 +39,7 @@ public class Parser
     public T Parse<T>()
     {
         var r = LyParser.Parse(input);
-        if (!r.IsError && r.Result != null && r.Result is NodeType) return (T)r.Result;
+        if (!r.IsError && r.Result is not null) return (T)r.Result;
 
         StringBuilder sb = new(r.Errors.Count * 25);
         if (r.Errors != null && r.Errors.Any())

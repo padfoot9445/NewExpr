@@ -74,7 +74,6 @@ public abstract class Scanner : IScanner
 
     private bool SkipComment() //returns true if skipped comment
     {
-        var Skipped = false;
         //skip eol comments
         if (EOLCommentBegin.Any(i => StrEq(Current, Current + i.Length, i)))
         {
@@ -97,7 +96,7 @@ public abstract class Scanner : IScanner
                 return true;
             }
 
-        return Skipped;
+        return false;
     }
 
     private IToken GetNumberLiteral()

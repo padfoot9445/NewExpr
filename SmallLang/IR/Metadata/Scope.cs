@@ -85,6 +85,10 @@ public record Scope
     {
         DefineName(functionSignature.Name);
         FunctionsDefinedInThisScope.RegisterFunction(functionSignature);
+
+        DefineTypeOfName(GetName(functionSignature.Name), new(TypeData.Void));
+
+        Console.WriteLine($"Scope {ScopeID} defining function {functionSignature.Name} with VName {GetName(functionSignature.Name)}");
     }
 
     public FunctionSignature GetSignature(string name)

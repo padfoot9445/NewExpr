@@ -14,7 +14,7 @@ public class GenericSmallLangTypeExpressionTests
 
     internal static IEnumerable<(ISmallLangNode, string)> GetTestCases()
     {
-        List<BaseASTVisitor> Evaluators = [new AssignScopeVisitor(), new VariableNameVisitor(), new TypeLiteralTypeVisitor()];
+        List<BaseASTVisitor> Evaluators = [new AssignScopeVisitor(), new VariableNameVisitor(), new TypeLiteralTypeVisitor(), new FunctionIDVisitor()];
 
         foreach (var program in ExamplePrograms.AllPrograms)
         {

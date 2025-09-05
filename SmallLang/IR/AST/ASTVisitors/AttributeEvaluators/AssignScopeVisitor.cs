@@ -6,8 +6,10 @@ namespace SmallLang.IR.AST.ASTVisitors.AttributeEvaluators;
 
 internal class AssignScopeVisitor : BaseASTVisitor
 {
+    private readonly Scope GlobalScope = new() { Parent = null };
+
     protected override void Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
-        => ((SmallLangNode)(ISmallLangNode)self).Scope ??= Parent?.Scope ?? new Scope() { Parent = null };
+        => ((SmallLangNode)(ISmallLangNode)self).Scope ??= Parent?.Scope ?? GlobalScope;
 
 
     protected override ISmallLangNode VisitAliasExpr(ISmallLangNode? Parent, AliasExprNode self) => self;
@@ -73,7 +75,7 @@ internal class AssignScopeVisitor : BaseASTVisitor
 
     protected override ISmallLangNode VisitSection(ISmallLangNode? Parent, SectionNode self)
     {
-        self.Scope = new Scope() { Parent = Parent?.Scope };
+        self.Scope ??= new Scope() { Parent = Parent?.Scope };
         return self;
     }
 

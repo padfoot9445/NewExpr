@@ -89,8 +89,10 @@ public abstract class Scanner : IScanner
             if (StrEq(Current, Current + StartEndCommentBegin[i].Length, StartEndCommentBegin[i]))
             {
                 Current += StartEndCommentBegin[i].Length;
-                while (Current < input.Length &&
-                       !StrEq(Current, Current + StartEndCommentEnd[i].Length, StartEndCommentEnd[i])) Current++;
+                while (Current < input.Length && !StrEq(Current, Current + StartEndCommentEnd[i].Length, StartEndCommentEnd[i]))
+                {
+                    Current++;
+                }
                 Current += StartEndCommentEnd[i].Length; //skip end comment
                 return true;
             }

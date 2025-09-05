@@ -52,9 +52,4 @@ public class Parser
         throw new Exception(sb.ToString());
     }
 
-    private static T Map<T>(NodeType node)
-    {
-        throw new NotImplementedException();
-        // return new OutNodeType(node.Data, node.Children.Select(Map).ToList(), node.NodeType.ToImportant());
-    }
 }

@@ -120,6 +120,13 @@ public static class ObjectDispatchers
     {
         return _ => throw new MatchNotFoundException();
     }
+    public static Action<TObject> GetDefault<TObject>()
+    {
+        return x =>
+        {
+            GetDefault<TObject, bool>()(x);
+        };
+    }
 
 
     public static TReturn Dispatch<TObject, TAttribute, TReturn>

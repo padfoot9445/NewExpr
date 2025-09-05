@@ -15,12 +15,15 @@ internal static class ComparisonExpressionVisitor
 {
     internal static void Visit(ComparisonExpressionNode Self, CodeGenerator Driver)
     {
-        Debug.Assert(Self.GreatestCommonType is not null);
+        var GreatestCommonType = Self.OperatorExpressionPairs.Aggregate(Self.Expression.GenericSLType,
+            (x, y) => x!.GreatestCommonType(y.Expression.GenericSLType!));
+
+        Debug.Assert(GreatestCommonType is not null);
         List<IExpressionNode> Expressions = [Self.Expression, .. Self.OperatorExpressionPairs.Select(x => x.Expression)];
         List<TokenType> Operators = [.. Self.OperatorExpressionPairs.Select(x => x.Data.TT)];
-        var ExpressionRegister = Driver.GetRegisters(Self.GreatestCommonType).First();
-        List<int> Registers = [ExpressionRegister, .. Expressions.Select(_ => Driver.GetRegisters(Self.GreatestCommonType!).First())];
-        var Width = Self.GreatestCommonType.Size;
+        var ExpressionRegister = Driver.GetRegisters(GreatestCommonType).First();
+        List<int> Registers = [ExpressionRegister, .. Expressions.Select(_ => Driver.GetRegisters(GreatestCommonType!).First())];
+        var Width = GreatestCommonType.Size;
 
         var ResultRegisters = Enumerable.Range(0, Operators.Count).Select(_ => Driver.GetRegisters(TypeData.Bool).First()).ToList();
 
@@ -31,7 +34,7 @@ internal static class ComparisonExpressionVisitor
         {
             //exploit the fact that in x == y == z => (x == y) and (y == z) y must be loaded in the second expression
             //
-            Driver.Cast(Self.Expression, Self.GreatestCommonType);
+            Driver.Cast(Self.Expression, GreatestCommonType);
             Driver.Emit(HighLevelOperation.LoadFromStack(ExpressionRegister, Width));
             Driver.Emit(HighLevelOperation.BatchAnd(1, Expressions.Count, ResultRegister));
             Driver.Emit(HighLevelOperation.PushFromRegister(ResultRegister, TypeData.Bool.Size));
@@ -41,7 +44,7 @@ internal static class ComparisonExpressionVisitor
         {
             Driver.NewChunk(i, () =>
             {
-                Driver.Cast(Expressions[i], Self.GreatestCommonType);
+                Driver.Cast(Expressions[i], GreatestCommonType);
                 Driver.Emit(HighLevelOperation.LoadFromStack(Registers[i], Width));
 
                 Driver.Emit(
@@ -52,7 +55,7 @@ internal static class ComparisonExpressionVisitor
                     (TokenType.GreaterThanOrEqualTo, HighLevelOperation.GreaterThanOrEqualTo),
                     (TokenType.LessThan, HighLevelOperation.LessThan),
                     (TokenType.LessThanOrEqualTo, HighLevelOperation.LessThanOrEqualTo)
-                    )(Registers[i - 1], Registers[i], ResultRegisters[i], Self.GreatestCommonType)
+                    )(Registers[i - 1], Registers[i], ResultRegisters[i], GreatestCommonType)
                 );
             });
         }

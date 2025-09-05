@@ -95,17 +95,18 @@ internal static class BinaryExpressionVisitor
 
     private static void NonAssignmentOperatorVisitor(BinaryExpressionNode Self, CodeGenerator Driver)
     {
-        Debug.Assert(Self.GreatestCommonType is not null);
+        Debug.Assert(Self.Left.GenericSLType is not null && Self.Right.GenericSLType is not null);
+        var GreatestCommonType = Self.Left.GenericSLType.GreatestCommonType(Self.Right.GenericSLType);
 
-        var LeftRegister = Driver.GetRegisters(Self.GreatestCommonType).Single();
-        var RightRegister = Driver.GetRegisters(Self.GreatestCommonType).Single();
-        var DstRegister = Driver.GetRegisters(Self.GreatestCommonType).Single();
+        var LeftRegister = Driver.GetRegisters(GreatestCommonType).Single();
+        var RightRegister = Driver.GetRegisters(GreatestCommonType).Single();
+        var DstRegister = Driver.GetRegisters(GreatestCommonType).Single();
 
-        Driver.Cast(Self.Left, Self.GreatestCommonType);
-        Driver.Emit(HighLevelOperation.LoadFromStack(LeftRegister, Self.GreatestCommonType.Size));
+        Driver.Cast(Self.Left, GreatestCommonType);
+        Driver.Emit(HighLevelOperation.LoadFromStack(LeftRegister, GreatestCommonType.Size));
 
-        Driver.Cast(Self.Right, Self.GreatestCommonType);
-        Driver.Emit(HighLevelOperation.LoadFromStack(RightRegister, Self.GreatestCommonType.Size));
+        Driver.Cast(Self.Right, GreatestCommonType);
+        Driver.Emit(HighLevelOperation.LoadFromStack(RightRegister, GreatestCommonType.Size));
 
         Driver.Emit(Self.Data.TT
             .Map<TokenType, Func<ArgumentType, ArgumentType, ArgumentType, TypeType, HighLevelOperation>>(
@@ -123,9 +124,9 @@ internal static class BinaryExpressionVisitor
                 (TokenType.BitwiseAnd, HighLevelOperation.BitwiseAnd),
                 (TokenType.BitwiseLeftShift, HighLevelOperation.BitwiseLeftShift),
                 (TokenType.BitwiseRightShift, HighLevelOperation.BitwiseRightShift)
-            )(LeftRegister, RightRegister, DstRegister, Self.GreatestCommonType));
+            )(LeftRegister, RightRegister, DstRegister, GreatestCommonType));
 
-        Driver.Emit(HighLevelOperation.PushFromRegister(DstRegister, Self.GreatestCommonType.Size));
+        Driver.Emit(HighLevelOperation.PushFromRegister(DstRegister, GreatestCommonType.Size));
     }
 
     internal static void Visit(BinaryExpressionNode Self, CodeGenerator Driver)

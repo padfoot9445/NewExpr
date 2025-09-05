@@ -160,17 +160,16 @@ public abstract class Scanner : IScanner
             return GetNumberLiteral();
         }
 
-        if (IsValidFirstIdentChar(input[Current]))
+        else if (IsValidFirstIdentChar(input[Current]))
         {
             return GetIdentifierLiteral();
         }
 
-        if (IsQuote(out var quoteLiteral))
+        else if (IsQuote(out var quoteLiteral))
         {
             return GetStringLiteral(quoteLiteral);
         }
-
-        throw new Exception($"Unexpected character ${input[Current]} at pos {Current}");
+        else throw new Exception($"Unexpected character ${input[Current]} at pos {Current}"); //#NOSONAR
     }
 
     private static bool IsNum(char c)

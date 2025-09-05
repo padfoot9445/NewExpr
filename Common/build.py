@@ -68,8 +68,7 @@ def time_command(command: list[str], stdout_destination: TextIO, msg: str):
         custom_run, command, stdout_destination)
 
 def make_dir(dst: Path):
-    if os.path.isdir(dst): return
-    elif os.path.split(dst)[-1] in ["NUL", "NUL:"]: return
+    if os.path.isdir(dst) or os.path.split(dst)[-1] in ["NUL", "NUL:"]: return
 
     if dst.is_file() or len(os.path.splitext(dst)[1]) > 0:
         dst = dst.parent.resolve()

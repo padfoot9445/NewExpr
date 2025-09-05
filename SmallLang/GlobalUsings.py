@@ -1,5 +1,4 @@
 import os
-import sys
 from pathlib import Path
 
 
@@ -21,8 +20,7 @@ def add_global_usings_to_cs_projects() -> None:
 
 
         if len(cs_project_paths) > 1:
-            raise Exception(f"Too many .csproj files in {directory} ({len(cs_project_paths)})")
-            sys.exit(1)
+            raise Exception(f"Too many .csproj files in {directory} ({len(cs_project_paths)})") #NOSONAR
         elif len(cs_project_paths) == 0:
             # print(f"No .csproj files in {directory}. Continuing.")
             continue
@@ -34,7 +32,7 @@ def add_global_usings_to_cs_projects() -> None:
                 reference_ir_in_cs_project_file: bool = "IR.csproj" in cs_project_file.read()
 
                 global_usings_file.write(
-                    f"global using BackingNumberType = byte;\n"
-                    f"global using OpcodeBackingType = uint;\n" +
+                    "global using BackingNumberType = byte;\n"
+                    "global using OpcodeBackingType = uint;\n" +
                     ("global using Node = Common.AST.DynamicASTNode<SmallLang.IR.AST.ImportantASTNodeType, SmallLang.IR.Metadata.Attributes>;\n" if reference_ir_in_cs_project_file else "")
                 )

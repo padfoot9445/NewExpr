@@ -97,62 +97,76 @@ public abstract class Scanner : IScanner
         return Skipped;
     }
 
+    private IToken GetNumberLiteral()
+    {
+        var SeenDot = false;
+        while (Current < input.Length)
+        {
+            if (input[Current] == '.')
+            {
+                if (SeenDot)
+                    throw new Exception(
+                        $"Number ${input[Start..(Current + 1)]} cannot have more than one dot at pos {Current}");
+
+                SeenDot = true;
+            }
+            else if (IsNum(input[Current]))
+            {
+            }
+            else
+            {
+                break;
+            }
+
+            Current++;
+        }
+
+        return IToken.NewToken(TokenType.Number, input[Start..Current], Current);
+    }
+    private IToken GetIdentifierLiteral()
+    {
+        while (Current < input.Length && (IsValidFirstIdentChar(input[Current]) || IsNum(input[Current])))
+            Current++;
+        return IToken.NewToken(TokenType.Identifier, input[Start..Current], Current);
+    }
+
+    private IToken GetStringLiteral(string quoteLiteral)
+    {
+        Current += quoteLiteral.Length; //skip opening quote
+        StringBuilder Literal = new();
+        while (!StrEq(Current, Current + quoteLiteral.Length, quoteLiteral))
+        {
+            if (Current >= input.Length) throw new Exception($"Reached EOF whilst consuming string at {Current}");
+            if (EscapeChars.Contains(input[Current]))
+            {
+                Literal.Append(ConsumeEscape());
+                continue;
+            }
+
+            Literal.Append(input[Current++]);
+        }
+
+        Current += quoteLiteral.Length; //skip closing quote
+        return IToken.NewToken(TokenType.String, input[Start..Current], Current, Literal.ToString());
+    }
+
     protected IToken GetLiteral()
     {
         Start = Current;
         //Check if it's a number first
         if (IsNum(input[Current]))
         {
-            var SeenDot = false;
-            while (Current < input.Length)
-            {
-                if (input[Current] == '.')
-                {
-                    if (SeenDot)
-                        throw new Exception(
-                            $"Number ${input[Start..(Current + 1)]} cannot have more than one dot at pos {Current}");
-
-                    SeenDot = true;
-                }
-                else if (IsNum(input[Current]))
-                {
-                }
-                else
-                {
-                    break;
-                }
-
-                Current++;
-            }
-
-            return IToken.NewToken(TokenType.Number, input[Start..Current], Current);
+            return GetNumberLiteral();
         }
 
         if (IsValidFirstIdentChar(input[Current]))
         {
-            while (Current < input.Length && (IsValidFirstIdentChar(input[Current]) || IsNum(input[Current])))
-                Current++;
-            return IToken.NewToken(TokenType.Identifier, input[Start..Current], Current);
+            return GetIdentifierLiteral();
         }
 
         if (IsQuote(out var quoteLiteral))
         {
-            Current += quoteLiteral.Length; //skip opening quote
-            StringBuilder Literal = new();
-            while (!StrEq(Current, Current + quoteLiteral.Length, quoteLiteral))
-            {
-                if (Current >= input.Length) throw new Exception($"Reached EOF whilst consuming string at {Current}");
-                if (EscapeChars.Contains(input[Current]))
-                {
-                    Literal.Append(ConsumeEscape());
-                    continue;
-                }
-
-                Literal.Append(input[Current++]);
-            }
-
-            Current += quoteLiteral.Length; //skip closing quote
-            return IToken.NewToken(TokenType.String, input[Start..Current], Current, Literal.ToString());
+            return GetStringLiteral(quoteLiteral);
         }
 
         throw new Exception($"Unexpected character ${input[Current]} at pos {Current}");

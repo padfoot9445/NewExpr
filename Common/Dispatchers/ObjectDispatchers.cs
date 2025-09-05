@@ -35,7 +35,7 @@ public static class ObjectDispatchers
             TPredicate Predicate,
             Func<TObject, bool> Result
             )>
-        NoReturnToReturnCases<TObject, TAttribute, TPredicate>
+        NoReturnToReturnCases<TObject, TPredicate>
         (
             IEnumerable
             <(
@@ -60,7 +60,7 @@ public static class ObjectDispatchers
                     x.Result(y);
                     return default;
                 }
-            ));
+        ));
     }
 
     private static IEnumerable
@@ -77,7 +77,7 @@ public static class ObjectDispatchers
                 )> Cases
         )
     {
-        return NoReturnToReturnCases<TObject, TAttribute, Func<TAttribute, bool>>(Cases);
+        return NoReturnToReturnCases<TObject, Func<TAttribute, bool>>(Cases);
     }
 
     private static Func<TObject, bool> NoReturnToReturnFunc<TObject>(Action<TObject> Default)
@@ -228,7 +228,7 @@ public static class ObjectDispatchers
     )
     {
         Self.Switch(Accessor, NoReturnToReturnFunc(Default), Comparer,
-            NoReturnToReturnCases<TObject, TAttribute, TAttribute>(Cases));
+            NoReturnToReturnCases(Cases));
     }
 
     public static void Switch<TObject, TAttribute>

@@ -31,7 +31,7 @@ if __name__ == "__main__":
     for subnode in config:
         name = subnode[NAME] + suffix
         attributes = cast(list[dict[str, str]], subnode["attributes"])
-        attribute_names = set(i["name"] for i in attributes)
+        attribute_names = {i["name"] for i in attributes}
         parents = subnode["parents"]
 
 

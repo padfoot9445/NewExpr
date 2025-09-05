@@ -75,9 +75,6 @@ attributes:
     - &ExpectedReturnType
       name: ExpectedReturnType
       type: GenericSmallLangType
-    - &GreatestCommonType
-      name: GreatestCommonType
-      type: GenericSmallLangType
     - &NestedTypeOfExpression
       name: NestedTypeOfExpression
       type: List<GenericSmallLangType>
@@ -724,7 +721,7 @@ classes:
         - BitwiseRightShift
         has additional data validation function: no
         data validation function: no
-        attributes: [*GreatestCommonType]
+        attributes: []
       
       - name: *ComparisonExpression
         children:
@@ -744,7 +741,7 @@ classes:
         valid data types: []
         has additional data validation function: no
         data validation function: no
-        attributes: [*GreatestCommonType]
+        attributes: []
       
       - name: *OperatorExpressionPair
         children:

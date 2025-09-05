@@ -187,5 +187,11 @@ Functions:
   name: Functions
 
   data:
-    - {name: input, ID: 1, returns: string, arguments: []}
+    - {name: Input, ID: 1, returns: string, arguments: []}
     - {name: SOut, ID: 2, returns: void, arguments: [string]}
+    - {name: GetLength, ID: 3, returns: int, arguments: [list]}
+    - {name: ConstructList, ID: 4, returns: list, arguments: [void]}
+    - {name: ConstructArray, ID: 5, returns: array, arguments: [void]}
+    # - {name: ConstructCollection, ID: 6, returns: collection, arguments: [void]}
+    - {name: ConstructSet, ID: 7, returns: set, arguments: [void]}
+    - {name: ConstructDict, ID: 8, returns: dict, arguments: [void]}

@@ -1,37 +1,143 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
 namespace SmallLang.IR.Metadata;
 
-public struct Scope()
+using Common.Dispatchers;
+using Common.Metadata;
+using FunctionID = Common.Metadata.FunctionID<BackingNumberType>;
+using FunctionSignature = Common.Metadata.FunctionSignature<BackingNumberType, GenericSmallLangType>;
+
+public sealed class Scope : IEquatable<Scope>
 {
-    Scope(HashSet<VariableName> Names) : this() { VariablesInScope = Names; }
-    private HashSet<VariableName> VariablesInScope = [];
-    public (int, int) GetLocationOfVariable(VariableName Name) => throw new NotImplementedException();
-    public bool Contains(VariableName variableName) => VariablesInScope.Contains(variableName);
-    public Scope ScopeUnion(Scope other)
+    public Scope(Scope? Parent)
     {
-        return new(VariablesInScope.Union(other.VariablesInScope).ToHashSet());
-    }
-    public Scope Append(VariableName other)
-    {
-        return ScopeUnion(new([other]));
-    }
-    public override bool Equals(object? other) => other is Scope scope && VariablesInScope.Intersect(scope.VariablesInScope).Count() == VariablesInScope.Count;
-    public static bool operator ==(Scope left, Scope right)
-    {
-        return left.Equals(right);
+        this.Parent = Parent;
+
+
+        NamesDefinedInThisScope = new HashSet<string>();
+        FunctionsDefinedInThisScope = new Functions();
+        TypeNameCombinationsDefinedInThisScope = new();
+        ScopeID = ++UsedScopeIDs;
+        foreach (var Function in Functions.StdLibFunctions)
+        {
+            DefineFunction(Function);
+        }
+
+
     }
 
-    public static bool operator !=(Scope left, Scope right)
+    private static int UsedScopeIDs { get; set; } = 0;
+    private readonly int ScopeID;
+    private string ScopeName => Parent is null ? "Global" : ScopeID.ToString();
+    public string FullScopeName => Parent is not null ? $"{Parent.FullScopeName}.{ScopeName}" : ScopeName;
+    public Scope? Parent { get; }
+    public HashSet<string> NamesDefinedInThisScope { get; }
+
+    public VariableName GetName(string name)
     {
-        return !(left == right);
+        return new VariableName($"{FullScopeName}::{name}");
+    }
+
+    public VariableName SearchName(string name)
+    {
+        if (IsDefinedLocally(name)) return GetName(name);
+        else if (Parent is not null) return Parent.SearchName(name);
+        else throw new ArgumentOutOfRangeException($"{name} was not defined");
+    }
+
+    public bool IsDefined(string name) => IsDefinedLocally(name) || (Parent is not null && Parent.IsDefined(name));
+    public bool IsDefinedLocally(string name) => NamesDefinedInThisScope.Contains(name);
+
+    public VariableName DefineName(string name)
+    {
+        NamesDefinedInThisScope.Add(name);
+        Debug.Assert(SearchName(name) == GetName(name));
+        return GetName(name);
+    }
+
+
+    public static bool operator ==(Scope? @this, Scope? other)
+    {
+        return (@this is null && other is null) || (@this is not null && @this.Equals(other));
+    }
+
+    public static bool operator !=(Scope @this, Scope other)
+    {
+        return !(@this == other);
+    }
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as Scope);
+    }
+    public bool Equals(Scope? other)
+    {
+        return other is not null && Parent == other.Parent &&
+               NamesDefinedInThisScope.Intersect(other.NamesDefinedInThisScope).Count() ==
+               NamesDefinedInThisScope.Count;
     }
 
     public override int GetHashCode()
     {
-        throw new NotImplementedException();
+        return Parent is null
+            ? 0
+            : HashCode.Combine(Parent.GetHashCode(),
+                NamesDefinedInThisScope.Aggregate(17, (x, y) => x ^ y.GetHashCode()),
+                FunctionsDefinedInThisScope.GetHashCode());
     }
 
-    internal object Union(Scope? v)
+    private Functions FunctionsDefinedInThisScope { get; }
+
+    private bool FunctionIsDefinedInThisScope(string name) =>
+        FunctionsDefinedInThisScope.RegisteredFunctions.Any(x => x.Name == name);
+
+    public bool FunctionIsDefined(string name)
     {
-        throw new NotImplementedException();
+        return FunctionIsDefinedInThisScope(name) || (Parent is not null && Parent.FunctionIsDefined(name));
+    }
+
+    public void DefineFunction(FunctionSignature functionSignature)
+    {
+        DefineName(functionSignature.Name);
+        FunctionsDefinedInThisScope.RegisterFunction(functionSignature);
+
+        DefineTypeOfName(GetName(functionSignature.Name), new(TypeData.Void));
+    }
+
+    public FunctionSignature GetSignature(string name)
+    {
+        if (FunctionIsDefinedInThisScope(name))
+        {
+            return FunctionsDefinedInThisScope.GetSignature(name);
+        }
+        else
+        {
+            if (Parent is null)
+                throw new ArgumentException(
+                    $"Could not find function defined in the current or enclosing scope of name {name}");
+            else return Parent.GetSignature(name);
+        }
+    }
+
+    public FunctionID GetID(string name) => GetSignature(name).ID;
+
+    public FunctionID GetIDOfConstructorFunction(GenericSmallLangType type)
+    {
+        return new(0);
+    }
+
+    private Dictionary<VariableName, GenericSmallLangType> TypeNameCombinationsDefinedInThisScope { get; } = [];
+
+    public void DefineTypeOfName(VariableName variableName, GenericSmallLangType Type)
+    {
+        Debug.Assert(variableName is not null);
+        TypeNameCombinationsDefinedInThisScope[variableName] = Type;
+    }
+
+    public bool TryGetTypeOfVariable(VariableName variableName, [NotNullWhen(true)] out GenericSmallLangType? type)
+    {
+        if (TypeNameCombinationsDefinedInThisScope.TryGetValue(variableName, out type)) return true;
+        else if (Parent is null) return false;
+        else return Parent.TryGetTypeOfVariable(variableName, out type);
     }
 }

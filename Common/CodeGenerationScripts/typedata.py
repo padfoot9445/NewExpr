@@ -40,6 +40,9 @@ if __name__ == "__main__":
                 f"public static SmallLangType {type_data["name"].capitalize()} => _{type_data["name"].capitalize()};"
                 for type_data in config["type info"]
             ] + [
+                f"public static IEnumerable<SmallLangType> AllTypes {{ get; }} = [{", ".join(i["name"][0].upper() + i["name"][1:] for i in config["type info"])}];"
+            ] +
+            [
                 code_method(
                     method_name = "CanDeclareTo",
                     content = [

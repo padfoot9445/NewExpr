@@ -76,13 +76,13 @@ public abstract class Scanner : IScanner
     {
         var Skipped = false;
         //skip eol comments
-        foreach (var i in EOLCommentBegin)
-            if (StrEq(Current, Current + i.Length, i))
-            {
-                while (Current < input.Length && input[Current] != '\n') Current++;
-                Current++; //skip \n
-                return true;
-            }
+        if (EOLCommentBegin.Any(i => StrEq(Current, Current + i.Length, i)))
+        {
+            while (Current < input.Length && input[Current] != '\n') Current++;
+
+            Current++; //skip \n
+            return true;
+        }
 
         //startendcomments
         for (var i = 0; i < StartEndCommentBegin.Count; i++)

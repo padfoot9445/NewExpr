@@ -44,7 +44,7 @@ def time_thread(name: str, work_function: Callable[..., Any], *args: Any, **kwar
     work_thread.start()
 
     start_time = time()
-    time_str = f"(0.0s)"
+    time_str = "(0.0s)"
     first_part = f"{BUILD}: {name} "
     sys.stdout.write(f"{first_part}{" " * len(SUCCEED)} {time_str}"); sys.stdout.flush()
 

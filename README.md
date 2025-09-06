@@ -1,7 +1,7 @@
 # Build Instructions
 This project relies heavily on custom source generation. As such, the following steps are required to build it after a fresh clone:
 
-0. Ensure you have python and a dotnet SDK installed
+## 0. Ensure you have python and a dotnet SDK installed
 Much of the build steps are written in python. Hence, a python interpreter needs to be installed. The rest of the steps assumes it is on your path as `python3`.
 
 You can check if you have python installed by running
@@ -21,7 +21,7 @@ dotnet --version
 
 If this gives a version below `9.0`, or errors, see [here](https://dotnet.microsoft.com/en-us/download).
 
-1. Create a python virtual environment
+## 1. Create a python virtual environment
 
 Though this step is optional, it is highly recommended. This is to ensure the dependencies installed below do not contaminate your python installation.
 
@@ -30,7 +30,7 @@ python3 -m venv .env
 .env/bin/activate
 ```
 > Note: when testing on git bash .env/bin/activate did not activate the virtual environment. If this happens for you, replace `python3` in all further steps with `.env/bin/python3.exe`.
-2. Install PyYAML
+## 2. Install PyYAML
 The configuration-files for this project are written in yaml, and PyYaml is used to parse them.
 
 ```powershell
@@ -42,7 +42,7 @@ or, alternatively
 python3 -m pip install PyYAML
 ```
 
-3. Run your build script of choice
+## 3. Run your build script of choice
 
 There are some options to build the project. All of these should be run from the root directory of the repository. Unfortunately, I have not gotten around to testing these on a linux machine yet. I suspect that the first two options will not work on a Linux machine, though I am not sure.
 
@@ -69,7 +69,7 @@ with optional arguments:
 - `--no-format` does not run dotnet format (recommended)
 - `--clean` also removes any folders instead of just removing files during cleanup
 
-4. Test your build
+## 4. Test your build
 
 This project is currently in development. As such, there are some tests on master which will not pass. However, the majority of tests *will* pass.
 

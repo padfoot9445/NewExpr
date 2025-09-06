@@ -1,1 +1,0 @@
-namespace SmallLang.IR.AST.ASTVisitors;

@@ -9,4 +9,4 @@ j as rational rationalJ;
 
 dict<[int, string]> converter = new dict<[int, string]>(1, "1", 2, "2");
 
-SOut converter[j];
+SOut(converter[j]);

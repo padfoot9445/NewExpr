@@ -10,7 +10,7 @@ namespace SmallLang.Parser;
 
 public partial class SmallLangParser
 {
-    private TOut WrapFunction<TOut, TIn>(Func<TIn, TOut> Wrapped, TIn Input, string Name)
+    private static TOut WrapFunction<TOut, TIn>(Func<TIn, TOut> Wrapped, TIn Input, string Name)
     {
         try
         {

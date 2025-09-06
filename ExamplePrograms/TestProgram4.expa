@@ -5,8 +5,3 @@ i as index;
 ((((i!)!)!)!)!;
 
 frozen int j = (i as number) + 1;
-j as rational rationalJ;
-
-dict<[int, string]> converter = new dict<[int, string]>(1, "1", 2, "2");
-
-SOut(converter[j]);

@@ -23,7 +23,7 @@ public partial class SmallLangParser
         }
     }
 
-    private Func<NodeType, T> TryCast<T>(string NameOfCastingMethod) where T : class, NodeType
+    private static Func<NodeType, T> TryCast<T>(string NameOfCastingMethod) where T : class, NodeType
     {
         return x => TryCast<T>(x, NameOfCastingMethod);
     }

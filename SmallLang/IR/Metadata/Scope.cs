@@ -33,12 +33,6 @@ public sealed class Scope : IEquatable<Scope>
 
     private Dictionary<VariableName, GenericSmallLangType> TypeNameCombinationsDefinedInThisScope { get; }
 
-    public bool Equals(Scope? other)
-    {
-        return other is not null && Parent == other.Parent &&
-               NamesDefinedInThisScope.Intersect(other.NamesDefinedInThisScope).Count() ==
-               NamesDefinedInThisScope.Count;
-    }
 
     public VariableName GetName(string name)
     {
@@ -78,6 +72,14 @@ public sealed class Scope : IEquatable<Scope>
     public static bool operator !=(Scope @this, Scope other)
     {
         return !(@this == other);
+    }
+
+    public bool Equals(Scope? other)
+    {
+        return other is not null &&
+                Parent == other.Parent &&
+                NamesDefinedInThisScope.Intersect(other.NamesDefinedInThisScope).Count()
+                    == NamesDefinedInThisScope.Count;
     }
 
     public override bool Equals(object? obj)

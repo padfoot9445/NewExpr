@@ -195,3 +195,17 @@ Functions:
     # - {name: ConstructCollection, ID: 6, returns: collection, arguments: [void]}
     - {name: ConstructSet, ID: 7, returns: set, arguments: [void]}
     - {name: ConstructDict, ID: 8, returns: dict, arguments: [void]}
+    - {name: __CastTo__float, ID: , returns: float, arguments: [void]} #args: stack: {TOP}[type of src, src]{BOTTOM}
+    - {name: __CastTo__int, ID: , returns: int, arguments: [void]}
+    - {name: __CastTo__double, ID: , returns: double, arguments: [void]}
+    - {name: __CastTo__number, ID: , returns: number, arguments: [void]}
+    - {name: __CastTo__long, ID: , returns: long, arguments: [void]}
+    - {name: __CastTo__longint, ID: , returns: longint, arguments: [void]}
+    - {name: __CastTo__byte, ID: , returns: byte, arguments: [void]}
+    - {name: __CastTo__char, ID: , returns: char, arguments: [void]}
+    - {name: __CastTo__bool, ID: , returns: bool, arguments: [void]}
+    - {name: __CastTo__rational, ID: , returns: rational, arguments: [void]}
+    - {name: __CastTo__array, ID: , returns: array, arguments: [void]}
+    - {name: __CastTo__list, ID: , returns: list, arguments: [void]}
+    - {name: __CastTo__set, ID: , returns: set, arguments: [void]}
+    - {name: __CastTo__dict, ID: , returns: dict, arguments: [void]}

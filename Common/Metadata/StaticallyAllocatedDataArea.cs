@@ -1,8 +1,10 @@
 using System.Numerics;
 using Common.LinearIR;
+using JetBrains.Annotations;
 
 namespace Common.Metadata;
 
+[PublicAPI]
 public record class StaticallyAllocatedDataArea<TKey, TBacking>
     where TBacking : IBinaryInteger<TBacking>, IMinMaxValue<TBacking>, new()
     where TKey : notnull

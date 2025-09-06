@@ -69,10 +69,6 @@ public partial class SmallLangParser
             : IToken.NewToken(t.TokenID, t.Value, t.Position.Index, null, t.Position.Line);
     }
 
-    private IToken? TryFromToken(LyToken t)
-    {
-        return t.IsEmpty ? null : FromToken(t);
-    }
 
     [Production($"{nameof(NTSection)}: {nameof(NTStatement)}*")]
     public NodeType NTSection(List<NodeType> Statements)

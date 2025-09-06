@@ -38,13 +38,13 @@ public partial class SmallLangParser
         return WrapFunction(TryCast<T>, node, NameOfCastingMethod);
     }
 
-    private T TryCast<T>(NodeType Node) where T : class, NodeType
+    private static T TryCast<T>(NodeType Node) where T : class, NodeType
     {
         if (Node is T t) return t;
         throw new Exception($"Tried to cast node {Node} of type {Node.GetType()} to {typeof(T)}");
     }
 
-    private T? TryCast<T>(ValueOption<NodeType> Node) where T : class, NodeType
+    private static T? TryCast<T>(ValueOption<NodeType> Node) where T : class, NodeType
     {
         if (Node.IsSome)
             return TryCast<T>(Node.Match(x => x, () => throw new Exception("IsSome was true when no value was found")));

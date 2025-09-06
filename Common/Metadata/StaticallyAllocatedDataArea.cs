@@ -7,8 +7,8 @@ public record class StaticallyAllocatedDataArea<TKey, TBacking>
     where TBacking : IBinaryInteger<TBacking>, IMinMaxValue<TBacking>, new()
     where TKey : notnull
 {
-    public Dictionary<TKey, int> KeyToNumberOfCellsUsed = new();
-    public Dictionary<TKey, Pointer<TBacking>> KeyToPointerStartMap = new();
+    public Dictionary<TKey, int> KeyToNumberOfCellsUsed { get; } = new();
+    public Dictionary<TKey, Pointer<TBacking>> KeyToPointerStartMap { get; } = new();
     public HashSet<Pointer<TBacking>> UsedPositions { get; init; } = new();
 
     public Pointer<TBacking> AllFreePointer { get; } =

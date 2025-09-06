@@ -40,7 +40,7 @@ public partial class SmallLangParser
 
     private T TryCast<T>(NodeType Node) where T : class, NodeType
     {
-        if (Node is T) return (T)Node;
+        if (Node is T t) return t;
         throw new Exception($"Tried to cast node {Node} of type {Node.GetType()} to {typeof(T)}");
     }
 

@@ -20,8 +20,7 @@ public record class StaticallyAllocatedDataArea<TKey, TBacking>
     {
         for (var i = AllFreePointer; i < AllFreePointer.Add(width); i = i.Add(1))
         {
-            if (UsedPositions.Contains(i)) throw new Exception("Accidentally allocated a used ptr");
-            UsedPositions.Add(i);
+            if (!UsedPositions.Add(i)) throw new Exception("Accidentally allocated a used ptr");
         }
 
         return AllFreePointer;

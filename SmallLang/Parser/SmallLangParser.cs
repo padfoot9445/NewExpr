@@ -53,10 +53,13 @@ public partial class SmallLangParser
 
     private static SectionNode ToSection<T>(NodeType Node, string HandlerName) where T : class, IStatementNode
     {
-        if (Node is SectionNode sectionNode) return sectionNode;
-        if (Node is T Statement) return new SectionNode([Statement]);
-        throw new Exception(
-            $"Tried to cast Node to Section in {HandlerName}. Expected : {typeof(T)} or SectionNode but got {Node.GetType()}");
+        return Node switch
+        {
+            SectionNode sectionNode => sectionNode,
+            T Statement => new SectionNode([Statement]),
+            _ => throw new Exception(
+                $"Tried to cast Node to Section in {HandlerName}. Expected : {typeof(T)} or SectionNode but got {Node.GetType()}")
+        };
     }
 
     private static IToken FromToken(LyToken t)

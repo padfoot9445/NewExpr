@@ -380,7 +380,7 @@ public partial class SmallLangParser
     [Production($"{nameof(NTLPrimary3)}: [Identifier | Number | String | TrueLiteral | FalseLiteral]")]
     public NodeType NTLPrimary3(LyToken Token)
     {
-        var oT = FromToken(Token)!;
+        var oT = FromToken(Token);
         return oT.TT == TokenType.Identifier ? new IdentifierNode(oT) : new PrimaryNode(oT);
     }
 

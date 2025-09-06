@@ -1,7 +1,3 @@
-immut int i = 12;
 
-i as index;
-
-((((i!)!)!)!)!;
 
 frozen int j = (i as number) + 1;

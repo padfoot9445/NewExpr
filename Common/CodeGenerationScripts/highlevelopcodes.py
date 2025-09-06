@@ -125,12 +125,12 @@ if __name__ == "__main__":
                     access_modifier="private",
                     parameters=[
                         f"{enum_name} Op",
-                        f"params IEnumerable<IOperationArgument<BackingNumberType>> Operands"
+                        "params IEnumerable<IOperationArgument<BackingNumberType>> Operands"
                     ],
                     delegated_ctor="base",
                     delegated_ctor_arguments=[
                         f"({wrapper_name})Op",
-                        f"Operands.ToArray()"
+                        "Operands.ToArray()"
                     ]
                 )
             ],

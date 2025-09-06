@@ -31,7 +31,7 @@ public sealed class Scope : IEquatable<Scope>
 
     private Functions FunctionsDefinedInThisScope { get; }
 
-    private Dictionary<VariableName, GenericSmallLangType> TypeNameCombinationsDefinedInThisScope { get; } = [];
+    private Dictionary<VariableName, GenericSmallLangType> TypeNameCombinationsDefinedInThisScope { get; }
 
     public bool Equals(Scope? other)
     {

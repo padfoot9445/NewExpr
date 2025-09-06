@@ -12,9 +12,9 @@ internal class TypeOfExpressionVisitor : BaseASTVisitor
 
     protected override void Epilogue<TArgumentType>(ISmallLangNode? Parent, TArgumentType self)
     {
-        if (self is IHasAttributeTypeOfExpressionSettable and IHasAttributeGenericSLType)
-            ((IHasAttributeTypeOfExpressionSettable)self).TypeOfExpression =
-                ((IHasAttributeGenericSLType)self).GenericSLType!.OutmostType;
+        if (self is IHasAttributeTypeOfExpressionSettable Settable and IHasAttributeGenericSLType GenericSLSelf)
+            Settable.TypeOfExpression =
+                GenericSLSelf.GenericSLType!.OutmostType;
         base.Epilogue(Parent, self);
     }
 }

@@ -2,7 +2,7 @@ using Common.Metadata;
 
 namespace SmallLang.IR.Metadata;
 
-internal partial class Functions
+public partial class Functions
 {
     public HashSet<FunctionSignature<BackingNumberType, GenericSmallLangType>> RegisteredFunctions { get; } = new();
 

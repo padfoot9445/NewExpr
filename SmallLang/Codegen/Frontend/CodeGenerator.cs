@@ -19,8 +19,20 @@ public partial class CodeGenerator(SmallLangNode RootNode)
     internal void Cast<T>(T self, GenericSmallLangType dstType)
         where T : IHasAttributeTypeOfExpression, ISmallLangNode
     {
+        Debug.Assert(IsInChunkFlag);
+
+
         if (self.TypeOfExpression! == dstType) Exec(self);
-        throw new NotImplementedException();
+        Debug.Assert(self.TypeOfExpression!.IsCollection == dstType.OutmostType.IsCollection);
+        Debug.Assert(self.TypeOfExpression is { IsNum: true } && dstType is { OutmostType.IsNum: true } || self.TypeOfExpression == TypeData.Char && dstType.OutmostType == TypeData.String || self.TypeOfExpression == TypeData.String && dstType.OutmostType == TypeData.Char || self.TypeOfExpression.IsRefType == dstType.OutmostType.IsRefType);
+
+        var FunctionToCallName = $"__CastTo__{dstType.OutmostType.Name}";
+        var FunctionToCall = Functions.StdLibFunctions.Single(x => x.Name == FunctionToCallName);
+
+
+        //the top of the stack should already contain the value
+        Emit(HighLevelOperation.Push(self.TypeOfExpression));
+        Emit(HighLevelOperation.Call(FunctionToCall.ID));
     }
 
 

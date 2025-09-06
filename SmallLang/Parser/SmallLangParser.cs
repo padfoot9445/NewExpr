@@ -397,11 +397,6 @@ public partial class SmallLangParser
         return new ArgListElementNode(TryCast<IExpressionNode>(Expr), TryCast<IdentifierNode>(Label));
     }
 
-    public static NodeType NTArgListPrime(NodeType Element)
-    {
-        return Element;
-    }
-
     [Production($"{nameof(NTArgumentLabel)}: Identifier Colon [d]")]
     public NodeType NTArgumentLabel(LyToken Ident)
     {

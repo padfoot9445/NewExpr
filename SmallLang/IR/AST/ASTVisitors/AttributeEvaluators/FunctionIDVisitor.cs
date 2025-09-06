@@ -32,7 +32,7 @@ internal class FunctionIDVisitor : BaseASTVisitor
     protected override ISmallLangNode VisitNewExpr(ISmallLangNode? Parent, NewExprNode self)
     {
         NotNull(self.Scope, self.Type.TypeLiteralType);
-        self.FunctionID = self.Scope.GetIDOfConstructorFunction(self.Type.TypeLiteralType);
+        self.FunctionID = Scope.GetIDOfConstructorFunction(self.Type.TypeLiteralType);
 
         return base.VisitNewExpr(Parent, self);
     }

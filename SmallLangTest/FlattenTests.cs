@@ -15,7 +15,7 @@ public class FlattenTests
         foreach (var i in ExamplePrograms.AllPrograms) yield return i;
     }
 
-    private int CountAST(ISmallLangNode ast)
+    private static int CountAST(ISmallLangNode ast)
     {
         var returnValue = 0;
         foreach (var i in ((SmallLangNode)ast).ChildNodes)

@@ -10,7 +10,7 @@ public record class NumberWrapper<T, TBacking> : GenericOperationArgument<TBacki
     {
     }
 
-    private int TBits => GetBits<T>();
+    private static int TBits => GetBits<T>();
 
     private static int GetBits<TInner>() where TInner : IBinaryInteger<TInner>, IMinMaxValue<TInner>
     {

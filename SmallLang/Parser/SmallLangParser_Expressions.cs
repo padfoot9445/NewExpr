@@ -55,7 +55,7 @@ public partial class SmallLangParser
     [Infix((int)TokenType.BitwiseNegateEquals, Associativity.Right, BitwiseNotEqualsPrecedence)]
     [Infix((int)TokenType.LeftShiftEquals, Associativity.Right, BitwiseLeftShiftEqualsPrecedence)]
     [Infix((int)TokenType.RightShiftEquals, Associativity.Right, BitwiseRightShiftEqualsPrecedence)]
-    public NodeType AssignmentOp(NodeType left, LyToken Op, NodeType right)
+    public static NodeType AssignmentOp(NodeType left, LyToken Op, NodeType right)
     {
         TokenType NewType;
         switch (Op.TokenID)
@@ -107,7 +107,7 @@ public partial class SmallLangParser
 
     [Prefix((int)TokenType.Increment, Associativity.Left, IncrementExprPrecedence)]
     [Prefix((int)TokenType.Decrement, Associativity.Right, DecrementExprPrecedence)]
-    public NodeType PreCrementOp(LyToken left, NodeType right)
+    public static NodeType PreCrementOp(LyToken left, NodeType right)
     {
         var RExp = TryCast<IExpressionNode>(right);
         var newToken = left.TokenID switch

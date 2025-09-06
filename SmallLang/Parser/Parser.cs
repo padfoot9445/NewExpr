@@ -21,7 +21,7 @@ public class Parser
         LyParser = GetParser();
     }
 
-    private LYParser GetParser()
+    private static LYParser GetParser()
     {
         var def = new SmallLangParser();
         BuildResult<LYParser> parserResult =

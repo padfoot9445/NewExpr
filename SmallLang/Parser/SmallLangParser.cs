@@ -28,12 +28,12 @@ public partial class SmallLangParser
         return x => TryCast<T>(x, NameOfCastingMethod);
     }
 
-    private T TryCast<T>(NodeType node, string NameOfCastingMethod) where T : class, NodeType
+    private static T TryCast<T>(NodeType node, string NameOfCastingMethod) where T : class, NodeType
     {
         return WrapFunction(TryCast<T>, node, NameOfCastingMethod);
     }
 
-    private T? TryCast<T>(ValueOption<NodeType> node, string NameOfCastingMethod) where T : class, NodeType
+    private static T? TryCast<T>(ValueOption<NodeType> node, string NameOfCastingMethod) where T : class, NodeType
     {
         return WrapFunction(TryCast<T>, node, NameOfCastingMethod);
     }
@@ -51,7 +51,7 @@ public partial class SmallLangParser
         return null;
     }
 
-    private SectionNode ToSection<T>(NodeType Node, string HandlerName) where T : class, IStatementNode
+    private static SectionNode ToSection<T>(NodeType Node, string HandlerName) where T : class, IStatementNode
     {
         if (Node is SectionNode sectionNode) return sectionNode;
         if (Node is T Statement) return new SectionNode([Statement]);
@@ -59,7 +59,7 @@ public partial class SmallLangParser
             $"Tried to cast Node to Section in {HandlerName}. Expected : {typeof(T)} or SectionNode but got {Node.GetType()}");
     }
 
-    private IToken FromToken(LyToken t)
+    private static IToken FromToken(LyToken t)
     {
         return t.IsEmpty
             ? throw new Exception($"Token {t} was empty")
@@ -398,7 +398,7 @@ public partial class SmallLangParser
         return new ArgListElementNode(TryCast<IExpressionNode>(Expr), TryCast<IdentifierNode>(Label));
     }
 
-    public NodeType NTArgListPrime(NodeType Element)
+    public static NodeType NTArgListPrime(NodeType Element)
     {
         return Element;
     }

@@ -74,7 +74,7 @@ public class ParserTest
         return new[] { "==", "!=", "<", "<=", ">=", ">" }.Select(x => new TestCaseData(x));
     }
 
-    private void AssertOpExprPair<T>(OperatorExpressionPairNode res, string OpLexeme, TokenType OpTT)
+    private static void AssertOpExprPair<T>(OperatorExpressionPairNode res, string OpLexeme, TokenType OpTT)
     {
         Assert.Multiple(() =>
         {

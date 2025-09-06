@@ -15,7 +15,7 @@ internal class GenericSLTypeVisitor : BaseASTVisitor
         base.PreVisit(node);
     }
 
-    private GenericSmallLangType GetGenericSLTFromLiteralType(ITypeNode type)
+    private static GenericSmallLangType GetGenericSLTFromLiteralType(ITypeNode type)
     {
         NotNull(type.TypeLiteralType);
         return GenericSmallLangType.ParseType(type);

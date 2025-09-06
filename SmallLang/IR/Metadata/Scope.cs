@@ -127,7 +127,7 @@ public sealed class Scope : IEquatable<Scope>
         return GetSignature(name).ID;
     }
 
-    public FunctionID GetIDOfConstructorFunction(GenericSmallLangType type)
+    public static FunctionID GetIDOfConstructorFunction(GenericSmallLangType type)
     {
         return new FunctionID(0);
     }

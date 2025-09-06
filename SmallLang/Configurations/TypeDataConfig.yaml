@@ -195,17 +195,17 @@ Functions:
     # - {name: ConstructCollection, ID: 6, returns: collection, arguments: [void]}
     - {name: ConstructSet, ID: 7, returns: set, arguments: [void]}
     - {name: ConstructDict, ID: 8, returns: dict, arguments: [void]}
-    - {name: __CastTo__float, ID: , returns: float, arguments: [void]} #args: stack: {TOP}[type of src, src]{BOTTOM}
-    - {name: __CastTo__int, ID: , returns: int, arguments: [void]}
-    - {name: __CastTo__double, ID: , returns: double, arguments: [void]}
-    - {name: __CastTo__number, ID: , returns: number, arguments: [void]}
-    - {name: __CastTo__long, ID: , returns: long, arguments: [void]}
-    - {name: __CastTo__longint, ID: , returns: longint, arguments: [void]}
-    - {name: __CastTo__byte, ID: , returns: byte, arguments: [void]}
-    - {name: __CastTo__char, ID: , returns: char, arguments: [void]}
-    - {name: __CastTo__bool, ID: , returns: bool, arguments: [void]}
-    - {name: __CastTo__rational, ID: , returns: rational, arguments: [void]}
-    - {name: __CastTo__array, ID: , returns: array, arguments: [void]}
-    - {name: __CastTo__list, ID: , returns: list, arguments: [void]}
-    - {name: __CastTo__set, ID: , returns: set, arguments: [void]}
-    - {name: __CastTo__dict, ID: , returns: dict, arguments: [void]}
+    - {name: __CastTo__float, ID: 9, returns: float, arguments: [void]} #args: stack: {TOP}[type of src, src]{BOTTOM}
+    - {name: __CastTo__int, ID: 10, returns: int, arguments: [void]}
+    - {name: __CastTo__double, ID: 11, returns: double, arguments: [void]}
+    - {name: __CastTo__number, ID: 12, returns: number, arguments: [void]}
+    - {name: __CastTo__long, ID: 13, returns: long, arguments: [void]}
+    - {name: __CastTo__longint, ID: 14, returns: longint, arguments: [void]}
+    - {name: __CastTo__byte, ID: 15, returns: byte, arguments: [void]}
+    - {name: __CastTo__char, ID: 16, returns: char, arguments: [void]}
+    - {name: __CastTo__bool, ID: 17, returns: bool, arguments: [void]}
+    - {name: __CastTo__rational, ID: 18, returns: rational, arguments: [void]}
+    - {name: __CastTo__array, ID: 19, returns: array, arguments: [void]}
+    - {name: __CastTo__list, ID: 20, returns: list, arguments: [void]}
+    - {name: __CastTo__set, ID: 21, returns: set, arguments: [void]}
+    - {name: __CastTo__dict, ID: 22, returns: dict, arguments: [void]}

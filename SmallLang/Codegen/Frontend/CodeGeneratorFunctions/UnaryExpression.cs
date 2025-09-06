@@ -1,15 +1,13 @@
 using Common.Dispatchers;
+using Common.LinearIR;
 using Common.Tokens;
-using sly.lexer;
-using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
-using SmallLang.IR.Metadata;
 
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
-using ArgumentType = Common.LinearIR.NumberWrapper<int, BackingNumberType>;
-using TypeType = Common.LinearIR.NumberWrapper<byte, BackingNumberType>;
+using ArgumentType = NumberWrapper<int, BackingNumberType>;
+using TypeType = NumberWrapper<byte, BackingNumberType>;
 
 internal static class UnaryExpressionVisitor
 {

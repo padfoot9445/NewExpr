@@ -1,7 +1,6 @@
 using Common.Dispatchers;
 using Common.Tokens;
 using SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFunctions;
-using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
@@ -47,7 +46,7 @@ internal static class PrimaryVisitor
 
     private static void VisitBool(PrimaryNode self, CodeGenerator Driver)
     {
-        Driver.Emit(HighLevelOperation.Push<BackingNumberType>(self.Switch(x => x.Data!.TT, (x, y) => x == y,
+        Driver.Emit(HighLevelOperation.Push(self.Switch(x => x.Data.TT, (x, y) => x == y,
             (TokenType.TrueLiteral, CodeGenerator.TrueValue), (TokenType.FalseLiteral, CodeGenerator.FalseValue))));
     }
 
@@ -56,14 +55,16 @@ internal static class PrimaryVisitor
         List<byte> Chars =
         [
             TypeData.String.Value.Single(),
-            .. ((GenericNumberWrapper<int>)self.Data!.Lexeme.Length).Value,
-            .. self.Data!.Lexeme.Select(x => (byte)x)
+            .. ((GenericNumberWrapper<int>)self.Data.Lexeme.Length).Value,
+            .. self.Data.Lexeme.Select(x => (byte)x)
         ];
 
         var Ptr = Driver.Data.StaticDataArea.AllocateAndFill(Chars.Count, Chars);
         Driver.Emit(HighLevelOperation.Push(Ptr));
     }
 
-    private static void VisitCollection(PrimaryNode self, CodeGenerator Driver) =>
+    private static void VisitCollection(PrimaryNode self, CodeGenerator Driver)
+    {
         throw new NotSupportedException("Shouldn't have Collection Primaries");
+    }
 }

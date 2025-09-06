@@ -1,6 +1,5 @@
 using System.Numerics;
 using Common.Dispatchers;
-using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 using SmallLang.IR.Metadata;
@@ -9,7 +8,7 @@ namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions.PrimaryVisitorSubFun
 
 internal static class ValNumVisitor
 {
-    static Action EmitCodeDelegateGenerator<T>(Func<string, T> parser, PrimaryNode self, CodeGenerator Driver)
+    private static Action EmitCodeDelegateGenerator<T>(Func<string, T> parser, PrimaryNode self, CodeGenerator Driver)
         where T : IBinaryInteger<T>, IMinMaxValue<T>
     {
         void EmitCode()
@@ -20,7 +19,8 @@ internal static class ValNumVisitor
         return EmitCode;
     }
 
-    static Func<string, TOut> GetIntParseFunctionFromFloatParseFunction<TIn, TOut>(Func<string, TIn> FloatParseFunction,
+    private static Func<string, TOut> GetIntParseFunctionFromFloatParseFunction<TIn, TOut>(
+        Func<string, TIn> FloatParseFunction,
         Func<TIn, TOut> Converter)
         where TIn : IBinaryFloatingPointIeee754<TIn>
         where TOut : IBinaryInteger<TOut>
@@ -30,10 +30,10 @@ internal static class ValNumVisitor
 
     internal static void Visit(PrimaryNode self, CodeGenerator Driver)
     {
-        Action Emitter = self.Switch
+        var Emitter = self.Switch
         (
-            Accessor: x => x.TypeOfExpression!,
-            Comparer: (x, y) => x == y,
+            x => x.TypeOfExpression!,
+            (x, y) => x == y,
             (TypeData.Char, EmitCodeDelegateGenerator(char.Parse, self, Driver)),
             (TypeData.Float,
                 EmitCodeDelegateGenerator
@@ -54,4 +54,3 @@ internal static class ValNumVisitor
         Emitter();
     }
 }
-

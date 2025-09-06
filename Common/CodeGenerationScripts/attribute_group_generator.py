@@ -9,7 +9,7 @@ if __name__ == "__main__":
     _, output_directory, _, raw_config, config = initialize()
     #write interfaces for attribute groups
     for attribute_group in config:
-        name = f"IHasAttributes_{"_".join(attribute for attribute in attribute_group["attributes"] + attribute_group["marker interfaces"])}"
+        name = f"IHasAttributes_{"_".join(attribute_group["attributes"] + attribute_group["marker interfaces"])}"
         both_joined = join_two_parent_groups(attribute_group["marker interfaces"], (get_interface_name(i) for i in attribute_group["attributes"]))
         with open(output_directory/f"{name}.cs", "w") as file:
             write_header(raw_config, file)

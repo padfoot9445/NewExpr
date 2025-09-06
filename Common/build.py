@@ -44,7 +44,7 @@ def time_thread(name: str, work_function: Callable[..., Any], *args: Any, **kwar
     work_thread.start()
 
     start_time = time()
-    time_str = f"(0.0s)"
+    time_str = "(0.0s)"
     first_part = f"{BUILD}: {name} "
     sys.stdout.write(f"{first_part}{" " * len(SUCCEED)} {time_str}"); sys.stdout.flush()
 
@@ -68,8 +68,7 @@ def time_command(command: list[str], stdout_destination: TextIO, msg: str):
         custom_run, command, stdout_destination)
 
 def make_dir(dst: Path):
-    if os.path.isdir(dst): return
-    elif os.path.split(dst)[-1] in ["NUL", "NUL:"]: return
+    if os.path.isdir(dst) or os.path.split(dst)[-1] in ["NUL", "NUL:"]: return
 
     if dst.is_file() or len(os.path.splitext(dst)[1]) > 0:
         dst = dst.parent.resolve()

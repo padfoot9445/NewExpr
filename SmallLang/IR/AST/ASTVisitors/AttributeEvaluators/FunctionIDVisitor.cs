@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using Common.Dispatchers;
 using Common.Metadata;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.Metadata;
@@ -15,10 +13,8 @@ internal class FunctionIDVisitor : BaseASTVisitor
     {
         NotNull(self.Scope, self.Type.TypeLiteralType);
         if (!self.Scope.FunctionIsDefined(self.FunctionName.Data.Lexeme))
-        {
             self.Scope.DefineFunction(new FunctionSignature(self.FunctionName.Data.Lexeme, FunctionID.GetNext(),
                 self.Type.TypeLiteralType, self.TypeAndIdentifierCSV.Select(x => x.Type.TypeLiteralType!).ToList()));
-        }
 
         return base.VisitFunction(Parent, self);
     }
@@ -28,9 +24,7 @@ internal class FunctionIDVisitor : BaseASTVisitor
         NotNull(self.Scope);
 
         if (self.Scope.FunctionIsDefined(self.Identifier.Data.Lexeme))
-        {
             self.FunctionID = self.Scope.GetID(self.Identifier.Data.Lexeme);
-        }
 
         return base.VisitFunctionCall(Parent, self);
     }
@@ -38,7 +32,7 @@ internal class FunctionIDVisitor : BaseASTVisitor
     protected override ISmallLangNode VisitNewExpr(ISmallLangNode? Parent, NewExprNode self)
     {
         NotNull(self.Scope, self.Type.TypeLiteralType);
-        self.FunctionID = self.Scope.GetIDOfConstructorFunction(self.Type.TypeLiteralType);
+        self.FunctionID = Scope.GetIDOfConstructorFunction(self.Type.TypeLiteralType);
 
         return base.VisitNewExpr(Parent, self);
     }

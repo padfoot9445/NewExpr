@@ -1,18 +1,15 @@
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using System.Text;
 using Common.AST;
-using Common.LinearIR;
 using Common.Metadata;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 
 namespace SmallLang.IR.Metadata;
+
 public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode<GenericSmallLangType>,
     IMetadataTypes<GenericSmallLangType>
 {
-
-    
     public GenericSmallLangType(SmallLangType OutmostType, params IEnumerable<GenericSmallLangType> TypeArguments) :
         base(OutmostType.BackingValue)
     {
@@ -21,25 +18,7 @@ public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode
     }
 
     public SmallLangType OutmostType { get; init; }
-    public IEnumerable<GenericSmallLangType> ChildNodes { get; init; }
     public bool IsLeafNode => ChildNodes.Any() is false;
-    public uint BaseValue
-    {
-        get => OutmostType.BaseValue;
-        init => _ = value;
-    }
-
-    public string Name
-    {
-        get => OutmostType.Name;
-        init => _ = value;
-    }
-
-    public bool IsRefType
-    {
-        get => OutmostType.IsRefType;
-        init => _ = value;
-    }
 
     public uint Size
     {
@@ -47,70 +26,49 @@ public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode
         init => _ = value;
     }
 
-    public bool IsNum
-    {
-        get => OutmostType.IsNum;
-        init => _ = value;
-    }
-
-    public NumberType NumberType
-    {
-        get => OutmostType.NumberType;
-        init => _ = value;
-    }
-
-    public bool IsCollection
-    {
-        get => OutmostType.IsCollection;
-        init => _ = value;
-    }
-
-    public int? ValMaxSize
-    {
-        get => OutmostType.ValMaxSize;
-        init => _ = value;
-    }
-    public static GenericSmallLangType GreatestCommonType(GenericSmallLangType self, GenericSmallLangType other)
-    {
-        if (self == other) return self;
-        else if (self.ChildNodes.Any() || other.ChildNodes.Any())
-        {
-            throw new ArgumentException("Cannot find gct of generic types which are not the same");
-        }
-        else return new(self.OutmostType.GreatestCommonType(other.OutmostType));
-    }
-    public GenericSmallLangType GreatestCommonType(GenericSmallLangType other) => GreatestCommonType(this, other);
     bool IMetadataTypes<GenericSmallLangType>.CanDeclareTo(GenericSmallLangType other)
     {
-        return this.OutmostType.CanDeclareTo(other.OutmostType);
+        return OutmostType.CanDeclareTo(other.OutmostType);
     }
 
     bool IMetadataTypes<GenericSmallLangType>.ImplicitCast(GenericSmallLangType other)
     {
         throw new NotImplementedException();
     }
+
+    public IEnumerable<GenericSmallLangType> ChildNodes { get; init; }
+
+    public static GenericSmallLangType GreatestCommonType(GenericSmallLangType self, GenericSmallLangType other)
+    {
+        if (self == other) return self;
+        if (self.ChildNodes.Any() || other.ChildNodes.Any())
+            throw new ArgumentException("Cannot find gct of generic types which are not the same");
+
+        return new GenericSmallLangType(self.OutmostType.GreatestCommonType(other.OutmostType));
+    }
+
+    public GenericSmallLangType GreatestCommonType(GenericSmallLangType other)
+    {
+        return GreatestCommonType(this, other);
+    }
+
     public override int GetHashCode()
     {
         HashCode hash = new();
         hash.Add(OutmostType);
-        foreach (var type in ChildNodes)
-        {
-            hash.Add(type);
-        }
+        foreach (var type in ChildNodes) hash.Add(type);
         return hash.ToHashCode();
     }
+
     public static GenericSmallLangType ParseType(ITypeNode type)
     {
-        if (type is BaseTypeNode BT) return new(TypeData.GetType(BT.Data.Lexeme));
-        else
-        {
-            return type is GenericTypeNode GT
-                ? new GenericSmallLangType(TypeData.GetType(GT.Data.Lexeme),
-                [
-                    ..GT.Types.Select(ParseType)
-                ])
-                : throw new ArgumentException("type contained unknown nodetype");
-        }
+        if (type is BaseTypeNode BT) return new GenericSmallLangType(TypeData.GetType(BT.Data.Lexeme));
+        return type is GenericTypeNode GT
+            ? new GenericSmallLangType(TypeData.GetType(GT.Data.Lexeme),
+            [
+                ..GT.Types.Select(ParseType)
+            ])
+            : throw new ArgumentException("type contained unknown nodetype");
     }
 
 
@@ -130,8 +88,8 @@ public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode
     {
         StringBuilder front = new();
         StringBuilder back = new();
-        bool HitBracket = false;
-        for (int i = 0; i < type.Length; i++)
+        var HitBracket = false;
+        for (var i = 0; i < type.Length; i++)
         {
             if ($"{type[i]}{type.ElementAtOrDefault(i + 1)}" == "<[") HitBracket = true;
 
@@ -146,11 +104,10 @@ public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode
     {
         if (csv.Length == 0) yield break;
         Debug.Assert(csv[..2] == "<[" && csv[^2..] == "]>");
-        int bracketsNumber = 0;
+        var bracketsNumber = 0;
         StringBuilder builder = new();
 
-        for (int i = 2; i < (csv.Length - 2); i++)
-        {
+        for (var i = 2; i < csv.Length - 2; i++)
             if (csv[i] == ',' && bracketsNumber == 0)
             {
                 yield return ParseType(builder.ToString());
@@ -166,28 +123,6 @@ public record class GenericSmallLangType : GenericNumberWrapper<byte>, ITreeNode
 
                 builder.Append(csv[i]);
             }
-        }
-        yield break;
     }
 
-    public bool CanDeclareTo(SmallLangType other)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Deconstruct(out uint BaseValue, out string Name, out bool IsRefType, out uint Size, out bool IsNum,
-        out NumberType NumberType, out bool IsCollection, out int? ValMaxSize)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Equals(SmallLangType? other)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool ImplicitCast(SmallLangType other)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -7,6 +7,7 @@ public record class RelativeChunkPointer : GenericNumberWrapper<int>
     protected RelativeChunkPointer(GenericNumberWrapper<int> original) : base(original)
     {
     }
+
     public RelativeChunkPointer(int Val) : base(Val)
     {
     }

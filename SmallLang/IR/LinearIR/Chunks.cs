@@ -5,5 +5,4 @@ namespace SmallLang.IR.LinearIR;
 public class Chunks : Chunks<BackingNumberType, Chunk, HighLevelOpcode>
 #pragma warning restore IDE0001
 {
-
 }

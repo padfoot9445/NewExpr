@@ -1,4 +1,3 @@
-using System.Collections;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.Metadata;
 
@@ -16,10 +15,7 @@ public abstract record class SmallLangNode : ISmallLangNode, IHasAttributeScope,
     public override int GetHashCode()
     {
         HashCode hash = new();
-        foreach (var child in ChildNodes)
-        {
-            hash.Add(child);
-        }
+        foreach (var child in ChildNodes) hash.Add(child);
         hash.Add(Scope);
 
         return hash.ToHashCode();

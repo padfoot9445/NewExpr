@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Runtime.InteropServices.JavaScript;
 using Common.AST;
 using SmallLang.Exceptions;
 using SmallLang.IR.AST.Generated;
@@ -30,18 +29,19 @@ internal class ExpectedTypeOfExpressionVisitor : BaseASTVisitor
         else
         {
             var FunctionDefinitionNode = CurrentRootNode.Flatten()
-            .OfType<FunctionNode>()
-            .Single(x => x.FunctionName.VariableName == self.Identifier.VariableName);
+                .OfType<FunctionNode>()
+                .Single(x => x.FunctionName.VariableName == self.Identifier.VariableName);
             //ReSharper disable All
             IndexableArgList =
-                FunctionDefinitionNode.TypeAndIdentifierCSV.Select(x => x.Type.GetGenericSLTFromLiteralType()).ToImmutableArray();
+                FunctionDefinitionNode.TypeAndIdentifierCSV.Select(x => x.Type.GetGenericSLTFromLiteralType())
+                    .ToImmutableArray();
             //ReSharper enable All
 
             FunctionDefinitionArgList = FunctionDefinitionNode.TypeAndIdentifierCSV
                 .Select(x => (x.Identifier.Data.Lexeme, x.Type.GetGenericSLTFromLiteralType()))
                 .ToDictionary();
-
         }
+
         bool SeenIdentifier = false;
         foreach (var (i, v) in self.ArgList.Index())
         {
@@ -66,6 +66,7 @@ internal class ExpectedTypeOfExpressionVisitor : BaseASTVisitor
                 }
             }
         }
+
         return base.VisitFunctionCall(Parent, self);
     }
 

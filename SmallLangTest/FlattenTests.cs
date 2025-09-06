@@ -6,22 +6,24 @@ using SmallLangTest.Generated;
 
 namespace SmallLangTest;
 
-[TestFixture, CancelAfter(5000)]
+[TestFixture]
+[CancelAfter(5000)]
 public class FlattenTests
 {
-    static IEnumerable<string> GetTestCases()
+    private static IEnumerable<string> GetTestCases()
     {
         foreach (var i in ExamplePrograms.AllPrograms) yield return i;
     }
 
-    int CountAST(ISmallLangNode ast)
+    private static int CountAST(ISmallLangNode ast)
     {
-        int returnValue = 0;
+        var returnValue = 0;
         foreach (var i in ((SmallLangNode)ast).ChildNodes)
         {
             returnValue++;
             returnValue += CountAST(i);
         }
+
         return returnValue;
     }
 
@@ -31,7 +33,8 @@ public class FlattenTests
         var ast = ParserTest.Parse(Program);
         Assert.That(ast.Flatten().Count(), Is.EqualTo(CountAST(ast) + 1));
     }
-    static IToken GetToken(TokenType TT)
+
+    private static IToken GetToken(TokenType TT)
     {
         return IToken.NewToken(TT, "", -1);
     }
@@ -40,10 +43,15 @@ public class FlattenTests
     public void Flatten_Count__Custom_AST__Matches_Manual_Count()
     {
         var ast = new SectionNode(
-            [new BinaryExpressionNode(
-                GetToken(TokenType.Addition), new PrimaryNode(GetToken(TokenType.Number)), new PrimaryNode(GetToken(TokenType.String))
-            ),
-        new WhileNode(new UnaryExpressionNode(GetToken(TokenType.LogicalNot), new PrimaryNode(GetToken(TokenType.Number))), null, new SectionNode([]), null)]
+            [
+                new BinaryExpressionNode(
+                    GetToken(TokenType.Addition), new PrimaryNode(GetToken(TokenType.Number)),
+                    new PrimaryNode(GetToken(TokenType.String))
+                ),
+                new WhileNode(
+                    new UnaryExpressionNode(GetToken(TokenType.LogicalNot),
+                        new PrimaryNode(GetToken(TokenType.Number))), null, new SectionNode([]), null)
+            ]
         );
 
         Assert.That(ast.Flatten().Count(), Is.EqualTo(8));

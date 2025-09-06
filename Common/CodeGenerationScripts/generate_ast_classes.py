@@ -6,8 +6,9 @@ from collections import Counter, defaultdict
 from collections.abc import Iterator, Callable
 from typing import cast
 
-
+HAS_DATA: Literal["has data"] = 'has data'
 names_used: defaultdict[str, defaultdict[str, int]] = defaultdict(lambda : defaultdict(int))
+
 def number_name(x: str, subnode: Any) -> str:
     names = Counter(i[NAME] for i in subnode["children"])
     if names[x] == 1: return x
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     for subnode in config:
         name = subnode[NAME] + suffix
         attributes = cast(list[dict[str, str]], subnode["attributes"])
-        attribute_names = set(i["name"] for i in attributes)
+        attribute_names = {i["name"] for i in attributes}
         parents = subnode["parents"]
 
 
@@ -41,7 +42,7 @@ if __name__ == "__main__":
                 else:
                     attributes.append(attribute)
 
-        data = ("IToken", "Data") if subnode["has data"] else None
+        data = ("IToken", "Data") if subnode[HAS_DATA] else None
         children = [
             (f"{"List<" if is_multiple else ""}{type}{"?" if is_optional else ""}{">" if is_multiple else ""}", 
             f"{number_name(name, subnode)}")
@@ -62,7 +63,7 @@ if __name__ == "__main__":
                     f"if(Data.TT == TokenType.{valid_tt}) return true;"
                     for valid_tt in subnode["valid data types"]
                 ] + [
-                    "return false;" if subnode["has data"] and subnode["check data type"] else "return true;"
+                    "return false;" if subnode[HAS_DATA] and subnode["check data type"] else "return true;"
                 ],
                 return_type="bool",
                 access_modifier=AccessModifiers.Private
@@ -81,7 +82,7 @@ if __name__ == "__main__":
                 ] + [
                     f"hash.Add({i["name"]});" for i in attributes
                 ] + [
-                    "hash.Add(Data);" if subnode["has data"] else ""
+                    "hash.Add(Data);" if subnode[HAS_DATA] else ""
                 ] + [
                     "foreach(var child in ChildNodes){ hash.Add(child.GetHashCode()); }"
                 ] + 
@@ -112,7 +113,7 @@ if __name__ == "__main__":
                                 get_assignment(child_name)
                                 for _, child_name in ctor_children
                             ] + [
-                                f"if (!DataChecker(){"|| !DataValidationFunction()" if subnode["has additional data validation function"] else ""}) throw new Exception($\"{name}: Invalid data type submitted. {"Was {Data}. " if subnode["has data"] else ""}\");",
+                                f"if (!DataChecker(){"|| !DataValidationFunction()" if subnode["has additional data validation function"] else ""}) throw new Exception($\"{name}: Invalid data type submitted. {"Was {Data}. " if subnode[HAS_DATA] else ""}\");",
                                 f"Children = [{", ".join(child_name if not child_type.startswith("List<") else f"..{child_name}" for child_type, child_name in children)}];"
                             ],
                             parameters= [

@@ -1,19 +1,21 @@
-using Common.LinearIR;
-using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
+
 namespace SmallLang.CodeGen.Frontend.CodeGeneratorFunctions;
 
 internal static class SwitchVisitor
 {
     public static void Visit(SwitchNode Self, CodeGenerator Driver)
     {
-
         var Expressions = Self.ExprStatementCombineds.Select(x => x.Expression).ToList();
         var Statements = Self.ExprStatementCombineds.Select(x => x.Section).ToList();
         var Length = Self.ExprStatementCombineds.Count();
         var ExpressionType = Self.Expression.TypeOfExpression!;
-        List<int> Registers = [Driver.GetRegisters((int)ExpressionType.Size).First(), .. Expressions.Select(_ => Driver.GetRegisters((int)ExpressionType.Size).First())];
+        List<int> Registers =
+        [
+            Driver.GetRegisters((int)ExpressionType.Size).First(),
+            .. Expressions.Select(_ => Driver.GetRegisters((int)ExpressionType.Size).First())
+        ];
 
         Driver.EnteringChunk(() =>
         {
@@ -22,7 +24,7 @@ internal static class SwitchVisitor
             Driver.Emit(HighLevelOperation.Switch<int, int, int, byte>(Registers[0], Length, 1, ExpressionType));
         });
 
-        for (int i = 1; i <= Length; i++)
+        for (var i = 1; i <= Length; i++)
         {
             Driver.NewChunk(i * 2 - 1, () =>
             {
@@ -30,17 +32,9 @@ internal static class SwitchVisitor
                 Driver.Emit(HighLevelOperation.LoadFromStack(Registers[i], ExpressionType.Size));
             });
 
-            Driver.NewChunk(i * 2, () =>
-            {
-                Driver.Exec(Statements[i - 1]);
-            });
+            Driver.NewChunk(i * 2, () => { Driver.Exec(Statements[i - 1]); });
         }
 
-        Driver.NewChunk(Length * 2 + 1, () =>
-        {
-            Driver.Next();
-        });
-
-
+        Driver.NewChunk(Length * 2 + 1, () => { Driver.Next(); });
     }
 }

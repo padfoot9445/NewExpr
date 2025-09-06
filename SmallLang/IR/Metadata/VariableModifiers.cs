@@ -8,5 +8,5 @@ public enum VariableModifiers : byte
     Readonly = 1 << 1,
     Frozen = 1 << 2,
     Immut = 1 << 3,
-    Copy = 1 << 4,
+    Copy = 1 << 4
 }

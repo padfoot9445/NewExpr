@@ -68,7 +68,7 @@ if __name__ == "__main__":
         get_where: Callable[[int], str] = lambda x: f"where T{x} : IBinaryInteger<T{x}>, IMinMaxValue<T{x}>"
 
 
-        get_affixes: Callable[[list[str]], list[str]] = lambda x: [
+        get_affixes: Callable[[list[str], str, int], list[str]] = lambda x, generics_string, generics: [
                     generics_string,
                     f"({", ".join(x)})"
                 ] + [
@@ -81,7 +81,7 @@ if __name__ == "__main__":
                 name=op_name,
                 keyword=record_name,
                 content=method_content,
-                affixes=get_affixes(method_params),
+                affixes=get_affixes(method_params, generics_string, generics),
                 modifiers=modifiers
             )
         )
@@ -91,7 +91,7 @@ if __name__ == "__main__":
                     name=op_name,
                     keyword=record_name,
                     content=other_content,
-                    affixes=get_affixes(other_params),
+                    affixes=get_affixes(other_params, generics_string, generics),
                     modifiers=modifiers
                 )
             )
@@ -125,12 +125,12 @@ if __name__ == "__main__":
                     access_modifier="private",
                     parameters=[
                         f"{enum_name} Op",
-                        f"params IEnumerable<IOperationArgument<BackingNumberType>> Operands"
+                        "params IEnumerable<IOperationArgument<BackingNumberType>> Operands"
                     ],
                     delegated_ctor="base",
                     delegated_ctor_arguments=[
                         f"({wrapper_name})Op",
-                        f"Operands.ToArray()"
+                        "Operands.ToArray()"
                     ]
                 )
             ],

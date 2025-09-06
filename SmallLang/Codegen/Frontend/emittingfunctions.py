@@ -51,8 +51,5 @@ def generate_emitting_functions(amount_of_generics: int = 5) -> None:
 
         output += "}"
 
-        # print(f"Generated code for {emitting_functions_file_path}:\n----")
-        # print(output)
-        # print("----")
 
         emitting_functions_file.write(output)

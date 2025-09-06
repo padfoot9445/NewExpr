@@ -1,27 +1,27 @@
 using System.Text;
 
 namespace Common.Logger;
+
 public class Logger : ILogger
 {
-    public TextWriter Writer { get; init; }
-
-    public bool LoggingEnabled { get; set; } = false;
-    public StringBuilder Buffer { get; init; } = new();
-
     public Logger(TextWriter writer)
     {
-        this.Writer = writer;
+        Writer = writer;
     }
+
     public Logger()
     {
-        this.Writer = Console.Out;
+        Writer = Console.Out;
     }
+
+    public TextWriter Writer { get; init; }
+    public StringBuilder Buffer { get; init; } = new();
+
+    public bool LoggingEnabled { get; set; }
+
     public void Log(string message)
     {
-        if (!LoggingEnabled)
-        {
-            return;
-        }
+        if (!LoggingEnabled) return;
         Buffer.AppendLine(message);
     }
 
@@ -33,6 +33,6 @@ public class Logger : ILogger
 
     public ILogger Copy()
     {
-        return new Logger() { Writer = Writer, Buffer = Buffer, LoggingEnabled = LoggingEnabled };
+        return new Logger { Writer = Writer, Buffer = Buffer, LoggingEnabled = LoggingEnabled };
     }
 }

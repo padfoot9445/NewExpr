@@ -1,1 +1,1 @@
-[assembly: Parallelizable(scope: ParallelScope.Children)]
+[assembly: Parallelizable(ParallelScope.Children)]

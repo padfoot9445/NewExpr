@@ -1,17 +1,12 @@
-using System.Collections.Immutable;
 using System.Diagnostics;
 
 namespace SmallLang.IR.LinearIR;
 
 public record class TreeChunk
 {
-    public Chunk Self { get; init; }
-    public List<TreeChunk> Children { get; init; }
-    private static int NextUuid { get; set; }
-    public int Uuid { get; init; }
-
-    public TreeChunk() : this(new Chunk(), []) { }
-    public int NumberOfChildren { get; init; }
+    public TreeChunk() : this(new Chunk(), [])
+    {
+    }
 
     public TreeChunk(Chunk Self, IEnumerable<TreeChunk> Children, int? NumberOfChildren = null)
     {
@@ -22,4 +17,10 @@ public record class TreeChunk
         this.NumberOfChildren = Children.Count();
         if (NumberOfChildren is not null) Debug.Assert(this.NumberOfChildren == NumberOfChildren);
     }
+
+    public Chunk Self { get; init; }
+    public List<TreeChunk> Children { get; init; }
+    private static int NextUuid { get; set; }
+    public int Uuid { get; init; }
+    public int NumberOfChildren { get; init; }
 }

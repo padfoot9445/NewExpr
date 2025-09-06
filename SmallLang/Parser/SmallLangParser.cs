@@ -164,6 +164,7 @@ public partial class SmallLangParser
         var ThisCombined = new ExprSectionCombinedNode(TryCast<IExpressionNode>(Cond),
             ToSection<IStatementNode>(StatementExpr, nameof(NTIf)));
         List<ExprSectionCombinedNode> rc = [ThisCombined];
+
         if (ElseNode is not null && ElseNode.Section.Statements.Count > 0 && ElseNode.Section.Statements.First() is IfNode If)
         {
             Debug.Assert(ElseNode.Section.Statements.Count == 1);

@@ -7,13 +7,15 @@ public enum TokenType
     EOF,
 
     //should be shared between all sets of valid tokens, since invalid ones will simply be unused
-    [Lexeme(GenericToken.Int)] [Lexeme(GenericToken.Double)]
+    [Lexeme(GenericToken.Int)]
+    [Lexeme(GenericToken.Double)]
     Number,
 
     [Lexeme(GenericToken.Identifier, IdentifierType.Custom, "_A-Za-z", "_0-9A-Za-z")]
     Identifier,
 
-    [Lexeme(GenericToken.String)] [Lexeme(GenericToken.String, "'")]
+    [Lexeme(GenericToken.String)]
+    [Lexeme(GenericToken.String, "'")]
     String,
 
     //Operators
@@ -111,11 +113,13 @@ public enum TokenType
     [Keyword("int")] TypeInt,
     [Keyword("double")] TypeDouble,
 
-    [Keyword("number")] [Keyword("bigfloat")]
+    [Keyword("number")]
+    [Keyword("bigfloat")]
     TypeNumber,
     [Keyword("long")] TypeLong,
 
-    [Keyword("longint")] [Keyword("bigint")]
+    [Keyword("longint")]
+    [Keyword("bigint")]
     TypeLongInt,
     [Keyword("byte")] TypeByte,
     [Keyword("array")] TypeArray,

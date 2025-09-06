@@ -43,7 +43,6 @@ public partial class CodeGenerator(SmallLangNode RootNode)
 
     internal void Exec(ISmallLangNode node)
     {
-        var CurrentChunk = Data.CurrentChunk;
         DynamicDispatch(node)(node, this);
     }
 

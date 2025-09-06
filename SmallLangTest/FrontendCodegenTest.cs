@@ -3,7 +3,7 @@ using SmallLangTest.Generated;
 
 namespace SmallLangTest;
 
-[TestFixture, Ignore("Not passing, and we're doing refactoring")]
+[TestFixture]
 public class FrontendCodegenTest
 {
     [Test]

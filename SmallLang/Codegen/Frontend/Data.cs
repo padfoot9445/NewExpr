@@ -39,17 +39,21 @@ public record class Data
 
     internal int GetVariableStartRegister(VariableName Variable)
     {
-        throw new NotImplementedException();
+        return RegistersDict[Variable].StartRegister;
     }
 
     internal int GetVariableWidth(VariableName Variable)
     {
-        throw new NotImplementedException();
+        return RegistersDict[Variable].Width;
     }
+
+    private readonly Dictionary<VariableName, (int StartRegister, int Width)> RegistersDict = [];
 
     internal int AllocateRegisters(VariableName Variable, int width)
     {
-        throw new NotImplementedException();
+        RegistersDict[Variable] = (NextRegister, width);
+        NextRegister += width;
+        return NextRegister - width;
     }
 
     public int GetRegister()

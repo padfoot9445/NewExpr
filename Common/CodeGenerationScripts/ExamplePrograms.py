@@ -18,7 +18,7 @@ if __name__ == "__main__":
                         program_name = os.path.splitext(program_file)[0]
                         program_names.append(program_name)
 
-                        class_content.append(f"public static readonly string {program_name} = \"\"\"\n{"\n".join(opened_program_file.readlines())}\n\"\"\";")
+                        class_content.append(f"public static readonly string {program_name} = \"\"\"\n{"".join(opened_program_file.readlines())}\n\"\"\";")
         
         class_content.append("public static string[] AllPrograms => __AllPrograms.Select(x => x).ToArray();")
         class_content.append(f"private static readonly string[] __AllPrograms = [{", ".join(program_names)}];")

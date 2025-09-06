@@ -6,10 +6,10 @@ namespace SmallLang.CodeGen.Frontend;
 
 public record class Data
 {
-    public Dictionary<LoopGUID, (int, int, int, int, int)> LoopData = new();
+    public Dictionary<LoopGUID, (int, int, int, int, int)> LoopData { get; } = new();
 
     private int NextRegister = 1;
-    public StaticallyAllocatedDataArea<VariableName, BackingNumberType> StaticDataArea = new();
+    public StaticallyAllocatedDataArea<VariableName, BackingNumberType> StaticDataArea { get; } = new();
 
     public Data()
     {

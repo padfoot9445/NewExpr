@@ -35,7 +35,8 @@ public record class StaticallyAllocatedDataArea<TKey, TBacking>
 
     public void FillFrom(Pointer<TBacking> start, params IEnumerable<TBacking> Values)
     {
-        while (Store.Count < start.BackingValue + Values.Count()) Store.Add(new TBacking());
+        int count = Values.Count();
+        while (Store.Count < start.BackingValue + count) Store.Add(new TBacking());
     }
 
     public Pointer<TBacking> AllocateAndFill(TKey Key, int width, params IEnumerable<TBacking> Values)

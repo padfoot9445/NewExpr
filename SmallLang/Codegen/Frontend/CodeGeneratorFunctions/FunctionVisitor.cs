@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics;
+using Common.AST;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 
@@ -14,7 +15,7 @@ internal static class FunctionVisitor
         {
             //assume that Entering chunk does not have JMP CHUNK1
         });
-
+        Console.WriteLine("FunctionVisitor!");
         Debug.Assert(chunk == Driver.Data.CurrentChunk);
         List<(int, uint)> registerAndWidths = [];
 
@@ -35,6 +36,11 @@ internal static class FunctionVisitor
             }
         });
 
+        Debug.Assert(Driver.Data.CurrentChunk.GetParent(Driver.Data.Sections) == chunk);
+
         Driver.NewChunk(2, () => { Driver.Next(); });
+
+
+        Debug.Assert(Driver.Data.CurrentChunk.GetParent(Driver.Data.Sections) == chunk);
     }
 }

@@ -9,19 +9,28 @@ partial class CodeGenerator
     private bool IsNextFlag { get; set; }
     private bool NextWasCalledFlag { get; set; }
     private bool IsInChunkFlag { get; set; }
+    private Stack<(bool IsNextCopy, bool NextWasCalledCopy, bool InChunkCopy)> Stack = new();
 
+    private void StoreState()
+    {
+        Stack.Push((IsNextFlag, NextWasCalledFlag, IsInChunkFlag));
+    }
+    private void RestoreState()
+    {
+        (IsNextFlag, NextWasCalledFlag, IsInChunkFlag) = Stack.Pop();
+    }
     private bool InChunk(Action Code)
     {
+        StoreState();
         IsNextFlag = false;
         IsInChunkFlag = true;
         Code();
-        IsInChunkFlag = false;
 
         var ret = IsNextFlag;
 
+        RestoreState();
         if (ret) NextWasCalledFlag = true;
 
-        IsNextFlag = false;
         return ret;
     }
 
@@ -56,12 +65,12 @@ partial class CodeGenerator
     {
         return (x, y) =>
         {
+            StoreState();
             Verify<T>(x);
             visitor((T)x, y);
-            if (NextWasCalledFlag)
-                NextWasCalledFlag = false;
-            else
+            if (!NextWasCalledFlag)
                 throw new Exception("Next must be called at some point within the Visitor. Call Next.");
+            RestoreState();
         };
     }
 }

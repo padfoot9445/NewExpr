@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using SmallLang.IR.AST.Generated;
 using SmallLang.IR.LinearIR;
 
@@ -8,11 +9,13 @@ internal static class FunctionVisitor
 {
     public static void Visit(FunctionNode Self, CodeGenerator Driver)
     {
+        var chunk = Driver.Data.CurrentChunk;
         Driver.EnteringChunk(() =>
         {
             //assume that Entering chunk does not have JMP CHUNK1
         });
 
+        Debug.Assert(chunk == Driver.Data.CurrentChunk);
         List<(int, uint)> registerAndWidths = [];
 
 

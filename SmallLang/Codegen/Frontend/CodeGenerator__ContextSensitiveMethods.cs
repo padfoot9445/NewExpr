@@ -54,7 +54,7 @@ partial class CodeGenerator
     {
         //do not set InChunk as we do not want any code to be in this treechunk's chunk
 
-        //TODO: wrap all newchunk sequences as in IfVisitor
+        //TODO: wrap all newchunk sequences as in ForVisitor
         var Return = Data.CurrentChunk.NumberOfChildren;
 
         NewChunk(Data.CurrentChunk.NumberOfChildren, () =>

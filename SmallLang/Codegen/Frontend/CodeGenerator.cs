@@ -55,7 +55,12 @@ public partial class CodeGenerator(SmallLangNode RootNode)
 
     internal void Exec(ISmallLangNode node)
     {
+        StoreState();
+        IsInChunkFlag = false;
+        IsNextFlag = false;
+        NextWasCalledFlag = false;
         DynamicDispatch(node)(node, this);
+        RestoreState();
     }
 
     internal int[] GetRegisters(int Width = 1)

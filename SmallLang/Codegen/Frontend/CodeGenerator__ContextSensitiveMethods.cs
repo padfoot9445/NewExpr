@@ -52,7 +52,8 @@ partial class CodeGenerator
     {
         Debug.Assert(Data.CurrentChunk.Children.Count == chunkID - 1);
         Data.NewChunk();
-        if (!InChunk(code)) Data.Rewind();
+        InChunk(code);
+        Data.Rewind(); //always rewind if we made a new chunk, and never rewind if we didn't, maybe?
     }
 
     internal void Next()

@@ -70,7 +70,9 @@ partial class CodeGenerator
             Verify<T>(x);
             visitor((T)x, y);
             if (!NextWasCalledFlag)
-                throw new Exception("Next must be called at some point within the Visitor. Call Next.");
+            {
+                throw new Exception($"Next must be called at some point within the Visitor {typeof(T)}. Call Next.");
+            }
             RestoreState();
         };
     }

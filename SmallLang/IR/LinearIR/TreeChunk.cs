@@ -1,8 +1,9 @@
 using System.Diagnostics;
+using Common.AST;
 
 namespace SmallLang.IR.LinearIR;
 
-public record class TreeChunk
+public record class TreeChunk : ITreeNode<TreeChunk>
 {
     public TreeChunk() : this(new Chunk(), [])
     {
@@ -23,4 +24,6 @@ public record class TreeChunk
     private static int NextUuid { get; set; }
     public int Uuid { get; init; }
     public int NumberOfChildren { get; init; }
+
+    IEnumerable<TreeChunk> ITreeNode<TreeChunk>.ChildNodes => Children;
 }

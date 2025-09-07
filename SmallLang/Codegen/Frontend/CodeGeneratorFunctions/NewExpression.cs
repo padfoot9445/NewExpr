@@ -8,6 +8,7 @@ internal static class NewExpressionVisitor
     {
         Driver.EnteringChunk(() =>
         {
+            //TODO: Size kwarg
             FunctionCallVisitor.CallFunction(Self, Self.ArgList, Driver);
             Driver.Next();
         });

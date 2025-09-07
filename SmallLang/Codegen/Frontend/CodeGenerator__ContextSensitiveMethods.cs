@@ -7,32 +7,27 @@ namespace SmallLang.CodeGen.Frontend;
 
 partial class CodeGenerator
 {
-    private bool IsNextFlag { get; set; }
-    private bool NextWasCalledFlag { get; set; }
     private bool IsInChunkFlag { get; set; }
-    private Stack<(bool IsNextCopy, bool NextWasCalledCopy, bool InChunkCopy)> Stack = new();
+    private Stack<bool> Stack = new();
 
     private void StoreState()
     {
-        Stack.Push((IsNextFlag, NextWasCalledFlag, IsInChunkFlag));
+        Stack.Push(IsInChunkFlag);
     }
     private void RestoreState()
     {
-        (IsNextFlag, NextWasCalledFlag, IsInChunkFlag) = Stack.Pop();
+        IsInChunkFlag = Stack.Pop();
     }
     private bool InChunk([InstantHandle] Action Code)
     {
         StoreState();
-        IsNextFlag = false;
         IsInChunkFlag = true;
         Code();
 
-        var ret = IsNextFlag;
 
         RestoreState();
-        if (ret) NextWasCalledFlag = true;
 
-        return ret;
+        return true;
     }
 
     internal void Emit(HighLevelOperation Op)
@@ -56,12 +51,6 @@ partial class CodeGenerator
         Data.Rewind(); //always rewind if we made a new chunk, and never rewind if we didn't, maybe?
     }
 
-    internal void Next()
-    {
-        if (!IsInChunkFlag) throw new InvalidOperationException("Must be in a chunk to call Next");
-        IsNextFlag = true;
-    }
-
     internal Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
         where T : ISmallLangNode
     {
@@ -70,10 +59,7 @@ partial class CodeGenerator
             StoreState();
             Verify<T>(x);
             visitor((T)x, y);
-            if (!NextWasCalledFlag)
-            {
-                throw new Exception($"Next must be called at some point within the Visitor {typeof(T)}. Call Next.");
-            }
+
             RestoreState();
         };
     }

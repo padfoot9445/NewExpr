@@ -270,3 +270,9 @@ HighLevelOpcodes:
         - name: FunctionID
       comment:
         Calls the function FunctionID. Arguments on stack, return on stack.
+    
+    - name: CallChunk
+      arguments: 
+        - name: ChunkRelativeID
+      comment:
+        executes the ChunkRelativeID, and then returns control-flow to the site of the call.

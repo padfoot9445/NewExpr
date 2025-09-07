@@ -12,34 +12,37 @@ internal static class ForVisitor
         Driver.EnteringChunk(() =>
         {
             Driver.Exec(Self.InitializingExpression); //Compile initializing expression
-            Driver.Emit(HighLevelOperation.Loop
+            Driver.Emit(HighLevelOperation.CallChunk
             (
-                1,
-                2,
-                3,
-                4,
-                5
+                Driver.WrapperChunk
+                (
+                    HighLevelOperation.Loop(1, 2, 3, 4, -1 /*Dummy value; TODO: remove this last loop-argument when while is wrapped as such*/),
+                    () =>
+                    {
+                        Driver.NewChunk(1, () =>
+                        {
+                            Driver.Cast(Self.ConditionExpression, TypeData.Bool); //Compile condition expression
+                        });
+
+                        Driver.NewChunk(2, () =>
+                        {
+                            Driver.Exec(Self.PostLoopExpression); //Compile postloop expression
+                        });
+
+                        Driver.NewChunk(3, () => { Driver.Exec(Self.LoopBody); });
+
+                        Driver.NewChunk(4, () =>
+                        {
+                            if (Self.Else is null)
+                                Driver.Emit(HighLevelOperation.NOp());
+                            else
+                                Driver.Exec(Self.Else);
+                        });
+
+
+                    }
+                )
             ));
-        });
-
-        Driver.NewChunk(1, () =>
-        {
-            Driver.Cast(Self.ConditionExpression, TypeData.Bool); //Compile condition expression
-        });
-
-        Driver.NewChunk(2, () =>
-        {
-            Driver.Exec(Self.PostLoopExpression); //Compile postloop expression
-        });
-
-        Driver.NewChunk(3, () => { Driver.Exec(Self.LoopBody); });
-
-        Driver.NewChunk(4, () =>
-        {
-            if (Self.Else is null)
-                Driver.Emit(HighLevelOperation.NOp());
-            else
-                Driver.Exec(Self.Else);
         });
 
 

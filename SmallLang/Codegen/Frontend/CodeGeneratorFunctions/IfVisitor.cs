@@ -27,15 +27,15 @@ internal static class IfVisitor
             ));
         });
 
-        for (var i = 1; i <= ESC.Length; i++)
+        for (var i = 0; i < ESC.Length; i++)
         {
-            Driver.NewChunk(i * 2 - 1, () =>
+            Driver.NewChunk(i * 2 + 1, () =>
             {
                 Driver.Cast(Expressions[i], TypeData.Bool);
                 Driver.Emit(HighLevelOperation.LoadFromStack(CondReg, TypeData.Bool.Size));
             });
 
-            Driver.NewChunk(i * 2 - 1, () => { Driver.Exec(Statements[i]); });
+            Driver.NewChunk(i * 2 + 2, () => { Driver.Exec(Statements[i]); });
         }
 
         Driver.NewChunk(ESC.Length * 2 + 1, () =>

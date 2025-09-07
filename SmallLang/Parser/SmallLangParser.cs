@@ -221,9 +221,7 @@ public partial class SmallLangParser
                 ));
         }
 
-
-        OutSection = OutSection with { Statements = [.. Copies, .. OutSection.Statements] };
-
+        OutSection = new SectionNode(Statements: [.. Copies, .. OutSection.Statements]);
 
         return new FunctionNode(TryCast<ITypeNode>(AType, nameof(NTFunction)),
             TICSV.Select(TryCast<TypeAndIdentifierCSVElementNode>(nameof(NTFunction))).ToList(), OutSection,

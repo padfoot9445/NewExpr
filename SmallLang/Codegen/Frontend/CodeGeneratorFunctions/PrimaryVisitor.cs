@@ -11,8 +11,16 @@ internal static class PrimaryVisitor
 {
     internal static void VisitIdentifier(IdentifierNode self, CodeGenerator Driver)
     {
-        Driver.Emit(HighLevelOperation.PushFromRegister(Driver.Data.GetVariableStartRegister(self.VariableName!),
-            Driver.Data.GetVariableWidth(self.VariableName!)));
+        Driver.EnteringChunk(() =>
+        {
+            Driver.Emit(
+                HighLevelOperation.PushFromRegister(Driver.Data.GetVariableStartRegister(self.VariableName!),
+                Driver.Data.GetVariableWidth(self.VariableName!))
+            );
+
+            Driver.Next();
+
+        });
     }
 
     internal static void Visit(PrimaryNode Self, CodeGenerator Driver)

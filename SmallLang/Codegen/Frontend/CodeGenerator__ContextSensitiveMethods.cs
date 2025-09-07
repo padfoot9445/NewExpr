@@ -50,7 +50,17 @@ partial class CodeGenerator
         InChunk(code);
         Data.Rewind(); //always rewind if we made a new chunk, and never rewind if we didn't, maybe?
     }
-
+    internal void WrapperChunk([InstantHandle] Action code)
+    {
+        //do not set InChunk as we do not want any code to be in this treechunk's chunk
+        NewChunk(Data.CurrentChunk.NumberOfChildren, () =>
+        {
+            StoreState();
+            IsInChunkFlag = false;
+            code();
+            RestoreState();
+        });
+    }
     internal Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
         where T : ISmallLangNode
     {

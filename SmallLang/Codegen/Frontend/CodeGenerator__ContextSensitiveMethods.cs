@@ -53,6 +53,8 @@ partial class CodeGenerator
     internal int WrapperChunk(HighLevelOperation chunkOp, [InstantHandle] Action code)
     {
         //do not set InChunk as we do not want any code to be in this treechunk's chunk
+
+        //TODO: wrap all newchunk sequences as in IfVisitor
         var Return = Data.CurrentChunk.NumberOfChildren;
 
         NewChunk(Data.CurrentChunk.NumberOfChildren, () =>

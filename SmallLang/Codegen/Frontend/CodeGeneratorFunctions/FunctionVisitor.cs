@@ -17,6 +17,7 @@ internal static class FunctionVisitor
         });
         Console.WriteLine("FunctionVisitor!");
         Debug.Assert(chunk == Driver.Data.CurrentChunk);
+        Console.WriteLine("T1 executed");
         List<(int, uint)> registerAndWidths = [];
 
 
@@ -28,19 +29,29 @@ internal static class FunctionVisitor
 
         Driver.NewChunk(1, () =>
         {
+            Debug.Assert(Driver.Data.CurrentChunk.GetParent(Driver.Data.Sections) == chunk, Driver.Data.CurrentChunk.GetParent(Driver.Data.Sections)!.ToString());
+            Console.WriteLine("T2 executed");
+
             //load arguments from stack into registers.
+            var chunk2 = Driver.Data.CurrentChunk;
             Driver.Exec(Self.FunctionBody);
+            Debug.Assert(Driver.Data.CurrentChunk == chunk2);
+            Console.WriteLine("T2.1 executed");
+
             foreach (var (register, width) in (registerAndWidths as IEnumerable<(int, uint)>).Reverse())
             {
                 Driver.Emit(HighLevelOperation.LoadFromStack(register, width));
             }
         });
 
-        Debug.Assert(Driver.Data.CurrentChunk.GetParent(Driver.Data.Sections) == chunk);
+        Debug.Assert(Driver.Data.CurrentChunk == chunk);
+        Console.WriteLine("T2.2 executed");
 
         Driver.NewChunk(2, () => { Driver.Next(); });
 
 
-        Debug.Assert(Driver.Data.CurrentChunk.GetParent(Driver.Data.Sections) == chunk);
+        Debug.Assert(Driver.Data.CurrentChunk == chunk);
+
+        Console.WriteLine("All tests executed");
     }
 }

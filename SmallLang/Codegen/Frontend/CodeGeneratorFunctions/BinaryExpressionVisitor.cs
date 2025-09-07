@@ -59,7 +59,7 @@ internal static class BinaryExpressionVisitor
             var Indexer = Driver.GetRegisters((int)TypeData.Int.Size).First();
             var ItemPtr = Driver.GetRegisters((int)Left.TypeOfExpression!.Size).First();
 
-            Debug.Assert(Left.TypeOfExpression == RightType);
+            Debug.Assert(Left.GenericSLType == RightType, $"{Left.TypeOfExpression}, {RightType}");
 
             //Push the indexer value as an int onto the stack
             Driver.Cast(Left.Expression2, TypeData.Int);

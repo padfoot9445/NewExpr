@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using JetBrains.Annotations;
 using SmallLang.IR.AST;
 using SmallLang.IR.LinearIR;
 
@@ -19,7 +20,7 @@ partial class CodeGenerator
     {
         (IsNextFlag, NextWasCalledFlag, IsInChunkFlag) = Stack.Pop();
     }
-    private bool InChunk(Action Code)
+    private bool InChunk([InstantHandle] Action Code)
     {
         StoreState();
         IsNextFlag = false;
@@ -42,12 +43,12 @@ partial class CodeGenerator
         Data.Emit(Op);
     }
 
-    internal void EnteringChunk(Action code)
+    internal void EnteringChunk([InstantHandle] Action code)
     {
         InChunk(code);
     }
 
-    internal void NewChunk(int chunkID, Action code)
+    internal void NewChunk(int chunkID, [InstantHandle] Action code)
     {
         Debug.Assert(Data.CurrentChunk.Children.Count == chunkID - 1);
         Data.NewChunk();

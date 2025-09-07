@@ -50,9 +50,11 @@ partial class CodeGenerator
         InChunk(code);
         Data.Rewind(); //always rewind if we made a new chunk, and never rewind if we didn't, maybe?
     }
-    internal void WrapperChunk(HighLevelOperation chunkOp, [InstantHandle] Action code)
+    internal int WrapperChunk(HighLevelOperation chunkOp, [InstantHandle] Action code)
     {
         //do not set InChunk as we do not want any code to be in this treechunk's chunk
+        var Return = Data.CurrentChunk.NumberOfChildren;
+
         NewChunk(Data.CurrentChunk.NumberOfChildren, () =>
         {
             Emit(chunkOp);
@@ -61,6 +63,8 @@ partial class CodeGenerator
             code();
             RestoreState();
         });
+
+        return Return;
     }
     internal Action<ISmallLangNode, CodeGenerator> VisitFunctionWrapper<T>(Action<T, CodeGenerator> visitor)
         where T : ISmallLangNode

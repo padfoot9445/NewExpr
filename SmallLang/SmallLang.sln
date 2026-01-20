@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IR", "IR\IR.csproj", "{D64A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "Parser\Parser.csproj", "{099E0ED5-7796-4C65-8553-35F7EF9A3263}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Treewalk-Interpreter", "Treewalk-Interpreter\Treewalk-Interpreter.csproj", "{4E523248-CAAD-4D1A-9D9A-033221D34644}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{099E0ED5-7796-4C65-8553-35F7EF9A3263}.Release|x64.Build.0 = Release|Any CPU
 		{099E0ED5-7796-4C65-8553-35F7EF9A3263}.Release|x86.ActiveCfg = Release|Any CPU
 		{099E0ED5-7796-4C65-8553-35F7EF9A3263}.Release|x86.Build.0 = Release|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Debug|x64.Build.0 = Debug|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Debug|x86.Build.0 = Debug|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Release|x64.ActiveCfg = Release|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Release|x64.Build.0 = Release|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Release|x86.ActiveCfg = Release|Any CPU
+		{4E523248-CAAD-4D1A-9D9A-033221D34644}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

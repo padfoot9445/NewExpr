@@ -4,189 +4,189 @@ using SmallLang.IR.AST.Generated;
 
 namespace SmallLang.TreeWalkInterpreter;
 
-public class TreeWalkInterpreter : ISmallLangNodeVisitor<InterpreterState>
+public class TreeWalkInterpreter : ISmallLangNodeVisitor<Nothing>
 {
-    public InterpreterState Visit(ISmallLangNode? Parent, ReTypingAliasNode self)
+    public Nothing Visit(ISmallLangNode? Parent, ReTypingAliasNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, ReTypeOriginalNode self)
+    public Nothing Visit(ISmallLangNode? Parent, ReTypeOriginalNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, IdentifierNode self)
+    public Nothing Visit(ISmallLangNode? Parent, IdentifierNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, SectionNode self)
+    public Nothing Visit(ISmallLangNode? Parent, SectionNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, FunctionNode self)
+    public Nothing Visit(ISmallLangNode? Parent, FunctionNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, LoopCTRLNode self)
+    public Nothing Visit(ISmallLangNode? Parent, LoopCTRLNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, ForNode self)
+    public Nothing Visit(ISmallLangNode? Parent, ForNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, WhileNode self)
+    public Nothing Visit(ISmallLangNode? Parent, WhileNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, LoopLabelNode self)
+    public Nothing Visit(ISmallLangNode? Parent, LoopLabelNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, ReturnNode self)
+    public Nothing Visit(ISmallLangNode? Parent, ReturnNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, BaseTypeNode self)
+    public Nothing Visit(ISmallLangNode? Parent, BaseTypeNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, GenericTypeNode self)
+    public Nothing Visit(ISmallLangNode? Parent, GenericTypeNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, IfNode self)
+    public Nothing Visit(ISmallLangNode? Parent, IfNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, SwitchNode self)
+    public Nothing Visit(ISmallLangNode? Parent, SwitchNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, ExprSectionCombinedNode self)
+    public Nothing Visit(ISmallLangNode? Parent, ExprSectionCombinedNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self)
+    public Nothing Visit(ISmallLangNode? Parent, TypeAndIdentifierCSVElementNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, AliasExprNode self)
+    public Nothing Visit(ISmallLangNode? Parent, AliasExprNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, DeclarationNode self)
+    public Nothing Visit(ISmallLangNode? Parent, DeclarationNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self)
+    public Nothing Visit(ISmallLangNode? Parent, DeclarationModifiersCombinedNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, DeclarationModifierNode self)
+    public Nothing Visit(ISmallLangNode? Parent, DeclarationModifierNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, FunctionArgDeclModifiersNode self)
+    public Nothing Visit(ISmallLangNode? Parent, FunctionArgDeclModifiersNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, FunctionArgDeclModifiersCombinedNode self)
+    public Nothing Visit(ISmallLangNode? Parent, FunctionArgDeclModifiersCombinedNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, AssignmentPrimeNode self)
+    public Nothing Visit(ISmallLangNode? Parent, AssignmentPrimeNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, FactorialExpressionNode self)
+    public Nothing Visit(ISmallLangNode? Parent, FactorialExpressionNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, BinaryExpressionNode self)
+    public Nothing Visit(ISmallLangNode? Parent, BinaryExpressionNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, ComparisonExpressionNode self)
+    public Nothing Visit(ISmallLangNode? Parent, ComparisonExpressionNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, OperatorExpressionPairNode self)
+    public Nothing Visit(ISmallLangNode? Parent, OperatorExpressionPairNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, PrimaryNode self)
+    public Nothing Visit(ISmallLangNode? Parent, PrimaryNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, CopyExprNode self)
+    public Nothing Visit(ISmallLangNode? Parent, CopyExprNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, NewExprNode self)
+    public Nothing Visit(ISmallLangNode? Parent, NewExprNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, IndexNode self)
+    public Nothing Visit(ISmallLangNode? Parent, IndexNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, FunctionCallNode self)
+    public Nothing Visit(ISmallLangNode? Parent, FunctionCallNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, ArgListElementNode self)
+    public Nothing Visit(ISmallLangNode? Parent, ArgListElementNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, TypeCSVNode self)
+    public Nothing Visit(ISmallLangNode? Parent, TypeCSVNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, UnaryExpressionNode self)
+    public Nothing Visit(ISmallLangNode? Parent, UnaryExpressionNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, ElseNode self)
+    public Nothing Visit(ISmallLangNode? Parent, ElseNode self)
     {
         throw new NotImplementedException();
     }
 
-    public InterpreterState Visit(ISmallLangNode? Parent, FactorialSymbolNode self)
+    public Nothing Visit(ISmallLangNode? Parent, FactorialSymbolNode self)
     {
         throw new NotImplementedException();
     }

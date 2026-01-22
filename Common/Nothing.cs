@@ -9,5 +9,9 @@ public sealed class Nothing
     [UsedImplicitly]
     public static Nothing GetNothing { get; } = new();
 
-    public static Nothing DoNothing(Action _) => GetNothing;
+    public static Nothing DoNothing(Action x)
+    {
+        x();
+        return GetNothing;
+    }
 }

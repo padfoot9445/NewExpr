@@ -1,11 +1,20 @@
 using Common;
+using Common.Dispatchers;
+using Common.Tokens;
+using sly.lexer;
 using SmallLang.IR.AST;
 using SmallLang.IR.AST.Generated;
+using SmallLang.IR.Metadata;
+using SmallLang.TreeWalkInterpreter.RuntimeObjects;
+using Boolean = SmallLang.TreeWalkInterpreter.RuntimeObjects.Boolean;
+using String = SmallLang.TreeWalkInterpreter.RuntimeObjects.String;
 
 namespace SmallLang.TreeWalkInterpreter;
 
 public class TreeWalkInterpreter : ISmallLangNodeVisitor<Nothing>
 {
+    public InterpreterState State { get; } = new();
+    private Nothing Push(IRunTimeObject o) => Nothing.DoNothing(() => State.Stack.Push(o));
     public Nothing Visit(ISmallLangNode? Parent, ReTypingAliasNode self)
     {
         throw new NotImplementedException();
@@ -143,7 +152,14 @@ public class TreeWalkInterpreter : ISmallLangNodeVisitor<Nothing>
 
     public Nothing Visit(ISmallLangNode? Parent, PrimaryNode self)
     {
-        throw new NotImplementedException();
+        Func<IToken, IRunTimeObject> Factory = self.Data.TT switch
+        {
+            TokenType.Number => Number.FromToken,
+            TokenType.String => String.FromToken,
+            TokenType.TrueLiteral or TokenType.FalseLiteral => Boolean.FromToken,
+            _ => throw new MatchNotFoundException()
+        };
+        return Push(Factory(self.Data));
     }
 
     public Nothing Visit(ISmallLangNode? Parent, CopyExprNode self)

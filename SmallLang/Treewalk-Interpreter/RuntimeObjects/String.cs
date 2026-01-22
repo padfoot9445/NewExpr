@@ -1,3 +1,11 @@
+using Common.Tokens;
+
 namespace SmallLang.TreeWalkInterpreter.RuntimeObjects;
 
-public record String(string Value) : IRunTimeObject<string>;
+public record String(string Value) : IRunTimeBaseType<String, string>
+{
+  public static String FromToken(IToken token)
+  {
+    return new(token.Lexeme);
+  }
+}

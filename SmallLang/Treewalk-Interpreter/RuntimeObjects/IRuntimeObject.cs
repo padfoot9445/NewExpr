@@ -7,5 +7,7 @@ public interface IRunTimeObject<out T> : IRunTimeObject
 
 public interface IRunTimeObject
 {
-  T As<T>() => this is IRunTimeObject<T> rtoT ? rtoT.Value : default;
+  T? AsVal<T>() where T : struct => this is IRunTimeObject<T> rtoT ? rtoT.Value : default;
+
+  T? AsRef<T>() where T : class => this is IRunTimeObject<T> rtoT ? rtoT.Value : null;
 }

@@ -20,4 +20,9 @@
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IR\IR.csproj" />
+    <ProjectReference Include="..\Treewalk-Interpreter\Treewalk-Interpreter.csproj" />
+  </ItemGroup>
+
 </Project>

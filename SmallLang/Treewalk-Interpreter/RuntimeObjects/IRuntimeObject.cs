@@ -7,4 +7,5 @@ public interface IRunTimeObject<out T> : IRunTimeObject
 
 public interface IRunTimeObject
 {
+  T As<T>() => this is IRunTimeObject<T> rtoT ? rtoT.Value : default;
 }

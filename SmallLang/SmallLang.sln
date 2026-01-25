@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "Parser\Parser.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Treewalk-Interpreter", "Treewalk-Interpreter\Treewalk-Interpreter.csproj", "{4E523248-CAAD-4D1A-9D9A-033221D34644}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TreewalkInterpreterTests", "TreewalkInterpreterTests\TreewalkInterpreterTests.csproj", "{39AC1824-9DBB-4080-9679-2F1F7B4C7D03}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

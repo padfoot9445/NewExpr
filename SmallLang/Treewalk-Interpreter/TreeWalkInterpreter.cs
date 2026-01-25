@@ -15,6 +15,10 @@ public class TreeWalkInterpreter : ISmallLangNodeVisitor<Nothing>
 {
     public InterpreterState State { get; } = new();
     private Nothing Push(IRunTimeObject o) => Nothing.DoNothing(() => State.Stack.Push(o));
+    public Nothing Interpret(ISmallLangNode self)
+    {
+        return self.AcceptVisitor(null, this);
+    }
     public Nothing Visit(ISmallLangNode? Parent, ReTypingAliasNode self)
     {
         throw new NotImplementedException();

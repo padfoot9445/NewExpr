@@ -1,5 +1,6 @@
 using Common;
 using Common.Dispatchers;
+using Common.LinqExtensions;
 using Common.Tokens;
 using sly.lexer;
 using SmallLang.IR.AST;
@@ -36,7 +37,8 @@ public class TreeWalkInterpreter : ISmallLangNodeVisitor<Nothing>
 
     public Nothing Visit(ISmallLangNode? Parent, SectionNode self)
     {
-        throw new NotImplementedException();
+        self.Statements.Select(x => Interpret(x)).Evaluate();
+        return Nothing.GetNothing;
     }
 
     public Nothing Visit(ISmallLangNode? Parent, FunctionNode self)

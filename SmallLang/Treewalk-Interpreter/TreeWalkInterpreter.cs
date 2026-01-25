@@ -63,7 +63,7 @@ public class TreeWalkInterpreter : ISmallLangNodeVisitor<Nothing>
 
     public Nothing Visit(ISmallLangNode? Parent, LoopLabelNode self)
     {
-        throw new NotImplementedException();
+        return Nothing.GetNothing;
     }
 
     public Nothing Visit(ISmallLangNode? Parent, ReturnNode self)

@@ -5,9 +5,10 @@ public class AttributeEvaluator : BaseASTVisitor
     private readonly List<BaseASTVisitor> OrderedPasses =
     [
         new AssignScopeVisitor(),
-        new VariableNameVisitor(),
+
         new TypeLiteralTypeVisitor(),
         new FunctionIDVisitor(),
+        new VariableNameVisitor(),
         new LoopGUIDVisitor(),
         new GUIDOfTargetLoopVisitor(),
         new GenericSLTypeVisitor(),

@@ -46,7 +46,7 @@ public class TreeWalkInterpreter : ISmallLangNodeVisitor<Nothing>
 
     public Nothing Visit(ISmallLangNode? Parent, FunctionNode self)
     {
-        throw new NotImplementedException();
+        return Nothing.GetNothing; //we should be able to call a function via flatten and searching, I think
     }
 
     public Nothing Visit(ISmallLangNode? Parent, LoopCTRLNode self)

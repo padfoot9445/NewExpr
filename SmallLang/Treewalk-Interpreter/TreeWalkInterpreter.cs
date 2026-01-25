@@ -16,8 +16,9 @@ public class TreeWalkInterpreter : ISmallLangNodeVisitor<Nothing>
 {
     public InterpreterState State { get; } = new();
     private Nothing Push(IRunTimeObject o) => Nothing.DoNothing(() => State.Stack.Push(o));
-    public Nothing Interpret(ISmallLangNode self)
+    public Nothing Interpret(ISmallLangNode? self)
     {
+        if (self is null) return Nothing.GetNothing;
         return self.AcceptVisitor(null, this);
     }
     public Nothing Visit(ISmallLangNode? Parent, ReTypingAliasNode self)

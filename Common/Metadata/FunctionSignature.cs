@@ -11,10 +11,6 @@ public record class FunctionSignature<T, TType>(
     where T : IBinaryInteger<T>, IMinMaxValue<T>
     where TType : IMetadataTypes<TType>
 {
-    public FunctionSignature(string Name, FunctionID<T> ID, TType RetVal, List<TType> ArgTypes) : this(Name, ID, RetVal,
-        ArgTypes.AsReadOnly())
-    {
-    }
 
     public virtual bool Equals(FunctionSignature<T, TType>? Other)
     {

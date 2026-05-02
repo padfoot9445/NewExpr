@@ -14,7 +14,7 @@ internal class FunctionIDVisitor : BaseASTVisitor
         NotNull(self.Scope, self.Type.TypeLiteralType);
         if (!self.Scope.FunctionIsDefined(self.FunctionName.Data.Lexeme))
             self.Scope.DefineFunction(new FunctionSignature(self.FunctionName.Data.Lexeme, FunctionID.GetNext(),
-                self.Type.TypeLiteralType, self.TypeAndIdentifierCSV.Select(x => x.Type.TypeLiteralType!).ToList()));
+                self.Type.TypeLiteralType, [.. self.TypeAndIdentifierCSV.Select(x => x.Type.TypeLiteralType!)]));
 
         return base.VisitFunction(Parent, self);
     }
